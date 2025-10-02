@@ -12,6 +12,7 @@ public class WeaponStats
 public class PlayerCombat : MonoBehaviour
 {
     public WeaponStats currentWeapon;
+    public ParticleSystem hitEffect;
 
     private Animator animator;
 
@@ -38,6 +39,13 @@ public class PlayerCombat : MonoBehaviour
                 if (angleToEnemy < currentWeapon.angle / 2f)
                 {
                     hit.GetComponent<Health>()?.TakeDamage(currentWeapon.damage);
+                    // instantiate hit effect at enemy position
+                    if (hitEffect != null)
+                    {
+                        ParticleSystem effect = Instantiate(hitEffect, hit.transform.position + Vector3.up, Quaternion.identity);
+                        // destroy hit effect after 1 second
+                        Destroy(effect.gameObject, 1f);
+                    }
                 }
             }
         }

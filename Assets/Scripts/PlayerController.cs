@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
@@ -6,6 +7,8 @@ public class PlayerController : MonoBehaviour
     public float runSpeed = 5f;
     public float gravity = -9.81f;
     public float jumpHeight = 1.5f;
+    public float dashSpeed = 15f;
+    public float dashDuration = 0.3f;
     public Transform cameraTransform;
     public GameObject sword; // reference ke objek sword
     public float timePassedToSheathe = 2f; // waktu untuk sheathe sword
@@ -17,6 +20,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
     private bool isAttacking;
+    private bool isDashing = false;
 
     void Start()
     {
@@ -64,11 +68,9 @@ public class PlayerController : MonoBehaviour
         }
 
         // Dodge
-        if (Input.GetKeyDown(KeyCode.LeftControl) && isGrounded && !isAttacking)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && isGrounded && !isAttacking && !isDashing)
         {
-            animator.SetTrigger("Dodge");
-            Vector3 dodgeDir = transform.forward;
-            controller.Move(dodgeDir * runSpeed * 1.5f * Time.deltaTime);
+            StartCoroutine(Dodge());
         }
 
         // Gravity
@@ -107,10 +109,27 @@ public class PlayerController : MonoBehaviour
             timeSinceLastAttack = 0f; // reset timer setelah animasi unequip selesai
         }
     }
+    
+    IEnumerator Dodge()
+    {
+        isDashing = true;
+        animator.SetFloat("WalkSpeed", 1f, 0.1f, Time.deltaTime);
+
+        float startTime = Time.time;
+        Vector3 dodgeDir = transform.forward;
+
+        while (Time.time < startTime + dashDuration)
+        {
+            controller.Move(dodgeDir * dashSpeed * Time.deltaTime);
+            yield return null; // tunggu frame berikutnya
+        }
+
+        isDashing = false;
+    }
 
     public void StartAttack()
     {
-        sword.SetActive(true); 
+        sword.SetActive(true);
     }
 
     public void EndAttack()
