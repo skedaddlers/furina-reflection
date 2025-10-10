@@ -1,9 +1,14 @@
 using UnityEngine;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
-    public GameObject goToNextRoomButton;
+
+    public CursorController cursorController;
+    [Header("Door Interaction UI")]
+    public CanvasGroup doorPromptCanvas;
+    public TextMeshProUGUI doorPromptText; // atau pakai Text biasa kalau belum pakai TMP
 
     void Awake()
     {
@@ -16,16 +21,38 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        ShowInterractionUI(false, "");        
     }
 
     void Start()
     {
-        goToNextRoomButton.SetActive(false);
+        if (cursorController == null)
+            cursorController = GetComponent<CursorController>();
+        cursorController.LockCursor();
+    }
+    
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (cursorController != null)
+            {
+                if (Cursor.lockState == CursorLockMode.Locked)
+                    cursorController.UnlockCursor();
+                else
+                    cursorController.LockCursor();
+            }
+        }   
     }
 
-    public void ShowGoToNextRoomButton()
+
+    public void ShowInterractionUI(bool show, string promptText = "")
     {
-        goToNextRoomButton.SetActive(true);
+        doorPromptCanvas.alpha = show ? 1 : 0;
+        doorPromptCanvas.blocksRaycasts = show;
+        doorPromptCanvas.interactable = show;
+        doorPromptText.text = promptText;
     }
 
 }

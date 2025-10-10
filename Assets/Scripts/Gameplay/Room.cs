@@ -5,8 +5,11 @@ public class Room : MonoBehaviour
 {
     public RoomType roomType;
     public int roomIndex;
+    public SpawnTrigger spawnTrigger = null;
     public int[] roomNeighbors = new int[4]; // [forward, right, back, left]
     public GameObject[] doors = new GameObject[4]; // urutan sama
+
+    public GameObject enemyPrefab;
     public Vector3 playerSpawn = new Vector3(0, 0, 0);
 
     public void Initialize(RoomData data)
@@ -23,10 +26,19 @@ public class Room : MonoBehaviour
                 doors[i].SetActive(true);
                 doors[i].GetComponent<DoorTrigger>().parentRoom = this;
                 doors[i].GetComponent<DoorTrigger>().directionIndex = i;
+                if (spawnTrigger != null)
+                    spawnTrigger.parentRoom = this;
+
             }
             else
                 doors[i].SetActive(false);
         }
+    }
+
+    public void SpawnEnemiesInRoom()
+    {
+        Debug.Log($"Spawning enemies in Room {roomIndex}");
+        
     }
     public void OnPlayerEnter(int fromDirection)
     {

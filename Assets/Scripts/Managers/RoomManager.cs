@@ -39,9 +39,9 @@ public class RoomManager : MonoBehaviour
     {
         // placeholder graph data, will be replaced by procedural generation
         roomDataMap[1] = new RoomData { id = 1, neighbors = new int[] { 3, 0, 0, 0 }, roomType = RoomType.Start };
-        roomDataMap[2] = new RoomData { id = 2, neighbors = new int[] { 0, 6, 3, 0 }, roomType = RoomType.Normal };
+        roomDataMap[2] = new RoomData { id = 2, neighbors = new int[] { 0, 0, 3, 0 }, roomType = RoomType.Boss };
         roomDataMap[3] = new RoomData { id = 3, neighbors = new int[] { 2, 0, 1, 6 }, roomType = RoomType.Normal };
-        roomDataMap[6] = new RoomData { id = 6, neighbors = new int[] { 0, 0, 3, 2 }, roomType = RoomType.Shop };
+        roomDataMap[6] = new RoomData { id = 6, neighbors = new int[] { 0, 3, 0, 0 }, roomType = RoomType.Shop };
 
         // Hitung posisi fisik berdasarkan graph
         Vector3 basePos = Vector3.zero;
