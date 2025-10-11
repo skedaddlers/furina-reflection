@@ -1279,12 +1279,12 @@ MonoBehaviour:
   rotationSpeed: 10.21
   gravity: -9.81
   jumpHeight: 1.5
-  dashSpeed: 6
+  dashSpeed: 7
   dashDuration: 0.3
   holdThreshold: 0.25
   cameraTransform: {fileID: 0}
   sword: {fileID: 6793813484719417245}
-  timePassedToSheathe: 2
+  attackCooldown: 0.5
   isAttacking: 0
 --- !u!4 &7162018679287225886 stripped
 Transform:

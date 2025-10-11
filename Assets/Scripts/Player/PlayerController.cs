@@ -13,8 +13,7 @@ public class PlayerController : MonoBehaviour
     public float holdThreshold = 0.25f; // waktu untuk bedain tap vs hold (dalam detik)
     public Transform cameraTransform;
     public GameObject sword; // reference ke objek sword
-    public float timePassedToSheathe = 2f; // waktu untuk sheathe sword
-    private float timeSinceLastAttack = 0f;
+    public float attackCooldown = 0.5f; // cooldown antar serangan (dalam detik)
 
     private Animator animator;
     private PlayerCombat playerCombat;
@@ -29,12 +28,18 @@ public class PlayerController : MonoBehaviour
     private float shiftPressedTime;
     private bool shiftHeld = false;
     private bool dashTriggered = false;
+    
+    private float lastAttackTime = 0f; // waktu terakhir attack
 
     void Start()
     {
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         playerCombat = GetComponent<PlayerCombat>();
+        
+        // Sword selalu aktif (atau bisa diatur sesuai kebutuhan)
+        if (sword != null)
+            sword.SetActive(true);
     }
 
     void Update()
@@ -47,6 +52,8 @@ public class PlayerController : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         Vector3 inputDir = new Vector3(h, 0, v).normalized;
+        
+        // Handle Dodge & Sprint
         if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isDodging)
         {
             shiftPressedTime = Time.time;
@@ -69,6 +76,7 @@ public class PlayerController : MonoBehaviour
                 // Lepas sprint
                 isSprinting = false;
             }
+            dashTriggered = false; // Reset untuk input berikutnya
         }
 
         if (shiftHeld && (Time.time - shiftPressedTime) >= holdThreshold && !isDodging && isGrounded)
@@ -77,6 +85,7 @@ public class PlayerController : MonoBehaviour
             dashTriggered = true; // supaya dash gak double
         }
 
+        // Movement
         float speed = isSprinting ? runSpeed : walkSpeed;
 
         if (inputDir.magnitude >= 0.1f)
@@ -107,54 +116,30 @@ public class PlayerController : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
-
-        if (Input.GetMouseButtonDown(0) && !isAttacking) // Hanya bisa menyerang jika tidak sedang menyerang
+        // Attack dengan cooldown
+        if (Input.GetMouseButtonDown(0) && !isAttacking && !isDodging)
         {
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            // Hanya izinkan serangan jika tidak sedang dalam animasi sheathe
-            if (!stateInfo.IsName("Seathing Sword") && !stateInfo.IsName("Slash")) // Tambahkan IsTag("Attack") jika ada transisi antar serangan
+            // Cek apakah cooldown sudah selesai
+            if (Time.time >= lastAttackTime + attackCooldown)
             {
-                isAttacking = true;
-                animator.SetTrigger("Attack");
-                // StartAttack();
-                // TriggerAttackHit();
+                PerformAttack();
             }
         }
-
-        if (!isAttacking && sword.activeSelf)
-        {
-            timeSinceLastAttack += Time.deltaTime;
-            if (timeSinceLastAttack >= timePassedToSheathe)
-            {
-                animator.SetTrigger("Unequip");
-                timeSinceLastAttack = 0f; // reset timer setelah mulai unequip
-            }
-        }
-
-        // deactivate setelah animasi unequip selesai
-        AnimatorStateInfo unequipStateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        if (unequipStateInfo.IsName("Seathing Sword") && unequipStateInfo.normalizedTime >= 0.5f)
-        {
-            sword.SetActive(false);
-            timeSinceLastAttack = 0f; // reset timer setelah animasi unequip selesai
-        }
+    }
+    
+    void PerformAttack()
+    {
+        isAttacking = true;
+        lastAttackTime = Time.time;
+        animator.SetTrigger("Attack");
+        
+        // Aktifkan sword jika belum aktif
+        if (sword != null && !sword.activeSelf)
+            sword.SetActive(true);
     }
     
     IEnumerator Dodge()
     {
-        // isDodging = true;
-        // animator.SetFloat("WalkSpeed", 1f, 0.1f, Time.deltaTime);
-
-        // float startTime = Time.time;
-        // Vector3 dodgeDir = transform.forward;
-
-        // while (Time.time < startTime + dashDuration)
-        // {
-        //     controller.Move(dodgeDir * dashSpeed * Time.deltaTime);
-        //     yield return null; // tunggu frame berikutnya
-        // }
-
-        // isDodging = false;
         isDodging = true;
         animator.SetTrigger("Dodge");
 
@@ -162,7 +147,7 @@ public class PlayerController : MonoBehaviour
         Vector3 dodgeDir = transform.forward;
 
         while (Time.time < startTime + dashDuration)
-        {
+        { 
             dodgeDir = transform.forward;
             controller.Move(dodgeDir * dashSpeed * Time.deltaTime);
             yield return null;
@@ -171,20 +156,24 @@ public class PlayerController : MonoBehaviour
         isDodging = false;
     }
 
+    // Dipanggil dari Animation Event di awal animasi attack (optional)
     public void StartAttack()
     {
-        sword.SetActive(true);
+        // Bisa digunakan untuk efek atau sound
+        if (sword != null)
+            sword.SetActive(true);
     }
 
+    // Dipanggil dari Animation Event di akhir animasi attack
     public void EndAttack()
     {
         isAttacking = false;
-        timeSinceLastAttack = 0f; 
     }
 
+    // Dipanggil dari Animation Event saat frame hit dari animasi attack
     public void TriggerAttackHit()
     {
-        playerCombat.CheckHit();
+        if (playerCombat != null)
+            playerCombat.CheckHit();
     }
-    
 }

@@ -21,6 +21,7 @@ public class SpawnTrigger : MonoBehaviour
             isPlayerNearby = false;
             this.gameObject.SetActive(false);
             parentRoom.SpawnEnemiesInRoom();
+            UIManager.Instance.ShowInterractionUI(false, "");
         }
     }
 
