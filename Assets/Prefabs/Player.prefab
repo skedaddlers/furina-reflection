@@ -1258,9 +1258,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentWeapon:
     name: 
-    damage: 0
-    range: 0
-    angle: 0
+    damage: 10
+    range: 2.5
+    angle: 120
   hitEffect: {fileID: 419406480085702754, guid: 8c8d8385f96bd054a88a3df780d77bcc, type: 3}
 --- !u!114 &5143592966940413264
 MonoBehaviour:
@@ -1276,13 +1276,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 2
   runSpeed: 5
+  rotationSpeed: 10.21
   gravity: -9.81
   jumpHeight: 1.5
-  dashSpeed: 15
+  dashSpeed: 6
   dashDuration: 0.3
+  holdThreshold: 0.25
   cameraTransform: {fileID: 0}
   sword: {fileID: 6793813484719417245}
   timePassedToSheathe: 2
+  isAttacking: 0
 --- !u!4 &7162018679287225886 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -2916741891282405652, guid: ccfb490d4f1e289449e786010a6314c6, type: 3}

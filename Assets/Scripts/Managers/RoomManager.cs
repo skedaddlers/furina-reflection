@@ -83,7 +83,7 @@ public class RoomManager : MonoBehaviour
         if (fromDoorIndex >= 0 && fromDoorIndex < nextRoom.doors.Length && nextRoom.doors[fromDoorIndex])
         {
             Transform doorTransform = nextRoom.doors[fromDoorIndex].transform;
-            spawnPos = doorTransform.position; // gunakan world-space
+            spawnPos = doorTransform.position + doorTransform.forward * 1.5f; // spawn agak ke depan pintu
             Debug.Log($"Spawning at door {fromDoorIndex} → worldPos {spawnPos}");
         }
 

@@ -149,12 +149,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomPrefabs:
-  - {fileID: 2287114120969589957, guid: 4093bc30d479f5f459607441641509d0, type: 3}
-  - {fileID: 3180443340598250169, guid: cd46bf40e7ec24445928da4ec01c18c8, type: 3}
-  - {fileID: 2768004386865820721, guid: 8a3021434767b1b4691f0bc3fa7660d7, type: 3}
-  - {fileID: 6681039886665532172, guid: 8a9ad2ec5ae619a42a6e0115bc4ba662, type: 3}
+  - {fileID: 7386528077388556701, guid: c63202244d71ffc44b2bd6e50758ec7b, type: 3}
+  - {fileID: 7386528077388556701, guid: f168880dc4a1d744fb75b65ac08a1434, type: 3}
+  - {fileID: 7386528077388556701, guid: 5d27ea0cad45e5e439e6a3370571aea5, type: 3}
+  - {fileID: 7386528077388556701, guid: 0ec429b392803634484cd46c81f23130, type: 3}
   player: {fileID: 855542997}
-  roomOffset: 15
+  roomOffset: 30
   totalRooms: 5
 --- !u!4 &35828313
 Transform:
@@ -217,6 +217,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &50898956
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 50898958}
+  - component: {fileID: 50898957}
+  m_Layer: 0
+  m_Name: cursor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &50898957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50898956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19fbd3ec1d3a1534bbf5d09b0abc0175, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &50898958
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50898956}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -17.107954, y: 1.4024413, z: -3.714193}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &156153930
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,12 +309,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -348,6 +392,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71e6854e9e2d07044b80861269d3750e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorController: {fileID: 50898957}
   doorPromptCanvas: {fileID: 1126277177}
   doorPromptText: {fileID: 1717151482}
 --- !u!4 &533169859
@@ -595,6 +640,18 @@ PrefabInstance:
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 637709096}
+    - target: {fileID: 5949525086677251983, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: currentWeapon.angle
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 5949525086677251983, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: currentWeapon.range
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5949525086677251983, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: currentWeapon.damage
+      value: 10
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -845,8 +902,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Press F to enter
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4810d5f758c3dbe49870c1493f10ded9, type: 2}
+  m_sharedMaterial: {fileID: 7790408596228138100, guid: 4810d5f758c3dbe49870c1493f10ded9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1018,6 +1075,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FreeLook Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 2870939742826063630, guid: 4b3269cd1f4406d48a0249e11838b9d7, type: 3}
+      propertyPath: CollideAgainst.m_Bits
+      value: 896
+      objectReference: {fileID: 0}
     - target: {fileID: 4787267268943822247, guid: 4b3269cd1f4406d48a0249e11838b9d7, type: 3}
       propertyPath: Target.TrackingTarget
       value: 
@@ -1080,3 +1141,4 @@ SceneRoots:
   - {fileID: 855542996}
   - {fileID: 533169859}
   - {fileID: 2502993097356393439}
+  - {fileID: 50898958}
