@@ -34,6 +34,16 @@ public class MinimapUI : MonoBehaviour
     public Image minimapMask;
     public Transform roomIconContainer;
     public Transform connectionLineContainer;
+    [Header("Player Facing Cone")]
+    public float coneRadius = 32f;                 // panjang kerucut di minimap
+    public float coneAngleDeg = 70f;               // bukaan kerucut
+    public Color coneColor = new Color(1, 1, 1, 0.85f);
+    [Header("Orientation Source")]
+    public bool useCameraAsOrientation = true;   // pakai POV kamera
+    public Transform orientationSource;          // kalau mau override manual
+    public float coneTurnSmoothing = 15f;        // haluskan rotasi
+
+    
     
     private Dictionary<int, MinimapRoomIcon> roomIcons = new Dictionary<int, MinimapRoomIcon>();
     private Dictionary<string, GameObject> connectionLines = new Dictionary<string, GameObject>();
@@ -41,15 +51,56 @@ public class MinimapUI : MonoBehaviour
     private HashSet<int> visitedRooms = new HashSet<int>();
     private int currentRoomId = -1;
     private RoomManager roomManager;
-    
+    private RectTransform playerCone;      // ← baru
+
     void Start()
     {
         SetupMinimapUI();
         roomManager = GameManager.Instance.roomManager;
-        
+        if (useCameraAsOrientation)
+        {
+            // coba ambil kamera aktif
+            if (orientationSource == null && Camera.main != null)
+                orientationSource = Camera.main.transform;
+        }
+        else
+        {
+            // fallback: pakai player
+            if (orientationSource == null)
+                orientationSource = GameManager.Instance?.roomManager?.player;
+        }
+
+
         // // Wait a frame for room generation to complete
         // Invoke(nameof(InitializeMinimap), 0.1f);
     }
+    
+    void Update()
+    {
+        if (playerIndicator != null)
+        {
+            float s = 1f + Mathf.Sin(Time.time * playerBlinkSpeed) * 0.2f;
+            playerIndicator.localScale = Vector3.one * s;
+        }
+
+        if (playerCone != null && orientationSource != null)
+        {
+            // POSISI: selalu sama dengan dot
+            playerCone.anchoredPosition = playerIndicator.anchoredPosition;
+
+            // ROTASI: pakai POV kamera (sudah kamu setting sebelumnya)
+            Vector3 f = orientationSource.forward;
+            Vector2 f2 = new Vector2(f.x, f.z);
+            if (f2.sqrMagnitude > 1e-4f)
+            {
+                float target = Mathf.Atan2(f2.y, f2.x) * Mathf.Rad2Deg;
+                float current = playerCone.localEulerAngles.z;
+                float smooth = Mathf.LerpAngle(current, target, Time.deltaTime * coneTurnSmoothing);
+                playerCone.localEulerAngles = new Vector3(0, 0, smooth);
+            }
+        }
+    }
+
     
     void SetupMinimapUI()
     {
@@ -167,25 +218,27 @@ public class MinimapUI : MonoBehaviour
         }
         
         // Create connection lines
+        // GANTI loop pembuatan garis dengan ini:
         foreach (var kvp in roomManager.minimapData.roomDataMap)
         {
             var roomData = kvp.Value;
             int roomId = roomData.id;
-            
+
             if (!roomIcons.ContainsKey(roomId)) continue;
-            
+
             for (int dir = 0; dir < 4; dir++)
             {
                 int neighborId = roomData.neighbors[dir];
-                if (neighborId != 0 && neighborId > roomId) // Only create line once
-                {
-                    if (roomIcons.ContainsKey(neighborId))
-                    {
-                        CreateConnectionLine(roomId, neighborId);
-                    }
-                }
+                if (neighborId == 0) continue;
+                if (!roomIcons.ContainsKey(neighborId)) continue;
+
+                string key = $"{Mathf.Min(roomId, neighborId)}_{Mathf.Max(roomId, neighborId)}";
+                if (connectionLines.ContainsKey(key)) continue; // hindari duplikasi
+
+                CreateConnectionLineAxisAligned(roomId, neighborId); // pakai fungsi baru
             }
         }
+
         
         // Create player indicator
         CreatePlayerIndicator();
@@ -223,59 +276,121 @@ public class MinimapUI : MonoBehaviour
         var roomData = roomManager.minimapData.roomDataMap[roomId];
         Color baseColor = GetRoomColor(roomData.roomType);
         roomIcon.baseColor = baseColor;
-        iconObj.GetComponent<Image>().color = Color.Lerp(baseColor, unvisitedRoomColor, 0.7f);
+        roomIcon.iconImage.color = Color.Lerp(baseColor, unvisitedRoomColor, 0.7f);
         
         roomIcons[roomId] = roomIcon;
     }
-    
+
     void CreateConnectionLine(int roomId1, int roomId2)
     {
         string lineKey = $"{Mathf.Min(roomId1, roomId2)}_{Mathf.Max(roomId1, roomId2)}";
-        
+
         GameObject lineObj = new GameObject($"Line_{lineKey}");
         lineObj.transform.SetParent(connectionLineContainer);
-        
+
         Image lineImage = lineObj.AddComponent<Image>();
         lineImage.color = connectionColor;
         lineImage.raycastTarget = false;
-        
+
         RectTransform lineRect = lineObj.GetComponent<RectTransform>();
-        
+
         // Calculate line position and rotation
         Vector2 pos1 = roomIcons[roomId1].GetComponent<RectTransform>().anchoredPosition;
         Vector2 pos2 = roomIcons[roomId2].GetComponent<RectTransform>().anchoredPosition;
-        
+
         Vector2 direction = pos2 - pos1;
         float distance = direction.magnitude;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        
+
         lineRect.anchoredPosition = (pos1 + pos2) / 2f;
         lineRect.sizeDelta = new Vector2(distance - iconSize * 0.8f, 2f);
         lineRect.rotation = Quaternion.Euler(0, 0, angle);
-        
+
         connectionLines[lineKey] = lineObj;
     }
     
-    void CreatePlayerIndicator()
+    void CreateConnectionLineAxisAligned(int roomId1, int roomId2)
     {
-        GameObject playerObj;
-        if (playerIndicatorPrefab != null)
+        string lineKey = $"{Mathf.Min(roomId1, roomId2)}_{Mathf.Max(roomId1, roomId2)}";
+
+        GameObject lineObj = new GameObject($"Line_{lineKey}");
+        lineObj.transform.SetParent(connectionLineContainer);
+
+        Image lineImage = lineObj.AddComponent<Image>();
+        lineImage.color = connectionColor;
+        lineImage.raycastTarget = false;
+
+        RectTransform r1 = roomIcons[roomId1].GetComponent<RectTransform>();
+        RectTransform r2 = roomIcons[roomId2].GetComponent<RectTransform>();
+
+        Vector2 p1 = r1.anchoredPosition;
+        Vector2 p2 = r2.anchoredPosition;
+        Vector2 d  = p2 - p1;
+
+        RectTransform rect = lineObj.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+
+        // Karena grid kita 4-arah, salah satu komponen pasti 0.
+        // Tapi untuk jaga-jaga, kita paksa ke horizontal/vertikal terdekat.
+        bool horizontal = Mathf.Abs(d.x) >= Mathf.Abs(d.y);
+        if (horizontal)
         {
-            playerObj = Instantiate(playerIndicatorPrefab, roomIconContainer);
+            Vector2 mid = new Vector2((p1.x + p2.x) * 0.5f, p1.y);
+            float width = Mathf.Abs(d.x) - iconSize * 0.8f;
+            rect.anchoredPosition = mid;
+            rect.sizeDelta = new Vector2(Mathf.Max(0, width), 2f);
+            rect.rotation = Quaternion.identity; // 0°
         }
         else
         {
-            playerObj = new GameObject("PlayerIndicator");
-            playerObj.transform.SetParent(roomIconContainer);
-            Image img = playerObj.AddComponent<Image>();
+            Vector2 mid = new Vector2(p1.x, (p1.y + p2.y) * 0.5f);
+            float height = Mathf.Abs(d.y) - iconSize * 0.8f;
+            rect.anchoredPosition = mid;
+            rect.sizeDelta = new Vector2(2f, Mathf.Max(0, height));
+            rect.rotation = Quaternion.identity; // tetap, tapi orientasi vertikal dari size
+        }
+
+        connectionLines[lineKey] = lineObj;
+    }
+
+    
+    void CreatePlayerIndicator()
+    {
+        // CONE
+        GameObject coneObj = new GameObject("PlayerFacingCone");
+        coneObj.transform.SetParent(roomIconContainer);
+        var coneImg = coneObj.AddComponent<Image>();
+        coneImg.sprite = CreateWedgeSprite(128, coneAngleDeg);
+        coneImg.color = coneColor;
+        coneImg.raycastTarget = false;
+
+        playerCone = coneObj.GetComponent<RectTransform>();
+        playerCone.anchorMin = playerCone.anchorMax = new Vector2(0.5f, 0.5f);
+        playerCone.pivot = new Vector2(0.5f, 0.5f);                // ⟵ penting: center
+        float coneDiameter = coneRadius * 2f;                       // kita pakai diameter
+        playerCone.sizeDelta = new Vector2(coneDiameter, coneDiameter);
+
+        // DOT
+        GameObject playerObj = playerIndicatorPrefab != null
+            ? Instantiate(playerIndicatorPrefab, roomIconContainer)
+            : new GameObject("Player icon");
+        if (playerIndicatorPrefab == null)
+        {
+            var img = playerObj.AddComponent<Image>();
             img.sprite = CreateCircleSprite();
             img.color = currentRoomColor;
         }
-        
+
         playerIndicator = playerObj.GetComponent<RectTransform>();
+        playerIndicator.anchorMin = playerIndicator.anchorMax = new Vector2(0.5f, 0.5f);
+        playerIndicator.pivot = new Vector2(0.5f, 0.5f);
         playerIndicator.sizeDelta = new Vector2(playerIconSize, playerIconSize);
-        playerIndicator.SetAsLastSibling();
+
+        // urutan render: cone di bawah, dot di atas
+        // playerCone.SetSiblingIndex(0);
+        // playerIndicator.SetAsLastSibling();
     }
+
     
     public void SetCurrentRoom(int roomId)
     {
@@ -287,13 +402,15 @@ public class MinimapUI : MonoBehaviour
         {
             Vector2 roomPos = roomIcons[roomId].GetComponent<RectTransform>().anchoredPosition;
             playerIndicator.anchoredPosition = roomPos;
+            if (playerCone != null) playerCone.anchoredPosition = roomPos;
         }
-        
+
         // Update room highlights
         foreach (var kvp in roomIcons)
         {
             kvp.Value.SetCurrent(kvp.Key == roomId);
         }
+
     }
     
     public void VisitRoom(int roomId)
@@ -343,16 +460,6 @@ public class MinimapUI : MonoBehaviour
         };
     }
     
-    void Update()
-    {
-        // Animate player indicator
-        if (playerIndicator != null)
-        {
-            float scale = 1f + Mathf.Sin(Time.time * playerBlinkSpeed) * 0.2f;
-            playerIndicator.localScale = Vector3.one * scale;
-        }
-    }
-    
     // Sprite creation helpers
     Sprite CreateCircleSprite()
     {
@@ -398,13 +505,13 @@ public class MinimapUI : MonoBehaviour
         tex.Apply();
         return Sprite.Create(tex, new Rect(0, 0, size, size), Vector2.one * 0.5f);
     }
-    
+
     Sprite CreateDiamondSprite()
     {
         int size = 64;
         Texture2D tex = new Texture2D(size, size);
         float center = size / 2f;
-        
+
         for (int x = 0; x < size; x++)
         {
             for (int y = 0; y < size; y++)
@@ -416,9 +523,53 @@ public class MinimapUI : MonoBehaviour
                     tex.SetPixel(x, y, Color.clear);
             }
         }
-        
+
         tex.Apply();
         return Sprite.Create(tex, new Rect(0, 0, size, size), Vector2.one * 0.5f);
     }
+    
+    Sprite CreateWedgeSprite(int size, float angleDeg)
+    {
+        Texture2D tex = new Texture2D(size, size, TextureFormat.ARGB32, false);
+        tex.wrapMode = TextureWrapMode.Clamp;
+
+        // orientasi default: “menghadap kanan” (sumbu +X), nanti kita putar di runtime
+        Vector2 center = new Vector2(size * 0.5f, size * 0.5f);
+        float radius = size * 0.5f;
+        float halfRad = angleDeg * 0.5f * Mathf.Deg2Rad;
+
+        // opsional: kosongkan sedikit bagian belakang supaya terlihat “kerucut”
+        float innerRadius = radius * 0.12f;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                Vector2 p = new Vector2(x, y);
+                Vector2 d = (p - center);
+                float r = d.magnitude;
+
+                if (r < innerRadius || r > radius) { tex.SetPixel(x, y, Color.clear); continue; }
+
+                if (r == 0) { tex.SetPixel(x, y, Color.clear); continue; }
+
+                Vector2 dn = d.normalized;
+                // sudut terhadap +X
+                float dot = Vector2.Dot(dn, Vector2.right);            // cos(theta)
+                float theta = Mathf.Acos(Mathf.Clamp(dot, -1f, 1f));   // 0..pi
+                // pastikan sisi atas/bawah benar (pakai cross z)
+                float crossZ = Vector3.Cross(new Vector3(1,0,0), new Vector3(dn.x,dn.y,0)).z;
+                theta = crossZ >= 0 ? theta : -theta;
+
+                if (Mathf.Abs(theta) <= halfRad)
+                    tex.SetPixel(x, y, Color.white);
+                else
+                    tex.SetPixel(x, y, Color.clear);
+            }
+        }
+        tex.Apply();
+        return Sprite.Create(tex, new Rect(0,0,size,size), new Vector2(0.5f,0.5f), 100f);
+    }
+
 }
 

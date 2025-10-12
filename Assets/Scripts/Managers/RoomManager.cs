@@ -62,6 +62,15 @@ public class RoomManager : MonoBehaviour
     // For generation tracking
     private HashSet<int> visitedRooms = new HashSet<int>();
     private Queue<int> roomsToProcess = new Queue<int>();
+    private readonly Vector2Int[] DIRS = new[]
+    {
+        new Vector2Int(0, 1),   // forward (0)
+        new Vector2Int(1, 0),   // right   (1)
+        new Vector2Int(0, -1),  // back    (2)
+        new Vector2Int(-1, 0),  // left    (3)
+    };
+    private Dictionary<int, Vector2Int> gridPositions = new();
+    private Dictionary<Vector2Int, int> occupied = new();
 
     public void Initialize()
     {
@@ -102,6 +111,13 @@ public class RoomManager : MonoBehaviour
         };
         minimapData.roomDataMap[startRoom.id] = startRoom;
         roomsToProcess.Enqueue(startRoom.id);
+
+        gridPositions.Clear();
+        occupied.Clear();
+
+        gridPositions[startRoom.id] = Vector2Int.zero;
+        occupied[Vector2Int.zero] = startRoom.id;
+
         
         // Step 2: Generate main path to boss using BFS
         List<int> mainPath = new List<int>();
@@ -148,6 +164,11 @@ public class RoomManager : MonoBehaviour
             minimapData.roomDataMap[currentRoom].neighbors[direction] = newRoom.id;
             newRoom.neighbors[GetOppositeDirection(direction)] = currentRoom;
 
+            Vector2Int pos = gridPositions[currentRoom] + DIRS[direction];
+            gridPositions[newRoom.id] = pos;
+            occupied[pos] = newRoom.id;
+
+
             minimapData.roomDataMap[newRoom.id] = newRoom;
             mainPath.Add(newRoom.id);
             currentRoom = newRoom.id;
@@ -191,7 +212,11 @@ public class RoomManager : MonoBehaviour
             // Connect rooms
             minimapData.roomDataMap[branchPoint].neighbors[direction] = newRoom.id;
             newRoom.neighbors[GetOppositeDirection(direction)] = branchPoint;
-            
+
+            Vector2Int pos = gridPositions[branchPoint] + DIRS[direction];
+            gridPositions[newRoom.id] = pos;
+            occupied[pos] = newRoom.id;
+
             minimapData.roomDataMap[newRoom.id] = newRoom;
             
             // Add to potential branch points if it's not a shop
@@ -219,21 +244,32 @@ public class RoomManager : MonoBehaviour
             if (candidateRooms.Count == 0) break;
             
             int room1 = candidateRooms[Random.Range(0, candidateRooms.Count)];
-            int dir = GetRandomEmptyDirection(room1);
-            if (dir == -1) continue;
-            
-            // Try to find another room to connect to
             foreach (var room2 in allRooms)
             {
                 if (room2 == room1) continue;
                 if (minimapData.roomDataMap[room2].roomType == RoomType.Boss) continue;
-                
-                int oppositeDir = GetOppositeDirection(dir);
-                if (minimapData.roomDataMap[room2].neighbors[oppositeDir] == 0)
+
+                Vector2Int p1 = gridPositions[room1];
+                Vector2Int p2 = gridPositions[room2];
+                int manhattan = Mathf.Abs(p1.x - p2.x) + Mathf.Abs(p1.y - p2.y);
+                if (manhattan != 1) continue; // cuma boleh 4-arah
+
+                // tentukan dir dari room1 ke room2
+                int dir = -1;
+                if      (p2 == p1 + DIRS[0]) dir = 0;
+                else if (p2 == p1 + DIRS[1]) dir = 1;
+                else if (p2 == p1 + DIRS[2]) dir = 2;
+                else if (p2 == p1 + DIRS[3]) dir = 3;
+
+                if (dir == -1) continue;
+                int opposite = GetOppositeDirection(dir);
+
+                // hanya jika slot kosong di kedua sisi
+                if (minimapData.roomDataMap[room1].neighbors[dir] == 0 &&
+                    minimapData.roomDataMap[room2].neighbors[opposite] == 0)
                 {
-                    // Connect them
                     minimapData.roomDataMap[room1].neighbors[dir] = room2;
-                    minimapData.roomDataMap[room2].neighbors[oppositeDir] = room1;
+                    minimapData.roomDataMap[room2].neighbors[opposite] = room1;
                     break;
                 }
             }
@@ -297,28 +333,24 @@ public class RoomManager : MonoBehaviour
                 minimapData.roomDataMap[bossLocation].neighbors[direction] = bossRoom.id;
                 bossRoom.neighbors[GetOppositeDirection(direction)] = bossLocation;
                 minimapData.roomDataMap[bossRoom.id] = bossRoom;
+
+                Vector2Int pos = gridPositions[bossLocation] + DIRS[direction];
+                gridPositions[bossRoom.id] = pos;
+                occupied[pos] = bossRoom.id;
             }
         }
     }
     
     void CalculateWorldPositions()
     {
-        // Generate 2D grid positions first
-        Dictionary<int, Vector2Int> gridPositions = GenerateGridLayout();
-        
-        // Convert grid positions to world positions
         foreach (var kvp in minimapData.roomDataMap)
         {
-            var data = kvp.Value;
-            if (gridPositions.ContainsKey(data.id))
-            {
-                Vector2Int gridPos = gridPositions[data.id];
-                data.worldPosition = new Vector3(gridPos.x * roomOffset, 0, gridPos.y * roomOffset);
-            }
+            int id = kvp.Key;
+            Vector2Int gpos = gridPositions[id];
+            kvp.Value.worldPosition = new Vector3(gpos.x * roomOffset, 0, gpos.y * roomOffset);
         }
 
-        // Update minimap grid data
-        minimapData.roomGridPositions = gridPositions;
+        minimapData.roomGridPositions = new Dictionary<int, Vector2Int>(gridPositions);
         minimapData.gridMinX = gridPositions.Values.Min(v => v.x);
         minimapData.gridMaxX = gridPositions.Values.Max(v => v.x);
         minimapData.gridMinY = gridPositions.Values.Min(v => v.y);
@@ -404,12 +436,16 @@ public class RoomManager : MonoBehaviour
     int GetRandomEmptyDirection(int roomId)
     {
         List<int> emptyDirs = new List<int>();
+        Vector2Int basePos = gridPositions[roomId];
+
         for (int i = 0; i < 4; i++)
         {
-            if (minimapData.roomDataMap[roomId].neighbors[i] == 0)
-                emptyDirs.Add(i);
+            if (minimapData.roomDataMap[roomId].neighbors[i] != 0) continue;
+
+            Vector2Int target = basePos + DIRS[i];
+            if (!occupied.ContainsKey(target)) emptyDirs.Add(i);
         }
-        
+            
         if (emptyDirs.Count == 0) return -1;
         return emptyDirs[Random.Range(0, emptyDirs.Count)];
     }

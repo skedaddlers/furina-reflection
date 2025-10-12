@@ -156,8 +156,8 @@ MonoBehaviour:
   player: {fileID: 855542997}
   roomOffset: 40
   dungeonConfig:
-    minRooms: 8
-    maxRooms: 10
+    minRooms: 12
+    maxRooms: 15
     shopRoomCount: 3
     maxConnectionsPerRoom: 3
     loopChance: 0.3
@@ -649,6 +649,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: walkSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 637709096}
@@ -907,13 +911,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 156153934}
     m_Modifications:
+    - target: {fileID: 1644524578845116723, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1992152516055822857, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -960
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -540
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_LocalPosition.z
@@ -936,6 +948,14 @@ PrefabInstance:
       value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
@@ -953,7 +973,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: iconSize
-      value: 150.5
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: coneColor.a
+      value: 0.4392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: minimapRadius
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: playerIconSize
@@ -965,11 +993,11 @@ PrefabInstance:
       objectReference: {fileID: 7868055575276285767, guid: 82055b854f9e93a41a6a002a27fec5bf, type: 3}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: minimapPosition.x
-      value: 0
+      value: 850
       objectReference: {fileID: 0}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: minimapPosition.y
-      value: 0
+      value: 430
       objectReference: {fileID: 0}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: roomIconContainer
@@ -979,13 +1007,21 @@ PrefabInstance:
       propertyPath: connectionLineContainer
       value: 
       objectReference: {fileID: 1547532267}
+    - target: {fileID: 6841019205382079279, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6841019205382079279, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
---- !u!4 &1547532265 stripped
-Transform:
+--- !u!224 &1547532265 stripped
+RectTransform:
   m_CorrespondingSourceObject: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
   m_PrefabInstance: {fileID: 1547532264}
   m_PrefabAsset: {fileID: 0}
