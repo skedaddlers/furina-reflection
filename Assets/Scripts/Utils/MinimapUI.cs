@@ -190,11 +190,12 @@ public class MinimapUI : MonoBehaviour
         borderObj.transform.SetAsLastSibling();
     }
     
-    public void InitializeMinimap()
+    public void InitializeMinimap(RoomManager rm)
     {
         if (roomManager == null) return;
+        roomManager = rm;
 
-        var minimapData = roomManager.minimapData;
+        var minimapData = roomManager.Layout; 
         if (minimapData == null) return;
         
         // Calculate scale to fit all rooms in minimap
@@ -219,7 +220,7 @@ public class MinimapUI : MonoBehaviour
         
         // Create connection lines
         // GANTI loop pembuatan garis dengan ini:
-        foreach (var kvp in roomManager.minimapData.roomDataMap)
+        foreach (var kvp in roomManager.Layout.roomDataMap)
         {
             var roomData = kvp.Value;
             int roomId = roomData.id;
@@ -273,7 +274,7 @@ public class MinimapUI : MonoBehaviour
         roomIcon.iconImage = iconObj.GetComponent<Image>();
         
         // Set initial color based on room type
-        var roomData = roomManager.minimapData.roomDataMap[roomId];
+        var roomData = roomManager.Layout.roomDataMap[roomId];
         Color baseColor = GetRoomColor(roomData.roomType);
         roomIcon.baseColor = baseColor;
         roomIcon.iconImage.color = Color.Lerp(baseColor, unvisitedRoomColor, 0.7f);
@@ -431,7 +432,7 @@ public class MinimapUI : MonoBehaviour
     
     void UpdateConnectionVisibility(int roomId)
     {
-        var roomData = roomManager.minimapData.roomDataMap[roomId];
+        var roomData = roomManager.Layout.roomDataMap[roomId];
         
         for (int dir = 0; dir < 4; dir++)
         {

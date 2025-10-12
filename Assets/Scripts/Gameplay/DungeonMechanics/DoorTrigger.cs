@@ -8,6 +8,9 @@ public class DoorTrigger : MonoBehaviour
 
     public Room parentRoom;
     private bool isPlayerNearby = false;
+    
+    [SerializeField]
+    private bool isLocked = false;
 
     void Start()
     {
@@ -19,6 +22,8 @@ public class DoorTrigger : MonoBehaviour
 
     void Update()
     {
+        if (isLocked)
+            return;
         // Kalau player di area & menekan F → pindah ke room tetangga
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.F))
         {
@@ -27,12 +32,17 @@ public class DoorTrigger : MonoBehaviour
         }
     }
 
+    public void SetLocked(bool locked)
+    {
+        isLocked = locked;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
             isPlayerNearby = true;
-            string txt = "Press <b>F</b> to Enter";
+            string txt = isLocked ? "Door is Locked" : "Press <b>F</b> to Enter";
             UIManager.Instance.ShowInterractionUI(true, txt);
         }
     }
@@ -50,7 +60,7 @@ public class DoorTrigger : MonoBehaviour
     // Tambahan visualisasi kecil di editor
     void OnDrawGizmos()
     {
-        Gizmos.color = Color.cyan;
+        Gizmos.color = isLocked ? Color.red : Color.green;
         Gizmos.DrawWireCube(transform.position + Vector3.up, new Vector3(1, 2, 0.2f));
     }
 #endif

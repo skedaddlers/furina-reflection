@@ -5,6 +5,9 @@ public class Health : MonoBehaviour
     public int maxHealth = 100;
     private int currentHealth;
 
+    // on death event
+    public System.Action onDeath;
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -22,6 +25,7 @@ public class Health : MonoBehaviour
 
     void Die()
     {
+        onDeath?.Invoke();
         // kalau ini enemy → destroy
         // kalau ini player → trigger game over
         if (CompareTag("Enemy"))
@@ -34,4 +38,6 @@ public class Health : MonoBehaviour
             // TODO: implement game over UI
         }
     }
+
+
 }

@@ -20,7 +20,7 @@ public class SpawnTrigger : MonoBehaviour
         {
             isPlayerNearby = false;
             this.gameObject.SetActive(false);
-            parentRoom.SpawnEnemiesInRoom();
+            parentRoom.BeginCombat();
             UIManager.Instance.ShowInterractionUI(false, "");
         }
     }

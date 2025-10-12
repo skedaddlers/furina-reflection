@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
     public Player player;
     public RoomManager roomManager;
+    public RoomGenerator roomGenerator;
 
     public GameState CurrentState { get; private set; }
 
@@ -31,6 +32,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        var layout = roomGenerator.Generate();
+        roomManager.Initialize(layout);
         ChangeState(GameState.MainMenu);
         StartGame();
     }
@@ -38,7 +41,6 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         ChangeState(GameState.Playing);
-        roomManager.Initialize();
     }
 
     public void ChangeState(GameState newState)

@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 35828313}
   - component: {fileID: 35828312}
+  - component: {fileID: 35828314}
   m_Layer: 0
   m_Name: Room Manager
   m_TagString: Untagged
@@ -154,19 +155,6 @@ MonoBehaviour:
   - {fileID: 7386528077388556701, guid: 5d27ea0cad45e5e439e6a3370571aea5, type: 3}
   - {fileID: 7386528077388556701, guid: 0ec429b392803634484cd46c81f23130, type: 3}
   player: {fileID: 855542997}
-  roomOffset: 40
-  dungeonConfig:
-    minRooms: 12
-    maxRooms: 15
-    shopRoomCount: 3
-    maxConnectionsPerRoom: 3
-    loopChance: 0.3
-    seed: -1
-  minimapData:
-    gridMinX: 0
-    gridMaxX: 0
-    gridMinY: 0
-    gridMaxY: 0
 --- !u!4 &35828313
 Transform:
   m_ObjectHideFlags: 0
@@ -182,6 +170,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &35828314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 35828311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c5beca063b5f914fbc3f55fb05d58ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dungeonConfig:
+    minRooms: 8
+    maxRooms: 16
+    shopRoomCount: 3
+    maxConnectionsPerRoom: 3
+    loopChance: 0.3
+    seed: -1
+  roomOffset: 29.8
 --- !u!1 &44145999
 GameObject:
   m_ObjectHideFlags: 0
@@ -213,6 +221,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 855542998}
   roomManager: {fileID: 35828312}
+  roomGenerator: {fileID: 35828314}
 --- !u!4 &44146001
 Transform:
   m_ObjectHideFlags: 0
@@ -666,7 +675,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5949525086677251983, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: currentWeapon.damage
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -966,6 +975,18 @@ PrefabInstance:
     - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4572110908602957812, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_Color.b
+      value: 0.9056604
+      objectReference: {fileID: 0}
+    - target: {fileID: 4572110908602957812, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_Color.g
+      value: 0.81862736
+      objectReference: {fileID: 0}
+    - target: {fileID: 4572110908602957812, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_Color.r
+      value: 0.55108577
       objectReference: {fileID: 0}
     - target: {fileID: 6035932831771106758, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_Name

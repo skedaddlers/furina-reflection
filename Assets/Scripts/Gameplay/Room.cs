@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-
+using System.Collections;
 public class Room : MonoBehaviour
 {
     public RoomType roomType;
@@ -16,9 +16,15 @@ public class Room : MonoBehaviour
     public LayerMask obstacleMask;
     public float minSpawnDistance = 2f;
     public GameObject enemyPrefab;
+
+    [Header("Runtime Info")]
+    public bool isCleared = false;
+    public bool isInCombat = false;
     public List<GameObject> spawnedEnemies = new List<GameObject>();
-    
+
+    private bool isLocked = false;
     public Vector3 playerSpawn = new Vector3(0, 0, 0);
+    private int lastEnterFrom = -1; // arah pintu terakhir dimasukin player
 
     public void Initialize(RoomData data)
     {
@@ -32,11 +38,11 @@ public class Room : MonoBehaviour
             if (roomNeighbors[i] != 0)
             {
                 doors[i].SetActive(true);
-                doors[i].GetComponent<DoorTrigger>().parentRoom = this;
-                doors[i].GetComponent<DoorTrigger>().directionIndex = i;
-                if (spawnTrigger != null)
+                var trig = doors[i].GetComponent<DoorTrigger>();
+                trig.parentRoom = this;
+                trig.directionIndex = i;
+                if (spawnTrigger)
                     spawnTrigger.parentRoom = this;
-
             }
             else
                 doors[i].SetActive(false);
@@ -86,6 +92,22 @@ public class Room : MonoBehaviour
                 {
                     GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity, transform);
                     spawnedEnemies.Add(enemy);
+                    var h = enemy.GetComponent<Health>();
+                    if (h != null) h.onDeath += () =>
+                    {
+                        // MIGHT BE IMPORTANT FOR DYNAMIC DIFFICULTY ADJUSTMENT
+                        spawnedEnemies.Remove(enemy);
+                        if (spawnedEnemies.Count == 0)
+                        {
+                            isCleared = true;
+                            isInCombat = false;
+                            UnlockAllDoors();
+                            Debug.Log($"Room {roomIndex} Cleared!");
+                        }
+
+                        var minimap = FindObjectOfType<MinimapUI>();
+                        if (minimap != null) minimap.VisitRoom(roomIndex);
+                    };
                     spawned++;
                 }
             }
@@ -106,14 +128,84 @@ public class Room : MonoBehaviour
     public void OnPlayerEnter(int fromDirection)
     {
         Debug.Log($"Player entered Room {roomIndex} from {fromDirection}");
-        if (roomNeighbors[fromDirection] != 0)
-            doors[fromDirection].SetActive(true);
+        if (isCleared || (roomType == RoomType.Start || roomType == RoomType.Shop))
+        {
+            UnlockAllDoors();               // semua pintu boleh dipakai
+            if (spawnTrigger) spawnTrigger.gameObject.SetActive(false);
+        }
+        else
+        {
+            // Belum clear: hanya boleh mundur ke pintu asal
+            LockAllDoors();
+            UnlockDoor(fromDirection);
+
+            // Tampilkan tombol start encounter
+            if (spawnTrigger) spawnTrigger.gameObject.SetActive(true);
+        }
+    }
+
+    public void BeginCombat()
+    {
+        if (isCleared || isInCombat) return;
+
+        isInCombat = true;
+        SpawnEnemiesInRoom();
+        LockAllDoors();
+    }
+
+    public void OnDoorInteract(int direction)
+    {
+        if (isLocked && direction != GetOpposite(lastEnterFrom))
+        {
+            Debug.Log("Room is locked! Cannot exit through this door.");
+            return;
+        }
+
+        int nextRoomID = roomNeighbors[direction];
+        if (nextRoomID != 0)
+        {
+            GameManager.Instance.roomManager.MovePlayerToRoom(nextRoomID, GetOpposite(direction));
+        }
+    }
+
+    void LockAllDoors()
+    {
+        isLocked = true;
+        foreach (var door in doors)
+        {
+            if (door != null)
+            {
+                var trig = door.GetComponent<DoorTrigger>();
+                if (trig != null) trig.SetLocked(true);
+            }
+        }
+    }
+
+    void UnlockAllDoors()
+    {
+        isLocked = false;
+        foreach (var door in doors)
+        {
+            if (door != null)
+            {
+                var trig = door.GetComponent<DoorTrigger>();
+                if (trig != null) trig.SetLocked(false);
+            }
+        }
+    }
+
+    void UnlockDoor(int dir)
+    {
+        if (dir < 0 || dir > 3) return;
+        if (doors[dir] && roomNeighbors[dir] != 0)
+            doors[dir].GetComponent<DoorTrigger>().SetLocked(false);
     }
 
     public void GoToNeighbor(int direction)
     {
         int nextRoomID = roomNeighbors[direction];
         if (nextRoomID == 0) return;
+
         GameManager.Instance.roomManager.MovePlayerToRoom(nextRoomID, GetOpposite(direction));
     }
 
