@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         Vector3 inputDir = new Vector3(h, 0, v).normalized;
-        
+
         // Handle Dodge & Sprint
         if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isDodging)
         {
@@ -122,10 +122,41 @@ public class PlayerController : MonoBehaviour
             // Cek apakah cooldown sudah selesai
             if (Time.time >= lastAttackTime + attackCooldown)
             {
+                FaceNearestEnemy();
                 PerformAttack();
             }
         }
     }
+    
+    void FaceNearestEnemy()
+    {
+        float detectionRadius = 10f; // jangkauan pencarian musuh, akan di replace dengan weapon range jika ada
+        Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius);
+        Transform nearestEnemy = null;
+        float nearestDist = Mathf.Infinity;
+
+        foreach (var hit in hits)
+        {
+            if (hit.CompareTag("Enemy"))
+            {
+                float dist = Vector3.Distance(transform.position, hit.transform.position);
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearestEnemy = hit.transform;
+                }
+            }
+        }
+
+        if (nearestEnemy != null)
+        {
+            Vector3 direction = (nearestEnemy.position - transform.position).normalized;
+            direction.y = 0; // tetap di bidang horizontal
+            Quaternion targetRot = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationSpeed * 2 * Time.deltaTime);
+        }
+    }
+
     
     void PerformAttack()
     {
@@ -174,6 +205,6 @@ public class PlayerController : MonoBehaviour
     public void TriggerAttackHit()
     {
         if (playerCombat != null)
-            playerCombat.CheckHit();
+            playerCombat.UseWeapon();
     }
 }
