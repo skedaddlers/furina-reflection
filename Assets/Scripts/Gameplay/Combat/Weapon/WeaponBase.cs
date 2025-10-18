@@ -19,6 +19,9 @@ public abstract class WeaponBase : ScriptableObject
     public float projectileSpeed = 20f;
     public float projectileLifeTime = 4f;
 
+    [Header("Optional Animation")]
+    public WeaponAnimationSet animSet; // optional, untuk override animasi player
+
     public abstract void PerformAttack(PlayerCombat ctx);
 }
 

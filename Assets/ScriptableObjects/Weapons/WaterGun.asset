@@ -9,17 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 5d5e05ece3f9c1f4dbb60800c143cf94, type: 3}
   m_Name: WaterGun
-  m_EditorClassIdentifier: Assembly-CSharp::RangedWeapon
+  m_EditorClassIdentifier: 
   id: weapon_id
   displayName: Weapon
   description: 
   baseDamage: 5
   range: 2
   angle: 60
-  cooldown: 0.13
+  cooldown: 0.6
   manaCost: 0
   projectilePrefab: {fileID: 3897606349267117842, guid: a681113537179d745a4f8140ae3396e0, type: 3}
   projectileSpeed: 20
-  projectileLifeTime: 5
+  projectileLifeTime: 4
+  animSet: {fileID: 11400000, guid: de146a2ddd12efa418bd36c091d6d100, type: 2}

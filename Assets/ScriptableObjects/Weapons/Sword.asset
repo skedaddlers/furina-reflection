@@ -9,17 +9,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: c46d3549e504d92468825daca2801ce6, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: Assembly-CSharp::MeleeWeapon
   id: weapon_id
   displayName: Weapon
   description: 
-  baseDamage: 100
-  range: 3
-  angle: 120
-  cooldown: 0.4
+  baseDamage: 5
+  range: 2
+  angle: 60
+  cooldown: 0.1
   manaCost: 0
   projectilePrefab: {fileID: 0}
   projectileSpeed: 20
   projectileLifeTime: 4
+  animSet: {fileID: 11400000, guid: 4703645d9a41c624988ffdd58b6c50ee, type: 2}
