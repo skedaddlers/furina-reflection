@@ -13,6 +13,10 @@ public class PlayerLoadout : MonoBehaviour
     {
         if (!animBinder) animBinder = GetComponent<PlayerAnimationBinder>();
         if (!combat) combat = GetComponent<PlayerCombat>();
+    }
+
+    void Start()
+    {
         if (loadout.Length > 0)
         {
             Equip(0);
@@ -22,8 +26,9 @@ public class PlayerLoadout : MonoBehaviour
     public void Equip(int index)
     {
         if (index < 0 || index >= loadout.Length) return;
-    
+
         current = loadout[index];
+        UIManager.Instance.weaponUI.UpdateWeaponIcon(this);
         // sinkron ke combat & anim
         if (animBinder) animBinder.ApplyAnimSet(current.animSet);
     }

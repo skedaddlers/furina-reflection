@@ -34,8 +34,8 @@ ModelImporter:
       name: Shoot Gun
       takeName: mixamo.com
       internalID: -203655887218126122
-      firstFrame: 0
-      lastFrame: 35
+      firstFrame: 8.38
+      lastFrame: 21.3
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -55,7 +55,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.50828725
+      - time: 0.061878394
         functionName: TriggerAttackHit
         data: 
         objectReferenceParameter: {instanceID: 0}

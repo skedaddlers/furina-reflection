@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GreatSword_Override
+  m_Controller: {fileID: 9100000, guid: 0761e79642c7e0b47a51bab0e7b86f73, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: d561b4bb01c02ec4983dbcc3c12cc45a, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: dcea0cc42952bec499b5f9e44ff8eab7, type: 3}

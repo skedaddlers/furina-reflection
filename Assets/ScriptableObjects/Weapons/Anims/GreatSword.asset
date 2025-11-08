@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1d4fb5b59629db40b68c86c579ed942, type: 3}
-  m_Name: Sword
+  m_Name: GreatSword
   m_EditorClassIdentifier: 
   type: 0
   attackTrigger: Attack
   shootTrigger: Shoot
   channelBool: Channel
   equipTrigger: Equip
-  overrideController: {fileID: 22100000, guid: c3089cc2852fc4b4cb2b0252f21815ea, type: 2}
+  overrideController: {fileID: 22100000, guid: 1901ddd48703caf4c8b763e7192bd75b, type: 2}
   hitEventTime: 0.2
   fireEventTime: 0
   channelWindup: 0.15

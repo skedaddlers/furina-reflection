@@ -15,6 +15,9 @@ public class PlayerCombat : MonoBehaviour
     public int currentIndex = 0;
     private float _lastUseTime = -999f;
 
+    [Header("Visual Effects")]
+    public ParticleSystem hitEffect;
+
     [Header("Attack Settings")]
     private bool _isAttacking = false;
     public bool IsAttacking => _isAttacking;
@@ -24,10 +27,10 @@ public class PlayerCombat : MonoBehaviour
         if (stats == null) stats = GetComponent<PlayerStats>();
         if (animBinder == null) animBinder = GetComponent<PlayerAnimationBinder>();
         if (loadout == null) loadout = GetComponent<PlayerLoadout>();
-        if (loadout != null && loadout.loadout.Length > 0)
-        {
-            loadout.Equip(0);
-        }
+        // if (loadout != null && loadout.loadout.Length > 0)
+        // {
+        //     loadout.Equip(0);
+        // }
     }
 
     // Dipanggil oleh anim event atau input (lihat PlayerController patch)
@@ -35,7 +38,11 @@ public class PlayerCombat : MonoBehaviour
     {
         if (loadout.current == null || stats == null) return;
         if (Time.time < _lastUseTime + loadout.current.cooldown) return;
-        if (!stats.TrySpendMana(loadout.current.manaCost)) return;
+        if (!stats.TrySpendMana(loadout.current.manaCost))
+        {
+            SetIsAttacking(false);
+            return;  
+        } 
 
         loadout.current.PerformAttack(this);
         _lastUseTime = Time.time;
@@ -48,7 +55,6 @@ public class PlayerCombat : MonoBehaviour
     {
         yield return new WaitForSeconds(cooldown);
         SetIsAttacking(false);
-        Debug.Log("Attack cooldown finished, IsAttacking reset to false.");
     }
     // Melee cone hit: deteksi musuh dalam jarak & sudut
     public void MeleeConeHit(float damage, float range, float angle)
@@ -57,15 +63,14 @@ public class PlayerCombat : MonoBehaviour
         Vector3 forward = (attackOrigin != null ? attackOrigin.forward : transform.forward).normalized;
 
         Collider[] hits = Physics.OverlapSphere(origin, range, enemyMask);
-        Debug.Log($"MeleeConeHit found {hits.Length} targets");
         foreach (var h in hits)
         {
-            Debug.Log($"MeleeConeHit found: {h.name}");
             Vector3 dir = (h.transform.position - origin);
             dir.y = 0f;
             float ang = Vector3.Angle(forward, dir);
             if (ang <= angle * 0.5f)
             {
+                GameObject particle = Instantiate(hitEffect.gameObject, h.ClosestPoint(origin), Quaternion.identity);
                 var health = h.GetComponent<Health>();
                 if (health != null) health.TakeDamage(damage);
             }

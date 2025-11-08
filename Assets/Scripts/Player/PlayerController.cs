@@ -3,6 +3,8 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
+    public PlayerStats stats;
+    [Header("Movement Settings")]
     public float walkSpeed = 2f;
     public float runSpeed = 5f;
     public float rotationSpeed = 10f;
@@ -43,6 +45,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+        stats = GetComponent<PlayerStats>();
         controller = GetComponent<CharacterController>();
         playerCombat = GetComponent<PlayerCombat>();
         _animBinder = GetComponent<PlayerAnimationBinder>();
@@ -66,6 +69,7 @@ public class PlayerController : MonoBehaviour
         // Handle Dodge & Sprint
         if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isDodging)
         {
+            CancelCombatLock();
             shiftPressedTime = Time.time;
             shiftHeld = true;
             StartCoroutine(Dodge()); // langsung dodge dulu
@@ -143,7 +147,7 @@ public class PlayerController : MonoBehaviour
         // Attack dengan cooldown
         if (Input.GetMouseButtonDown(0) && !isDodging)
         {
-            if(!playerCombat.IsAttacking) PerformAttack();
+            if(!playerCombat.IsAttacking && stats.CurrentMana >= playerCombat.loadout.current.manaCost) PerformAttack();
         }
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -166,6 +170,7 @@ public class PlayerController : MonoBehaviour
 
     void PerformAttack()
     {
+        Debug.Log("PlayerController: PerformAttack called");
         var t = FindNearestEnemy(autoAimRadius);
         if (t) StartCombatLock(t);
         playerCombat.SetIsAttacking(true);

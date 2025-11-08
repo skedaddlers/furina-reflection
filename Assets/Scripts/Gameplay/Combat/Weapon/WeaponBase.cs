@@ -6,6 +6,7 @@ public abstract class WeaponBase : ScriptableObject
     public string id = "weapon_id";
     public string displayName = "Weapon";
     [TextArea] public string description;
+    public Sprite icon;
 
     [Header("Stats")]
     public int baseDamage = 5;

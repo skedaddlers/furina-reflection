@@ -17,10 +17,13 @@ public class PlayerStats : MonoBehaviour
 
     [Header("Mana")]
     public int maxMana = 10;
+    public int MaxMana => maxMana;
     public float manaRegenPerSecond = 1.0f;
 
     [SerializeField] private int _currentMana;
     public int CurrentMana => _currentMana;
+
+    private float _manaRegenBuffer = 0f;
 
     public event Action<int, int> onManaChanged; // (current, max)
 
@@ -35,9 +38,14 @@ public class PlayerStats : MonoBehaviour
         // Regen pasif
         if (_currentMana < maxMana)
         {
-            float regen = manaRegenPerSecond * Time.deltaTime;
-            _currentMana = Mathf.Min(maxMana, _currentMana + Mathf.FloorToInt(regen));
-            onManaChanged?.Invoke(_currentMana, maxMana);
+            _manaRegenBuffer += manaRegenPerSecond * Time.deltaTime;
+            int regenAmount = Mathf.FloorToInt(_manaRegenBuffer);
+            if (regenAmount > 0)
+            {
+                _currentMana = Mathf.Min(maxMana, _currentMana + regenAmount);
+                _manaRegenBuffer -= regenAmount;
+                onManaChanged?.Invoke(_currentMana, maxMana);
+            }
         }
     }
 
