@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     public PlayerStats stats;
+    public SkillManager skillManager;
     [Header("Movement Settings")]
     public float walkSpeed = 2f;
     public float runSpeed = 5f;
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         controller = GetComponent<CharacterController>();
         playerCombat = GetComponent<PlayerCombat>();
+        skillManager = GetComponent<SkillManager>();
         _animBinder = GetComponent<PlayerAnimationBinder>();
         
         // Sword selalu aktif (atau bisa diatur sesuai kebutuhan)
@@ -154,15 +156,30 @@ public class PlayerController : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             animator.SetTrigger("Jump");
         }
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            playerCombat.loadout.Swap();
+            playerCombat.SetIsAttacking(false);
+        }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            playerCombat.loadout.Equip(0);
+            skillManager.TryUseSkill(0);
             playerCombat.SetIsAttacking(false);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            playerCombat.loadout.Equip(1);
+            skillManager.TryUseSkill(1);
+            playerCombat.SetIsAttacking(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            skillManager.TryUseSkill(2);
+            playerCombat.SetIsAttacking(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            skillManager.TryUseSkill(3);
             playerCombat.SetIsAttacking(false);
         }
     }

@@ -856,6 +856,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: gravity
+      value: -19.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: walkSpeed
       value: 3
       objectReference: {fileID: 0}
@@ -898,7 +902,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4044326400695588259, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1049335841}
   m_SourcePrefab: {fileID: 100100000, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
 --- !u!4 &855542997 stripped
 Transform:
@@ -910,7 +917,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6536990159064562789, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
   m_PrefabInstance: {fileID: 855542996}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1049335832}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca4cbd9d105133844b13578d24873d61, type: 3}
@@ -1156,6 +1163,46 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1028429079}
   m_CullTransparentMesh: 1
+--- !u!1 &1049335832 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4044326400695588259, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+  m_PrefabInstance: {fileID: 855542996}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1049335841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1049335832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 757450ca3bf66554b807f62e8d7a401d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownedSkills:
+  - skill: {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
+    currentCooldown: 0
+    isOnCooldown: 0
+    level: 0
+  maxActiveSkills: 4
+  activeSkillSlots:
+  - skill: {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
+    currentCooldown: 0
+    isOnCooldown: 0
+    level: 1
+  - skill: {fileID: 0}
+    currentCooldown: 0
+    isOnCooldown: 0
+    level: 1
+  - skill: {fileID: 0}
+    currentCooldown: 0
+    isOnCooldown: 0
+    level: 1
+  - skill: {fileID: 0}
+    currentCooldown: 0
+    isOnCooldown: 0
+    level: 1
 --- !u!1 &1075878896
 GameObject:
   m_ObjectHideFlags: 0

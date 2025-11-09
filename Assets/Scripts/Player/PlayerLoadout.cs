@@ -7,7 +7,7 @@ public class PlayerLoadout : MonoBehaviour
     public PlayerCombat combat;   // punyamu
     public WeaponBase current;    // senjata terpakai sekarang
     public WeaponBase[] loadout = new WeaponBase[2];
-    public int maxLoadoutSize = 2;
+    private int maxLoadoutSize = 2;
 
     void Awake()
     {
@@ -17,10 +17,8 @@ public class PlayerLoadout : MonoBehaviour
 
     void Start()
     {
-        if (loadout.Length > 0)
-        {
-            Equip(0);
-        }
+        current = loadout[0];
+        if (animBinder) animBinder.ApplyAnimSet(current.animSet);
     }
 
     public void Equip(int index)
@@ -28,9 +26,17 @@ public class PlayerLoadout : MonoBehaviour
         if (index < 0 || index >= loadout.Length) return;
 
         current = loadout[index];
-        UIManager.Instance.weaponUI.UpdateWeaponIcon(this);
+        UIManager.Instance.weaponUI?.UpdateWeaponIcon(this);
         // sinkron ke combat & anim
         if (animBinder) animBinder.ApplyAnimSet(current.animSet);
+    }
+
+    public void Swap()
+    {
+        if (loadout.Length < 2) return;
+        int currentIndex = System.Array.IndexOf(loadout, current);
+        int newIndex = (currentIndex + 1) % loadout.Length;
+        Equip(newIndex);
     }
 
     public void AddToLoadout(WeaponBase w)

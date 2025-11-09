@@ -58,6 +58,13 @@ public class PlayerStats : MonoBehaviour
         return true;
     }
 
+    public void UseMana(int amount)
+    {
+        if (amount <= 0) return;
+        _currentMana = Mathf.Max(0, _currentMana - amount);
+        onManaChanged?.Invoke(_currentMana, maxMana);
+    }
+
     public void AddMana(int amount)
     {
         if (amount <= 0) return;

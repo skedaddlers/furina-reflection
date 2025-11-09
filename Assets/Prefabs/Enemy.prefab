@@ -87,6 +87,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2549722619775263633}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1515617572872959726}
   m_SourcePrefab: {fileID: 100100000, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
 --- !u!1 &8705725717222443200 stripped
 GameObject:
@@ -189,3 +192,32 @@ MonoBehaviour:
   attackCooldown: 1.5
   damage: 10
   detectionRange: 10
+--- !u!114 &1515617572872959726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8705725717222443200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Graph: {fileID: -2212167153873125606, guid: 532aa23d9cb81c14caf4f06baf2b697f, type: 2}
+  m_BlackboardVariableOverridesList:
+  - rid: 8801865671370342656
+  m_OriginalGraph: {fileID: 0}
+  m_IsInitialised: 0
+  m_IsStarted: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: 8801865671370342656
+      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
+      data:
+        GUID:
+          m_Value0: 1
+          m_Value1: 0
+        Name: Self
+        m_Value: {fileID: 8705725717222443200}
