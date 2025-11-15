@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class Health : MonoBehaviour
 {
@@ -6,7 +7,9 @@ public class Health : MonoBehaviour
     private float currentHealth;
 
     // on death event
-    public System.Action onDeath;
+    public Action onDeath;
+    public Action<float, float> onHealthChanged; // (current, max)
+
 
     void Start()
     {
@@ -20,6 +23,12 @@ public class Health : MonoBehaviour
         if (currentHealth <= 0)
         {
             Die();
+        }
+        if (currentHealth < 0)
+            currentHealth = 0;
+        if (GetComponent<PlayerStats>() != null)
+        {
+            onHealthChanged?.Invoke(currentHealth, maxHealth);
         }
     }
 

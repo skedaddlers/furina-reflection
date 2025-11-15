@@ -12,6 +12,7 @@ public class SkillManager : MonoBehaviour
     
     [Header("Active Skills")]
     [SerializeField] private SkillSlot[] activeSkillSlots = new SkillSlot[4];
+    public SkillSlot[] ActiveSkillSlots => activeSkillSlots;
     
     [Header("References")]
     private PlayerStats playerStats;
@@ -31,7 +32,6 @@ public class SkillManager : MonoBehaviour
     {
         playerStats = GetComponent<PlayerStats>();
         playerCombat = GetComponent<PlayerCombat>();
-        
         // Initialize skill slots
         // for (int i = 0; i < activeSkillSlots.Length; i++)
         // {
@@ -331,6 +331,7 @@ public class SkillManager : MonoBehaviour
                 {
                     slot.currentCooldown = 0;
                     slot.isOnCooldown = false;
+                    UIManager.Instance.skillsUI.UpdateSkillsUI(activeSkillSlots);
                 }
             }
         }

@@ -16,7 +16,14 @@ public partial class CheckInRangeAction : Action
 
     protected override Status OnUpdate()
     {
-        return Status.Success;
+        if (Enemy == null || Enemy.Value == null)
+            return Status.Failure;
+
+        if (Enemy.Value.SeePlayer())
+            return Status.Success;
+        
+        Enemy.Value.StopChasing();
+        return Status.Failure;
     }
 
     protected override void OnEnd()

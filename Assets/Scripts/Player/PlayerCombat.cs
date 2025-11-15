@@ -33,29 +33,41 @@ public class PlayerCombat : MonoBehaviour
         // }
     }
 
-    // Dipanggil oleh anim event atau input (lihat PlayerController patch)
-    public void UseWeapon()
+    public bool TryUseWeapon()
     {
-        if (loadout.current == null || stats == null) return;
-        if (Time.time < _lastUseTime + loadout.current.cooldown) return;
-        if (!stats.TrySpendMana(loadout.current.manaCost))
-        {
-            SetIsAttacking(false);
-            return;  
-        } 
+        if (loadout.current == null || stats == null) return false;
 
-        loadout.current.PerformAttack(this);
+        float cd = loadout.current.cooldown;
+        if (Time.time < _lastUseTime + cd) return false;
+
+        if (!stats.TrySpendMana(loadout.current.manaCost))
+            return false;
+
         _lastUseTime = Time.time;
-        StartCoroutine(ResetAttackAfterCooldown(loadout.current.cooldown));
-        // Debug.Log($"Used weapon {loadout.current.name} at time {_lastUseTime}");
+
+        _isAttacking = true;
+
+        return true;
+    }
+
+    // Dipanggil oleh anim event atau input (lihat PlayerController patch)
+    public void TriggerAttackHit()
+    {
+        if (loadout.current == null) return;
+        loadout.current.PerformAttack(this);
+    }
+    public void EndAttack()
+    {
+        _isAttacking = false;
+    }
+
+    public void ForceCancelAttack()
+    {
+        _isAttacking = false;
     }
 
     // ==== UTIL UNTUK WEAPON ====
-    private IEnumerator ResetAttackAfterCooldown(float cooldown)
-    {
-        yield return new WaitForSeconds(cooldown);
-        SetIsAttacking(false);
-    }
+
     // Melee cone hit: deteksi musuh dalam jarak & sudut
     public void MeleeConeHit(float damage, float range, float angle)
     {
@@ -96,6 +108,9 @@ public class PlayerCombat : MonoBehaviour
         //     Destroy(go, Mathf.Max(lifeTime, maxRange / Mathf.Max(0.1f, speed)));
         // }
     }
+
+    // Called through animation event
+    
 
     public void SetIsAttacking(bool val)
     {

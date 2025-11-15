@@ -19,7 +19,7 @@ MonoBehaviour:
   baseDamage: 15
   range: 4
   angle: 180
-  cooldown: 1
+  cooldown: 1.6
   manaCost: 0
   projectilePrefab: {fileID: 0}
   projectileSpeed: 20

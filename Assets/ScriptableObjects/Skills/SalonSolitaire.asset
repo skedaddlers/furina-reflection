@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1fb85fa64aa31d64ba44ea62fe254ce0, type: 3}
-  m_Name: LetThePeopleRejoice
+  m_Script: {fileID: 11500000, guid: 773ad69f6fd2c5345825be4106acfcec, type: 3}
+  m_Name: SalonSolitaire
   m_EditorClassIdentifier: 
-  skillName: Let The People Rejoice
+  skillName: 
   description: 
-  skillIcon: {fileID: 21300000, guid: d8abc9e6ecfa9e74da9b52a9b2df1b4a, type: 3}
+  skillIcon: {fileID: 21300000, guid: 33dcf26d179f4034399608c15d01b524, type: 3}
   skillID: 0
   skillType: 0
   targetType: 0
-  manaCost: 30
+  manaCost: 10
   cooldownTime: 5
   levelRequired: 1
   purchasePrice: 100

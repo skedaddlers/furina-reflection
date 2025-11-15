@@ -6,6 +6,7 @@ public class PlayerStats : MonoBehaviour
 {
     [Header("Core")]
     public int level = 1;
+    public Health health;
     public float baseAttack = 10f;
     public float baseDefense = 0f;
     public float moveSpeed = 6f;
@@ -31,6 +32,7 @@ public class PlayerStats : MonoBehaviour
     {
         _currentMana = maxMana;
         onManaChanged?.Invoke(_currentMana, maxMana);
+        health = GetComponent<Health>();
     }
 
     void Update()

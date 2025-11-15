@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     [Header("UI Parts")]
     public StatsUI statsUI;
     public WeaponUI weaponUI;
+    public SkillsUI skillsUI;
     public CursorController cursorController;
     [Header("Door Interaction UI")]
     public CanvasGroup doorPromptCanvas;
@@ -45,15 +46,20 @@ public class UIManager : MonoBehaviour
         {
             weaponUI = GetComponent<WeaponUI>();
         }
+        if (skillsUI == null)
+        {
+            skillsUI = GetComponent<SkillsUI>();
+        }
         InitUI();
         cursorController.LockCursor();
     }
 
     void InitUI()
     {
-        playerStats.onManaChanged += statsUI.UpdateUI;
-        statsUI.UpdateUI(playerStats.CurrentMana, playerStats.MaxMana);
-
+        playerStats.onManaChanged += statsUI.UpdateManaUI;
+        statsUI.UpdateManaUI(playerStats.CurrentMana, playerStats.MaxMana);
+        playerStats.GetComponent<Health>().onHealthChanged += statsUI.UpdateHealthUI;
+        statsUI.UpdateHealthUI(playerStats.health.maxHealth, playerStats.health.maxHealth);
         weaponUI.UpdateWeaponIcon(FindObjectOfType<PlayerLoadout>());
     }
 

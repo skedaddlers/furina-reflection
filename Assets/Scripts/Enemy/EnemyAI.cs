@@ -23,33 +23,6 @@ public class EnemyAI : MonoBehaviour
     void Update()
     {
         float distance = Vector3.Distance(player.position, transform.position);
-
-        if (distance > attackRange && distance < detectionRange)
-        {
-            // Jalan ke player
-            agent.isStopped = false;
-            agent.SetDestination(player.position);
-            animator.SetFloat("WalkSpeed", 1f);
-        }
-        else if (distance >= detectionRange)
-        {
-            // Idle
-            agent.isStopped = true;
-            animator.SetFloat("WalkSpeed", 0f);
-        }
-        else
-        {
-            // Stop & attack
-            agent.isStopped = true;
-            animator.SetFloat("WalkSpeed", 0f);
-
-            if (Time.time - lastAttackTime >= attackCooldown)
-            {
-
-                animator.SetTrigger("Attack");
-                lastAttackTime = Time.time;
-            }
-        }
     }
 
     // Panggil dari animation event di animasi Attack
@@ -58,6 +31,39 @@ public class EnemyAI : MonoBehaviour
         if (Vector3.Distance(player.position, transform.position) <= attackRange + 0.5f)
         {
             player.GetComponent<Health>()?.TakeDamage(damage);
+        }
+    }
+
+    public bool SeePlayer()
+    {
+        return Vector3.Distance(player.position, transform.position) <= detectionRange;
+    }
+
+    public bool InAttackRange()
+    {
+        return Vector3.Distance(player.position, transform.position) <= attackRange;
+    }
+
+    public void ChasePlayer()
+    {
+        agent.isStopped = false;
+        agent.SetDestination(player.position);
+        animator.SetFloat("WalkSpeed", 1f);
+    }
+
+
+    public void StopChasing()
+    {
+        agent.isStopped = true;
+        animator.SetFloat("WalkSpeed", 0f);
+    }
+    
+    public void AttackPlayer()
+    {
+        if (Time.time - lastAttackTime >= attackCooldown)
+        {
+            animator.SetTrigger("Attack");
+            lastAttackTime = Time.time;
         }
     }
 }

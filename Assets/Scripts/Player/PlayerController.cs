@@ -35,7 +35,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
     [SerializeField]
-    private bool isAttacking;
     private bool isDodging = false;
     private bool isSprinting = false;
 
@@ -76,7 +75,7 @@ public class PlayerController : MonoBehaviour
             shiftHeld = true;
             StartCoroutine(Dodge()); // langsung dodge dulu
             dashTriggered = true;
-            playerCombat.SetIsAttacking(false); 
+            playerCombat.ForceCancelAttack(); 
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
@@ -149,48 +148,54 @@ public class PlayerController : MonoBehaviour
         // Attack dengan cooldown
         if (Input.GetMouseButtonDown(0) && !isDodging)
         {
-            if(!playerCombat.IsAttacking && stats.CurrentMana >= playerCombat.loadout.current.manaCost) PerformAttack();
+            if (!playerCombat.IsAttacking)
+            {
+                bool success = playerCombat.TryUseWeapon();
+                if (success)
+                {
+                    PerformAttack();
+                }
+            }
         }
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             animator.SetTrigger("Jump");
+            playerCombat.ForceCancelAttack();
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
             playerCombat.loadout.Swap();
-            playerCombat.SetIsAttacking(false);
+            playerCombat.ForceCancelAttack();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             skillManager.TryUseSkill(0);
-            playerCombat.SetIsAttacking(false);
+            playerCombat.ForceCancelAttack();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             skillManager.TryUseSkill(1);
-            playerCombat.SetIsAttacking(false);
+            playerCombat.ForceCancelAttack();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
             skillManager.TryUseSkill(2);
-            playerCombat.SetIsAttacking(false);
+            playerCombat.ForceCancelAttack();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             skillManager.TryUseSkill(3);
-            playerCombat.SetIsAttacking(false);
+            playerCombat.ForceCancelAttack();
         }
     }
     
 
     void PerformAttack()
     {
-        Debug.Log("PlayerController: PerformAttack called");
         var t = FindNearestEnemy(autoAimRadius);
         if (t) StartCombatLock(t);
-        playerCombat.SetIsAttacking(true);
 
         var set = _animBinder?.currentAnimSet;
         if (set == null || set.type == WeaponAnimType.Melee || set.type == WeaponAnimType.Bow || set.type == WeaponAnimType.BombThrow)
@@ -258,21 +263,5 @@ public class PlayerController : MonoBehaviour
         if (dir.sqrMagnitude < 0.0001f) return;
         var targetRot = Quaternion.LookRotation(dir.normalized);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed * rotSpeedMul);
-    }
-
-
-    // Dipanggil dari Animation Event di awal animasi attack (optional)
-    public void StartAttack()
-    {
-        // Bisa digunakan untuk efek atau sound
-        if (sword != null)
-            sword.SetActive(true);
-    }
-
-    // Dipanggil dari Animation Event saat frame hit dari animasi attack
-    public void TriggerAttackHit()
-    {
-        if (playerCombat != null)
-            playerCombat.UseWeapon();
     }
 }
