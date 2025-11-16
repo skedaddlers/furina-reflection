@@ -5,7 +5,7 @@ public class MeleeWeapon : WeaponBase
 {
     public override void PerformAttack(PlayerCombat ctx)
     {
-        Debug.Log($"Melee attack with {displayName}");
+        Debug.Log($"Melee attack with {weaponName}");
         float dmg = ctx.stats.RollDamage(baseDamage);
         ctx.MeleeConeHit(dmg, range, angle);
     }

@@ -8,6 +8,7 @@ public class SkillBase : ScriptableObject
     public string skillName;
     public string description;
     public Sprite skillIcon;
+    public int price;
     public int skillID;
     
     [Header("Skill Type")]

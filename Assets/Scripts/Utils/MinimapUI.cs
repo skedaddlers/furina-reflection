@@ -176,18 +176,18 @@ public class MinimapUI : MonoBehaviour
         }
         
         // Create border
-        GameObject borderObj = new GameObject("Border");
-        borderObj.transform.SetParent(minimapContainer);
-        Image border = borderObj.AddComponent<Image>();
-        border.sprite = CreateCircleOutlineSprite();
-        border.color = new Color(0.3f, 0.3f, 0.3f, 1f);
-        border.raycastTarget = false;
-        RectTransform borderRect = borderObj.GetComponent<RectTransform>();
-        borderRect.anchorMin = Vector2.zero;
-        borderRect.anchorMax = Vector2.one;
-        borderRect.sizeDelta = Vector2.zero;
-        borderRect.anchoredPosition = Vector2.zero;
-        borderObj.transform.SetAsLastSibling();
+        // GameObject borderObj = new GameObject("Border");
+        // borderObj.transform.SetParent(minimapContainer);
+        // Image border = borderObj.AddComponent<Image>();
+        // border.sprite = CreateCircleOutlineSprite();
+        // border.color = new Color(0.3f, 0.3f, 0.3f, 1f);
+        // border.raycastTarget = false;
+        // RectTransform borderRect = borderObj.GetComponent<RectTransform>();
+        // borderRect.anchorMin = Vector2.zero;
+        // borderRect.anchorMax = Vector2.one;
+        // borderRect.sizeDelta = Vector2.zero;
+        // borderRect.anchoredPosition = Vector2.zero;
+        // borderObj.transform.SetAsLastSibling();
     }
     
     public void InitializeMinimap(RoomManager rm)

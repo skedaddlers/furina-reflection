@@ -4,9 +4,10 @@ public abstract class WeaponBase : ScriptableObject
 {
     [Header("Info")]
     public string id = "weapon_id";
-    public string displayName = "Weapon";
+    public string weaponName = "Weapon";
     [TextArea] public string description;
     public Sprite icon;
+    public int price = 100;
 
     [Header("Stats")]
     public int baseDamage = 5;

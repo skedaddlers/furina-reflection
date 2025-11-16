@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: WaterGun
   m_EditorClassIdentifier: 
   id: weapon_id
-  displayName: Weapon
-  description: 
+  weaponName: Water Gun
+  description: A gun that Furina made herself! Now Furina can shoot from afar! It
+    spends mana to shoot though
   icon: {fileID: 21300000, guid: e347058d2faf9a847abdfd247b1ad7be, type: 3}
+  price: 50
   baseDamage: 5
   range: 2
   angle: 60

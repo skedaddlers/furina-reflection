@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 773ad69f6fd2c5345825be4106acfcec, type: 3}
   m_Name: SalonSolitaire
   m_EditorClassIdentifier: 
-  skillName: 
-  description: 
+  skillName: Salon Solitaire
+  description: Summons Furina's besites to fight alongside you!
   skillIcon: {fileID: 21300000, guid: 33dcf26d179f4034399608c15d01b524, type: 3}
+  price: 40
   skillID: 0
-  skillType: 0
+  skillType: 3
   targetType: 0
   manaCost: 10
   cooldownTime: 5

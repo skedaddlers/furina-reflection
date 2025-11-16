@@ -100,7 +100,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 68504362e7d08ca49bda1581d84a72fd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -290,6 +290,12 @@ MonoBehaviour:
   minimapMask: {fileID: 419654064696876056}
   roomIconContainer: {fileID: 0}
   connectionLineContainer: {fileID: 0}
+  coneRadius: 32
+  coneAngleDeg: 70
+  coneColor: {r: 1, g: 1, b: 1, a: 0.85}
+  useCameraAsOrientation: 1
+  orientationSource: {fileID: 0}
+  coneTurnSmoothing: 15
 --- !u!1 &6108889175193973752
 GameObject:
   m_ObjectHideFlags: 0

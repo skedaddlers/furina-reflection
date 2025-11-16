@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     public RoomManager roomManager;
     public RoomGenerator roomGenerator;
+    public CursorController cursorController;
 
     public GameState CurrentState { get; private set; }
 
@@ -41,6 +42,18 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         ChangeState(GameState.Playing);
+    }
+
+    public void SetCursorState(bool unlocked)
+    {
+        if (unlocked)
+        {
+            cursorController.UnlockCursor();
+        }
+        else
+        {
+            cursorController.LockCursor();
+        }
     }
 
     public void ChangeState(GameState newState)
