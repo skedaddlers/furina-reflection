@@ -1,0 +1,194 @@
+using System.Collections.Generic;
+using UnityEngine;
+using System.Linq;
+
+namespace DDAMAPEKitFramework
+{
+    /// <summary>
+    /// Main facade for the DDA-MAPEKit framework
+    /// Manages all MAPE-K components and orchestrates the adaptation loop
+    /// </summary>
+    public class DDAMAPEKit : MonoBehaviour
+    {
+        [Header("MAPE-K Configuration")]
+        [SerializeField] private int readFrequency = 60; // frames between reads
+        [SerializeField] private bool isPerformanceOverTime = false;
+        [SerializeField] private bool flexibleSymptoms = false;
+        [SerializeField] private bool flexibleRules = false;
+        [SerializeField] private float adjustmentConstant = 0.5f;
+        [SerializeField] private int movingAverageSample = 5;
+
+        [Header("Player Profile Configuration")]
+        [SerializeField] private List<PlayerProfile> profiles = new List<PlayerProfile>();
+        [SerializeField] private float profileUpdateFrequency = 10f;
+        [SerializeField] private float explorationRate = 0.2f;
+
+        private PlayerModel playerModel;
+        private Monitor monitor;
+        private Analyzer analyzer;
+        private Planner planner;
+        private Executor executor;
+        private SymptomRepository symptomRepository;
+        private PolicyEngine policyEngine;
+        private SystemStateLog systemStateLog;
+        
+        private List<Sensor> sensors = new List<Sensor>();
+        private List<Effector> effectors = new List<Effector>();
+        
+        private int frameCounter = 0;
+        private bool isInitialized = false;
+
+        private static DDAMAPEKit instance;
+        public static DDAMAPEKit Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = FindObjectOfType<DDAMAPEKit>();
+                    if (instance == null)
+                    {
+                        GameObject go = new GameObject("DDA-MAPEKit");
+                        instance = go.AddComponent<DDAMAPEKit>();
+                    }
+                }
+                return instance;
+            }
+        }
+
+        void Awake()
+        {
+            if (instance != null && instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        void Start()
+        {
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            if (isInitialized) return;
+
+            // Initialize components
+            playerModel = new PlayerModel();
+            symptomRepository = new SymptomRepository();
+            policyEngine = new PolicyEngine();
+            systemStateLog = new SystemStateLog();
+
+            // Initialize MAPE-K components
+            monitor = new Monitor(playerModel, systemStateLog);
+            analyzer = new Analyzer(playerModel, symptomRepository, systemStateLog);
+            analyzer.SetPerformanceOverTime(isPerformanceOverTime);
+            analyzer.SetFlexibleSymptoms(flexibleSymptoms);
+            analyzer.SetMovingAverageSample(movingAverageSample);
+
+            planner = new Planner(policyEngine, playerModel);
+            planner.SetFlexibleRules(flexibleRules);
+            planner.SetAdjustmentConstant(adjustmentConstant);
+
+            executor = new Executor();
+
+            // Setup Observer pattern connections
+            monitor.Subscribe(analyzer);
+            analyzer.Subscribe(planner);
+            planner.Subscribe(executor);
+
+            // Configure default symptoms and rules
+            ConfigureDefaultSymptomsAndRules();
+
+            isInitialized = true;
+            Debug.Log("[DDA-MAPEKit] Framework initialized successfully");
+        }
+
+        void Update()
+        {
+            if (!isInitialized) return;
+
+            frameCounter++;
+            if (frameCounter >= readFrequency)
+            {
+                frameCounter = 0;
+                RunMAPEKLoop();
+            }
+
+            // Update player profile periodically
+            if (Time.time % profileUpdateFrequency < Time.deltaTime)
+            {
+                playerModel.UpdatePlayerProfile(explorationRate);
+            }
+        }
+
+        private void RunMAPEKLoop()
+        {
+            // Monitor phase
+            monitor.Observe(sensors);
+
+            // The rest of the loop is handled through the Observer pattern
+            // Analyzer -> Planner -> Executor are triggered automatically
+        }
+
+        public void RegisterSensor(Sensor sensor)
+        {
+            if (sensor != null && !sensors.Contains(sensor))
+            {
+                sensors.Add(sensor);
+                Debug.Log($"[DDA-MAPEKit] Registered sensor: {sensor.GetType().Name}");
+            }
+        }
+
+        public void RegisterEffector(Effector effector)
+        {
+            if (effector != null && !effectors.Contains(effector))
+            {
+                effectors.Add(effector);
+                executor.RegisterEffector(effector);
+                Debug.Log($"[DDA-MAPEKit] Registered effector: {effector.GetType().Name}");
+            }
+        }
+
+        public void AddPlayerAttribute(PlayerAttribute attribute)
+        {
+            playerModel.AddAttribute(attribute);
+        }
+
+        public void AddSymptom(Symptom symptom)
+        {
+            symptomRepository.AddSymptom(symptom);
+        }
+
+        public void AddRule(Rule rule)
+        {
+            policyEngine.AddRule(rule);
+        }
+
+        public void AddPlayerProfile(PlayerProfile profile)
+        {
+            profiles.Add(profile);
+            playerModel.AddProfile(profile);
+        }
+
+        private void ConfigureDefaultSymptomsAndRules()
+        {
+            // Configure default symptoms based on the paper
+            symptomRepository.AddSymptom(new Symptom("very.high", 2.0f, 3.0f));
+            symptomRepository.AddSymptom(new Symptom("sharply.high", 1.8f, 2.0f));
+            symptomRepository.AddSymptom(new Symptom("high", 1.5f, 1.8f));
+            symptomRepository.AddSymptom(new Symptom("slightly.high", 1.1f, 1.5f));
+            symptomRepository.AddSymptom(new Symptom("normal", 0.9f, 1.1f));
+            symptomRepository.AddSymptom(new Symptom("slightly.low", 0.5f, 0.9f));
+            symptomRepository.AddSymptom(new Symptom("low", 0.2f, 0.5f));
+            symptomRepository.AddSymptom(new Symptom("very.low", 0.0f, 0.2f));
+        }
+
+        public PlayerModel GetPlayerModel() => playerModel;
+        public SymptomRepository GetSymptomRepository() => symptomRepository;
+        public PolicyEngine GetPolicyEngine() => policyEngine;
+    }
+}

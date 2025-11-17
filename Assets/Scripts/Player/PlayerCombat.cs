@@ -22,8 +22,12 @@ public class PlayerCombat : MonoBehaviour
     private bool _isAttacking = false;
     public bool IsAttacking => _isAttacking;
 
+    public static PlayerCombat Instance { get; private set; }
+
     void Awake()
     {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
         if (stats == null) stats = GetComponent<PlayerStats>();
         if (animBinder == null) animBinder = GetComponent<PlayerAnimationBinder>();
         if (loadout == null) loadout = GetComponent<PlayerLoadout>();

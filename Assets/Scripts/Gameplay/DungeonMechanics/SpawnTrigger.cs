@@ -25,6 +25,19 @@ public class SpawnTrigger : MonoBehaviour
         }
     }
 
+    public void SetSpawnCooldown(float seconds)
+    {
+        // Further logic can be added here for cooldown if needed
+    }
+
+    public void SetMaxEnemies(int maxEnemies)
+    {
+        if (parentRoom != null)
+        {
+            parentRoom.maxEnemies = maxEnemies;
+        }
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

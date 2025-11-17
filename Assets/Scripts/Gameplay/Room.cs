@@ -10,7 +10,8 @@ public class Room : MonoBehaviour
     public GameObject[] doors = new GameObject[4]; // urutan sama
 
     [Header("Enemy Spawn Settings")]
-    public int enemyCount = 3;
+    public int maxEnemies = 3;
+    public int enemyCount = 3; // modified later based on DDA
     public Vector3 spawnAreaSize = new Vector3(10f, 5f, 10f); // area spawn di sekitar room
     public LayerMask groundMask;
     public LayerMask obstacleMask;
