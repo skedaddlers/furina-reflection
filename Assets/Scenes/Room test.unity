@@ -426,6 +426,8 @@ MonoBehaviour:
   - {fileID: 5911626624432018676, guid: 198e7c563884e65409dd05975d0ec15d, type: 3}
   - {fileID: 7386528077388556701, guid: 5d27ea0cad45e5e439e6a3370571aea5, type: 3}
   - {fileID: 7386528077388556701, guid: 0ec429b392803634484cd46c81f23130, type: 3}
+  - {fileID: 7386528077388556701, guid: 9d1d454ac5307c14291c214499b6ff27, type: 3}
+  - {fileID: 5911626624432018676, guid: 051737a6f4b735841a1942426be267b4, type: 3}
   player: {fileID: 855542997}
 --- !u!4 &35828313
 Transform:
@@ -457,10 +459,22 @@ MonoBehaviour:
   dungeonConfig:
     minRooms: 8
     maxRooms: 16
-    shopRoomCount: 3
+    normalRoomRatio: 0.5
+    shopRoomRatio: 0.2
+    eventRoomRatio: 0.15
+    eliteRoomRatio: 0.15
+    guaranteedShops: 2
+    guaranteedElites: 1
+    guaranteedEvents: 2
+    guaranteeEarlyShop: 1
+    minDistanceBetweenShops: 3
+    minDistanceBetweenElites: 4
+    eliteMinDistanceFromStart: 3
     maxConnectionsPerRoom: 3
     loopChance: 0.3
     seed: -1
+    eliteSpawnModifier: 1
+    eventBenefitModifier: 1
   roomOffset: 29.8
 --- !u!1 &41937632
 GameObject:
@@ -6723,13 +6737,37 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1644524578845116723, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
-      propertyPath: m_Enabled
-      value: 1
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 1992152516055822857, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2389399210326569471, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6800,25 +6838,9 @@ PrefabInstance:
       value: MinimapUI (1)
       objectReference: {fileID: 0}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
-      propertyPath: iconSize
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: coneColor.a
       value: 0.4392157
       objectReference: {fileID: 0}
-    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
-      propertyPath: minimapRadius
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
-      propertyPath: playerIconSize
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
-      propertyPath: roomIconPrefab
-      value: 
-      objectReference: {fileID: 7868055575276285767, guid: 82055b854f9e93a41a6a002a27fec5bf, type: 3}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: minimapPosition.x
       value: 850
@@ -6866,10 +6888,6 @@ PrefabInstance:
     - target: {fileID: 6984134259328572752, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: m_SizeDelta.y
       value: 232.9337
-      objectReference: {fileID: 0}
-    - target: {fileID: 6984134259328572752, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

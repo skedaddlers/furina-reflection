@@ -30,7 +30,7 @@ public partial class AttackPlayerAction : Action
 
         // Serang (cooldown di-handle di EnemyAI)
         enemy.AttackPlayer();
-        return Status.Running;
+        return Status.Success;
     }
 
     protected override void OnEnd()

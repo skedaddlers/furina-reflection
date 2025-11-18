@@ -343,7 +343,7 @@ GameObject:
   - component: {fileID: 5874909383187200772}
   - component: {fileID: 1799587732239382749}
   m_Layer: 0
-  m_Name: Room Combat
+  m_Name: Elite Room
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -380,10 +380,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5911626624432018676}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dea2af49f6b28454699a35ee6efe6a90, type: 3}
+  m_Script: {fileID: 11500000, guid: c7f1cc0c264c04942bc50817dfbb6cfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomType: 1
+  roomType: 5
   roomIndex: 0
   spawnTrigger: {fileID: 7158363839760584567}
   roomNeighbors: 00000000000000000000000000000000
@@ -392,8 +392,9 @@ MonoBehaviour:
   - {fileID: 6880289590999414734}
   - {fileID: 2449373732708187433}
   - {fileID: 4411320387035580006}
-  enemyCount: 3
-  spawnAreaSize: {x: 11.74, y: 6.45, z: 15.31}
+  maxEnemies: 1
+  enemyCount: 1
+  spawnAreaSize: {x: 10, y: 5, z: 10}
   groundMask:
     serializedVersion: 2
     m_Bits: 512
@@ -401,7 +402,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   minSpawnDistance: 2
-  enemyPrefab: {fileID: 8705725717222443200, guid: 97fd4f131dd65d845b42df81910399ef, type: 3}
+  enemyPrefab: {fileID: 4228300383457371494, guid: 095290b4c328f1e4d896bbb01f409732, type: 3}
   isCleared: 0
   isInCombat: 0
   spawnedEnemies: []

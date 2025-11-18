@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-public enum RoomType { Start, Normal, Boss, Shop }
+public enum RoomType { Start, Normal, Boss, Shop, Event, Elite }
 
 [System.Serializable]
 public class RoomData
@@ -11,6 +11,8 @@ public class RoomData
     public int[] neighbors = new int[4]; // forward, right, back, left
     public Vector3 worldPosition;
     public RoomType roomType;
+    public int distanceFromStart;
+    public float difficultyWeight;
 }
 
 [System.Serializable]
@@ -19,7 +21,23 @@ public class DungeonConfig
     [Header("Room Count Configuration")]
     public int minRooms = 8;
     public int maxRooms = 16;
-    public int shopRoomCount = 3;
+
+    [Header("Room Type Distribution")]
+    [Range(0f , 1f)] public float normalRoomRatio = 0.5f;
+    [Range(0f , 1f)] public float shopRoomRatio = 0.2f;
+    [Range(0f , 1f)] public float eventRoomRatio = 0.15f;
+    [Range(0f , 1f)] public float eliteRoomRatio = 0.15f;
+
+    [Header("Guaranteed Rooms")]
+    public int guaranteedShops = 2;        // At least 2 shops
+    public int guaranteedElites = 1;       // At least 1 elite
+    public int guaranteedEvents = 2;       // At least 2 events
+    public bool guaranteeEarlyShop = true; // Shop within 3 rooms of start
+
+    [Header("Room Placement Rules")]
+    public int minDistanceBetweenShops = 3;
+    public int minDistanceBetweenElites = 4;
+    public int eliteMinDistanceFromStart = 3;
 
     [Header("Room Connection Settings")]
     public int maxConnectionsPerRoom = 3;
@@ -27,6 +45,10 @@ public class DungeonConfig
 
     [Header("Generation Seed")]
     public int seed = -1; // -1 = random
+
+    [Header("DDA Modifiers")]
+    public float eliteSpawnModifier = 1.0f;  // Multiplier from DDA
+    public float eventBenefitModifier = 1.0f; // How beneficial events are
 }
 
 [System.Serializable]
@@ -56,6 +78,7 @@ public class RoomGenerator : MonoBehaviour
     };
     private Dictionary<int, Vector2Int> gridPositions = new();
     private Dictionary<Vector2Int, int> occupied = new();
+    private Dictionary<int, int> roomDistances = new();
 
     // ====== PUBLIC API ======
     public DungeonLayout Generate()
@@ -80,8 +103,14 @@ public class RoomGenerator : MonoBehaviour
         Debug.Log($"[RoomGenerator] totalRooms={totalRooms} seed={dungeonConfig.seed}");
 
         // Start
-        var start = new RoomData { id = nextRoomID++, neighbors = new int[4], roomType = RoomType.Start };
+        var start = new RoomData { 
+            id = nextRoomID++, 
+            neighbors = new int[4], 
+            roomType = RoomType.Start,
+            distanceFromStart = 0
+        };
         Layout.roomDataMap[start.id] = start;
+        roomDistances[start.id] = 0;
 
         gridPositions.Clear();
         occupied.Clear();
@@ -90,72 +119,221 @@ public class RoomGenerator : MonoBehaviour
 
         // Main path
         var mainPath = new List<int> { start.id };
-        GenerateMainPath(start.id, totalRooms, mainPath);
+        GenerateBaseLayout(start.id, totalRooms);
 
-        // Branches & shops
-        AddBranchesAndShops(totalRooms, mainPath);
+        AssignRoomTypes();
+        
+        // Place boss room
+        PlaceBossRoom();
+        
+        // Validate and fix distribution
+        ValidateRoomDistribution();
 
-        // Loops
-        if (Random.value < dungeonConfig.loopChance) AddLoops();
+        // GenerateMainPath(start.id, totalRooms, mainPath);
 
-        // Boss
-        PlaceBossRoom(mainPath);
+        // // Branches & shops
+        // AddBranchesAndShops(totalRooms, mainPath);
+
+        // // Loops
+        // if (Random.value < dungeonConfig.loopChance) AddLoops();
+
+        // // Boss
+        // PlaceBossRoom(mainPath);
 
         // bounds grid (diisi saat CalculateWorldPositions)
     }
 
-    void GenerateMainPath(int startId, int totalRooms, List<int> mainPath)
+    void GenerateBaseLayout(int startId, int totalRooms)
     {
-        int current = startId;
-        int pathLength = Mathf.Min(totalRooms / 2, 6);
-
-        for (int i = 0; i < pathLength && nextRoomID <= totalRooms; i++)
+        var frontier = new Queue<int>();
+        frontier.Enqueue(startId);
+        
+        while (Layout.roomDataMap.Count < totalRooms && frontier.Count > 0)
         {
-            int dir = GetRandomEmptyDirection(current);
-            if (dir == -1) break;
+            int current = frontier.Dequeue();
+            int connectionsLeft = dungeonConfig.maxConnectionsPerRoom - GetConnectionCount(current);
+            
+            for (int i = 0; i < connectionsLeft && Layout.roomDataMap.Count < totalRooms; i++)
+            {
+                int dir = GetRandomEmptyDirection(current);
+                if (dir == -1) break;
+                
+                var newRoom = new RoomData { 
+                    id = nextRoomID++, 
+                    neighbors = new int[4], 
+                    roomType = RoomType.Normal, // Temporary, will reassign
+                    distanceFromStart = roomDistances[current] + 1
+                };
+                
+                // Connect rooms
+                Layout.roomDataMap[current].neighbors[dir] = newRoom.id;
+                newRoom.neighbors[Opp(dir)] = current;
+                
+                // Update positions
+                Vector2Int pos = gridPositions[current] + DIRS[dir];
+                gridPositions[newRoom.id] = pos;
+                occupied[pos] = newRoom.id;
+                roomDistances[newRoom.id] = newRoom.distanceFromStart;
+                
+                Layout.roomDataMap[newRoom.id] = newRoom;
+                
+                // Add to frontier if it has space for more connections
+                if (GetEmptyDirectionCount(newRoom.id) > 0)
+                    frontier.Enqueue(newRoom.id);
+            }
+            
+            // Re-add current room if it still has space
+            if (GetEmptyDirectionCount(current) > 0 && Random.value < 0.5f)
+                frontier.Enqueue(current);
+        }
+        
+        // Add some loops
+        if (Random.value < dungeonConfig.loopChance) 
+            AddLoops();
+    }
 
-            var newRoom = new RoomData { id = nextRoomID++, neighbors = new int[4], roomType = RoomType.Normal };
-
-            Layout.roomDataMap[current].neighbors[dir] = newRoom.id;
-            newRoom.neighbors[Opp(dir)] = current;
-
-            Vector2Int pos = gridPositions[current] + DIRS[dir];
-            gridPositions[newRoom.id] = pos;
-            occupied[pos] = newRoom.id;
-
-            Layout.roomDataMap[newRoom.id] = newRoom;
-            mainPath.Add(newRoom.id);
-            current = newRoom.id;
+    void AssignRoomTypes()
+    {
+        // Get all non-start rooms sorted by distance from start
+        var assignableRooms = Layout.roomDataMap
+            .Where(kvp => kvp.Value.roomType != RoomType.Start)
+            .OrderBy(kvp => kvp.Value.distanceFromStart)
+            .ThenBy(kvp => Random.value)
+            .Select(kvp => kvp.Key)
+            .ToList();
+        
+        // Calculate room counts based on ratios and DDA
+        int totalAssignable = assignableRooms.Count - 1; // -1 for boss room
+        
+        int shopCount = Mathf.Max(
+            dungeonConfig.guaranteedShops,
+            Mathf.RoundToInt(totalAssignable * dungeonConfig.shopRoomRatio)
+        );
+        
+        int eliteCount = Mathf.Max(
+            dungeonConfig.guaranteedElites,
+            Mathf.RoundToInt(totalAssignable * dungeonConfig.eliteRoomRatio * dungeonConfig.eliteSpawnModifier)
+        );
+        
+        int eventCount = Mathf.Max(
+            dungeonConfig.guaranteedEvents,
+            Mathf.RoundToInt(totalAssignable * dungeonConfig.eventRoomRatio)
+        );
+        
+        // Place guaranteed early shop
+        if (dungeonConfig.guaranteeEarlyShop && shopCount > 0)
+        {
+            var earlyRooms = assignableRooms
+                .Where(id => roomDistances[id] <= 2 && roomDistances[id] > 0)
+                .ToList();
+            
+            if (earlyRooms.Count > 0)
+            {
+                int shopId = earlyRooms[Random.Range(0, earlyRooms.Count)];
+                Layout.roomDataMap[shopId].roomType = RoomType.Shop;
+                assignableRooms.Remove(shopId);
+                shopCount--;
+            }
+        }
+        
+        // Place shops with spacing
+        PlaceRoomsWithSpacing(assignableRooms, RoomType.Shop, shopCount, dungeonConfig.minDistanceBetweenShops);
+        
+        // Place elites with spacing and distance requirement
+        var eliteEligible = assignableRooms
+            .Where(id => roomDistances[id] >= dungeonConfig.eliteMinDistanceFromStart)
+            .ToList();
+        PlaceRoomsWithSpacing(eliteEligible, RoomType.Elite, eliteCount, dungeonConfig.minDistanceBetweenElites);
+        
+        // Remove assigned elites from assignable list
+        foreach (var id in eliteEligible)
+        {
+            if (Layout.roomDataMap[id].roomType == RoomType.Elite)
+                assignableRooms.Remove(id);
+        }
+        
+        // Place events randomly
+        for (int i = 0; i < eventCount && assignableRooms.Count > 0; i++)
+        {
+            int index = Random.Range(0, assignableRooms.Count);
+            Layout.roomDataMap[assignableRooms[index]].roomType = RoomType.Event;
+            assignableRooms.RemoveAt(index);
+        }
+        
+        // Remaining rooms stay as Normal
+        foreach (var id in assignableRooms)
+        {
+            Layout.roomDataMap[id].roomType = RoomType.Normal;
         }
     }
 
-    void AddBranchesAndShops(int targetCount, List<int> mainPath)
+    void PlaceRoomsWithSpacing(List<int> eligibleRooms, RoomType roomType, int count, int minSpacing)
     {
-        var roomsWithSpace = new List<int>(mainPath);
-        int shopsPlaced = 0;
-
-        while (Layout.roomDataMap.Count < targetCount - 1 && roomsWithSpace.Count > 0)
+        var placed = new List<int>();
+        var available = new List<int>(eligibleRooms);
+        
+        for (int i = 0; i < count && available.Count > 0; i++)
         {
-            int branchPoint = roomsWithSpace[Random.Range(0, roomsWithSpace.Count)];
-            int dir = GetRandomEmptyDirection(branchPoint);
+            // Filter by spacing requirement
+            var validRooms = available.Where(id => 
+            {
+                foreach (var placedId in placed)
+                {
+                    if (GetPathDistance(id, placedId) < minSpacing)
+                        return false;
+                }
+                return true;
+            }).ToList();
+            
+            if (validRooms.Count == 0)
+                validRooms = available; // Fallback if spacing impossible
+            
+            int chosenId = validRooms[Random.Range(0, validRooms.Count)];
+            Layout.roomDataMap[chosenId].roomType = roomType;
+            placed.Add(chosenId);
+            available.Remove(chosenId);
+        }
+    }
 
-            if (dir == -1) { roomsWithSpace.Remove(branchPoint); continue; }
+    int GetPathDistance(int room1, int room2)
+    {
+        // Simple Manhattan distance in grid
+        var pos1 = gridPositions[room1];
+        var pos2 = gridPositions[room2];
+        return Mathf.Abs(pos1.x - pos2.x) + Mathf.Abs(pos1.y - pos2.y);
+    }
 
-            RoomType type = RoomType.Normal;
-            if (shopsPlaced < dungeonConfig.shopRoomCount && Random.value < 0.3f) { type = RoomType.Shop; shopsPlaced++; }
-
-            var newRoom = new RoomData { id = nextRoomID++, neighbors = new int[4], roomType = type };
-            Layout.roomDataMap[branchPoint].neighbors[dir] = newRoom.id;
-            newRoom.neighbors[Opp(dir)] = branchPoint;
-
-            Vector2Int pos = gridPositions[branchPoint] + DIRS[dir];
-            gridPositions[newRoom.id] = pos;
-            occupied[pos] = newRoom.id;
-
-            Layout.roomDataMap[newRoom.id] = newRoom;
-
-            if (type == RoomType.Normal && GetEmptyDirectionCount(newRoom.id) > 0)
-                roomsWithSpace.Add(newRoom.id);
+    void ValidateRoomDistribution()
+    {
+        // Count current distribution
+        var typeCounts = new Dictionary<RoomType, int>();
+        foreach (RoomType type in System.Enum.GetValues(typeof(RoomType)))
+            typeCounts[type] = 0;
+        
+        foreach (var room in Layout.roomDataMap.Values)
+            typeCounts[room.roomType]++;
+        
+        // Log distribution
+        Debug.Log($"[Room Distribution] Start:{typeCounts[RoomType.Start]} " +
+                  $"Normal:{typeCounts[RoomType.Normal]} Elite:{typeCounts[RoomType.Elite]} " +
+                  $"Event:{typeCounts[RoomType.Event]} Shop:{typeCounts[RoomType.Shop]} " +
+                  $"Boss:{typeCounts[RoomType.Boss]}");
+        
+        // Check for early shop
+        bool hasEarlyShop = Layout.roomDataMap.Values.Any(r => 
+            r.roomType == RoomType.Shop && r.distanceFromStart <= 2);
+        
+        if (!hasEarlyShop && dungeonConfig.guaranteeEarlyShop)
+        {
+            Debug.LogWarning("[RoomGenerator] No early shop found, converting a room...");
+            // Convert nearest normal room to shop
+            var candidate = Layout.roomDataMap.Values
+                .Where(r => r.roomType == RoomType.Normal && r.distanceFromStart <= 2)
+                .OrderBy(r => r.distanceFromStart)
+                .FirstOrDefault();
+            
+            if (candidate != null)
+                candidate.roomType = RoomType.Shop;
         }
     }
 
@@ -230,6 +408,48 @@ public class RoomGenerator : MonoBehaviour
                 Vector2Int pos = gridPositions[bossLoc] + DIRS[dir];
                 gridPositions[boss.id] = pos;
                 occupied[pos] = boss.id;
+            }
+        }
+    }
+
+    void PlaceBossRoom()
+    {
+        // Find furthest dead-end room
+        var deadEnds = Layout.roomDataMap
+            .Where(kvp => GetConnectionCount(kvp.Key) == 1 && 
+                   kvp.Value.roomType != RoomType.Start)
+            .OrderByDescending(kvp => kvp.Value.distanceFromStart)
+            .Select(kvp => kvp.Key)
+            .ToList();
+        
+        if (deadEnds.Count > 0)
+        {
+            // Try to extend from furthest dead end
+            int bossLocation = deadEnds[0];
+            int dir = GetRandomEmptyDirection(bossLocation);
+            
+            if (dir != -1)
+            {
+                // Can extend - create new boss room
+                var boss = new RoomData { 
+                    id = nextRoomID++, 
+                    neighbors = new int[4], 
+                    roomType = RoomType.Boss,
+                    distanceFromStart = roomDistances[bossLocation] + 1
+                };
+                
+                Layout.roomDataMap[bossLocation].neighbors[dir] = boss.id;
+                boss.neighbors[Opp(dir)] = bossLocation;
+                Layout.roomDataMap[boss.id] = boss;
+                
+                Vector2Int pos = gridPositions[bossLocation] + DIRS[dir];
+                gridPositions[boss.id] = pos;
+                occupied[pos] = boss.id;
+            }
+            else
+            {
+                // Can't extend - convert the room itself
+                Layout.roomDataMap[bossLocation].roomType = RoomType.Boss;
             }
         }
     }

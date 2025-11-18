@@ -22,4 +22,4 @@ MonoBehaviour:
   fireEventTime: 0
   channelWindup: 0.15
   channelCooldown: 0.1
-  useUpperBodyLayerForAttacks: 0
+  useUpperBodyLayerForAttacks: 1

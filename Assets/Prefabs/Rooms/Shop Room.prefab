@@ -697,7 +697,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7386528077388556701}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dea2af49f6b28454699a35ee6efe6a90, type: 3}
+  m_Script: {fileID: 11500000, guid: c7f1cc0c264c04942bc50817dfbb6cfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   roomType: 3
@@ -709,6 +709,7 @@ MonoBehaviour:
   - {fileID: 3034041666097588974}
   - {fileID: 5567475832201832613}
   - {fileID: 8705788801835095017}
+  maxEnemies: 3
   enemyCount: 3
   spawnAreaSize: {x: 10, y: 5, z: 10}
   groundMask:
@@ -718,7 +719,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   minSpawnDistance: 2
-  enemyPrefab: {fileID: 8705725717222443200, guid: 97fd4f131dd65d845b42df81910399ef, type: 3}
+  enemyPrefab: {fileID: 0}
   isCleared: 0
   isInCombat: 0
   spawnedEnemies: []

@@ -129,7 +129,7 @@ public class Room : MonoBehaviour
     public void OnPlayerEnter(int fromDirection)
     {
         Debug.Log($"Player entered Room {roomIndex} from {fromDirection}");
-        if (isCleared || (roomType == RoomType.Start || roomType == RoomType.Shop))
+        if (isCleared || (roomType == RoomType.Start || roomType == RoomType.Shop || roomType == RoomType.Event))
         {
             UnlockAllDoors();               // semua pintu boleh dipakai
             if (spawnTrigger) spawnTrigger.gameObject.SetActive(false);

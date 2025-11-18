@@ -18,6 +18,8 @@ public class MinimapUI : MonoBehaviour
     public Color normalRoomColor = Color.gray;
     public Color shopRoomColor = Color.yellow;
     public Color bossRoomColor = Color.red;
+    public Color eventRoomColor = new Color(1f, 0.5f, 0f); // orange
+    public Color eliteRoomColor = new Color(0.5f, 0.2f, 1f); // ungu
     public Color currentRoomColor = Color.white;
     public Color visitedRoomColor = Color.white;
     public Color unvisitedRoomColor = new Color(0.3f, 0.3f, 0.3f, 0.5f);
@@ -457,6 +459,8 @@ public class MinimapUI : MonoBehaviour
             RoomType.Normal => normalRoomColor,
             RoomType.Shop => shopRoomColor,
             RoomType.Boss => bossRoomColor,
+            RoomType.Event => eventRoomColor,
+            RoomType.Elite => eliteRoomColor,
             _ => normalRoomColor
         };
     }
