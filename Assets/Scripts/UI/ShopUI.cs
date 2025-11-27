@@ -41,13 +41,20 @@ public class ShopUI : MonoBehaviour
         {
             if (i < weaponsForSale.Count)
             {
+                int index = i; // Capture index for the listener
+                weaponBuyButtons[i].onClick.RemoveAllListeners();
                 WeaponBase weapon = weaponsForSale[i];
                 weaponSlots[i].SetActive(true);
                 weaponImages[i].sprite = weapon.icon;
                 weaponNames[i].text = weapon.weaponName;
                 weaponPrices[i].text = weapon.price.ToString() + " Gold";
                 weaponDescriptions[i].text = weapon.description;
-                weaponBuyButtons[i].onClick.RemoveAllListeners();
+                if(Player.Instance.GetComponent<PlayerLoadout>().HasWeapon(weaponsForSale[i]))
+                {
+                    weaponImages[i].color = Color.gray; // Indicate already owned weapon
+                    weaponBuyButtons[i].interactable = false;
+                    continue;
+                }
                 weaponBuyButtons[i].onClick.AddListener(() => {
                     // Implement purchase logic here
                     if (PlayerStats.Instance.CanAfford(weapon.price))
@@ -55,6 +62,8 @@ public class ShopUI : MonoBehaviour
                         Debug.Log("Purchased: " + weapon.weaponName);
                         PlayerStats.Instance.SpendGold(weapon.price);
                         Player.Instance.GetComponent<PlayerLoadout>().AddToLoadout(weapon);
+                        weaponImages[index].color = Color.gray; // Indicate already owned weapon
+                        weaponBuyButtons[index].interactable = false;
                     }
                     else
                     {
@@ -74,6 +83,7 @@ public class ShopUI : MonoBehaviour
         {
             if (i < skillsForSale.Count)
             {
+                int index = i; // Capture index for the listener
                 skillBuyButtons[i].onClick.RemoveAllListeners();
                 SkillBase skill = skillsForSale[i];
                 skillSlots[i].SetActive(true);
@@ -89,11 +99,13 @@ public class ShopUI : MonoBehaviour
                 }
                 skillBuyButtons[i].onClick.AddListener(() => {
                     // Implement purchase logic here
-                    Debug.Log("Purchased: " + skill.skillName);
                     if (PlayerStats.Instance.CanAfford(skill.price))
                     {
+                        Debug.Log("Purchased: " + skill.skillName);
                         PlayerStats.Instance.SpendGold(skill.price);
                         Player.Instance.GetComponent<SkillManager>().PurchaseSkill(skill);
+                        skillImages[index].color = Color.gray; // Indicate already owned skill
+                        skillBuyButtons[index   ].interactable = false;
                     }
                     else
                     {

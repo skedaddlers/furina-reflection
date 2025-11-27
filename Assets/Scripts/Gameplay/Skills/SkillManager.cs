@@ -113,8 +113,8 @@ public class SkillManager : MonoBehaviour
             Debug.LogError("Trying to equip skill not owned");
             return;
         }
-        
         activeSkillSlots[slotIndex] = ownedSlot;
+        UIManager.Instance.skillsUI.UpdateSkillsUI(activeSkillSlots);
         OnSkillEquipped?.Invoke(skill);
     }
     

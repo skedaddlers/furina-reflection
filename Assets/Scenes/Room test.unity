@@ -3807,7 +3807,7 @@ PrefabInstance:
     - target: {fileID: 6078093185230963454, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: current
       value: 
-      objectReference: {fileID: 11400000, guid: afaedcb761b713342b328f5e33b06a23, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 6078093185230963454, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: loadout.Array.size
       value: 2
@@ -3815,14 +3815,14 @@ PrefabInstance:
     - target: {fileID: 6078093185230963454, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: 'loadout.Array.data[0]'
       value: 
-      objectReference: {fileID: 11400000, guid: afaedcb761b713342b328f5e33b06a23, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 6078093185230963454, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: 'loadout.Array.data[1]'
       value: 
-      objectReference: {fileID: 11400000, guid: bea791f8c286b5a4faf8d46af6133218, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: gold
-      value: 100
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: maxMana
@@ -4890,41 +4890,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757450ca3bf66554b807f62e8d7a401d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownedSkills:
-  - skill: {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
-  - skill: {fileID: 11400000, guid: 6e759b0bb886a4b469765ee8b3469bde, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
-  - skill: {fileID: 11400000, guid: e329ce488c6754f4483e5c4229d9d4c4, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
-  - skill: {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
+  ownedSkills: []
   maxActiveSkills: 4
   activeSkillSlots:
-  - skill: {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
+  - skill: {fileID: 0}
     currentCooldown: 0
     isOnCooldown: 0
-    level: 1
-  - skill: {fileID: 11400000, guid: 6e759b0bb886a4b469765ee8b3469bde, type: 2}
+    level: 0
+  - skill: {fileID: 0}
     currentCooldown: 0
     isOnCooldown: 0
-    level: 1
-  - skill: {fileID: 11400000, guid: e329ce488c6754f4483e5c4229d9d4c4, type: 2}
+    level: 0
+  - skill: {fileID: 0}
     currentCooldown: 0
     isOnCooldown: 0
-    level: 1
-  - skill: {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
+    level: 0
+  - skill: {fileID: 0}
     currentCooldown: 0
     isOnCooldown: 0
-    level: 1
+    level: 0
 --- !u!114 &1049335844 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}

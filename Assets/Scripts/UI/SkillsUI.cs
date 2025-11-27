@@ -47,6 +47,10 @@ public class SkillsUI : MonoBehaviour
         {
             if (i < activeSkillSlots.Length && activeSkillSlots[i].skill != null)
             {
+                skillIcons[i].enabled = true;
+                manaCosts[i].enabled = true;
+                cooldownTexts[i].enabled = true;
+                cooldownOverlays[i].enabled = true;
                 SkillBase skill = activeSkillSlots[i].skill;
                 skillIcons[i].sprite = skill.skillIcon;
                 manaCosts[i].text = skill.manaCost.ToString();

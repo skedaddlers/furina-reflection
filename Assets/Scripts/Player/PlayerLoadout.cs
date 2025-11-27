@@ -17,8 +17,11 @@ public class PlayerLoadout : MonoBehaviour
 
     void Start()
     {
-        current = loadout[0];
-        if (animBinder) animBinder.ApplyAnimSet(current.animSet);
+        if (loadout[0] != null)
+        {
+            current = loadout[0];
+            if (animBinder) animBinder.ApplyAnimSet(current.animSet);
+        }
     }
 
     public void Equip(int index)
@@ -41,11 +44,38 @@ public class PlayerLoadout : MonoBehaviour
 
     public void AddToLoadout(WeaponBase w)
     {
-        if (loadout.Length >= maxLoadoutSize)
+        int currentIndex = System.Array.IndexOf(loadout, current);
+
+        // Case spesifik: slot 0 isi, slot 1 kosong
+        if (loadout[0] != null && loadout[1] == null)
         {
-            loadout[System.Array.IndexOf(loadout, current)] = null;
+            loadout[1] = loadout[0]; // geser yang lama ke 1
+            loadout[0] = w;          // senjata baru ke 0
+            Equip(0);
+            return;
         }
-        loadout[System.Array.IndexOf(loadout, null)] = w;
-        Equip(System.Array.IndexOf(loadout, w));
+
+        // Kalau ada slot kosong biasa
+        int emptyIndex = System.Array.IndexOf(loadout, null);
+        if (emptyIndex != -1)
+        {
+            loadout[emptyIndex] = w;
+            Equip(emptyIndex);
+            return;
+        }
+
+        // Kalau full, replace current
+        if (currentIndex == -1) currentIndex = 0;
+        loadout[currentIndex] = w;
+        Equip(currentIndex);
+    }
+
+    public bool HasWeapon(WeaponBase w)
+    {
+        foreach (var weapon in loadout)
+        {
+            if (weapon == w) return true;
+        }
+        return false;
     }
 }
