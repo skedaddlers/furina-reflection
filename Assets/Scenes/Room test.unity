@@ -4899,6 +4899,14 @@ MonoBehaviour:
     currentCooldown: 0
     isOnCooldown: 0
     level: 0
+  - skill: {fileID: 11400000, guid: e329ce488c6754f4483e5c4229d9d4c4, type: 2}
+    currentCooldown: 0
+    isOnCooldown: 0
+    level: 0
+  - skill: {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
+    currentCooldown: 0
+    isOnCooldown: 0
+    level: 0
   maxActiveSkills: 4
   activeSkillSlots:
   - skill: {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
@@ -4909,11 +4917,11 @@ MonoBehaviour:
     currentCooldown: 0
     isOnCooldown: 0
     level: 1
-  - skill: {fileID: 0}
+  - skill: {fileID: 11400000, guid: e329ce488c6754f4483e5c4229d9d4c4, type: 2}
     currentCooldown: 0
     isOnCooldown: 0
     level: 1
-  - skill: {fileID: 0}
+  - skill: {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
     currentCooldown: 0
     isOnCooldown: 0
     level: 1
@@ -5462,7 +5470,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36301bdabcf7b8241889698779c65c16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableDDA: 1
+  enableDDA: 0
   debugMode: 0
 --- !u!4 &1130029149
 Transform:

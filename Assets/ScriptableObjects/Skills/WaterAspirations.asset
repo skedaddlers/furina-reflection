@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb488dd5a88524645acee265c222ad2c, type: 3}
   m_Name: WaterAspirations
   m_EditorClassIdentifier: 
-  skillName: 
+  skillName: Water
   description: 
   skillIcon: {fileID: 0}
   price: 0

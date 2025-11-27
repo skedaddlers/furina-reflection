@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62f8b24e7891d214e9509ff126d4739e, type: 3}
   m_Name: AuraOfTheFormerArchon
   m_EditorClassIdentifier: 
-  skillName: 
+  skillName: Aura
   description: 
   skillIcon: {fileID: 0}
   price: 0
@@ -34,3 +34,4 @@ MonoBehaviour:
   animationTrigger: 
   isUpgradeable: 0
   nextLevelSkill: {fileID: 0}
+  radius: 0

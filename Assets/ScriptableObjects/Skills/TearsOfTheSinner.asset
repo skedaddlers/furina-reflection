@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06f9e05bf7ca8c943b8331e30a22c832, type: 3}
   m_Name: TearsOfTheSinner
   m_EditorClassIdentifier: 
-  skillName: 
+  skillName: Tears
   description: 
   skillIcon: {fileID: 0}
   price: 0

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfb2ce83c23953b4ba943f5a42638570, type: 3}
   m_Name: SingerOfManyWaters
   m_EditorClassIdentifier: 
-  skillName: 
+  skillName: SInger
   description: 
   skillIcon: {fileID: 0}
   price: 0
