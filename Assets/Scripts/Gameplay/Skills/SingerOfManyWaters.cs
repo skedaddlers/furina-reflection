@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "TearsOfTheSinner", menuName = "Furina/Skills/Tears Of The Sinner")]
-public class TearsOfTheSinner : SkillBase
+[CreateAssetMenu(fileName = "SingerOfManyWaters", menuName = "Furina/Skills/Singer Of Many Waters")]
+public class SingerOfManyWaters : SkillBase
 {
-    // this skill summons a rain of tears that damages all enemies in a room over time
+    // this skill summons a singer that heals the player over time
     public override void OnSkillActivate(GameObject caster)
     {
         base.OnSkillActivate(caster);

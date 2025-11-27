@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfb2ce83c23953b4ba943f5a42638570, type: 3}
+  m_Name: SingerOfManyWaters
+  m_EditorClassIdentifier: 
+  skillName: 
+  description: 
+  skillIcon: {fileID: 0}
+  price: 0
+  skillID: 0
+  skillType: 0
+  targetType: 0
+  manaCost: 10
+  cooldownTime: 5
+  levelRequired: 1
+  purchasePrice: 100
+  duration: 0
+  damageAmount: 0
+  healAmount: 0
+  shieldAmount: 0
+  effectPrefab: {fileID: 0}
+  castSound: {fileID: 0}
+  impactSound: {fileID: 0}
+  statModifiers: []
+  animationTrigger: 
+  isUpgradeable: 0
+  nextLevelSkill: {fileID: 0}
