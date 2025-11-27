@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public abstract class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
     public float attackRange = 1.5f;
     public float attackCooldown = 1.5f;

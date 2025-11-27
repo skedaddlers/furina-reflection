@@ -94,10 +94,13 @@ PrefabInstance:
       addedObject: {fileID: 45310832842323965}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2549722619775263633}
+      addedObject: {fileID: 1515617572872959726}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1515617572872959726}
+      addedObject: {fileID: 8824784142229656006}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6259348790908507245}
   m_SourcePrefab: {fileID: 100100000, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
 --- !u!1 &8705725717222443200 stripped
 GameObject:
@@ -184,22 +187,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2549722619775263633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8705725717222443200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5c85756a8a5e81428a73f00a928a687, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackRange: 1.5
-  attackCooldown: 1.5
-  damage: 10
-  detectionRange: 10
 --- !u!114 &1515617572872959726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -229,3 +216,35 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 8705725717222443200}
+--- !u!114 &8824784142229656006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8705725717222443200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1723927270b6754f8f6d4365da49217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: 0
+  xpReward: 15
+  goldReward: 10
+--- !u!114 &6259348790908507245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8705725717222443200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5c85756a8a5e81428a73f00a928a687, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 1.5
+  attackCooldown: 1.5
+  damage: 10
+  detectionRange: 10
+  isPerformingSpecialAttack: 0

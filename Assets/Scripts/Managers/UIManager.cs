@@ -66,6 +66,9 @@ public class UIManager : MonoBehaviour
         playerStats.GetComponent<Health>().onHealthChanged += statsUI.UpdateHealthUI;
         statsUI.UpdateHealthUI(playerStats.health.maxHealth, playerStats.health.maxHealth);
         weaponUI.UpdateWeaponIcon(FindObjectOfType<PlayerLoadout>());
+        statsUI.UpdateLevelUI(playerStats.level);
+        statsUI.UpdateGoldUI(playerStats.gold);
+        statsUI.UpdateXPUI(playerStats.currentXP, playerStats.xpToNextLevel);
         shopUI.CloseShop();
     }
 

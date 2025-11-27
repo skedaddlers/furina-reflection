@@ -50,7 +50,7 @@ public class DDAIntegration : MonoBehaviour
     private void SubscribeToGameEvents()
     {
         // Subscribe to enemy death events to update score
-        Health.OnAnyDeath += OnEnemyDeath;
+        Enemy.OnAnyDeath += OnEnemyDeath;
         
         // Subscribe to player shooting events for accuracy tracking
         if (PlayerCombat.Instance != null)
@@ -61,7 +61,7 @@ public class DDAIntegration : MonoBehaviour
         }
     }
 
-    private void OnEnemyDeath(Health enemyHealth)
+    private void OnEnemyDeath(Enemy enemy)
     {
         if (scoreSensor != null)
         {
@@ -108,6 +108,6 @@ public class DDAIntegration : MonoBehaviour
     void OnDestroy()
     {
         // Cleanup event subscriptions
-        Health.OnAnyDeath -= OnEnemyDeath;
+        Enemy.OnAnyDeath -= OnEnemyDeath;
     }
 }

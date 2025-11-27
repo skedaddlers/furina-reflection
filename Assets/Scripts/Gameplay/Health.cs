@@ -9,7 +9,6 @@ public class Health : MonoBehaviour
     // on death event
     public Action onDeath;
     public Action<float, float> onHealthChanged; // (current, max)
-    public static event Action<Health> OnAnyDeath;
 
 
     void Start()
@@ -38,12 +37,7 @@ public class Health : MonoBehaviour
         onDeath?.Invoke();
         // kalau ini enemy → destroy
         // kalau ini player → trigger game over
-        if (CompareTag("Enemy"))
-        {
-            OnAnyDeath?.Invoke(this);
-            Destroy(gameObject);
-        }
-        else if (CompareTag("Player"))
+        if (CompareTag("Player"))
         {
             Debug.Log("Player Died!");
             // TODO: implement game over UI

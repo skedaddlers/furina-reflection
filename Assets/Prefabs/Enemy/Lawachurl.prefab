@@ -2407,6 +2407,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5536203884852970170}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3905815751628404084}
   m_SourcePrefab: {fileID: 100100000, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
 --- !u!4 &3595596980550615004 stripped
 Transform:
@@ -2523,3 +2526,18 @@ MonoBehaviour:
   detectionRange: 10
   isPerformingSpecialAttack: 0
   specialAttackCooldown: 5
+--- !u!114 &3905815751628404084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228300383457371494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1723927270b6754f8f6d4365da49217, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: 1
+  xpReward: 50
+  goldReward: 15

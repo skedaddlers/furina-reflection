@@ -9,6 +9,10 @@ public class StatsUI : MonoBehaviour
     public Slider manaSlider;
     public TextMeshProUGUI healthText;
     public Slider healthSlider;
+    public TextMeshProUGUI levelText;
+    public TextMeshProUGUI goldText;
+    public TextMeshProUGUI xpText;
+    public Slider xpSlider;
 
 
     public void UpdateManaUI(int currentMana = -1, int maxMana = -1)
@@ -25,5 +29,23 @@ public class StatsUI : MonoBehaviour
 
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;
+    }
+
+    public void UpdateLevelUI(int level)
+    {
+        levelText.text = $"Level: {level}";
+    }
+
+    public void UpdateGoldUI(int gold)
+    {
+        goldText.text = $"Gold: {gold}";
+    }
+
+    public void UpdateXPUI(int currentXP, int xpToNextLevel)
+    {
+        xpText.text = $"XP: {currentXP} / {xpToNextLevel}";
+
+        xpSlider.maxValue = xpToNextLevel;
+        xpSlider.value = currentXP;
     }
 }

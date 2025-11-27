@@ -23,6 +23,10 @@ namespace DDAMAPEKitFramework
         [SerializeField] private float profileUpdateFrequency = 10f;
         [SerializeField] private float explorationRate = 0.2f;
 
+        [Header("Symptoms (Designer editable)")]
+        [SerializeField] private bool useDefaultSymptoms = true;
+        [SerializeField] private SymptomConfig[] customSymptoms;
+        
         private PlayerModel playerModel;
         private Monitor monitor;
         private Analyzer analyzer;
@@ -177,18 +181,38 @@ namespace DDAMAPEKitFramework
         private void ConfigureDefaultSymptomsAndRules()
         {
             // Configure default symptoms based on the paper
-            symptomRepository.AddSymptom(new Symptom("very.high", 2.0f, 3.0f));
-            symptomRepository.AddSymptom(new Symptom("sharply.high", 1.8f, 2.0f));
-            symptomRepository.AddSymptom(new Symptom("high", 1.5f, 1.8f));
-            symptomRepository.AddSymptom(new Symptom("slightly.high", 1.1f, 1.5f));
-            symptomRepository.AddSymptom(new Symptom("normal", 0.9f, 1.1f));
-            symptomRepository.AddSymptom(new Symptom("slightly.low", 0.5f, 0.9f));
-            symptomRepository.AddSymptom(new Symptom("low", 0.2f, 0.5f));
-            symptomRepository.AddSymptom(new Symptom("very.low", 0.0f, 0.2f));
+            if(useDefaultSymptoms)
+            {
+                symptomRepository.AddSymptom(new Symptom("very.high", 2.0f, 3.0f));
+                symptomRepository.AddSymptom(new Symptom("sharply.high", 1.8f, 2.0f));
+                symptomRepository.AddSymptom(new Symptom("high", 1.5f, 1.8f));
+                symptomRepository.AddSymptom(new Symptom("slightly.high", 1.1f, 1.5f));
+                symptomRepository.AddSymptom(new Symptom("normal", 0.9f, 1.1f));
+                symptomRepository.AddSymptom(new Symptom("slightly.low", 0.5f, 0.9f));
+                symptomRepository.AddSymptom(new Symptom("low", 0.2f, 0.5f));
+                symptomRepository.AddSymptom(new Symptom("very.low", 0.0f, 0.2f));
+            }
+
+            if (customSymptoms != null)
+            {
+                foreach (var cfg in customSymptoms)
+                {
+                    if (string.IsNullOrEmpty(cfg.description)) continue;
+                    symptomRepository.AddSymptom(new Symptom(cfg.description, cfg.min, cfg.max));
+                }
+            }
         }
 
         public PlayerModel GetPlayerModel() => playerModel;
         public SymptomRepository GetSymptomRepository() => symptomRepository;
         public PolicyEngine GetPolicyEngine() => policyEngine;
     }
+}
+
+[System.Serializable]
+public struct SymptomConfig
+{
+    public string description;
+    public float min;
+    public float max;
 }

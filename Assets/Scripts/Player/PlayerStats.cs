@@ -4,6 +4,7 @@ using System;
 [DisallowMultipleComponent]
 public class PlayerStats : MonoBehaviour
 {
+    public static PlayerStats Instance;
     [Header("Core")]
     public int level = 1;
     public Health health;
@@ -21,6 +22,20 @@ public class PlayerStats : MonoBehaviour
     public int MaxMana => maxMana;
     public float manaRegenPerSecond = 1.0f;
 
+    [Header("Leveling")]
+    public int currentXP = 0;
+    public int xpToNextLevel = 100;
+    public float xpMultiplier = 1.0f;
+    public float xpGrowthRate = 1.2f;
+
+    [Header("Economy")]
+    public int gold = 0;
+    public int Gold
+    {
+        get => gold;
+        set => gold = Mathf.Max(0, value);
+    }
+
     [SerializeField] private int _currentMana;
     public int CurrentMana => _currentMana;
 
@@ -30,6 +45,16 @@ public class PlayerStats : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
         _currentMana = maxMana;
         onManaChanged?.Invoke(_currentMana, maxMana);
         health = GetComponent<Health>();
@@ -79,5 +104,40 @@ public class PlayerStats : MonoBehaviour
         // crit sederhana
         bool isCrit = UnityEngine.Random.value < critRate;
         return isCrit ? baseDmg * critMultiplier : baseDmg;
+    }
+
+    public void AddXP(int amount)
+    {
+        if (amount <= 0) return;
+        currentXP += amount;
+        UIManager.Instance.statsUI.UpdateXPUI(currentXP, xpToNextLevel);
+        while (currentXP >= xpToNextLevel)
+        {
+            currentXP -= xpToNextLevel;
+            LevelUp();
+        }
+    }
+
+    public void AddGold(int amount)
+    {
+        if (amount <= 0) return;
+        Gold += amount;
+        UIManager.Instance.statsUI.UpdateGoldUI(Gold);
+    }
+
+    public void SpendGold(int amount)
+    {
+        if (amount <= 0) return;
+        Gold = Mathf.Max(0, Gold - amount);
+        UIManager.Instance.statsUI.UpdateGoldUI(Gold);
+    }
+
+    private void LevelUp()
+    {
+        level++;
+        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * xpGrowthRate); // Increase XP needed for next level by growth rate
+        UIManager.Instance.statsUI.UpdateLevelUI(level);
+        UIManager.Instance.statsUI.UpdateXPUI(currentXP, xpToNextLevel);
+        // You can add more logic here for what happens when the player levels up
     }
 }
