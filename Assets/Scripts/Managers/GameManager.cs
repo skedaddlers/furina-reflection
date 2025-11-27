@@ -5,7 +5,8 @@ public enum GameState
     MainMenu,
     Playing,
     Paused,
-    GameOver
+    GameOver,
+    InMenu
 }
 
 public class GameManager : MonoBehaviour
@@ -77,6 +78,10 @@ public class GameManager : MonoBehaviour
             case GameState.GameOver:
                 Time.timeScale = 0;
                 // Show game over UI
+                break;
+            case GameState.InMenu:
+                Time.timeScale = 1;
+                // Show in-game menu UI
                 break;
         }
     }

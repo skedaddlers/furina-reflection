@@ -3821,6 +3821,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: bea791f8c286b5a4faf8d46af6133218, type: 2}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: gold
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: maxMana
       value: 100
       objectReference: {fileID: 0}
@@ -5530,7 +5534,7 @@ MonoBehaviour:
   accuracyWeight: 0.5
   rules:
   - id: 
-    symptomDescription: 
+    symptomDescription: low
     profileId: 0
     variableChanges:
     - variableName: 

@@ -132,6 +132,11 @@ public class PlayerStats : MonoBehaviour
         UIManager.Instance.statsUI.UpdateGoldUI(Gold);
     }
 
+    public bool CanAfford(int amount)
+    {
+        return Gold >= amount;
+    }
+
     private void LevelUp()
     {
         level++;

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
+using DG.Tweening;
 
 public class ShopUI : MonoBehaviour
 {
@@ -29,7 +30,11 @@ public class ShopUI : MonoBehaviour
     public void OpenShopUI(List<WeaponBase> weaponsForSale, List<SkillBase> skillsForSale)
     {
         shopPanel.SetActive(true);
-        GameManager.Instance.ChangeState(GameState.Paused);
+        shopPanel.transform.localScale = Vector3.zero;
+        shopPanel.transform.DOScale(Vector3.one, 0.3f)
+            .SetEase(Ease.OutBack)
+            .SetUpdate(true);
+        GameManager.Instance.ChangeState(GameState.InMenu);
         GameManager.Instance.SetCursorState(true);
         // Setup weapon slots
         for (int i = 0; i < weaponSlots.Count; i++)
@@ -45,7 +50,17 @@ public class ShopUI : MonoBehaviour
                 weaponBuyButtons[i].onClick.RemoveAllListeners();
                 weaponBuyButtons[i].onClick.AddListener(() => {
                     // Implement purchase logic here
-                    Debug.Log("Purchased: " + weapon.weaponName);
+                    if (PlayerStats.Instance.CanAfford(weapon.price))
+                    {
+                        Debug.Log("Purchased: " + weapon.weaponName);
+                        PlayerStats.Instance.SpendGold(weapon.price);
+                        Player.Instance.GetComponent<PlayerLoadout>().AddToLoadout(weapon);
+                    }
+                    else
+                    {
+                        // Not enough gold feedback
+                    }
+                    // Debug.Log("Purchased: " + weapon.weaponName);
                 });
             }
             else
@@ -59,16 +74,31 @@ public class ShopUI : MonoBehaviour
         {
             if (i < skillsForSale.Count)
             {
+                skillBuyButtons[i].onClick.RemoveAllListeners();
                 SkillBase skill = skillsForSale[i];
                 skillSlots[i].SetActive(true);
                 skillImages[i].sprite = skill.skillIcon;
                 skillNames[i].text = skill.skillName;
                 skillPrices[i].text = skill.price.ToString() + " Gold";
                 skillDescriptions[i].text = skill.description;
-                skillBuyButtons[i].onClick.RemoveAllListeners();
+                if(Player.Instance.GetComponent<SkillManager>().HasSkill(skillsForSale[i]))
+                {
+                    skillImages[i].color = Color.gray; // Indicate already owned skill
+                    skillBuyButtons[i].interactable = false;
+                    continue;
+                }
                 skillBuyButtons[i].onClick.AddListener(() => {
                     // Implement purchase logic here
                     Debug.Log("Purchased: " + skill.skillName);
+                    if (PlayerStats.Instance.CanAfford(skill.price))
+                    {
+                        PlayerStats.Instance.SpendGold(skill.price);
+                        Player.Instance.GetComponent<SkillManager>().PurchaseSkill(skill);
+                    }
+                    else
+                    {
+                        // Not enough gold feedback
+                    }
                 });
             }
             else
