@@ -162,7 +162,7 @@ public class RoomGenerator : MonoBehaviour
                     id = nextRoomID++, 
                     neighbors = new int[4], 
                     roomType = RoomType.Normal, // Temporary, will reassign
-                    distanceFromStart = roomDistances[current] + 1
+                    distanceFromStart = roomDistances[current] + 1,
                 };
                 
                 // Connect rooms
@@ -185,6 +185,13 @@ public class RoomGenerator : MonoBehaviour
             // Re-add current room if it still has space
             if (GetEmptyDirectionCount(current) > 0 && Random.value < 0.5f)
                 frontier.Enqueue(current);
+        }
+
+        foreach (var kvp in Layout.roomDataMap)
+        {
+            var room = kvp.Value;
+            // contoh: makin jauh makin berat, tapi clamp dikit
+            room.difficultyWeight = Mathf.Clamp01(0.5f + 0.1f * room.distanceFromStart);
         }
         
         // Add some loops

@@ -48,9 +48,11 @@ public class RoomManager : MonoBehaviour
         }
 
         player.SetParent(null, true);
+        player.SetParent(nextRoom.transform, true);
+        Debug.Log($"Before move: Player Pos {player.position}, Room {nextRoomID} Pos {nextRoom.transform.position}");
         player.position = spawnPos;
         player.rotation = nextRoom.transform.rotation;
-        player.SetParent(nextRoom.transform, true);
+        Debug.Log($"After move: Player Pos {player.position}, Room {nextRoomID} Pos {nextRoom.transform.position}");
 
         nextRoom.OnPlayerEnter(fromDoorIndex);
 

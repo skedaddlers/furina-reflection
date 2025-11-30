@@ -27,7 +27,7 @@ public class DoorTrigger : MonoBehaviour
         // Kalau player di area & menekan F → pindah ke room tetangga
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.F))
         {
-            parentRoom.GoToNeighbor(directionIndex);
+            parentRoom.OnDoorInteract(directionIndex);
             isPlayerNearby = false;
         }
     }

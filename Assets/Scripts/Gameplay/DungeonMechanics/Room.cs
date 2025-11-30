@@ -5,6 +5,12 @@ public class Room : MonoBehaviour
 {
     public RoomType roomType;
     public int roomIndex;
+
+    [Header("Difficulty / Progression Info")]
+    public int distanceFromStart;      // di-fill dari RoomData
+    public float difficultyWeight = 1; // optional kalau mau pakai nanti
+
+    [Header("Room Structure")]
     public SpawnTrigger spawnTrigger = null;
     public int[] roomNeighbors = new int[4]; // [forward, right, back, left]
     public GameObject[] doors = new GameObject[4]; // urutan sama
@@ -32,6 +38,9 @@ public class Room : MonoBehaviour
         roomIndex = data.id;
         roomNeighbors = data.neighbors;
         roomType = data.roomType;
+
+        distanceFromStart = data.distanceFromStart;
+        difficultyWeight = data.difficultyWeight;
 
         // Set doors active/inactive based on neighbors
         for (int i = 0; i < 4; i++)
@@ -128,7 +137,8 @@ public class Room : MonoBehaviour
 
     public void OnPlayerEnter(int fromDirection)
     {
-        Debug.Log($"Player entered Room {roomIndex} from {fromDirection}");
+        lastEnterFrom = fromDirection;
+        // Debug.Log($"Player entered Room {roomIndex} from {fromDirection}");
         if (isCleared || (roomType == RoomType.Start || roomType == RoomType.Shop || roomType == RoomType.Event))
         {
             UnlockAllDoors();               // semua pintu boleh dipakai
@@ -150,13 +160,24 @@ public class Room : MonoBehaviour
         if (isCleared || isInCombat) return;
 
         isInCombat = true;
+
+        var diff = GlobalDifficultyState.Instance;
+        if (diff != null)
+        {
+            enemyCount = diff.GetEnemyCountForRoom(this);
+        }
+        else
+        {
+            enemyCount = Mathf.Clamp(enemyCount, 1, maxEnemies);
+        }
+        Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
         SpawnEnemiesInRoom();
         LockAllDoors();
     }
 
     public void OnDoorInteract(int direction)
     {
-        if (isLocked && direction != GetOpposite(lastEnterFrom))
+        if (isLocked && direction != lastEnterFrom)
         {
             Debug.Log("Room is locked! Cannot exit through this door.");
             return;

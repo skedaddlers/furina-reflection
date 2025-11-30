@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour
     public float dashDuration = 0.3f;
     public float holdThreshold = 0.25f; // waktu untuk bedain tap vs hold (dalam detik)
     public Transform cameraTransform;
-    public GameObject sword; // reference ke objek sword
     // === Combat lock ===
     [Header("Combat Lock / Auto Aim")]
     public float autoAimRadius = 12f;            // radius cari musuh
@@ -50,10 +49,6 @@ public class PlayerController : MonoBehaviour
         playerCombat = GetComponent<PlayerCombat>();
         skillManager = GetComponent<SkillManager>();
         _animBinder = GetComponent<PlayerAnimationBinder>();
-        
-        // Sword selalu aktif (atau bisa diatur sesuai kebutuhan)
-        if (sword != null)
-            sword.SetActive(true);
     }
 
     void Update()

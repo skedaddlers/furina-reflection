@@ -9,6 +9,10 @@ public class PlayerLoadout : MonoBehaviour
     public WeaponBase[] loadout = new WeaponBase[2];
     private int maxLoadoutSize = 2;
 
+    // event to subscribe when weapon changes
+    public delegate void OnWeaponChanged(WeaponBase newWeapon);
+    public event OnWeaponChanged onWeaponChanged;
+
     void Awake()
     {
         if (!animBinder) animBinder = GetComponent<PlayerAnimationBinder>();
@@ -29,6 +33,7 @@ public class PlayerLoadout : MonoBehaviour
         if (index < 0 || index >= loadout.Length) return;
 
         current = loadout[index];
+        onWeaponChanged?.Invoke(current);
         UIManager.Instance.weaponUI?.UpdateWeaponIcon(this);
         // sinkron ke combat & anim
         if (animBinder) animBinder.ApplyAnimSet(current.animSet);

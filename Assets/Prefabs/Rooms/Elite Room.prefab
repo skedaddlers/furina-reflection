@@ -385,6 +385,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomType: 5
   roomIndex: 0
+  distanceFromStart: 0
+  difficultyWeight: 1
   spawnTrigger: {fileID: 7158363839760584567}
   roomNeighbors: 00000000000000000000000000000000
   doors:
@@ -392,7 +394,7 @@ MonoBehaviour:
   - {fileID: 6880289590999414734}
   - {fileID: 2449373732708187433}
   - {fileID: 4411320387035580006}
-  maxEnemies: 1
+  maxEnemies: 12
   enemyCount: 1
   spawnAreaSize: {x: 10, y: 5, z: 10}
   groundMask:
