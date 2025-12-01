@@ -80,9 +80,11 @@ public class GameManager : MonoBehaviour
                 // Show game over UI
                 break;
             case GameState.InMenu:
-                Time.timeScale = 1;
+                Time.timeScale = 0;
                 // Show in-game menu UI
                 break;
         }
     }
+
+    public bool IsPaused => CurrentState == GameState.Paused || CurrentState == GameState.MainMenu || CurrentState == GameState.GameOver;
 }

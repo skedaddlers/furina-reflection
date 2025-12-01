@@ -8,6 +8,9 @@ public class Projectile : MonoBehaviour
     public float damage = 5f;
     public LayerMask hitMask; // set agar kena Enemy/Obstacle
 
+    [Header("Visuals")]
+    public ParticleSystem hitEffect;
+
     private Vector3 _dir;
     private float _timer;
 
@@ -37,6 +40,12 @@ public class Projectile : MonoBehaviour
         if (health != null)
         {
             health.TakeDamage(damage);
+        }
+
+        // Play hit effect
+        if (hitEffect != null)
+        {
+            Instantiate(hitEffect, transform.position, Quaternion.identity);
         }
 
         // Hancurkan saat kena apapun yang valid

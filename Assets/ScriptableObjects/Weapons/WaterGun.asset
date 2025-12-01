@@ -27,3 +27,4 @@ MonoBehaviour:
   projectileSpeed: 20
   projectileLifeTime: 4
   animSet: {fileID: 11400000, guid: de146a2ddd12efa418bd36c091d6d100, type: 2}
+  useCameraAim: 0

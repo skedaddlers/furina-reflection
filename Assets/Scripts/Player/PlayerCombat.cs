@@ -8,6 +8,8 @@ public class PlayerCombat : MonoBehaviour
     public Transform attackOrigin; // arah serangan (mis: titik depan player / socket senjata)
     public LayerMask enemyMask;
     public PlayerStats stats; // NEW
+    public Transform aimCamera;
+    public LayerMask hitMask;
 
     [Header("Weapon Loadout")]
     public PlayerAnimationBinder animBinder;
@@ -35,6 +37,11 @@ public class PlayerCombat : MonoBehaviour
         // {
         //     loadout.Equip(0);
         // }
+        if (aimCamera == null)
+        {
+            var cam = Camera.main;
+            if (cam != null) aimCamera = cam.transform;
+        }
     }
 
     public bool TryUseWeapon()
@@ -94,23 +101,52 @@ public class PlayerCombat : MonoBehaviour
     }
 
     // Projectile fire
-    public void FireProjectile(GameObject projPrefab, float speed, float lifeTime, float damage, float maxRange)
+    public void FireProjectile(
+        GameObject projPrefab,
+        float speed,
+        float lifeTime,
+        float damage,
+        float maxRange,
+        bool useCameraAim = false
+    )
     {
         if (projPrefab == null) return;
+
         Transform muzzle = attackOrigin != null ? attackOrigin : transform;
-        Vector3 dir = muzzle.forward;
+
+        Vector3 dir;
+
+        if (useCameraAim && aimCamera != null)
+        {
+            // Ray dari kamera lewat crosshair (tengah layar)
+            Ray ray = new Ray(aimCamera.position, aimCamera.forward);
+            RaycastHit hit;
+            Vector3 targetPoint;
+
+            // 1000f jarak max, layerMask bebas (bisa kamu ganti kalau mau)
+            if (Physics.Raycast(ray, out hit, 1000f, hitMask))
+            {
+                targetPoint = hit.point;
+            }
+            else
+            {
+                targetPoint = aimCamera.position + aimCamera.forward * 1000f;
+            }
+
+            dir = (targetPoint - muzzle.position).normalized;
+        }
+        else
+        {
+            // default: tembak lurus dari muzzle
+            dir = muzzle.forward;
+        }
 
         GameObject go = Instantiate(projPrefab, muzzle.position, Quaternion.LookRotation(dir));
         var proj = go.GetComponent<Projectile>();
         if (proj == null) proj = go.AddComponent<Projectile>();
         proj.Init(dir, speed, lifeTime, damage);
-        Debug.Log($"Fired projectile {go.name}");
 
-        // // Optional: auto-destroy by distance (fallback)
-        // if (maxRange > 0f)
-        // {
-        //     Destroy(go, Mathf.Max(lifeTime, maxRange / Mathf.Max(0.1f, speed)));
-        // }
+        Debug.Log($"Fired projectile {go.name} with dir {dir}");
     }
 
     // Called through animation event

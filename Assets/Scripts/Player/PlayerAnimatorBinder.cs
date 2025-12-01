@@ -50,4 +50,10 @@ public class PlayerAnimationBinder : MonoBehaviour
         if (!string.IsNullOrEmpty(currentAnimSet.channelBool))
             animator.SetBool(currentAnimSet.channelBool, on);
     }
+
+    public void SetAim(bool isAiming)
+    {
+        if (animator == null) return;
+        animator.SetBool("IsAiming", isAiming);
+    }
 }

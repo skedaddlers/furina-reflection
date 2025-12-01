@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d5e05ece3f9c1f4dbb60800c143cf94, type: 3}
+  m_Name: Bow
+  m_EditorClassIdentifier: 
+  id: weapon_id
+  weaponName: Bow
+  description: Awol
+  icon: {fileID: 0}
+  price: 78
+  baseDamage: 25
+  range: 2
+  angle: 60
+  cooldown: 0.4
+  manaCost: 0
+  projectilePrefab: {fileID: 3897606349267117842, guid: 3d93df6fa18c9a840bb2faa7ebc11faa, type: 3}
+  projectileSpeed: 20
+  projectileLifeTime: 4
+  animSet: {fileID: 11400000, guid: 9c66520de583f7b469b09579f3cd7d7c, type: 2}
+  useCameraAim: 1

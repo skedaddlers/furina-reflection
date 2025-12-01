@@ -38,6 +38,7 @@ public class Shop : MonoBehaviour
         // if in range of collider and press interact key
         if (Input.GetKeyDown(KeyCode.E) && isPlayerInRange)
         {
+            player.GetComponent<PlayerController>().ResetAllStates();
             UIManager.Instance.shopUI.OpenShopUI(weaponsForSale, skillsForSale);
             UIManager.Instance.ShowInterractionUI(false, "");
         }

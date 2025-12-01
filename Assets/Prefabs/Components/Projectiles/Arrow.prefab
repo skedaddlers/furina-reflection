@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3667981546764158118}
   - component: {fileID: 7933930715022831805}
   m_Layer: 10
-  m_Name: WaterBullets
+  m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,8 +31,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.88, y: 0.24, z: 0.81}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 0.15, y: 0.09, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f84ec0cbbd24d3f4899945bf027e6565, type: 2}
+  - {fileID: 2100000, guid: 31df8746b05db4b4d828de478438a686, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -155,4 +155,4 @@ MonoBehaviour:
   hitMask:
     serializedVersion: 2
     m_Bits: 960
-  hitEffect: {fileID: 1285461008595968975, guid: 673dd86dc0590e84a976de2f8dc35a63, type: 3}
+  hitEffect: {fileID: 6063287097601494674, guid: af44cbf49172b8d42b452221c9638892, type: 3}

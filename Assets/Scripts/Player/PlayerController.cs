@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-
+using Unity.Cinemachine;
 public class PlayerController : MonoBehaviour
 {
     public PlayerStats stats;
@@ -21,7 +21,17 @@ public class PlayerController : MonoBehaviour
     public float combatLockSeconds = 2.0f;       // durasi auto-face setelah serang
     public float breakDistance = 15f;            // jarak putus lock
     public LayerMask enemyMask;                  // optional: filter physics
+    
+    [Header("Bow Aim Settings")]
+    public GameObject bowCrosshair;      // assign di inspector
+    public float bowAimFOV = 40f;        // FOV saat aim
+    public float bowFovLerpSpeed = 15f;  // seberapa cepat lerp FOV
+    public GameObject cameraTarget;
 
+    private bool isBowAiming = false;
+    [SerializeField]
+    private CinemachineCamera mainCam;
+    private float defaultFOV;
     private float _combatLockUntil = -1f;
     private Transform _combatTarget;
     private bool InCombatLock => Time.time < _combatLockUntil && _combatTarget != null;
@@ -30,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private PlayerCombat playerCombat;
     private CharacterController controller;
+    [SerializeField]
     private PlayerAnimationBinder _animBinder;
     private Vector3 velocity;
     private bool isGrounded;
@@ -49,10 +60,17 @@ public class PlayerController : MonoBehaviour
         playerCombat = GetComponent<PlayerCombat>();
         skillManager = GetComponent<SkillManager>();
         _animBinder = GetComponent<PlayerAnimationBinder>();
+        // find main camera with tag CinemachineCamera
+        mainCam = GameObject.FindGameObjectWithTag("CinemachineCamera").GetComponent<CinemachineCamera>();
+        if (mainCam != null)
+        {
+            defaultFOV = mainCam.Lens.FieldOfView;
+        }
     }
 
     void Update()
     {
+        if (GameManager.Instance.IsPaused) return;
         // Cek apakah player nyentuh tanah
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
@@ -115,22 +133,73 @@ public class PlayerController : MonoBehaviour
         // Movement
         float speed = isSprinting ? runSpeed : walkSpeed;
 
-        if (inputDir.magnitude >= 0.1f) {
-            float targetAngle = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-            Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+        if (inputDir.magnitude >= 0.1f)
+        {
+            if (isBowAiming)
+            {
+                // --- Rotate whole upper body (no need to edit animation) ---
+                Vector3 camFwd = cameraTransform.forward;
+                camFwd.y = 0;
+                camFwd.Normalize();
 
-            // GANTI logika rotasi: kalau lock → hadap musuh; kalau tidak → hadap arah gerak (lama)
-            if (InCombatLock && !isSprinting) {
-                FaceTarget(_combatTarget, 1.0f); // sedikit lebih cepat dari rotasi biasa kalau mau: 1.2f
-            } else {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(moveDir), Time.deltaTime * rotationSpeed);
+                // --- Strafe movement style ---
+                Vector3 camRight = cameraTransform.right;
+                camRight.y = 0;
+
+                Quaternion lookRot = Quaternion.LookRotation(camRight);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    lookRot,
+                    Time.deltaTime * rotationSpeed * 2f // lebih cepat biar aim responsif
+                );
+                Vector3 moveDir =
+                    camFwd * Input.GetAxis("Vertical") +
+                    camRight * Input.GetAxis("Horizontal");
+
+                controller.Move(moveDir.normalized * walkSpeed * Time.deltaTime);
+
+                animator.SetFloat("WalkSpeed", moveDir.magnitude > 0 ? 0.5f : 0f);
+            }
+            else
+            {
+                float targetAngle = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+                Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+
+                if (InCombatLock && !isSprinting)
+                {
+                    FaceTarget(_combatTarget, 1.0f);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Slerp(
+                        transform.rotation,
+                        Quaternion.LookRotation(moveDir),
+                        Time.deltaTime * rotationSpeed
+                    );
+                }
+
+                controller.Move(moveDir * speed * Time.deltaTime);
+                animator.SetFloat("WalkSpeed", isSprinting ? 1f : 0.5f, 0.1f, Time.deltaTime);
+            }
+        }
+        else
+        {
+            if (isBowAiming)
+            {
+                // diam tapi tetep hadap ke camera
+                Vector3 camRight = cameraTransform.right;
+                camRight.y = 0f;
+                if (camRight.sqrMagnitude > 0.0001f)
+                {
+                    Quaternion targetRot = Quaternion.LookRotation(camRight);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed * 2f);
+                }
+            }
+            else
+            {
+                if (InCombatLock && !isSprinting) FaceTarget(_combatTarget, 1.2f);
             }
 
-            controller.Move(moveDir * speed * Time.deltaTime);
-            animator.SetFloat("WalkSpeed", isSprinting ? 1f : 0.5f, 0.1f, Time.deltaTime);
-        } else {
-            // diam di tempat → kalau lock, tetap hadap target
-            if (InCombatLock && !isSprinting) FaceTarget(_combatTarget, 1.2f);
             animator.SetFloat("WalkSpeed", 0f, 0.1f, Time.deltaTime);
         }
 
@@ -140,17 +209,42 @@ public class PlayerController : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
 
-        // Attack dengan cooldown
-        if (Input.GetMouseButtonDown(0) && !isDodging)
+        if (mainCam != null)
         {
-            if (!playerCombat.IsAttacking)
+            float targetFov = isBowAiming ? bowAimFOV : defaultFOV;
+            float sideOffset = isBowAiming ? 0.5f : 0f; // contoh offset saat aim
+            cameraTarget.transform.localPosition = Vector3.Lerp(
+                cameraTarget.transform.localPosition,
+                new Vector3(cameraTarget.transform.localPosition.x, cameraTarget.transform.localPosition.y, sideOffset),
+                Time.deltaTime * bowFovLerpSpeed
+            );
+            mainCam.Lens.FieldOfView = Mathf.Lerp(
+                mainCam.Lens.FieldOfView,
+                targetFov,
+                Time.deltaTime * bowFovLerpSpeed
+            );
+        }
+
+        // Attack dengan cooldown
+        if (!HasBowEquipped)
+        {
+            // NORMAL weapon (melee / gun / laser, dll)
+            if (Input.GetMouseButtonDown(0) && !isDodging)
             {
-                bool success = playerCombat.TryUseWeapon();
-                if (success)
+                if (!playerCombat.IsAttacking)
                 {
-                    PerformAttack();
+                    bool success = playerCombat.TryUseWeapon();
+                    if (success)
+                    {
+                        PerformAttack();
+                    }
                 }
             }
+        }
+        else
+        {
+            // BOW: hold to aim, release to shoot
+            HandleBowInput();
         }
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
@@ -160,6 +254,7 @@ public class PlayerController : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            isBowAiming = false;
             playerCombat.loadout.Swap();
             playerCombat.ForceCancelAttack();
         }
@@ -193,12 +288,14 @@ public class PlayerController : MonoBehaviour
         if (t) StartCombatLock(t);
 
         var set = _animBinder?.currentAnimSet;
-        if (set == null || set.type == WeaponAnimType.Melee || set.type == WeaponAnimType.Bow || set.type == WeaponAnimType.BombThrow)
+        if (set == null || set.type == WeaponAnimType.Melee || set.type == WeaponAnimType.BombThrow)
             _animBinder?.PlayAttack(); // pakai trigger Attack
         else if (set.type == WeaponAnimType.OneHandGun || set.type == WeaponAnimType.TwoHandGun)
             _animBinder?.PlayShoot();  // pakai trigger Shoot
         else if (set.type == WeaponAnimType.ChannelLaser)
             _animBinder?.SetChannel(true); // mulai channel; matikan saat mouse up
+        else if (set.type == WeaponAnimType.Bow)
+            _animBinder?.PlayShoot();  // pakai trigger Shoot
 
         // untuk laser channel, hentikan saat input dilepas:
         // di Update():
@@ -223,6 +320,59 @@ public class PlayerController : MonoBehaviour
 
         isDodging = false;
     }
+
+    void HandleBowInput()
+    {
+        // mulai aim saat mouse down
+        if (Input.GetMouseButtonDown(0) && !isDodging && !isBowAiming)
+        {
+            BeginBowAim();
+        }
+
+        // kalau mau nanti ditambah charge logic, bisa pakai Input.GetMouseButton(0) di sini
+
+        // lepas -> tembak
+        if (Input.GetMouseButtonUp(0) && isBowAiming)
+        {
+            ReleaseBowShot();
+        }
+    }
+
+    void BeginBowAim()
+    {
+        isBowAiming = true;
+
+        // stop sprint & combat lock biar gak ganggu aim
+        CancelCombatLock();
+        isSprinting = false;
+        shiftHeld = false;
+        dashTriggered = false;
+
+        // kasih tau animator + UI crosshair
+        _animBinder?.SetAim(true); // kita bikin fungsi ini di binder
+        if (bowCrosshair != null)
+            bowCrosshair.SetActive(true);
+    }
+
+    void ReleaseBowShot()
+    {
+        isBowAiming = false;
+
+        _animBinder?.SetAim(false);
+        if (bowCrosshair != null)
+            bowCrosshair.SetActive(false);
+
+        // baru beneran pake weapon (cek mana, cooldown, dll)
+        // if (!playerCombat.IsAttacking)
+        // {
+        //     bool success = playerCombat.TryUseWeapon();
+        //     if (success)
+        //     {
+        //         PerformAttack(); // ini bakal mainin anim bow (Attack / Shoot) sesuai animSet
+        //     }
+        // }
+    }
+
     
     void StartCombatLock(Transform t, float extraSeconds = 0f) {
         if (t == null) return;
@@ -258,5 +408,27 @@ public class PlayerController : MonoBehaviour
         if (dir.sqrMagnitude < 0.0001f) return;
         var targetRot = Quaternion.LookRotation(dir.normalized);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed * rotSpeedMul);
+    }
+
+    public void ResetAllStates()
+    {
+        isBowAiming = false;
+        isDodging = false;
+        isSprinting = false;
+        shiftHeld = false;
+        dashTriggered = false;
+        CancelCombatLock();
+        _animBinder?.SetAim(false);
+        if (bowCrosshair != null)
+            bowCrosshair.SetActive(false);
+    }
+
+    bool HasBowEquipped
+    {
+        get
+        {
+            var set = _animBinder?.currentAnimSet;
+            return set != null && set.type == WeaponAnimType.Bow;
+        }
     }
 }
