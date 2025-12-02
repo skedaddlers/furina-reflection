@@ -47,6 +47,7 @@ public class EventRoomUI : MonoBehaviour
                 widget.button.onClick.AddListener(() =>
                 {
                     currentManager.OnChoiceSelected(capturedIndex);
+                    GameManager.Instance.ChangeState(GameState.Playing);
                 });
             }
             else
