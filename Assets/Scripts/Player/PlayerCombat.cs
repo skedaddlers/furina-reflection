@@ -149,7 +149,49 @@ public class PlayerCombat : MonoBehaviour
         Debug.Log($"Fired projectile {go.name} with dir {dir}");
     }
 
-    // Called through animation event
+    public void FireLaser(float damage, float range, float radius, bool useCameraAim = false)
+    {
+        Transform origin = attackOrigin != null ? attackOrigin : transform;
+
+        Vector3 dir;
+        if (useCameraAim && aimCamera != null)
+        {
+            dir = aimCamera.forward;
+        }
+        else
+        {
+            dir = origin.forward;
+        }
+
+        Vector3 start = origin.position;
+
+        // Kalau mau agak "tebal" pakai SphereCast, kalau mau line tipis pakai RaycastAll
+        RaycastHit[] hits = Physics.SphereCastAll(
+            start,
+            radius,
+            dir,
+            range,
+            enemyMask,
+            QueryTriggerInteraction.Ignore
+        );
+
+        foreach (var hit in hits)
+        {
+            var health = hit.collider.GetComponent<Health>();
+            if (health != null)
+            {
+                health.TakeDamage(damage);
+            }
+
+            // optional: VFX di titik hit
+            if (hitEffect != null)
+            {
+                Instantiate(hitEffect.gameObject, hit.point, Quaternion.LookRotation(-dir));
+            }
+        }
+
+        Debug.Log($"Laser fired from {start} dir {dir}, hit {hits.Length} colliders");
+    }
     
 
     public void SetIsAttacking(bool val)

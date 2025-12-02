@@ -32,6 +32,17 @@ public class Health : MonoBehaviour
         }
     }
 
+    public void Heal(float amount)
+    {
+        currentHealth += amount;
+        if (currentHealth > maxHealth)
+            currentHealth = maxHealth;
+        if (GetComponent<PlayerStats>() != null)
+        {
+            onHealthChanged?.Invoke(currentHealth, maxHealth);
+        }
+    }
+
     void Die()
     {
         onDeath?.Invoke();

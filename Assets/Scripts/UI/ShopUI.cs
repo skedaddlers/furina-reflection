@@ -123,7 +123,7 @@ public class ShopUI : MonoBehaviour
     public void CloseShop()
     {
         shopPanel.SetActive(false);
-        GameManager.Instance.ChangeState(GameState.Playing);
         GameManager.Instance.SetCursorState(false);
+        GameManager.Instance.ChangeState(GameState.Playing);
     }
 }

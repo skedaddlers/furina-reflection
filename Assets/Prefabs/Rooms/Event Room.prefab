@@ -660,6 +660,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6902003628654455650}
   - component: {fileID: 3122027807920853622}
+  - component: {fileID: 1943486101771266216}
   m_Layer: 0
   m_Name: Event Room
   m_TagString: Untagged
@@ -681,6 +682,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5335505085667557006}
+  - {fileID: 9146944881943552042}
   - {fileID: 7842390665992725164}
   - {fileID: 5538836582280422442}
   - {fileID: 2724809907804349107}
@@ -700,9 +702,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7f1cc0c264c04942bc50817dfbb6cfa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomType: 3
+  roomType: 4
   roomIndex: 0
+  distanceFromStart: 0
+  difficultyWeight: 1
   spawnTrigger: {fileID: 0}
+  eventTrigger: {fileID: 7746862259421702857}
   roomNeighbors: 00000000000000000000000000000000
   doors:
   - {fileID: 7537758176207119401}
@@ -724,6 +729,106 @@ MonoBehaviour:
   isInCombat: 0
   spawnedEnemies: []
   playerSpawn: {x: 0, y: 0, z: 0}
+--- !u!114 &1943486101771266216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7386528077388556701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01a22fcc3e022e440828fcd0c07cb121, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentRoom: {fileID: 0}
+  availableEvents:
+  - id: 
+    displayName: Try Your Luck
+    description: Roll 4 or more to get rewards! Take 10 damage on failure
+    eventType: 0
+    weight: 1
+    goldAmount: 150
+    xpAmount: 0
+    healAmount: 0
+    diceSides: 6
+    successThreshold: 3
+    curseDamage: 10
+    damageBuffMultiplier: 0
+    buffDuration: 0
+    battleEnemyCount: 0
+  - id: 
+    displayName: Midas Touch
+    description: Get 100 Gold!
+    eventType: 1
+    weight: 1
+    goldAmount: 100
+    xpAmount: 0
+    healAmount: 0
+    diceSides: 6
+    successThreshold: 3
+    curseDamage: 10
+    damageBuffMultiplier: 0
+    buffDuration: 0
+    battleEnemyCount: 0
+  - id: 
+    displayName: Blessing of Egeria
+    description: Gain attack buff for 30 seconds!
+    eventType: 2
+    weight: 1
+    goldAmount: 100
+    xpAmount: 0
+    healAmount: 0
+    diceSides: 6
+    successThreshold: 3
+    curseDamage: 10
+    damageBuffMultiplier: 1.3
+    buffDuration: 30
+    battleEnemyCount: 0
+  - id: 
+    displayName: Wish Upon a Lantern
+    description: Recieve weapon
+    eventType: 3
+    weight: 1
+    goldAmount: 100
+    xpAmount: 0
+    healAmount: 0
+    diceSides: 6
+    successThreshold: 3
+    curseDamage: 10
+    damageBuffMultiplier: 1.3
+    buffDuration: 30
+    battleEnemyCount: 0
+  - id: 
+    displayName: Hydro Enhancement
+    description: Upgrades one of your skills!
+    eventType: 4
+    weight: 1
+    goldAmount: 100
+    xpAmount: 0
+    healAmount: 0
+    diceSides: 6
+    successThreshold: 3
+    curseDamage: 10
+    damageBuffMultiplier: 1.3
+    buffDuration: 30
+    battleEnemyCount: 0
+  - id: 
+    displayName: Special Guest
+    description: Start battle, gain rewards upon completing
+    eventType: 5
+    weight: 1
+    goldAmount: 100
+    xpAmount: 0
+    healAmount: 0
+    diceSides: 6
+    successThreshold: 3
+    curseDamage: 10
+    damageBuffMultiplier: 1.3
+    buffDuration: 30
+    battleEnemyCount: 3
+  choicesPerEvent: 3
+  eventUI: {fileID: 0}
 --- !u!1 &8235411151096158427
 GameObject:
   m_ObjectHideFlags: 0
@@ -11935,6 +12040,133 @@ MeshCollider:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3537792449865722905, guid: f96442df40a0bf74bbd6431cf2ee05d9, type: 3}
   m_PrefabInstance: {fileID: 8702051319798660666}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8753520572650997697
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6902003628654455650}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.01
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.69
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.806335
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.93
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.55
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c2e40fa84d53ccd428f640eac126b1fb, type: 2}
+    - target: {fileID: 919132149155446097, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_Name
+      value: Key
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2021662434537690675}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7746862259421702857}
+  m_SourcePrefab: {fileID: 100100000, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+--- !u!1 &8483560436076313232 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+  m_PrefabInstance: {fileID: 8753520572650997697}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &2021662434537690675
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8483560436076313232}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.23, y: 4.58, z: 2.26}
+  m_Center: {x: -0.000000074505806, y: 2, z: 0.000000029802322}
+--- !u!114 &7746862259421702857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8483560436076313232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8ba8d2c9a0f27d4dbbf1ee8ecb98020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentRoom: {fileID: 0}
+--- !u!4 &9146944881943552042 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
+  m_PrefabInstance: {fileID: 8753520572650997697}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8817200380919057185
 PrefabInstance:

@@ -86,5 +86,5 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public bool IsPaused => CurrentState == GameState.Paused || CurrentState == GameState.MainMenu || CurrentState == GameState.GameOver;
+    public bool IsPaused => CurrentState == GameState.Paused || CurrentState == GameState.MainMenu || CurrentState == GameState.GameOver || CurrentState == GameState.InMenu;
 }

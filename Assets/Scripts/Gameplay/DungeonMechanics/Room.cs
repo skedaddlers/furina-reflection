@@ -12,6 +12,7 @@ public class Room : MonoBehaviour
 
     [Header("Room Structure")]
     public SpawnTrigger spawnTrigger = null;
+    public EventTrigger eventTrigger = null;
     public int[] roomNeighbors = new int[4]; // [forward, right, back, left]
     public GameObject[] doors = new GameObject[4]; // urutan sama
 
@@ -53,6 +54,8 @@ public class Room : MonoBehaviour
                 trig.directionIndex = i;
                 if (spawnTrigger)
                     spawnTrigger.parentRoom = this;
+                if (eventTrigger)
+                    eventTrigger.parentRoom = this;
             }
             else
                 doors[i].SetActive(false);
@@ -139,10 +142,11 @@ public class Room : MonoBehaviour
     {
         lastEnterFrom = fromDirection;
         // Debug.Log($"Player entered Room {roomIndex} from {fromDirection}");
-        if (isCleared || (roomType == RoomType.Start || roomType == RoomType.Shop || roomType == RoomType.Event))
+        if (isCleared || (roomType == RoomType.Start || roomType == RoomType.Shop))
         {
             UnlockAllDoors();               // semua pintu boleh dipakai
             if (spawnTrigger) spawnTrigger.gameObject.SetActive(false);
+            if (eventTrigger) eventTrigger.gameObject.SetActive(false);
         }
         else
         {
@@ -190,7 +194,7 @@ public class Room : MonoBehaviour
         }
     }
 
-    void LockAllDoors()
+    public void LockAllDoors()
     {
         isLocked = true;
         foreach (var door in doors)
@@ -203,7 +207,7 @@ public class Room : MonoBehaviour
         }
     }
 
-    void UnlockAllDoors()
+    public void UnlockAllDoors()
     {
         isLocked = false;
         foreach (var door in doors)

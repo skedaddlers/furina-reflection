@@ -11,6 +11,7 @@ public class UIManager : MonoBehaviour
     public WeaponUI weaponUI;
     public SkillsUI skillsUI;
     public ShopUI shopUI;
+    public EventRoomUI eventRoomUI;
     public CursorController cursorController;
     [Header("Door Interaction UI")]
     public CanvasGroup doorPromptCanvas;
@@ -54,6 +55,10 @@ public class UIManager : MonoBehaviour
         if (shopUI == null)
         {
             shopUI = GetComponent<ShopUI>();
+        }
+        if (eventRoomUI == null)
+        {
+            eventRoomUI = GetComponent<EventRoomUI>();
         }
         InitUI();
         cursorController.LockCursor();

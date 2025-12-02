@@ -70,7 +70,18 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance.IsPaused) return;
+        if (GameManager.Instance.IsPaused) 
+        {
+            if (isBowAiming)
+            {
+                isBowAiming = false;
+                _animBinder?.SetAim(false);
+                if (bowCrosshair != null)
+                    bowCrosshair.SetActive(false);
+            }
+            return;
+        }
+
         // Cek apakah player nyentuh tanah
         isGrounded = controller.isGrounded;
         if (isGrounded && velocity.y < 0)
