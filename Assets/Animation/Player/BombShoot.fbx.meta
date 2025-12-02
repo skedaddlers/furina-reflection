@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c01c09bfcdab0f945a3c1b27cbfa260a
+guid: 66540657126d82540b3dfd38c7041b9a
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Shoot Gun
+      name: Shoot Bomb
       takeName: mixamo.com
       internalID: -203655887218126122
       firstFrame: 0
-      lastFrame: 19
+      lastFrame: 35
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -55,21 +55,14 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0.52579546
+      - time: 0.31676686
         functionName: TriggerAttackHit
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.71946955
-        functionName: TriggerAttackHit
-        data: 
-        objectReferenceParameter: {instanceID: 0}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 1
+      - time: 0.52702695
         functionName: EndAttack
         data: 
         objectReferenceParameter: {instanceID: 0}

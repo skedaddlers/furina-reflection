@@ -1229,6 +1229,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1847971773}
   - {fileID: 1126277176}
   - {fileID: 1547532265}
   - {fileID: 685317974}
@@ -1236,7 +1237,6 @@ RectTransform:
   - {fileID: 314728598}
   - {fileID: 1473120876}
   - {fileID: 270749759}
-  - {fileID: 1847971773}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2601,11 +2601,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 506701940}
   m_CullTransparentMesh: 1
---- !u!4 &529353427 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3763157798463411327, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-  m_PrefabInstance: {fileID: 855542996}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &533169857
 GameObject:
   m_ObjectHideFlags: 0
@@ -3800,28 +3795,16 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-      propertyPath: spine
-      value: 
-      objectReference: {fileID: 529353427}
-    - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-      propertyPath: bowAimFOV
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: bowCrosshair
       value: 
       objectReference: {fileID: 1847971772}
     - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-      propertyPath: cameraTarget
-      value: 
-      objectReference: {fileID: 1847814870}
-    - target: {fileID: 5143592966940413264, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 637709096}
-    - target: {fileID: 5949525086677251983, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-      propertyPath: hitMask.m_Bits
-      value: 448
+    - target: {fileID: 5824748219904918748, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.757
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9155,11 +9138,6 @@ RectTransform:
   m_AnchoredPosition: {x: -546.64246, y: 461.9}
   m_SizeDelta: {x: 319.91498, y: 152.12042}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1847814870 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 377129471940795034, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-  m_PrefabInstance: {fileID: 855542996}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1847971772
 GameObject:
   m_ObjectHideFlags: 0
@@ -9172,12 +9150,12 @@ GameObject:
   - component: {fileID: 1847971775}
   - component: {fileID: 1847971774}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Crosshair
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1847971773
 RectTransform:
   m_ObjectHideFlags: 0

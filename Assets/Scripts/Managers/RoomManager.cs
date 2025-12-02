@@ -67,6 +67,8 @@ public class RoomManager : MonoBehaviour
         {
             GameObject prefab = roomPrefabs[(int)data.roomType];
             GameObject instance = Instantiate(prefab, data.worldPosition, Quaternion.identity);
+            // set name agar gampang dicari di hierarchy
+            instance.name = $"Room_{data.id}_{data.roomType}";
             Room room = instance.GetComponent<Room>();
             room.Initialize(data);
             roomInstances[data.id] = room;

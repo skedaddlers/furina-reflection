@@ -41,7 +41,7 @@ public class PlayerLoadout : MonoBehaviour
 
     public void Swap()
     {
-        if (loadout.Length < 2) return;
+        if (loadout[1] == null) return;
         int currentIndex = System.Array.IndexOf(loadout, current);
         int newIndex = (currentIndex + 1) % loadout.Length;
         Equip(newIndex);

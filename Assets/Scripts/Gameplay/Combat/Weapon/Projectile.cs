@@ -3,6 +3,17 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Projectile : MonoBehaviour
 {
+    public enum ProjectileMode
+    {
+        Straight,       // peluru / arrow biasa
+        HitScan,
+        Homing,          // mengikuti target (belum diimplementasi)
+        Trajectory      // melengkung (belum diimplementasi)
+    }
+
+    [Header("Projectile Settings")]
+    public ProjectileMode mode = ProjectileMode.Straight;
+    public bool isAOE = false;
     public float speed = 20f;
     public float lifeTime = 3f;
     public float damage = 5f;
@@ -10,9 +21,26 @@ public class Projectile : MonoBehaviour
 
     [Header("Visuals")]
     public ParticleSystem hitEffect;
+    public LineRenderer laserRenderer;
+
+    [Header("Laser Settings")]
+    public float maxDistance = 100f;
+    public float laserDuration = 0.1f;
+
+    [Header("Homing Settings")]
+    public Transform target; // target homing
+
+    [Header("Trajectory Settings")]
+    public float gravityMultiplier = 1f;
+    
+    [Header("AOE Settings")]
+    public float aoeRadius = 3f;
 
     private Vector3 _dir;
+    private Vector3 _velocity;
     private float _timer;
+    private bool _laserFired = false;
+    private bool _exploded = false; 
 
     public void Init(Vector3 dir, float speed, float lifeTime, float damage)
     {
@@ -21,13 +49,51 @@ public class Projectile : MonoBehaviour
         this.lifeTime = lifeTime;
         this.damage = damage;
         _timer = 0f;
+
+        if(mode == ProjectileMode.Trajectory)
+        {
+            _velocity = _dir * speed;
+        }
+
+        if(mode == ProjectileMode.HitScan)
+        {
+            FireHitScan();
+        }
     }
 
     void Update()
     {
-        transform.position += _dir * speed * Time.deltaTime;
         _timer += Time.deltaTime;
-        if (_timer >= lifeTime) Destroy(gameObject);
+
+        switch(mode)
+        {
+            case ProjectileMode.Straight:
+                transform.position += _dir * speed * Time.deltaTime;
+                break;
+
+            case ProjectileMode.Trajectory:
+                _velocity += Physics.gravity * gravityMultiplier * Time.deltaTime;
+                transform.position += _velocity * Time.deltaTime;
+
+                if(_velocity.sqrMagnitude > 0.1f)
+                {
+                    transform.rotation = Quaternion.LookRotation(_velocity.normalized);
+                }
+                break;
+
+            case ProjectileMode.Homing:
+                if(target != null)
+                {
+                    Vector3 toTarget = (target.position - transform.position).normalized;
+                    transform.position += toTarget * speed * Time.deltaTime;
+                    transform.rotation = Quaternion.LookRotation(toTarget);
+                }
+                else
+                {
+                    transform.position += _dir * speed * Time.deltaTime;
+                }
+                break;
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -35,12 +101,19 @@ public class Projectile : MonoBehaviour
         // Cek layer mask
         if ((hitMask.value & (1 << other.gameObject.layer)) == 0) return;
 
-        // Coba damage target yang punya Health
-        var health = other.GetComponent<Health>();
-        if (health != null)
+        if(isAOE && !_exploded)
         {
-            health.TakeDamage(damage);
+            ExplodeAOE();
         }
+
+        if(mode == ProjectileMode.HitScan)
+        {
+            // HitScan sudah menembak di Init
+            return;
+        }
+
+        // Coba damage target yang punya Health
+        DealDamage(other);
 
         // Play hit effect
         if (hitEffect != null)
@@ -50,5 +123,95 @@ public class Projectile : MonoBehaviour
 
         // Hancurkan saat kena apapun yang valid
         Destroy(gameObject);
+    }
+
+    void DealDamage(Collider other)
+    {
+        var health = other.GetComponent<Health>();
+        if (health != null)
+        {
+            health.TakeDamage(damage);
+        }
+    }
+
+    void ExplodeAOE()
+    {
+        _exploded = true;
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position, 
+            aoeRadius, 
+            hitMask
+        );
+        // visualize
+        Debug.DrawLine(transform.position, transform.position + Vector3.up * aoeRadius, Color.red, 1f);
+        Debug.DrawLine(transform.position, transform.position + Vector3.down * aoeRadius, Color.red, 1f);
+        Debug.DrawLine(transform.position, transform.position + Vector3.left * aoeRadius, Color.red, 1f);
+        Debug.DrawLine(transform.position, transform.position + Vector3.right * aoeRadius, Color.red, 1f);
+        Debug.DrawLine(transform.position, transform.position + Vector3.forward * aoeRadius, Color.red, 1f);
+        Debug.DrawLine(transform.position, transform.position + Vector3.back * aoeRadius, Color.red, 1f);
+
+        foreach (var hit in hits)
+        {
+            DealDamage(hit);
+        }
+
+        if (hitEffect != null)
+        {
+            Instantiate(hitEffect, transform.position, Quaternion.identity);
+        }
+
+        Destroy(gameObject);
+    }
+
+    void FireHitScan()
+    {
+        if (_laserFired) return;
+        _laserFired = true;
+
+        Ray ray = new Ray(transform.position, _dir);
+        RaycastHit[] hits = Physics.RaycastAll(
+            ray,
+            maxDistance,
+            hitMask,
+            QueryTriggerInteraction.Collide
+        );
+
+        // sort by distance biar visual di hit pertama
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var hit in hits)
+        {
+            Debug.Log("HitScan hit: " + hit.collider.name);
+            DealDamage(hit.collider);
+        }
+
+        // efek di semua tag enemy yang kena
+        if (hits.Length > 0 && hitEffect != null)
+        {
+            foreach (var hit in hits)
+            {
+                if (hit.collider.gameObject.CompareTag("Enemy"))
+                    Instantiate(hitEffect.gameObject, hit.point, Quaternion.LookRotation(-_dir));
+            }
+        }
+
+        // optional: line renderer buat visual beam
+        if (laserRenderer != null)
+        {
+            laserRenderer.positionCount = 2;
+            laserRenderer.SetPosition(0, transform.position);
+
+            Vector3 end = hits.Length > 0
+                ? hits[hits.Length - 1].point
+                : transform.position + _dir * maxDistance;
+
+            laserRenderer.SetPosition(1, end);
+        }
+
+        Destroy(gameObject, laserDuration);
+
+        // kalau cuma flash 1 frame, bisa langsung destroy:
+        // Destroy(gameObject);
+        // kalau mau line fade, biarin hidup sampai lifeTime habis.
     }
 }
