@@ -13,20 +13,20 @@ MonoBehaviour:
   m_Name: WaterAspirations
   m_EditorClassIdentifier: 
   skillName: Water
-  description: 
+  description: Creates a damage-absorbing shield
   skillIcon: {fileID: 0}
   price: 0
   skillID: 0
-  skillType: 0
+  skillType: 1
   targetType: 0
   manaCost: 10
   cooldownTime: 5
   levelRequired: 1
   purchasePrice: 100
-  duration: 0
+  duration: 5
   damageAmount: 0
   healAmount: 0
-  shieldAmount: 0
+  shieldAmount: 100
   effectPrefab: {fileID: 0}
   castSound: {fileID: 0}
   impactSound: {fileID: 0}

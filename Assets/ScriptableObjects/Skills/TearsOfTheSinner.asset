@@ -13,18 +13,18 @@ MonoBehaviour:
   m_Name: TearsOfTheSinner
   m_EditorClassIdentifier: 
   skillName: Tears
-  description: 
+  description: Damages ALL enemies in the room
   skillIcon: {fileID: 0}
   price: 0
   skillID: 0
   skillType: 0
-  targetType: 0
+  targetType: 2
   manaCost: 10
   cooldownTime: 5
   levelRequired: 1
   purchasePrice: 100
-  duration: 0
-  damageAmount: 0
+  duration: 5
+  damageAmount: 20
   healAmount: 0
   shieldAmount: 0
   effectPrefab: {fileID: 0}
@@ -34,3 +34,5 @@ MonoBehaviour:
   animationTrigger: 
   isUpgradeable: 0
   nextLevelSkill: {fileID: 0}
+  tickInterval: 1
+  enemyTag: Enemy
