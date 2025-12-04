@@ -23,8 +23,8 @@ MonoBehaviour:
   cooldownTime: 5
   levelRequired: 1
   purchasePrice: 100
-  duration: 0
-  damageAmount: 0
+  duration: 10
+  damageAmount: 50
   healAmount: 0
   shieldAmount: 0
   effectPrefab: {fileID: 0}
@@ -34,3 +34,11 @@ MonoBehaviour:
   animationTrigger: 
   isUpgradeable: 0
   nextLevelSkill: {fileID: 0}
+  salonMemberPrefab: {fileID: 919132149155446097, guid: 20f3127425aae2a45a9794af54676d8d, type: 3}
+  memberCount: 3
+  spawnRadius: 2
+  attackRange: 10
+  attackInterval: 1.5
+  projectileSpeed: 15
+  enemyTag: Enemy
+  projectilePrefab: {fileID: 0}

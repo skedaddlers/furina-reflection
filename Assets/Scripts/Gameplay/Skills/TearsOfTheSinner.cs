@@ -1,14 +1,121 @@
 using UnityEngine;
-using System.Collections.Generic;
+using System.Collections;
 
 [CreateAssetMenu(fileName = "TearsOfTheSinner", menuName = "Furina/Skills/Tears Of The Sinner")]
 public class TearsOfTheSinner : SkillBase
 {
-    // this skill summons a rain of tears that damages all enemies in a room over time
+    [Header("Rain Settings")]
+    public float tickInterval = 1f;
+    public string enemyTag = "Enemy";
+
+    private bool isActive = false;
+
+    private void OnEnable()
+    {
+        isActive = false;
+    }
+
     public override void OnSkillActivate(GameObject caster)
     {
         base.OnSkillActivate(caster);
 
+        if (isActive) return;
+
+        isActive = true;
+
         Debug.Log($"{skillName} activated by {caster.name}");
+
+        // Play cast sound
+        if (castSound != null)
+        {
+            AudioSource.PlayClipAtPoint(castSound, caster.transform.position);
+        }
+
+        // Spawn effect prefab
+        if (effectPrefab != null)
+        {
+            GameObject effect = Object.Instantiate(effectPrefab, caster.transform.position, Quaternion.identity);
+            Object.Destroy(effect, duration);
+        }
+
+        // Start the rain damage coroutine
+        MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
+        if (casterMono != null)
+        {
+            casterMono.StartCoroutine(RainOfTearsEffect(caster));
+        }
+    }
+
+    private IEnumerator RainOfTearsEffect(GameObject caster)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration && isActive)
+        {
+            DamageAllEnemies(caster);
+            yield return new WaitForSeconds(tickInterval);
+            elapsed += tickInterval;
+        }
+
+        OnSkillEnd(caster);
+    }
+
+    private void DamageAllEnemies(GameObject caster)
+    {
+        // Get player stats for damage calculation
+        PlayerStats playerStats = caster.GetComponent<PlayerStats>();
+        float finalDamage = damageAmount;
+
+        // Add player attack stat and apply crit if available
+        if (playerStats != null)
+        {
+            finalDamage += playerStats.baseAttack;
+            finalDamage = playerStats.RollDamage(finalDamage);
+        }
+
+        // Find ALL enemies in the scene by tag
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);
+
+        Debug.Log($"{skillName}: Damaging {enemies.Length} enemies for {finalDamage} damage each");
+
+        foreach (GameObject enemy in enemies)
+        {
+            if (enemy == null) continue;
+
+            // Apply damage
+            Health health = enemy.GetComponent<Health>();
+            if (health != null)
+            {
+                health.TakeDamage(finalDamage);
+
+                // Play impact sound
+                if (impactSound != null)
+                {
+                    AudioSource.PlayClipAtPoint(impactSound, enemy.transform.position);
+                }
+            }
+        }
+    }
+
+    public override void OnSkillEnd(GameObject caster)
+    {
+        if (!isActive) return;
+
+        base.OnSkillEnd(caster);
+        isActive = false;
+
+        Debug.Log($"{skillName} ended");
+    }
+
+    public override bool CanUseSkill(GameObject caster)
+    {
+        if (isActive) return false;
+
+        PlayerStats playerStats = caster.GetComponent<PlayerStats>();
+        if (playerStats != null)
+        {
+            return playerStats.CurrentMana >= manaCost;
+        }
+        return base.CanUseSkill(caster);
     }
 }

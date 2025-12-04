@@ -10,6 +10,8 @@ public class Health : MonoBehaviour
     public Action onDeath;
     public Action<float, float> onHealthChanged; // (current, max)
 
+    // Shield system - returns remaining damage after absorption
+    public Func<float, float> onTakeDamage;
 
     void Start()
     {
@@ -18,18 +20,45 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        Debug.Log($"{gameObject.name} took {amount} damage.");
-        currentHealth -= amount;
+        if (currentHealth <= 0) return;
+
+        float finalDamage = amount;
+
+        // Let shield absorb damage first
+        if (onTakeDamage != null)
+        {
+            finalDamage = onTakeDamage.Invoke(amount);
+            Debug.Log($"Shield absorbed! Original: {amount}, After shield: {finalDamage}");
+        }
+
+        // Apply remaining damage to health
+        if (finalDamage > 0)
+        {
+            currentHealth -= finalDamage;
+            Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
+        }
+        else
+        {
+            Debug.Log($"{gameObject.name} damage fully absorbed by shield!");
+        }
+
+        if (currentHealth < 0)
+            currentHealth = 0;
+
+        onHealthChanged?.Invoke(currentHealth, maxHealth);
+
         if (currentHealth <= 0)
         {
             Die();
         }
-        if (currentHealth < 0)
-            currentHealth = 0;
-        if (GetComponent<PlayerStats>() != null)
-        {
-            onHealthChanged?.Invoke(currentHealth, maxHealth);
-        }
+    }
+
+    public void Heal(float amount)
+    {
+        if (amount <= 0) return;
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        onHealthChanged?.Invoke(currentHealth, maxHealth);
+        Debug.Log($"{gameObject.name} healed {amount}. Current health: {currentHealth}");
     }
 
     public void Heal(float amount)
@@ -46,12 +75,9 @@ public class Health : MonoBehaviour
     void Die()
     {
         onDeath?.Invoke();
-        // kalau ini enemy → destroy
-        // kalau ini player → trigger game over
         if (CompareTag("Player"))
         {
             Debug.Log("Player Died!");
-            // TODO: implement game over UI
         }
     }
 
@@ -59,6 +85,4 @@ public class Health : MonoBehaviour
     {
         return currentHealth;
     }
-
-
 }
