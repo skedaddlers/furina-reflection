@@ -20,4 +20,7 @@ MonoBehaviour:
   allSkills:
   - {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
   - {fileID: 11400000, guid: 6e759b0bb886a4b469765ee8b3469bde, type: 2}
-  - {fileID: 11400000, guid: 6e759b0bb886a4b469765ee8b3469bde, type: 2}
+  - {fileID: 11400000, guid: 6e165cf67a866c543b3bd4cbf4fc8ebe, type: 2}
+  - {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
+  - {fileID: 11400000, guid: e329ce488c6754f4483e5c4229d9d4c4, type: 2}
+  - {fileID: 11400000, guid: 3611da32711d9e64ca3605ba86cca725, type: 2}

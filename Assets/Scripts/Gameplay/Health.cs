@@ -61,16 +61,16 @@ public class Health : MonoBehaviour
         Debug.Log($"{gameObject.name} healed {amount}. Current health: {currentHealth}");
     }
 
-    public void Heal(float amount)
-    {
-        currentHealth += amount;
-        if (currentHealth > maxHealth)
-            currentHealth = maxHealth;
-        if (GetComponent<PlayerStats>() != null)
-        {
-            onHealthChanged?.Invoke(currentHealth, maxHealth);
-        }
-    }
+    // public void Heal(float amount)
+    // {
+    //     currentHealth += amount;
+    //     if (currentHealth > maxHealth)
+    //         currentHealth = maxHealth;
+    //     if (GetComponent<PlayerStats>() != null)
+    //     {
+    //         onHealthChanged?.Invoke(currentHealth, maxHealth);
+    //     }
+    // }
 
     void Die()
     {

@@ -37,4 +37,4 @@ MonoBehaviour:
   radius: 10
   tickInterval: 0.5
   enemyTag: Enemy
-  slowPercent: 1
+  slowPercent: 0.5
