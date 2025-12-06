@@ -10,7 +10,7 @@ public partial class IsPerformingSpecialAttackCondition : Condition
 
     public override bool IsTrue()
     {
-        var agent = Agent?.Value as EliteLawachurl;
+        var agent = Agent?.Value;
         if (agent == null)
             return false;
         return agent.isPerformingSpecialAttack;

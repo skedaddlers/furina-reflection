@@ -388,6 +388,7 @@ MonoBehaviour:
   distanceFromStart: 0
   difficultyWeight: 1
   spawnTrigger: {fileID: 7158363839760584567}
+  eventTrigger: {fileID: 0}
   roomNeighbors: 00000000000000000000000000000000
   doors:
   - {fileID: 2373307085510552295}
@@ -395,7 +396,7 @@ MonoBehaviour:
   - {fileID: 2449373732708187433}
   - {fileID: 4411320387035580006}
   maxEnemies: 12
-  enemyCount: 3
+  enemyCount: 1
   spawnAreaSize: {x: 10, y: 5, z: 10}
   groundMask:
     serializedVersion: 2
@@ -404,7 +405,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   minSpawnDistance: 2
-  enemyPrefab: {fileID: 4228300383457371494, guid: 04b67d2fa47ec9345b6ff287a639f317, type: 3}
+  enemyPrefab: {fileID: 4228300383457371494, guid: 095290b4c328f1e4d896bbb01f409732, type: 3}
   isCleared: 0
   isInCombat: 0
   spawnedEnemies: []

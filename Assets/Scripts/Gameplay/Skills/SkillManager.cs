@@ -190,20 +190,6 @@ public class SkillManager : MonoBehaviour
             AudioSource.PlayClipAtPoint(skill.castSound, transform.position);
         }
         
-        // Create visual effect
-        if (skill.effectPrefab != null)
-        {
-            GameObject effect = Instantiate(skill.effectPrefab, transform.position, transform.rotation);
-            if (skill.duration > 0)
-            {
-                Destroy(effect, skill.duration);
-            }
-            else
-            {
-                Destroy(effect, 2f); // Default destroy time for instant effects
-            }
-        }
-        
 
         // Call custom activation
         skill.OnSkillActivate(gameObject);

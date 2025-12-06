@@ -243,8 +243,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5c85756a8a5e81428a73f00a928a687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 1.5
+  isRanged: 1
+  attackRange: 5
   attackCooldown: 1.5
   damage: 10
   detectionRange: 10
+  projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
   isPerformingSpecialAttack: 0

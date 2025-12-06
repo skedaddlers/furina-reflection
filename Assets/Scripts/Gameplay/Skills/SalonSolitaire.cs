@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class SalonSolitaire : SkillBase
 {
     [Header("Salon Member Settings")]
-    public GameObject salonMemberPrefab;
+    public GameObject[] salonMemberPrefabs;
     public int memberCount = 3;
     public float spawnRadius = 2f;
     public float attackRange = 10f;
@@ -65,13 +65,15 @@ public class SalonSolitaire : SkillBase
             GameObject member;
 
             // Spawn prefab or create dummy if no prefab assigned
-            if (salonMemberPrefab != null)
+            if (salonMemberPrefabs[i] != null)
             {
+                GameObject salonMemberPrefab = salonMemberPrefabs[i];
                 member = Object.Instantiate(salonMemberPrefab, spawnPosition, Quaternion.identity);
+                // set rotatation the same as the prefab
+                member.transform.rotation = salonMemberPrefab.transform.rotation;
             }
             else
             {
-                // Create dummy salon member
                 member = CreateDummySalonMember(spawnPosition, i);
             }
 

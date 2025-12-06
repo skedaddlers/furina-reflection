@@ -34,7 +34,10 @@ MonoBehaviour:
   animationTrigger: 
   isUpgradeable: 0
   nextLevelSkill: {fileID: 0}
-  salonMemberPrefab: {fileID: 919132149155446097, guid: 20f3127425aae2a45a9794af54676d8d, type: 3}
+  salonMemberPrefabs:
+  - {fileID: 8976042506686824731, guid: 9f534529175ccad4e8cff4eee0278d8e, type: 3}
+  - {fileID: 7937071911852978319, guid: 2ecafd9e831e58f46a7ceb2b981cc5fb, type: 3}
+  - {fileID: 8054609030304198596, guid: 6e97f5589e86fdb449fd17068363c8ad, type: 3}
   memberCount: 3
   spawnRadius: 2
   attackRange: 10

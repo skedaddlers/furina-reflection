@@ -17,10 +17,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: afaedcb761b713342b328f5e33b06a23, type: 2}
   - {fileID: 11400000, guid: d79524271f8f15d418b129d9e019ccfb, type: 2}
   - {fileID: 11400000, guid: 695124cae280d394a82a9e330a0534e9, type: 2}
+  - {fileID: 11400000, guid: bea791f8c286b5a4faf8d46af6133218, type: 2}
+  - {fileID: 11400000, guid: 17d425f9c6e88be498802478f4c5196e, type: 2}
+  - {fileID: 11400000, guid: 5e7ec8b4bcc28884c83e9adf131a46c1, type: 2}
   allSkills:
-  - {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
   - {fileID: 11400000, guid: 6e759b0bb886a4b469765ee8b3469bde, type: 2}
   - {fileID: 11400000, guid: 6e165cf67a866c543b3bd4cbf4fc8ebe, type: 2}
   - {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
-  - {fileID: 11400000, guid: e329ce488c6754f4483e5c4229d9d4c4, type: 2}
-  - {fileID: 11400000, guid: 3611da32711d9e64ca3605ba86cca725, type: 2}

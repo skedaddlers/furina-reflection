@@ -34,7 +34,7 @@ MonoBehaviour:
   animationTrigger: 
   isUpgradeable: 0
   nextLevelSkill: {fileID: 0}
-  singerPrefab: {fileID: 3474463395411865732, guid: 3f24c80895a77fa4bba15f9bd599a41b, type: 3}
+  singerPrefab: {fileID: 8502773717673982367, guid: ee515460cca89ad449ec9127df38a975, type: 3}
   spawnDistance: 1
   healInterval: 1
   floatHeight: 1.5

@@ -3,10 +3,12 @@ using UnityEngine.AI;
 
 public class EnemyAI : MonoBehaviour
 {
+    public bool isRanged = false;
     public float attackRange = 1.5f;
     public float attackCooldown = 1.5f;
     public int damage = 10;
     public float detectionRange = 10f;
+    public Projectile projectilePrefab;
 
     public bool isPerformingSpecialAttack = false;
     protected Transform player;
@@ -34,6 +36,22 @@ public class EnemyAI : MonoBehaviour
             // further implementation include defense, resistances, etc.
             // but for now just directly reduce health
             player.GetComponent<Health>()?.TakeDamage(damage);
+        }
+    }
+
+    public virtual void RangedAttack()
+    {
+        if (Vector3.Distance(player.position, transform.position) <= attackRange + 0.5f)
+        {
+            if (projectilePrefab != null)
+            {
+                Vector3 dir = (player.position - transform.position).normalized;
+                GameObject go = Instantiate(projectilePrefab.gameObject, transform.position + dir * 1f + Vector3.up * 1.5f, Quaternion.LookRotation(dir));
+                var proj = go.GetComponent<Projectile>();
+                if (proj == null) proj = go.AddComponent<Projectile>();
+
+                proj.Init(dir, this.transform);
+            }
         }
     }
 
@@ -65,7 +83,14 @@ public class EnemyAI : MonoBehaviour
     {
         if (Time.time - lastAttackTime >= attackCooldown)
         {
-            animator.SetTrigger("Attack");
+            if(isRanged)
+            {
+                animator.SetTrigger("RangedAttack");
+            }
+            else
+            {
+                animator.SetTrigger("Attack");
+            }
             lastAttackTime = Time.time;
         }
     }
@@ -73,5 +98,11 @@ public class EnemyAI : MonoBehaviour
     public virtual void SpecialAttack()
     {
         // to be overridden by subclasses
+    }
+
+    public virtual bool CanPerformSpecialAttack()
+    {
+        // Default: common enemy nggak punya special
+        return false;
     }
 }

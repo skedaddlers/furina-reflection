@@ -374,10 +374,10 @@ PrefabInstance:
       addedObject: {fileID: 8923154997231941624}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 5536203884852970170}
+      addedObject: {fileID: 2121161279988868480}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2121161279988868480}
+      addedObject: {fileID: 9184170250974352647}
   m_SourcePrefab: {fileID: 100100000, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
 --- !u!1 &4228300383457371494 stripped
 GameObject:
@@ -471,24 +471,6 @@ MonoBehaviour:
           m_Value1: 0
         Name: Self
         m_Value: {fileID: 4228300383457371494}
---- !u!114 &5536203884852970170
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4228300383457371494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d18125d5852aacb47b8c421dabfe392f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackRange: 1.2
-  attackCooldown: 1
-  damage: 7
-  detectionRange: 10
-  isPerformingSpecialAttack: 0
-  specialAttackCooldown: 5
 --- !u!114 &2121161279988868480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -504,3 +486,20 @@ MonoBehaviour:
   enemyType: 0
   xpReward: 15
   goldReward: 10
+--- !u!114 &9184170250974352647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228300383457371494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5c85756a8a5e81428a73f00a928a687, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 1.5
+  attackCooldown: 1.5
+  damage: 10
+  detectionRange: 10
+  isPerformingSpecialAttack: 0

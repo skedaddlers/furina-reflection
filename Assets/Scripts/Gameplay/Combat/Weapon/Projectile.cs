@@ -19,6 +19,10 @@ public class Projectile : MonoBehaviour
     public float damage = 5f;
     public LayerMask hitMask; // set agar kena Enemy/Obstacle
 
+    [Header("Ownership")]
+    public Transform owner;        // siapa yang nembak
+    public bool ignoreOwner = true; // biar nggak nabrak diri sendiri
+
     [Header("Visuals")]
     public ParticleSystem hitEffect;
     public LineRenderer laserRenderer;
@@ -42,12 +46,28 @@ public class Projectile : MonoBehaviour
     private bool _laserFired = false;
     private bool _exploded = false; 
 
-    public void Init(Vector3 dir, float speed, float lifeTime, float damage)
+    public void Init(
+        Vector3 dir, 
+        Transform owner = null, 
+        LayerMask? customHitMask = null
+    )
+    {
+        _dir = dir.normalized;
+        this.owner = owner;
+        _timer = 0f;
+
+        if (customHitMask.HasValue)
+        {
+            hitMask = customHitMask.Value;
+        }
+    }
+    public void Init(Vector3 dir, float speed, float lifeTime, float damage, Transform owner = null, LayerMask? customHitMask = null)
     {
         _dir = dir.normalized;
         this.speed = speed;
         this.lifeTime = lifeTime;
         this.damage = damage;
+        this.owner = owner;
         _timer = 0f;
 
         if(mode == ProjectileMode.Trajectory)
@@ -58,6 +78,11 @@ public class Projectile : MonoBehaviour
         if(mode == ProjectileMode.HitScan)
         {
             FireHitScan();
+        }
+
+        if (customHitMask.HasValue)
+        {
+            hitMask = customHitMask.Value;
         }
     }
 
@@ -98,6 +123,11 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        if (ignoreOwner && owner != null)
+        {
+            if (other.transform == owner || other.transform.IsChildOf(owner))
+                return;
+        }
         // Cek layer mask
         if ((hitMask.value & (1 << other.gameObject.layer)) == 0) return;
 
@@ -152,6 +182,11 @@ public class Projectile : MonoBehaviour
 
         foreach (var hit in hits)
         {
+            if (ignoreOwner && owner != null)
+            {
+                if (hit.transform == owner || hit.transform.IsChildOf(owner))
+                    continue;
+            }
             DealDamage(hit);
         }
 
@@ -181,6 +216,11 @@ public class Projectile : MonoBehaviour
 
         foreach (var hit in hits)
         {
+            if (ignoreOwner && owner != null)
+            {
+                if (hit.collider.transform == owner || hit.collider.transform.IsChildOf(owner))
+                    continue;
+            }
             Debug.Log("HitScan hit: " + hit.collider.name);
             DealDamage(hit.collider);
         }

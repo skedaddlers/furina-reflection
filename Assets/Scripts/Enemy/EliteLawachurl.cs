@@ -1,35 +1,84 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
 public class EliteLawachurl : EnemyAI
 {
     public float specialAttackCooldown = 5f;
     private float lastSpecialAttackTime;
 
+    [Header("Charge Settings")]
+    public float chargeDuration = 1.0f;
+    public float chargeSpeedMultiplier = 2.5f;
+    public float heavyAttackDamageMultiplier = 2f;
+
+    private float originalSpeed;
+
     protected override void Awake()
     {
         base.Awake();
+        if (agent != null)
+            originalSpeed = agent.speed;
         // Additional initialization for Elite Lawachurl if needed
     }
     public override void SpecialAttack()
     {
+        if (!CanPerformSpecialAttack())
+            return;
         StopChasing();
-        // Implementation of elite lawachurl's special attack
-        Debug.Log("Lawachurl performs a powerful special attack!");
-        lastSpecialAttackTime = Time.time;
-        isPerformingSpecialAttack = true;
-        StartCoroutine(EndSpecialAttackAfterDelay(2f)); // Assume special attack lasts 2 seconds
-        // Add special attack logic here (e.g., area damage, stun, etc.)
+
+        StartCoroutine(DoChargeAttack());    
     }
 
-    private IEnumerator EndSpecialAttackAfterDelay(float delay)
+    private IEnumerator DoChargeAttack()
     {
-        yield return new WaitForSeconds(delay);
+        isPerformingSpecialAttack = true;
+        lastSpecialAttackTime = Time.time;
+
+        // Trigger anim khusus kalau ada
+        if (animator != null)
+            animator.SetBool("IsCharging", true);
+
+        // Naikkan speed dan charge ke arah player
+        if (agent != null && player != null)
+        {
+            float prevSpeed = agent.speed;
+            agent.speed = prevSpeed * chargeSpeedMultiplier;
+            agent.isStopped = false;
+            agent.SetDestination(player.position);
+
+            float t = 0f;
+            while (t < chargeDuration)
+            {
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            // Heavy hit di akhir charge
+            if (Vector3.Distance(player.position, transform.position) <= attackRange + 1.0f)
+            {
+                var hp = player.GetComponent<Health>();
+                if (hp != null)
+                {
+                    int heavyDamage = Mathf.RoundToInt(damage * heavyAttackDamageMultiplier);
+                    hp.TakeDamage(heavyDamage);
+                }
+            }
+
+            agent.speed = prevSpeed;
+            agent.isStopped = false;
+        }
+        if (animator != null)
+            animator.SetBool("IsCharging", false);
+
         isPerformingSpecialAttack = false;
     }
 
-    public bool CanPerformSpecialAttack()
+    public override bool CanPerformSpecialAttack()
     {
-        return Time.time - lastSpecialAttackTime >= specialAttackCooldown;
+        Debug.Log("Checking if enemy can perform special attack.");
+        return !isPerformingSpecialAttack &&
+               Time.time - lastSpecialAttackTime >= specialAttackCooldown &&
+               player != null;
     }
 }

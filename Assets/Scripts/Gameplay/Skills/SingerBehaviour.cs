@@ -21,7 +21,7 @@ public class SingerBehaviour : MonoBehaviour
 
         FollowOwner();
         FloatEffect();
-        LookAtOwner();
+        // LookAtOwner();
     }
 
     private void FollowOwner()
@@ -47,13 +47,14 @@ public class SingerBehaviour : MonoBehaviour
         Vector3 directionToOwner = owner.transform.position - transform.position;
         directionToOwner.y = 0;
 
-        if (directionToOwner != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(directionToOwner);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
-        }
+        // if (directionToOwner != Vector3.zero)
+        // {
+        //     // rotate only on Y axis
+        //     Quaternion targetRotation = Quaternion.LookRotation(directionToOwner);
+        //     transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotateSpeed);
+        // }
 
         // Add gentle spin effect
-        transform.Rotate(Vector3.up, 30f * Time.deltaTime);
+        // transform.Rotate(Vector3.up, 30f * Time.deltaTime);
     }
 }

@@ -407,7 +407,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &35639396
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2468,9 +2468,9 @@ RectTransform:
   - {fileID: 719816341}
   m_Father: {fileID: 35639396}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1085.8, y: -50}
   m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &471453635
@@ -2952,9 +2952,9 @@ RectTransform:
   - {fileID: 628309437}
   m_Father: {fileID: 35639396}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 542.9, y: -50}
   m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &546881507
@@ -4756,9 +4756,9 @@ RectTransform:
   - {fileID: 1566523107}
   m_Father: {fileID: 35639396}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -50}
   m_SizeDelta: {x: 0, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &876754235
@@ -5789,41 +5789,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757450ca3bf66554b807f62e8d7a401d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ownedSkills:
-  - skill: {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
-  - skill: {fileID: 11400000, guid: 6e759b0bb886a4b469765ee8b3469bde, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
-  - skill: {fileID: 11400000, guid: 6e165cf67a866c543b3bd4cbf4fc8ebe, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
-  - skill: {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 0
-  maxActiveSkills: 4
-  activeSkillSlots:
-  - skill: {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 1
-  - skill: {fileID: 11400000, guid: 6e759b0bb886a4b469765ee8b3469bde, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 1
-  - skill: {fileID: 11400000, guid: 6e165cf67a866c543b3bd4cbf4fc8ebe, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 1
-  - skill: {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
-    currentCooldown: 0
-    isOnCooldown: 0
-    level: 1
 --- !u!114 &1049335844 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}

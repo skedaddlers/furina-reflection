@@ -10,7 +10,7 @@ public partial class TImeForSpecialAttackCondition : Condition
 
     public override bool IsTrue()
     {
-        var lawachurl = Lawachurl?.Value as EliteLawachurl;
+        var lawachurl = Lawachurl?.Value;
         if (lawachurl == null)
             return false;
         if (lawachurl.CanPerformSpecialAttack() == false)

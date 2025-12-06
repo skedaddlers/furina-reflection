@@ -55,6 +55,7 @@ public class SingerOfManyWaters : SkillBase
         if (singerPrefab != null)
         {
             activeSinger = Object.Instantiate(singerPrefab, spawnPosition, Quaternion.identity);
+            activeSinger.transform.localRotation = singerPrefab.transform.localRotation;
         }
         else
         {

@@ -28,6 +28,13 @@ public partial class ChaseAction : Action
             return Status.Failure;
         }
 
+        if (enemy.CanPerformSpecialAttack())
+        {
+            Debug.Log("Enemy can perform special attack, stopping chase.");
+            enemy.StopChasing();
+            return Status.Failure;
+        }
+
         // Kalau sudah cukup dekat, berhenti jalan dan sukses
         if (enemy.InAttackRange())
         {

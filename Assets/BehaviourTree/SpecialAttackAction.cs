@@ -24,6 +24,7 @@ public partial class SpecialAttackAction : Action
             return Status.Failure;
 
         eliteEnemy.SpecialAttack();
+        Debug.Log("Elite enemy performed special attack.");
         return Status.Success;
     }
 

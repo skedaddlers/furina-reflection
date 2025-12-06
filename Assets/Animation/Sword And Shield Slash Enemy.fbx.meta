@@ -55,10 +55,10 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0
+      - time: 0.3682008
         functionName: DealDamage
         data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 69ce476a49620fb478d374204012c0da, type: 3}
+        objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
         intParameter: 0
         messageOptions: 0

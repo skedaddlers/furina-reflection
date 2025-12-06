@@ -2323,7 +2323,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: f485c27967acb274f8b12e5ee0e7f7c5, type: 2}
+      objectReference: {fileID: 9100000, guid: 4fd5d314df4e91d4a9f8ad8238e56f1e, type: 2}
     - target: {fileID: 5866666021909216657, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -2520,12 +2520,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d18125d5852aacb47b8c421dabfe392f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isRanged: 0
   attackRange: 2
   attackCooldown: 3
   damage: 15
   detectionRange: 10
+  projectilePrefab: {fileID: 0}
   isPerformingSpecialAttack: 0
   specialAttackCooldown: 5
+  chargeDuration: 1
+  chargeSpeedMultiplier: 4
+  heavyAttackDamageMultiplier: 2
 --- !u!114 &3905815751628404084
 MonoBehaviour:
   m_ObjectHideFlags: 0

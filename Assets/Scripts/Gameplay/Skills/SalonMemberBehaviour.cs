@@ -15,26 +15,19 @@ public class SalonMemberBehaviour : MonoBehaviour
         lastAttackTime = -skill.attackInterval; // Allow immediate first attack
 
         // Start following and attacking
-        StartCoroutine(SalonMemberAI());
     }
 
-    private IEnumerator SalonMemberAI()
+    void Update()
     {
-        while (true)
+        // Follow owner at a distance
+        FollowOwner();
+        // Find and attack enemies
+        FindTarget();
+
+        if (currentTarget != null && Time.time >= lastAttackTime + skillData.attackInterval)
         {
-            // Follow owner at a distance
-            FollowOwner();
-
-            // Find and attack enemies
-            FindTarget();
-
-            if (currentTarget != null && Time.time >= lastAttackTime + skillData.attackInterval)
-            {
-                AttackTarget();
-                lastAttackTime = Time.time;
-            }
-
-            yield return new WaitForSeconds(0.1f);
+            AttackTarget();
+            lastAttackTime = Time.time;
         }
     }
 
@@ -86,6 +79,7 @@ public class SalonMemberBehaviour : MonoBehaviour
         // Look at target
         transform.LookAt(new Vector3(currentTarget.position.x, transform.position.y, currentTarget.position.z));
 
+        transform.Rotate(-90f, 0f, 0f); // Adjust for model orientation if needed
         // Calculate damage
         float finalDamage = skillData.damageAmount;
         if (owner != null)
