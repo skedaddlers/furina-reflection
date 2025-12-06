@@ -4,6 +4,8 @@ using System;
 public class Health : MonoBehaviour
 {
     public float maxHealth = 100;
+    public float shieldAmount = 0;
+    public float maxShield = 100;
     private float currentHealth;
 
     // on death event
@@ -16,6 +18,7 @@ public class Health : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        maxShield = maxHealth;
     }
 
     public void TakeDamage(float amount)
@@ -25,10 +28,12 @@ public class Health : MonoBehaviour
         float finalDamage = amount;
 
         // Let shield absorb damage first
-        if (onTakeDamage != null)
+        if (shieldAmount > 0)
         {
-            finalDamage = onTakeDamage.Invoke(amount);
-            Debug.Log($"Shield absorbed! Original: {amount}, After shield: {finalDamage}");
+            float damageAbsorbed = Mathf.Min(shieldAmount, finalDamage);
+            shieldAmount -= damageAbsorbed;
+            finalDamage -= damageAbsorbed;
+            Debug.Log($"{gameObject.name} shield absorbed {damageAbsorbed} damage. Remaining shield: {shieldAmount}");
         }
 
         // Apply remaining damage to health
@@ -51,6 +56,19 @@ public class Health : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public void AddShield(float amount)
+    {
+        if (amount <= 0) return;
+        shieldAmount = Mathf.Min(maxShield, shieldAmount + amount);
+        Debug.Log($"{gameObject.name} gained {amount} shield. Current shield: {shieldAmount}");
+    }
+
+    public void RemoveShield()
+    {
+        shieldAmount = 0;
+        Debug.Log($"{gameObject.name} shield removed.");
     }
 
     public void Heal(float amount)

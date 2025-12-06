@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -93,6 +94,27 @@ public class EnemyAI : MonoBehaviour
             }
             lastAttackTime = Time.time;
         }
+    }
+
+    public virtual void LookAtPlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0; // keep only horizontal rotation
+        if (direction != Vector3.zero)
+        {
+            StartCoroutine(RotateTowards(direction));
+        }
+    }
+
+    private IEnumerator RotateTowards(Vector3 direction)
+    {
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+        while (Quaternion.Angle(transform.rotation, targetRotation) > 0.5f)
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+            yield return null;
+        }
+        transform.rotation = targetRotation;
     }
 
     public virtual void SpecialAttack()

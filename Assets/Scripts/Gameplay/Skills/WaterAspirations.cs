@@ -56,8 +56,7 @@ public class WaterAspirations : SkillBase
         // Apply shield
         currentShieldAmount = shieldAmount;
 
-        // Subscribe to damage event to absorb damage
-        activePlayerStats.health.onTakeDamage += AbsorbDamage;
+        activePlayerStats.health.AddShield(currentShieldAmount);
 
         isActive = true;
 
@@ -84,43 +83,12 @@ public class WaterAspirations : SkillBase
         OnSkillEnd(caster);
     }
 
-    private float AbsorbDamage(float incomingDamage)
-    {
-        if (!isActive || currentShieldAmount <= 0) return incomingDamage;
-
-        float absorbed = Mathf.Min(currentShieldAmount, incomingDamage);
-        currentShieldAmount -= absorbed;
-        float remainingDamage = incomingDamage - absorbed;
-
-        Debug.Log($"{skillName}: Absorbed {absorbed} damage. Shield remaining: {currentShieldAmount}");
-
-        // Play impact sound when shield absorbs damage
-        if (impactSound != null && activeCaster != null)
-        {
-            AudioSource.PlayClipAtPoint(impactSound, activeCaster.transform.position);
-        }
-
-        // Shield broke
-        if (currentShieldAmount <= 0)
-        {
-            Debug.Log($"{skillName}: Shield broke!");
-            OnSkillEnd(activeCaster);
-        }
-
-        return remainingDamage;
-    }
 
     public override void OnSkillEnd(GameObject caster)
     {
         if (!isActive) return;
 
         base.OnSkillEnd(caster);
-
-        // Unsubscribe from damage event
-        if (activePlayerStats != null && activePlayerStats.health != null)
-        {
-            activePlayerStats.health.onTakeDamage -= AbsorbDamage;
-        }
 
         isActive = false;
         activeCaster = null;

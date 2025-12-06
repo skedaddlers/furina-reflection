@@ -60,6 +60,15 @@ public class Projectile : MonoBehaviour
         {
             hitMask = customHitMask.Value;
         }
+        if(mode == ProjectileMode.HitScan)
+        {
+            FireHitScan();
+        }
+        if(mode == ProjectileMode.Trajectory)
+        {
+            _velocity = _dir * speed;
+        }
+
     }
     public void Init(Vector3 dir, float speed, float lifeTime, float damage, Transform owner = null, LayerMask? customHitMask = null)
     {
@@ -148,7 +157,16 @@ public class Projectile : MonoBehaviour
         // Play hit effect
         if (hitEffect != null)
         {
-            Instantiate(hitEffect, transform.position, Quaternion.identity);
+            ParticleSystem ps = Instantiate(hitEffect, transform.position, Quaternion.identity);
+            if (ps != null)
+            {
+                Destroy(ps.gameObject, ps.main.duration + ps.main.startLifetime.constantMax);
+            }
+            else
+            {
+                Destroy(ps.gameObject, 2f);
+            }
+            
         }
 
         // Hancurkan saat kena apapun yang valid
@@ -192,7 +210,15 @@ public class Projectile : MonoBehaviour
 
         if (hitEffect != null)
         {
-            Instantiate(hitEffect, transform.position, Quaternion.identity);
+            ParticleSystem ps = Instantiate(hitEffect, transform.position, Quaternion.identity);
+            if (ps != null)
+            {
+                Destroy(ps.gameObject, ps.main.duration + ps.main.startLifetime.constantMax);
+            }
+            else
+            {
+                Destroy(ps.gameObject, 2f);
+            }
         }
 
         Destroy(gameObject);
@@ -231,7 +257,17 @@ public class Projectile : MonoBehaviour
             foreach (var hit in hits)
             {
                 if (hit.collider.gameObject.CompareTag("Enemy"))
-                    Instantiate(hitEffect.gameObject, hit.point, Quaternion.LookRotation(-_dir));
+                {
+                    ParticleSystem ps = Instantiate(hitEffect, hit.point, Quaternion.identity);
+                    if (ps != null)
+                    {
+                        Destroy(ps.gameObject, ps.main.duration + ps.main.startLifetime.constantMax);
+                    }
+                    else
+                    {
+                        Destroy(ps.gameObject, 2f);
+                    }
+                }
             }
         }
 

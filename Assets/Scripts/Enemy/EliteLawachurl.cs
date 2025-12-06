@@ -76,7 +76,6 @@ public class EliteLawachurl : EnemyAI
 
     public override bool CanPerformSpecialAttack()
     {
-        Debug.Log("Checking if enemy can perform special attack.");
         return !isPerformingSpecialAttack &&
                Time.time - lastSpecialAttackTime >= specialAttackCooldown &&
                player != null;

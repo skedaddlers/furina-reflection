@@ -64,18 +64,7 @@ public class EliteRifthound : EnemyAI
         DealDamage();
 
         // 3. Apply bleed (damage over time)
-        if (player != null)
-        {
-            var hp = player.GetComponent<Health>();
-            if (hp != null)
-            {
-                for (int i = 0; i < bleedTicks; i++)
-                {
-                    yield return new WaitForSeconds(bleedTickInterval);
-                    hp.TakeDamage(bleedDamagePerTick);
-                }
-            }
-        }
+        // to be implemented: apply bleed effect to player
 
         lastSpecialAttackTime = Time.time;
         isPerformingSpecialAttack = false;

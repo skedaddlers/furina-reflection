@@ -2528,7 +2528,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 0}
   isPerformingSpecialAttack: 0
   specialAttackCooldown: 5
-  chargeDuration: 1
+  chargeDuration: 2
   chargeSpeedMultiplier: 4
   heavyAttackDamageMultiplier: 2
 --- !u!114 &3905815751628404084

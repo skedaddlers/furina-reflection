@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public float dashSpeed = 15f;
     public float dashDuration = 0.3f;
     public float holdThreshold = 0.25f; // waktu untuk bedain tap vs hold (dalam detik)
+    public float speedMultiplier = 1f;
     public Transform cameraTransform;
     // === Combat lock ===
     [Header("Combat Lock / Auto Aim")]
@@ -142,7 +143,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Movement
-        float speed = isSprinting ? runSpeed : walkSpeed;
+        float speed = (isSprinting ? runSpeed : walkSpeed) * speedMultiplier;
 
         if (inputDir.magnitude >= 0.1f)
         {
@@ -167,7 +168,7 @@ public class PlayerController : MonoBehaviour
                     camFwd * Input.GetAxis("Vertical") +
                     camRight * Input.GetAxis("Horizontal");
 
-                controller.Move(moveDir.normalized * walkSpeed * Time.deltaTime);
+                controller.Move(moveDir.normalized * walkSpeed * speedMultiplier * Time.deltaTime);
 
                 animator.SetFloat("WalkSpeed", moveDir.magnitude > 0 ? 0.5f : 0f);
             }
@@ -325,7 +326,7 @@ public class PlayerController : MonoBehaviour
         while (Time.time < startTime + dashDuration)
         {
             dodgeDir = transform.forward;
-            controller.Move(dodgeDir * dashSpeed * Time.deltaTime);
+            controller.Move(dodgeDir * dashSpeed * speedMultiplier * Time.deltaTime);
             yield return null;
         }
 
