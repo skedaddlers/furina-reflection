@@ -17,17 +17,17 @@ public class DDAIntegration : MonoBehaviour
 
     void Awake()
     {
-        if (!enableDDA) return;
+        // if (!enableDDA) return;
 
-        // Setup DDA framework
-        GameObject ddaObject = new GameObject("DDA System");
-        DontDestroyOnLoad(ddaObject);
+        // // Setup DDA framework
+        // GameObject ddaObject = new GameObject("DDA System");
+        // DontDestroyOnLoad(ddaObject);
 
-        // Add DDA-MAPEKit main component
-        var ddaFramework = ddaObject.AddComponent<DDAMAPEKit>();
+        // // Add DDA-MAPEKit main component
+        // var ddaFramework = ddaObject.AddComponent<DDAMAPEKit>();
 
-        // Add configuration manager
-        configManager = ddaObject.AddComponent<DDAConfigurationManager>();
+        // // Add configuration manager
+        // configManager = ddaObject.AddComponent<DDAConfigurationManager>();
     }
 
     void Start()
@@ -40,6 +40,12 @@ public class DDAIntegration : MonoBehaviour
 
         // Subscribe to game events
         SubscribeToGameEvents();
+
+        Room.OnRoomCleared += (room) =>
+        {
+            // Trigger DDA loop on room cleared
+            DDAMAPEKit.Instance?.TriggerMAPEKLoop();
+        };
 
         if (debugMode)
         {

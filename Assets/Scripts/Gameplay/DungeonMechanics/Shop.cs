@@ -5,7 +5,7 @@ public class Shop : MonoBehaviour
 {
     public List<WeaponBase> weaponsForSale;
     public List<SkillBase> skillsForSale;
-
+    public Room parentRoom;
     private Transform model;
     private Animator animator;
     private Player player;
@@ -14,12 +14,13 @@ public class Shop : MonoBehaviour
 
     void Start()
     {
+        parentRoom = GetComponentInParent<Room>();
         model = GetComponent<Transform>();
         animator = GetComponent<Animator>();
         player = GameManager.Instance.player;
         // Example: Populate shop with random items from library
-        var allWeapons = Helpers.GetRandomItems(Library.Instance.allWeapons, 3);
-        var allSkills = Helpers.GetRandomItems(Library.Instance.allSkills, 3);
+        var allWeapons = Helpers.GetRandomItems(Library.Instance.allWeapons, 3, parentRoom.roomIndex + (int)System.DateTime.Now.Ticks);
+        var allSkills = Helpers.GetRandomItems(Library.Instance.allSkills, 3, parentRoom.roomIndex + (int)System.DateTime.Now.Ticks);
 
         // For simplicity, just add first 3 weapons and skills
         for (int i = 0; i < 3 && i < allWeapons.Count; i++)

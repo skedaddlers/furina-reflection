@@ -9,6 +9,9 @@ public class StatsUI : MonoBehaviour
     public Slider manaSlider;
     public TextMeshProUGUI healthText;
     public Slider healthSlider;
+    public TextMeshProUGUI staminaText;
+    public Slider staminaSlider;
+    public GameObject staminaRoot;
     public TextMeshProUGUI levelText;
     public TextMeshProUGUI goldText;
     public TextMeshProUGUI xpText;
@@ -29,6 +32,27 @@ public class StatsUI : MonoBehaviour
 
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;
+    }
+
+    public void UpdateStaminaUI(float currentStamina, float maxStamina)
+    {
+        bool shouldShow = currentStamina < maxStamina;
+
+        if (staminaRoot != null)
+            staminaRoot.SetActive(shouldShow);
+
+        if (staminaSlider != null)
+        {
+            staminaSlider.gameObject.SetActive(shouldShow || staminaRoot == null);
+            staminaSlider.maxValue = maxStamina;
+            staminaSlider.value = currentStamina;
+        }
+
+        if (staminaText != null)
+        {
+            staminaText.gameObject.SetActive(shouldShow || staminaRoot == null);
+            staminaText.text = $"Stamina: {Mathf.CeilToInt(currentStamina)} / {Mathf.CeilToInt(maxStamina)}";
+        }
     }
 
     public void UpdateLevelUI(int level)

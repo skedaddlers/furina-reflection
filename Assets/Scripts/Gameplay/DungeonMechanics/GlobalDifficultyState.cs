@@ -22,6 +22,14 @@ public class GlobalDifficultyState : MonoBehaviour
     public float minDifficultyMultiplier = 0.5f;
     public float maxDifficultyMultiplier = 2.0f;
 
+    [Header("Progression Scaling (based on cleared rooms)")]
+    public AnimationCurve clearedRoomToMultiplier = AnimationCurve.Linear(0f, 0f, 1f, 1f);
+    public float progressionMultiplierMin = 0.8f;
+    public float progressionMultiplierMax = 1.5f;
+
+    private int _totalRooms = 0;
+    private int _clearedRooms = 0;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -31,6 +39,21 @@ public class GlobalDifficultyState : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnEnable()
+    {
+        Room.OnRoomCleared += HandleRoomCleared;
+    }
+
+    private void OnDisable()
+    {
+        Room.OnRoomCleared -= HandleRoomCleared;
+    }
+
+    public void SetTotalRooms(int totalRooms)
+    {
+        _totalRooms = Mathf.Max(0, totalRooms);
     }
 
     public int GetEnemyCountForRoom(Room room)
@@ -53,12 +76,29 @@ public class GlobalDifficultyState : MonoBehaviour
                                 minDifficultyMultiplier, 
                                 maxDifficultyMultiplier);
 
-        // 4. hitung
-        float raw = baseEnemyCount * distanceFactor * typeFactor * dda;
-        Debug.Log($"[GlobalDifficultyState] Calculated enemy count for Room {room.roomIndex} (Distance: {room.distanceFromStart}, Type: {room.roomType}) => Raw: {raw}");
+        // 4. faktor progression berdasarkan jumlah room yang sudah diselesaikan
+        float progression = GetProgressionMultiplier();
+
+        // 5. hitung
+        float raw = baseEnemyCount * distanceFactor * typeFactor * dda * progression;
+        Debug.Log($"[GlobalDifficultyState] Calculated enemy count for Room {room.roomIndex} (Distance: {room.distanceFromStart}, Type: {room.roomType}, Cleared: {_clearedRooms}/{_totalRooms}) => Raw: {raw}");
         int result = Mathf.RoundToInt(raw);
         result = Mathf.Clamp(result, 1, room.maxEnemies);
 
         return result;
+    }
+
+    private float GetProgressionMultiplier()
+    {
+        if (_totalRooms <= 0) return 1f;
+        float completionRatio = Mathf.Clamp01((float)_clearedRooms / _totalRooms);
+        float curveEval = clearedRoomToMultiplier.Evaluate(completionRatio);
+        float clamped = Mathf.Clamp(curveEval, progressionMultiplierMin, progressionMultiplierMax);
+        return clamped;
+    }
+
+    private void HandleRoomCleared(Room room)
+    {
+        _clearedRooms = Mathf.Max(_clearedRooms + 1, 0);
     }
 }

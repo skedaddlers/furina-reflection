@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour
     public float holdThreshold = 0.25f; // waktu untuk bedain tap vs hold (dalam detik)
     public float speedMultiplier = 1f;
     public Transform cameraTransform;
+    [Header("Stamina Settings")]
+    public float dodgeStaminaCost = 25f;
+    public float sprintStaminaCostPerSecond = 15f;
     // === Combat lock ===
     [Header("Combat Lock / Auto Aim")]
     public float autoAimRadius = 12f;            // radius cari musuh
@@ -98,9 +101,12 @@ public class PlayerController : MonoBehaviour
             CancelCombatLock();
             shiftPressedTime = Time.time;
             shiftHeld = true;
-            StartCoroutine(Dodge()); // langsung dodge dulu
-            dashTriggered = true;
-            playerCombat.ForceCancelAttack(); 
+            if (HasEnoughStamina(dodgeStaminaCost))
+            {
+                StartCoroutine(Dodge()); // langsung dodge dulu
+                dashTriggered = true;
+                playerCombat.ForceCancelAttack(); 
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
@@ -109,7 +115,8 @@ public class PlayerController : MonoBehaviour
             if (!dashTriggered && (Time.time - shiftPressedTime) < holdThreshold && !isDodging && isGrounded)
             {
                 // Tap -> dash
-                StartCoroutine(Dodge());
+                if (HasEnoughStamina(dodgeStaminaCost))
+                    StartCoroutine(Dodge());
             }
             else
             {
@@ -119,7 +126,7 @@ public class PlayerController : MonoBehaviour
             dashTriggered = false; // Reset untuk input berikutnya
         }
 
-        bool wantsSprintNow = shiftHeld && (Time.time - shiftPressedTime) >= holdThreshold && !isDodging && isGrounded;
+        bool wantsSprintNow = shiftHeld && (Time.time - shiftPressedTime) >= holdThreshold && !isDodging && isGrounded && HasEnoughStamina(sprintStaminaCostPerSecond * 0.25f);
         if (wantsSprintNow)
         {
             isSprinting = true;
@@ -144,6 +151,15 @@ public class PlayerController : MonoBehaviour
 
         // Movement
         float speed = (isSprinting ? runSpeed : walkSpeed) * speedMultiplier;
+
+        if (isSprinting)
+        {
+            bool success = stats == null || stats.TrySpendStamina(sprintStaminaCostPerSecond * Time.deltaTime);
+            if (!success)
+            {
+                isSprinting = false;
+            }
+        }
 
         if (inputDir.magnitude >= 0.1f)
         {
@@ -317,11 +333,17 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Dodge()
     {
+        if (stats != null && !stats.TrySpendStamina(dodgeStaminaCost))
+        {
+            yield break;
+        }
+
         isDodging = true;
         animator.SetTrigger("Dodge");
 
         float startTime = Time.time;
         Vector3 dodgeDir = transform.forward;
+        stats?.health?.SetInvulnerable(true);
 
         while (Time.time < startTime + dashDuration)
         {
@@ -331,6 +353,7 @@ public class PlayerController : MonoBehaviour
         }
 
         isDodging = false;
+        stats?.health?.SetInvulnerable(false);
     }
 
     void HandleBowInput()
@@ -433,6 +456,13 @@ public class PlayerController : MonoBehaviour
         _animBinder?.SetAim(false);
         if (bowCrosshair != null)
             bowCrosshair.SetActive(false);
+        stats?.health?.SetInvulnerable(false);
+    }
+
+    bool HasEnoughStamina(float amount)
+    {
+        if (stats == null) return true;
+        return stats.CurrentStamina >= amount;
     }
 
     bool HasBowEquipped

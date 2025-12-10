@@ -94,7 +94,7 @@ public class WaterAspirations : SkillBase
         activeCaster = null;
         activePlayerStats = null;
         currentShieldAmount = 0f;
-
+        activePlayerStats.health.RemoveShield();
         Debug.Log($"{skillName} ended");
     }
 

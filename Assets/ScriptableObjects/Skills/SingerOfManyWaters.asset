@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: SInger
   description: Summons a healer companion
-  skillIcon: {fileID: 0}
+  skillIcon: {fileID: 21300000, guid: 2fad783e0625ec7468a8e745e58ec697, type: 3}
   price: 0
   skillID: 0
   skillType: 0

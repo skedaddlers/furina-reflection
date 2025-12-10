@@ -17,6 +17,15 @@ public class PlayerStats : MonoBehaviour
     public float critMultiplier = 1.5f;               // 150%
     public float luck = 0f;
 
+    [Header("Stamina")]
+    public float maxStamina = 100f;
+    public float staminaRegenPerSecond = 20f;
+    public float staminaRegenDelay = 1.0f;
+    [SerializeField] private float _currentStamina;
+    public float CurrentStamina => _currentStamina;
+    private float _staminaRegenDelayTimer = 0f;
+    private float _staminaRegenBuffer = 0f;
+
     [Header("Mana")]
     public int maxMana = 10;
     public int MaxMana => maxMana;
@@ -42,6 +51,7 @@ public class PlayerStats : MonoBehaviour
     private float _manaRegenBuffer = 0f;
 
     public event Action<int, int> onManaChanged; // (current, max)
+    public event Action<float, float> onStaminaChanged; // (current, max)
 
     void Awake()
     {
@@ -57,11 +67,14 @@ public class PlayerStats : MonoBehaviour
         }
         _currentMana = maxMana;
         onManaChanged?.Invoke(_currentMana, maxMana);
+        _currentStamina = maxStamina;
+        onStaminaChanged?.Invoke(_currentStamina, maxStamina);
         health = GetComponent<Health>();
     }
 
     void Update()
     {
+        HandleStaminaRegen();
         // Regen pasif
         if (_currentMana < maxMana)
         {
@@ -74,6 +87,57 @@ public class PlayerStats : MonoBehaviour
                 onManaChanged?.Invoke(_currentMana, maxMana);
             }
         }
+    }
+
+    void HandleStaminaRegen()
+    {
+        if (_currentStamina >= maxStamina) return;
+
+        if (_staminaRegenDelayTimer > 0f)
+        {
+            _staminaRegenDelayTimer -= Time.deltaTime;
+            return;
+        }
+
+        _staminaRegenBuffer += staminaRegenPerSecond * Time.deltaTime;
+        float regenAmount = _staminaRegenBuffer;
+        if (regenAmount >= 0.5f) // apply in small batches for smoother slider
+        {
+            _currentStamina = Mathf.Min(maxStamina, _currentStamina + regenAmount);
+            _staminaRegenBuffer -= regenAmount;
+            onStaminaChanged?.Invoke(_currentStamina, maxStamina);
+        }
+    }
+
+    public bool TrySpendStamina(float amount, bool resetDelay = true)
+    {
+        if (amount <= 0f) return true;
+        if (_currentStamina < amount) return false;
+
+        _currentStamina -= amount;
+        if (resetDelay) _staminaRegenDelayTimer = staminaRegenDelay;
+        onStaminaChanged?.Invoke(_currentStamina, maxStamina);
+        return true;
+    }
+
+    public void SpendStamina(float amount, bool resetDelay = true)
+    {
+        if (amount <= 0f) return;
+        _currentStamina = Mathf.Max(0f, _currentStamina - amount);
+        if (resetDelay) _staminaRegenDelayTimer = staminaRegenDelay;
+        onStaminaChanged?.Invoke(_currentStamina, maxStamina);
+    }
+
+    public void AddStamina(float amount)
+    {
+        if (amount <= 0f) return;
+        _currentStamina = Mathf.Min(maxStamina, _currentStamina + amount);
+        onStaminaChanged?.Invoke(_currentStamina, maxStamina);
+    }
+
+    public void ResetStaminaRegenDelay()
+    {
+        _staminaRegenDelayTimer = staminaRegenDelay;
     }
 
     public bool TrySpendMana(int amount)

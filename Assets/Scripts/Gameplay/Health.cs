@@ -7,6 +7,7 @@ public class Health : MonoBehaviour
     public float shieldAmount = 0;
     public float maxShield = 100;
     private float currentHealth;
+    private bool isInvulnerable = false;
 
     // on death event
     public Action onDeath;
@@ -24,6 +25,11 @@ public class Health : MonoBehaviour
     public void TakeDamage(float amount)
     {
         if (currentHealth <= 0) return;
+        if (isInvulnerable)
+        {
+            Debug.Log($"{gameObject.name} is invulnerable. Damage ignored.");
+            return;
+        }
 
         float finalDamage = amount;
 
@@ -77,6 +83,11 @@ public class Health : MonoBehaviour
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
         onHealthChanged?.Invoke(currentHealth, maxHealth);
         Debug.Log($"{gameObject.name} healed {amount}. Current health: {currentHealth}");
+    }
+
+    public void SetInvulnerable(bool value)
+    {
+        isInvulnerable = value;
     }
 
     // public void Heal(float amount)

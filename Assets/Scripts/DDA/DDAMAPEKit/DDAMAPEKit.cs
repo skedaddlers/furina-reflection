@@ -17,6 +17,7 @@ namespace DDAMAPEKitFramework
         [SerializeField] private bool flexibleRules = false;
         [SerializeField] private float adjustmentConstant = 0.5f;
         [SerializeField] private int movingAverageSample = 5;
+        [SerializeField] private bool runAutomatically = true;
 
         [Header("Player Profile Configuration")]
         [SerializeField] private List<PlayerProfile> profiles = new List<PlayerProfile>();
@@ -113,7 +114,7 @@ namespace DDAMAPEKitFramework
 
         void Update()
         {
-            if (!isInitialized) return;
+            if (!isInitialized || !runAutomatically) return;
 
             frameCounter++;
             if (frameCounter >= readFrequency)
@@ -127,6 +128,12 @@ namespace DDAMAPEKitFramework
             {
                 playerModel.UpdatePlayerProfile(explorationRate);
             }
+        }
+
+        public void TriggerMAPEKLoop()
+        {
+            if (!isInitialized) return;
+            RunMAPEKLoop();
         }
 
         private void RunMAPEKLoop()

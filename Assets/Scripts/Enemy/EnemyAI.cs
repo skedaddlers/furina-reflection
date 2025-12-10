@@ -42,6 +42,7 @@ public class EnemyAI : MonoBehaviour
 
     public virtual void RangedAttack()
     {
+        LookAtPlayer();
         if (Vector3.Distance(player.position, transform.position) <= attackRange + 0.5f)
         {
             if (projectilePrefab != null)

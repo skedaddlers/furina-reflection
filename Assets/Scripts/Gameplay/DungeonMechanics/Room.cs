@@ -30,6 +30,8 @@ public class Room : MonoBehaviour
     public bool isInCombat = false;
     public List<GameObject> spawnedEnemies = new List<GameObject>();
 
+    public static System.Action<Room> OnRoomCleared;
+
     private bool isLocked = false;
     public Vector3 playerSpawn = new Vector3(0, 0, 0);
     private int lastEnterFrom = -1; // arah pintu terakhir dimasukin player
@@ -67,11 +69,18 @@ public class Room : MonoBehaviour
         Debug.Log($"Spawning enemies in Room {roomIndex}");
         ClearExistingEnemies();
 
+        List<GameObject> enemiesToSpawn = GetEnemiesForRoom();
+        if (enemiesToSpawn.Count == 0)
+        {
+            Debug.LogWarning($"Room {roomIndex} has no enemy prefabs available to spawn.");
+            return;
+        }
+
         int attempts = 0;
         int spawned = 0;
-        int maxAttempts = enemyCount * 10; // pembatas biar ga infinite loop
+        int maxAttempts = enemiesToSpawn.Count * 10; // pembatas biar ga infinite loop
 
-        while (spawned < enemyCount && attempts < maxAttempts)
+        while (spawned < enemiesToSpawn.Count && attempts < maxAttempts)
         {
             attempts++;
 
@@ -103,7 +112,8 @@ public class Room : MonoBehaviour
 
                 if (!blocked && !tooClose)
                 {
-                    GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity, transform);
+                    GameObject prefabToSpawn = enemiesToSpawn[spawned];
+                    GameObject enemy = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity, transform);
                     spawnedEnemies.Add(enemy);
                     var h = enemy.GetComponent<Health>();
                     if (h != null) h.onDeath += () =>
@@ -116,6 +126,8 @@ public class Room : MonoBehaviour
                             isInCombat = false;
                             UnlockAllDoors();
                             Debug.Log($"Room {roomIndex} Cleared!");
+
+                            OnRoomCleared?.Invoke(this);
                         }
 
                         var minimap = FindObjectOfType<MinimapUI>();
@@ -165,6 +177,21 @@ public class Room : MonoBehaviour
 
         isInCombat = true;
 
+        ApplyDifficultySnapshots();
+
+
+        if (roomType == RoomType.Elite)
+        {
+            enemyCount = 1;
+        }
+
+        Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
+        SpawnEnemiesInRoom();
+        LockAllDoors();
+    }
+
+    void ApplyDifficultySnapshots()
+    {
         var diff = GlobalDifficultyState.Instance;
         if (diff != null)
         {
@@ -174,9 +201,6 @@ public class Room : MonoBehaviour
         {
             enemyCount = Mathf.Clamp(enemyCount, 1, maxEnemies);
         }
-        Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
-        SpawnEnemiesInRoom();
-        LockAllDoors();
     }
 
     public void OnDoorInteract(int direction)
@@ -261,4 +285,29 @@ public class Room : MonoBehaviour
     }
     #endif
 
+    List<GameObject> GetEnemiesForRoom()
+    {
+        var result = new List<GameObject>();
+        var library = Library.Instance;
+
+        if (library != null)
+        {
+            List<GameObject> pool = roomType == RoomType.Elite ? library.eliteEnemies : library.commonEnemies;
+            result = Helpers.GetRandomItemsAllowRepeats(pool, enemyCount, roomIndex);
+        }
+
+        if (result.Count == 0)
+        {
+            Debug.LogWarning($"Fallback enemy selection for Room {roomIndex}. Please populate {(roomType == RoomType.Elite ? "elite" : "common")} enemies in GlobalLibrary.");
+            if (enemyPrefab != null)
+            {
+                for (int i = 0; i < enemyCount; i++)
+                {
+                    result.Add(enemyPrefab);
+                }
+            }
+        }
+
+        return result;
+    }
 }

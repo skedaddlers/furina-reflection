@@ -68,6 +68,8 @@ public class UIManager : MonoBehaviour
     {
         playerStats.onManaChanged += statsUI.UpdateManaUI;
         statsUI.UpdateManaUI(playerStats.CurrentMana, playerStats.MaxMana);
+        playerStats.onStaminaChanged += statsUI.UpdateStaminaUI;
+        statsUI.UpdateStaminaUI(playerStats.CurrentStamina, playerStats.maxStamina);
         playerStats.GetComponent<Health>().onHealthChanged += statsUI.UpdateHealthUI;
         statsUI.UpdateHealthUI(playerStats.health.maxHealth, playerStats.health.maxHealth);
         weaponUI.UpdateWeaponIcon(FindObjectOfType<PlayerLoadout>());

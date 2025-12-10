@@ -22,6 +22,12 @@ public class RoomManager : MonoBehaviour
         InstantiateRooms();
         MovePlayerToRoom(1, -1);
 
+        var diff = GlobalDifficultyState.Instance;
+        if (diff != null)
+        {
+            diff.SetTotalRooms(Layout?.roomDataMap?.Count ?? 0);
+        }
+
         var minimap = FindObjectOfType<MinimapUI>();
         if (minimap != null)
         {

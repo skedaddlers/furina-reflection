@@ -395,7 +395,7 @@ MonoBehaviour:
   - {fileID: 6880289590999414734}
   - {fileID: 2449373732708187433}
   - {fileID: 4411320387035580006}
-  maxEnemies: 1
+  maxEnemies: 15
   enemyCount: 1
   spawnAreaSize: {x: 10, y: 5, z: 10}
   groundMask:
