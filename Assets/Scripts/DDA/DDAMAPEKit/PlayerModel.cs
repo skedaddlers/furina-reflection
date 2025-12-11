@@ -18,16 +18,20 @@ namespace DDAMAPEKitFramework
 
         public PlayerModel()
         {
-            // Initialize default profiles (based on Bartle's types)
-            profiles.Add(new PlayerProfile(0, "Killer"));
-            profiles.Add(new PlayerProfile(1, "Achiever"));
-            profiles.Add(new PlayerProfile(2, "Explorer"));
+            attributes = new List<PlayerAttribute>();
+            profiles = new List<PlayerProfile>();
+            profileScores = new Dictionary<PlayerProfile, float>();
+            currentProfile = null;
+            lastProfileUpdateTime = 0f;
+        }
 
-            foreach (var profile in profiles)
+        public void InitProfiles(List<PlayerProfile> initialProfiles)
+        {
+            foreach (var profile in initialProfiles)
             {
-                profileScores[profile] = 0f;
+                AddProfile(profile);
             }
-            currentProfile = profiles[0];
+            currentProfile = profiles.FirstOrDefault();
         }
 
         public void AddAttribute(PlayerAttribute attribute)
@@ -79,6 +83,8 @@ namespace DDAMAPEKitFramework
                 // Exploitation: choose best profile
                 currentProfile = profileScores.OrderByDescending(kvp => kvp.Value).First().Key;
             }
+
+            Debug.Log($"[PlayerModel] Current Profile: {currentProfile.name}, Score: {profileScores[currentProfile]}");
         }
 
         public void UpdateProfileScore(float performance)

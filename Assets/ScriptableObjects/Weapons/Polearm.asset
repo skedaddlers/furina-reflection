@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeWeapon
   id: weapon_id
   weaponName: Staff of Homa
-  description: Hutao's Weapon lol
+  description: Ei's grasscutter, with its double hit, it's effective on cutting other
+    things too!
   icon: {fileID: 21300000, guid: 4dec4b78d091b5446a22327316d70abe, type: 3}
   price: 80
   baseDamage: 8

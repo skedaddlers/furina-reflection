@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -16,6 +17,12 @@ public class UIManager : MonoBehaviour
     [Header("Door Interaction UI")]
     public CanvasGroup doorPromptCanvas;
     public TextMeshProUGUI doorPromptText; // atau pakai Text biasa kalau belum pakai TMP
+    [Header("Victory/Defeat UI")]
+    public Button restartButton;
+    public string mainSceneName = "MainScene";
+    public CanvasGroup victoryCanvas;
+    public CanvasGroup defeatCanvas;
+    public GameObject winLoseScreen;
 
     void Awake()
     {
@@ -77,6 +84,11 @@ public class UIManager : MonoBehaviour
         statsUI.UpdateGoldUI(playerStats.gold);
         statsUI.UpdateXPUI(playerStats.currentXP, playerStats.xpToNextLevel);
         shopUI.CloseShop();
+        restartButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(mainSceneName);
+            GameManager.Instance.Restart();
+        });
     }
 
     void Update()
@@ -99,6 +111,26 @@ public class UIManager : MonoBehaviour
         {
             Instance.weaponUI.UpdateWeaponIcon(loadout);
         }
+    }
+
+    public void ShowVictoryScreen()
+    {
+        cursorController.UnlockCursor();
+        winLoseScreen.SetActive(true);
+        victoryCanvas.gameObject.SetActive(true);
+        victoryCanvas.alpha = 1;
+        victoryCanvas.blocksRaycasts = true;
+        victoryCanvas.interactable = true;
+    }
+
+    public void ShowDefeatScreen()
+    {
+        cursorController.UnlockCursor();
+        winLoseScreen.SetActive(true);
+        defeatCanvas.gameObject.SetActive(true);
+        defeatCanvas.alpha = 1;
+        defeatCanvas.blocksRaycasts = true;
+        defeatCanvas.interactable = true;
     }
 
 

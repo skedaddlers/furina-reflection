@@ -57,7 +57,7 @@ public class SalonMemberBehaviour : MonoBehaviour
         float closestDistance = skillData.attackRange;
 
         // Find all enemies
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag(skillData.enemyTag);
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag(skillData.targetTag);
 
         foreach (GameObject enemy in enemies)
         {
@@ -92,8 +92,7 @@ public class SalonMemberBehaviour : MonoBehaviour
             }
         }
 
-        // Create dummy projectile
-        FireDummyProjectile(finalDamage);
+        FireProjectile(finalDamage);
 
         // Play impact sound
         if (skillData.impactSound != null)
@@ -102,29 +101,15 @@ public class SalonMemberBehaviour : MonoBehaviour
         }
     }
 
-    private void FireDummyProjectile(float damage)
+    private void FireProjectile(float damage)
     {
-        // Create a simple sphere projectile
-        GameObject projectile = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        projectile.name = "SalonProjectile";
-        projectile.transform.position = transform.position;
-        projectile.transform.localScale = Vector3.one * 0.3f;
-
-        // Set color
-        Renderer renderer = projectile.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            Material mat = new Material(Shader.Find("Standard"));
-            mat.color = Color.blue;
-            renderer.material = mat;
-        }
-
-        // Add projectile behaviour
-        SalonProjectile proj = projectile.AddComponent<SalonProjectile>();
-        proj.Initialize(damage, skillData.projectileSpeed, skillData.enemyTag);
-
-        // Set direction towards target
         Vector3 direction = (currentTarget.position - transform.position).normalized;
-        proj.SetDirection(direction);
+        GameObject projectile = Object.Instantiate(skillData.projectilePrefab, transform.position + direction * 0.5f, Quaternion.LookRotation(direction));
+        Projectile projComponent = projectile.GetComponent<Projectile>();
+        LayerMask targetMask = LayerMask.GetMask(skillData.targetTag);
+        if (projComponent != null)
+        {
+            projComponent.Init(direction, skillData.projectileSpeed, projComponent.lifeTime, damage, owner.transform, targetMask);
+        }
     }
 }

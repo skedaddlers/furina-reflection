@@ -12,29 +12,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62f8b24e7891d214e9509ff126d4739e, type: 3}
   m_Name: AuraOfTheFormerArchon
   m_EditorClassIdentifier: 
-  skillName: Aura
+  skillName: Aura of The Former Archon
   description: Damages and slows enemies within radius
   skillIcon: {fileID: 21300000, guid: 601b542ced2454341bb891453972808a, type: 3}
-  price: 0
+  price: 100
   skillID: 0
   skillType: 0
   targetType: 2
-  manaCost: 10
-  cooldownTime: 10
+  manaCost: 40
+  cooldownTime: 15
   levelRequired: 1
   purchasePrice: 100
-  duration: 5
-  damageAmount: 5
+  duration: 6
+  damageAmount: 10
   healAmount: 0
   shieldAmount: 0
   effectPrefab: {fileID: 4932088507883938021, guid: 0e5709a7ddb77924090c112cf73bb98a, type: 3}
-  castSound: {fileID: 0}
+  castSound: {fileID: 8300000, guid: b770e9c65bc4c794c8d1e40e3edd5637, type: 3}
   impactSound: {fileID: 0}
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 0
   nextLevelSkill: {fileID: 0}
-  radius: 10
-  tickInterval: 0.5
+  radius: 6
+  tickInterval: 1
   enemyTag: Enemy
+  playerTag: Player
   slowPercent: 0.5

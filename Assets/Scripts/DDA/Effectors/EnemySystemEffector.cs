@@ -23,8 +23,29 @@ public class EnemySystemEffector : Effector
 
     public override void Apply(string variable, float value)
     {
+        var diff = GlobalDifficultyState.Instance;
         switch (variable)
         {
+            case "enemyDamageMultiplier":
+                diff?.SetEnemyMultiplier("damage", value);
+                UpdateActiveEnemies();
+                break;
+            case "enemyHealthMultiplier":
+                diff?.SetEnemyMultiplier("health", value);
+                UpdateActiveEnemies();
+                break;
+            case "enemySpeedMultiplier":
+                diff?.SetEnemyMultiplier("speed", value);
+                UpdateActiveEnemies();
+                break;
+            case "enemyAttackSpeedMultiplier":
+                diff?.SetEnemyMultiplier("attackSpeed", value);
+                UpdateActiveEnemies();
+                break;
+            case "enemyAggroMultiplier":
+                diff?.SetEnemyMultiplier("aggro", value);
+                UpdateActiveEnemies();
+                break;
             case "enemySpawnRate":
                 AdjustSpawnRate(value);
                 break;
@@ -32,13 +53,16 @@ public class EnemySystemEffector : Effector
                 AdjustMaxEnemies((int)value);
                 break;
             case "enemyDamage":
-                AdjustEnemyDamage(value);
+                diff?.SetEnemyMultiplier("damage", 1f + value * 0.1f);
+                UpdateActiveEnemies();
                 break;
             case "enemySpeed":
-                AdjustEnemySpeed(value);
+                diff?.SetEnemyMultiplier("speed", 1f + value * 0.1f);
+                UpdateActiveEnemies();
                 break;
             case "enemyHealth":
-                AdjustEnemyHealth(value);
+                diff?.SetEnemyMultiplier("health", 1f + value * 0.1f);
+                UpdateActiveEnemies();
                 break;
         }
     }
@@ -130,5 +154,13 @@ public class EnemySystemEffector : Effector
         }
         Debug.Log($"[EnemySystemEffector] Enemy health multiplier: {healthMultiplier}");
     }
-}
 
+    private void UpdateActiveEnemies()
+    {
+        activeEnemies = FindObjectsOfType<EnemyAI>();
+        foreach (var enemy in activeEnemies)
+        {
+            enemy?.ApplyDifficultyMultipliers();
+        }
+    }
+}

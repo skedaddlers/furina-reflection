@@ -13,15 +13,24 @@ public class EnemyAI : MonoBehaviour
 
     public bool isPerformingSpecialAttack = false;
     protected Transform player;
+    protected float movementSpeed = 3f;
     protected NavMeshAgent agent;
     protected Animator animator;
     protected float lastAttackTime;
+    private int baseDamage;
+    private float baseAttackCooldown;
+    private float baseDetectionRange;
+    private float baseAgentSpeed;
+    private float baseMaxHealth;
+    private bool baseCaptured = false;
 
     protected virtual void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        CaptureBaseStats();
+        ApplyDifficultyMultipliers();
     }
 
     protected virtual void Update()
@@ -127,5 +136,40 @@ public class EnemyAI : MonoBehaviour
     {
         // Default: common enemy nggak punya special
         return false;
+    }
+
+    void CaptureBaseStats()
+    {
+        if (baseCaptured) return;
+        baseDamage = damage;
+        baseAttackCooldown = attackCooldown;
+        baseDetectionRange = detectionRange;
+        baseAgentSpeed = agent != null ? agent.speed : 3f;
+        var h = GetComponent<Health>();
+        if (h != null) baseMaxHealth = h.maxHealth;
+        baseCaptured = true;
+    }
+
+    public void ApplyDifficultyMultipliers()
+    {
+        var diff = GlobalDifficultyState.Instance;
+        if (diff == null) return;
+        var snap = diff.GetEnemyDifficultySnapshot();
+
+        damage = Mathf.RoundToInt(baseDamage * snap.damage);
+        attackCooldown = Mathf.Max(0.1f, baseAttackCooldown / Mathf.Max(0.01f, snap.attackSpeed));
+        detectionRange = baseDetectionRange * snap.aggro;
+
+        if (agent != null)
+        {
+            agent.speed = Mathf.Max(0.5f, baseAgentSpeed * snap.speed);
+        }
+
+        var h = GetComponent<Health>();
+        if (h != null && baseMaxHealth > 0f)
+        {
+            float newMax = Mathf.Max(1f, baseMaxHealth * snap.health);
+            h.SetMaxHealth(newMax, keepCurrentRatio: true, fillOnIncrease: true);
+        }
     }
 }

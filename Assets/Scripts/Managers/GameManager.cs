@@ -40,10 +40,16 @@ public class GameManager : MonoBehaviour
         StartGame();
     }
 
+    public void Restart()
+    {
+    }
+
     public void StartGame()
     {
         ChangeState(GameState.Playing);
+        AudioManager.Instance.PlayMusic(AudioManager.Instance.gameplayMusic);
     }
+    
 
     public void SetCursorState(bool unlocked)
     {
@@ -84,6 +90,18 @@ public class GameManager : MonoBehaviour
                 // Show in-game menu UI
                 break;
         }
+    }
+
+    public void OnBossRoomCleared()
+    {
+        UIManager.Instance.ShowVictoryScreen();
+        ChangeState(GameState.GameOver);
+    }
+
+    public void OnPlayerDeath()
+    {
+        UIManager.Instance.ShowDefeatScreen();
+        ChangeState(GameState.GameOver);
     }
 
     public bool IsPaused => CurrentState == GameState.Paused || CurrentState == GameState.MainMenu || CurrentState == GameState.GameOver || CurrentState == GameState.InMenu;

@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: weapon_id
   weaponName: Bow
-  description: Awol
+  description: A bow that is given from Venti himself! you can aim and target the
+    enemy you want to shoot!
   icon: {fileID: 21300000, guid: 18afb8bac18bd0b4c815d73573a8a41c, type: 3}
   price: 78
   baseDamage: 25

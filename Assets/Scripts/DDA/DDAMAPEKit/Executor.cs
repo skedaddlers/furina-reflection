@@ -39,6 +39,7 @@ namespace DDAMAPEKitFramework
                     {
                         aggregatedChanges[kvp.Key] = kvp.Value;
                     }
+                    Debug.Log($"[Executor] Planned change: {kvp.Key} -> {kvp.Value}");
                 }
             }
 

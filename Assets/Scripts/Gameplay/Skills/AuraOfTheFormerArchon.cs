@@ -10,6 +10,7 @@ public class AuraOfTheFormerArchon : SkillBase
     public float radius = 5f;
     public float tickInterval = 0.5f;
     public string enemyTag = "Enemy";
+    public string playerTag = "Player";
 
     [Header("Slow Effect")]
     [Range(0f, 1f)]
@@ -73,13 +74,18 @@ public class AuraOfTheFormerArchon : SkillBase
     {
         // Get player stats for damage calculation
         PlayerStats playerStats = caster.GetComponent<PlayerStats>();
+        EnemyAI enemyCaster = caster.GetComponent<EnemyAI>();
         float finalDamage = damageAmount;
 
-        // Add player attack stat and apply crit if available
+        // Add attack stat and apply crit if available
         if (playerStats != null)
         {
             finalDamage += playerStats.baseAttack;
             finalDamage = playerStats.RollDamage(finalDamage);
+        }
+        else if (enemyCaster != null)
+        {
+            finalDamage += enemyCaster.damage;
         }
 
         // Find all colliders in radius
@@ -93,8 +99,9 @@ public class AuraOfTheFormerArchon : SkillBase
             // Skip the caster
             if (hit.gameObject == caster) continue;
 
-            // Check if it's an enemy by tag
-            if (!hit.CompareTag(enemyTag)) continue;
+            // Determine target tag based on caster tag
+            string targetTag = caster.CompareTag(playerTag) ? enemyTag : playerTag;
+            if (!hit.CompareTag(targetTag)) continue;
 
             // Apply damage
             Health health = hit.GetComponent<Health>();
@@ -174,6 +181,7 @@ public class AuraOfTheFormerArchon : SkillBase
         {
             return playerStats.CurrentMana >= manaCost;
         }
-        return base.CanUseSkill(caster);
+        // Enemies or non-player casters: allow
+        return true;
     }
 }

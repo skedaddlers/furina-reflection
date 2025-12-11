@@ -31,6 +31,7 @@ public class Room : MonoBehaviour
     public List<GameObject> spawnedEnemies = new List<GameObject>();
 
     public static System.Action<Room> OnRoomCleared;
+    public static System.Action<Room> OnRoomCombatStarted;
 
     private bool isLocked = false;
     public Vector3 playerSpawn = new Vector3(0, 0, 0);
@@ -128,6 +129,10 @@ public class Room : MonoBehaviour
                             Debug.Log($"Room {roomIndex} Cleared!");
 
                             OnRoomCleared?.Invoke(this);
+                            if(roomType == RoomType.Boss)
+                            {
+                                GameManager.Instance.OnBossRoomCleared();
+                            }
                         }
 
                         var minimap = FindObjectOfType<MinimapUI>();
@@ -177,6 +182,7 @@ public class Room : MonoBehaviour
 
         isInCombat = true;
 
+        OnRoomCombatStarted?.Invoke(this);
         ApplyDifficultySnapshots();
 
 

@@ -14,16 +14,23 @@ public class DDAConfigurationManager : MonoBehaviour
     [SerializeField] private Vector2 healthThreshold = new Vector2(0.3f, 1.0f);
     [SerializeField] private Vector2 scoreThreshold = new Vector2(50f, 500f);
     [SerializeField] private Vector2 accuracyThreshold = new Vector2(0.2f, 0.8f);
+    [SerializeField] private Vector2 survivabilityThreshold = new Vector2(0.5f, 1.0f);
+    [SerializeField] private Vector2 clearTimeThreshold = new Vector2(0.7f, 1.3f); // ratio around 1 is expected
 
     [Header("Reference Values")]
     [SerializeField] private float healthReference = 0.7f;
     [SerializeField] private float scoreReference = 200f;
     [SerializeField] private float accuracyReference = 0.5f;
+    [SerializeField] private float survivabilityReference = 0.85f;
+    [SerializeField] private float expectedClearTimeSeconds = 45f;
+    [SerializeField] private float clearTimeReference = 1f;
 
     [Header("Player Attribute Weights")]
     [SerializeField] private float healthWeight = 1f;
     [SerializeField] private float scoreWeight = 1f;
     [SerializeField] private float accuracyWeight = 0.5f;
+    [SerializeField] private float survivabilityWeight = 1.2f;
+    [SerializeField] private float clearTimeWeight = 1f;
 
 
     [Header("Rules (Designer editable)")]
@@ -69,8 +76,8 @@ public class DDAConfigurationManager : MonoBehaviour
         healthAttr.weight = healthWeight;
         ddaFramework.AddPlayerAttribute(healthAttr);
 
-        // Score attribute
-        var scoreAttr = new PlayerAttribute(1, "Score", scoreThreshold.x, scoreThreshold.y);
+        // Economy attribute (XP + Gold gain rate)
+        var scoreAttr = new PlayerAttribute(1, "Economy", scoreThreshold.x, scoreThreshold.y);
         scoreAttr.reference.SetStaticReference(scoreReference);
         scoreAttr.weight = scoreWeight;
         ddaFramework.AddPlayerAttribute(scoreAttr);
@@ -80,6 +87,16 @@ public class DDAConfigurationManager : MonoBehaviour
         accuracyAttr.reference.SetStaticReference(accuracyReference);
         accuracyAttr.weight = accuracyWeight;
         ddaFramework.AddPlayerAttribute(accuracyAttr);
+
+        var survivabilityAttr = new PlayerAttribute(3, "Survivability", survivabilityThreshold.x, survivabilityThreshold.y);
+        survivabilityAttr.reference.SetStaticReference(survivabilityReference);
+        survivabilityAttr.weight = survivabilityWeight;
+        ddaFramework.AddPlayerAttribute(survivabilityAttr);
+
+        var clearTimeAttr = new PlayerAttribute(4, "ClearTime", clearTimeThreshold.x, clearTimeThreshold.y);
+        clearTimeAttr.reference.SetStaticReference(clearTimeReference);
+        clearTimeAttr.weight = clearTimeWeight;
+        ddaFramework.AddPlayerAttribute(clearTimeAttr);
     }
 
     private void ConfigureSymptoms()
@@ -261,6 +278,15 @@ public class DDAConfigurationManager : MonoBehaviour
         // Add accuracy sensor
         var accuracySensor = gameObject.AddComponent<AccuracySensor>();
         ddaFramework.RegisterSensor(accuracySensor);
+
+        // Add survivability sensor
+        var survivabilitySensor = gameObject.AddComponent<SurvivabilitySensor>();
+        ddaFramework.RegisterSensor(survivabilitySensor);
+
+        // Add clear time sensor
+        var clearTimeSensor = gameObject.AddComponent<ClearTimeSensor>();
+        clearTimeSensor.SetExpectedClearTime(expectedClearTimeSeconds);
+        ddaFramework.RegisterSensor(clearTimeSensor);
     }
 
     private void RegisterEffectors()

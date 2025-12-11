@@ -13,6 +13,8 @@ public class SalonSolitaire : SkillBase
     public float attackInterval = 1.5f;
     public float projectileSpeed = 15f;
     public string enemyTag = "Enemy";
+    public string playerTag = "Player";
+    public string targetTag = "Enemy";
 
     [Header("Projectile Settings")]
     public GameObject projectilePrefab;
@@ -40,6 +42,15 @@ public class SalonSolitaire : SkillBase
         if (castSound != null)
         {
             AudioSource.PlayClipAtPoint(castSound, caster.transform.position);
+        }
+
+        if(caster.CompareTag(playerTag))
+        {
+            targetTag = enemyTag;
+        }
+        else
+        {
+            targetTag = playerTag;
         }
 
         // Spawn salon members around the caster

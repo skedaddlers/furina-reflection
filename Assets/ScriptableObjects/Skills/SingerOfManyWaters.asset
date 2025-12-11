@@ -12,23 +12,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfb2ce83c23953b4ba943f5a42638570, type: 3}
   m_Name: SingerOfManyWaters
   m_EditorClassIdentifier: 
-  skillName: SInger
+  skillName: SInger of Many Waters
   description: Summons a healer companion
   skillIcon: {fileID: 21300000, guid: 2fad783e0625ec7468a8e745e58ec697, type: 3}
-  price: 0
-  skillID: 0
+  price: 145
+  skillID: 3
   skillType: 0
   targetType: 0
-  manaCost: 10
-  cooldownTime: 5
+  manaCost: 60
+  cooldownTime: 20
   levelRequired: 1
   purchasePrice: 100
-  duration: 5
+  duration: 8
   damageAmount: 0
   healAmount: 5
   shieldAmount: 0
   effectPrefab: {fileID: 0}
-  castSound: {fileID: 0}
+  castSound: {fileID: 8300000, guid: e4da608dc48a9f14d8ee26e068503327, type: 3}
   impactSound: {fileID: 0}
   statModifiers: []
   animationTrigger: 
@@ -36,5 +36,5 @@ MonoBehaviour:
   nextLevelSkill: {fileID: 0}
   singerPrefab: {fileID: 8502773717673982367, guid: ee515460cca89ad449ec9127df38a975, type: 3}
   spawnDistance: 1
-  healInterval: 1
+  healInterval: 2
   floatHeight: 1.5

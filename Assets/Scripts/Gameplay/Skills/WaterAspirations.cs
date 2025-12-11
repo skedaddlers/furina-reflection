@@ -32,7 +32,9 @@ public class WaterAspirations : SkillBase
         activeCaster = caster;
         activePlayerStats = caster.GetComponent<PlayerStats>();
 
-        if (activePlayerStats == null || activePlayerStats.health == null)
+        Health targetHealth = activePlayerStats != null ? activePlayerStats.health : caster.GetComponent<Health>();
+
+        if (targetHealth == null)
         {
             Debug.LogWarning($"{skillName}: Missing PlayerStats or Health component!");
             return;
@@ -56,7 +58,7 @@ public class WaterAspirations : SkillBase
         // Apply shield
         currentShieldAmount = shieldAmount;
 
-        activePlayerStats.health.AddShield(currentShieldAmount);
+        targetHealth.AddShield(currentShieldAmount);
 
         isActive = true;
 
@@ -92,9 +94,17 @@ public class WaterAspirations : SkillBase
 
         isActive = false;
         activeCaster = null;
+        if (activePlayerStats != null && activePlayerStats.health != null)
+        {
+            activePlayerStats.health.RemoveShield();
+        }
+        else
+        {
+            var h = caster.GetComponent<Health>();
+            if (h != null) h.RemoveShield();
+        }
         activePlayerStats = null;
         currentShieldAmount = 0f;
-        activePlayerStats.health.RemoveShield();
         Debug.Log($"{skillName} ended");
     }
 
@@ -105,6 +115,7 @@ public class WaterAspirations : SkillBase
         {
             return playerStats.CurrentMana >= manaCost;
         }
-        return base.CanUseSkill(caster);
+        // Enemies or non-player casters: ignore mana gating
+        return true;
     }
 }

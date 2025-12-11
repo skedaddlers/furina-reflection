@@ -90,6 +90,33 @@ public class Health : MonoBehaviour
         isInvulnerable = value;
     }
 
+    public void SetMaxHealth(float newMaxHealth, bool keepCurrentRatio = true, bool fillOnIncrease = true)
+    {
+        newMaxHealth = Mathf.Max(1f, newMaxHealth);
+        float prevMax = maxHealth;
+        float prevCurrent = currentHealth;
+
+        maxHealth = newMaxHealth;
+        maxShield = newMaxHealth;
+
+        if (keepCurrentRatio && prevMax > 0f)
+        {
+            float ratio = prevCurrent / prevMax;
+            currentHealth = Mathf.Clamp(ratio * maxHealth, 0f, maxHealth);
+        }
+        else
+        {
+            currentHealth = Mathf.Min(currentHealth, maxHealth);
+        }
+
+        if (!keepCurrentRatio && fillOnIncrease && newMaxHealth > prevMax)
+        {
+            currentHealth = maxHealth;
+        }
+
+        onHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     // public void Heal(float amount)
     // {
     //     currentHealth += amount;
@@ -106,6 +133,7 @@ public class Health : MonoBehaviour
         onDeath?.Invoke();
         if (CompareTag("Player"))
         {
+            GameManager.Instance.OnPlayerDeath();
             Debug.Log("Player Died!");
         }
     }

@@ -27,6 +27,15 @@ public class GlobalDifficultyState : MonoBehaviour
     public float progressionMultiplierMin = 0.8f;
     public float progressionMultiplierMax = 1.5f;
 
+    [Header("Enemy Stat Multipliers (set by DDA)")]
+    public float enemyDamageMultiplier = 1f;
+    public float enemyHealthMultiplier = 1f;
+    public float enemySpeedMultiplier = 1f;
+    public float enemyAttackSpeedMultiplier = 1f; // >1 = faster attacks (shorter cooldown)
+    public float enemyAggroRangeMultiplier = 1f;
+    public float enemyMultiplierMin = 0.5f;
+    public float enemyMultiplierMax = 2.5f;
+
     private int _totalRooms = 0;
     private int _clearedRooms = 0;
 
@@ -101,4 +110,39 @@ public class GlobalDifficultyState : MonoBehaviour
     {
         _clearedRooms = Mathf.Max(_clearedRooms + 1, 0);
     }
+
+    public EnemyDifficultySnapshot GetEnemyDifficultySnapshot()
+    {
+        float Clamp(float v) => Mathf.Clamp(v, enemyMultiplierMin, enemyMultiplierMax);
+        return new EnemyDifficultySnapshot
+        {
+            damage = Clamp(enemyDamageMultiplier),
+            health = Clamp(enemyHealthMultiplier),
+            speed = Clamp(enemySpeedMultiplier),
+            attackSpeed = Clamp(enemyAttackSpeedMultiplier),
+            aggro = Clamp(enemyAggroRangeMultiplier)
+        };
+    }
+
+    public void SetEnemyMultiplier(string stat, float value)
+    {
+        float v = Mathf.Clamp(value, enemyMultiplierMin, enemyMultiplierMax);
+        switch (stat)
+        {
+            case "damage": enemyDamageMultiplier = v; break;
+            case "health": enemyHealthMultiplier = v; break;
+            case "speed": enemySpeedMultiplier = v; break;
+            case "attackSpeed": enemyAttackSpeedMultiplier = v; break;
+            case "aggro": enemyAggroRangeMultiplier = v; break;
+        }
+    }
+}
+
+public struct EnemyDifficultySnapshot
+{
+    public float damage;
+    public float health;
+    public float speed;
+    public float attackSpeed;
+    public float aggro;
 }

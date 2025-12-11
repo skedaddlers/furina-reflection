@@ -83,6 +83,7 @@ namespace DDAMAPEKitFramework
 
             // Initialize components
             playerModel = new PlayerModel();
+            playerModel.InitProfiles(profiles);
             symptomRepository = new SymptomRepository();
             policyEngine = new PolicyEngine();
             systemStateLog = new SystemStateLog();
@@ -134,6 +135,8 @@ namespace DDAMAPEKitFramework
         {
             if (!isInitialized) return;
             RunMAPEKLoop();
+
+            playerModel.UpdatePlayerProfile(explorationRate);
         }
 
         private void RunMAPEKLoop()
@@ -190,8 +193,7 @@ namespace DDAMAPEKitFramework
             // Configure default symptoms based on the paper
             if(useDefaultSymptoms)
             {
-                symptomRepository.AddSymptom(new Symptom("very.high", 2.0f, 3.0f));
-                symptomRepository.AddSymptom(new Symptom("sharply.high", 1.8f, 2.0f));
+                symptomRepository.AddSymptom(new Symptom("very.high", 1.8f, 3.0f));
                 symptomRepository.AddSymptom(new Symptom("high", 1.5f, 1.8f));
                 symptomRepository.AddSymptom(new Symptom("slightly.high", 1.1f, 1.5f));
                 symptomRepository.AddSymptom(new Symptom("normal", 0.9f, 1.1f));

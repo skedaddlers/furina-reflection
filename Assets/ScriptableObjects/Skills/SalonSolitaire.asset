@@ -15,20 +15,20 @@ MonoBehaviour:
   skillName: Salon Solitaire
   description: Summons Furina's besites to fight alongside you!
   skillIcon: {fileID: 21300000, guid: 33dcf26d179f4034399608c15d01b524, type: 3}
-  price: 40
-  skillID: 0
+  price: 60
+  skillID: 2
   skillType: 3
   targetType: 0
-  manaCost: 10
-  cooldownTime: 5
+  manaCost: 35
+  cooldownTime: 15
   levelRequired: 1
   purchasePrice: 100
   duration: 10
-  damageAmount: 50
+  damageAmount: 5
   healAmount: 0
   shieldAmount: 0
   effectPrefab: {fileID: 0}
-  castSound: {fileID: 0}
+  castSound: {fileID: 8300000, guid: b845970004a00984aba2ed486eb4c2d2, type: 3}
   impactSound: {fileID: 0}
   statModifiers: []
   animationTrigger: 
@@ -41,7 +41,9 @@ MonoBehaviour:
   memberCount: 3
   spawnRadius: 2
   attackRange: 10
-  attackInterval: 1.5
-  projectileSpeed: 15
+  attackInterval: 2
+  projectileSpeed: 10
   enemyTag: Enemy
-  projectilePrefab: {fileID: 0}
+  playerTag: Player
+  targetTag: Enemy
+  projectilePrefab: {fileID: 3897606349267117842, guid: a681113537179d745a4f8140ae3396e0, type: 3}

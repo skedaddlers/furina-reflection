@@ -112,18 +112,21 @@ public class SingerOfManyWaters : SkillBase
     {
         float elapsed = 0f;
         PlayerStats playerStats = caster.GetComponent<PlayerStats>();
-
-        if (playerStats == null || playerStats.health == null)
-        {
-            Debug.LogWarning($"{skillName}: Missing PlayerStats or Health component!");
-            yield break;
-        }
+        Health targetHealth = playerStats != null ? playerStats.health : caster.GetComponent<Health>();
 
         while (elapsed < duration && isActive)
         {
             // Heal player
-            playerStats.health.Heal(healAmount);
-            Debug.Log($"{skillName}: Healed {healAmount} HP. Elapsed: {elapsed}/{duration}");
+            if (targetHealth != null)
+            {
+                targetHealth.Heal(healAmount);
+                Debug.Log($"{skillName}: Healed {healAmount} HP. Elapsed: {elapsed}/{duration}");
+            }
+            else
+            {
+                Debug.LogWarning($"{skillName}: No Health found on caster, stopping.");
+                break;
+            }
 
             // Play impact sound for heal feedback
             if (impactSound != null && activeSinger != null)
@@ -165,6 +168,7 @@ public class SingerOfManyWaters : SkillBase
         {
             return playerStats.CurrentMana >= manaCost;
         }
-        return base.CanUseSkill(caster);
+        // Enemies or non-player casters: allow
+        return true;
     }
 }
