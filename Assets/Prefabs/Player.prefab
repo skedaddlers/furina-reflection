@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 1374226717924566661}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.315, z: 0.091}
+  m_LocalPosition: {x: 0, y: 1.315, z: 0.757}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1464,6 +1464,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+  shieldAmount: 0
+  maxShield: 100
 --- !u!114 &6536990159064562789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1518,12 +1520,15 @@ MonoBehaviour:
   walkSpeed: 3
   runSpeed: 5
   rotationSpeed: 15
-  gravity: -19.81
-  jumpHeight: 1.5
+  gravity: -25
+  jumpHeight: 1.3
   dashSpeed: 7
-  dashDuration: 0.3
+  dashDuration: 0.35
   holdThreshold: 0.25
+  speedMultiplier: 1
   cameraTransform: {fileID: 0}
+  dodgeStaminaCost: 25
+  sprintStaminaCostPerSecond: 15
   autoAimRadius: 12
   combatLockSeconds: 2
   breakDistance: 15
@@ -1557,6 +1562,10 @@ MonoBehaviour:
   critRate: 0.1
   critMultiplier: 1.5
   luck: 0
+  maxStamina: 100
+  staminaRegenPerSecond: 20
+  staminaRegenDelay: 1
+  _currentStamina: 0
   maxMana: 100
   manaRegenPerSecond: 0.8
   currentXP: 0
