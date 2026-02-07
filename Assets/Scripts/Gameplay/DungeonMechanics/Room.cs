@@ -1,25 +1,35 @@
 using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+
 public class Room : MonoBehaviour
 {
     public RoomType roomType;
     public int roomIndex;
 
     [Header("Difficulty / Progression Info")]
-    public int distanceFromStart;      // di-fill dari RoomData
-    public float difficultyWeight = 1; // optional kalau mau pakai nanti
+    public int distanceFromStart;
+    public float difficultyWeight = 1f;
 
     [Header("Room Structure")]
     public SpawnTrigger spawnTrigger = null;
     public EventTrigger eventTrigger = null;
-    public int[] roomNeighbors = new int[4]; // [forward, right, back, left]
-    public GameObject[] doors = new GameObject[4]; // urutan sama
+
+    [Tooltip("Order: [forward, right, back, left]")]
+    public int[] roomNeighbors = new int[4];
+
+    [Tooltip("Order: [forward, right, back, left]")]
+    public GameObject[] doors = new GameObject[4];
 
     [Header("Enemy Spawn Settings")]
+    public int waveCount = 1;
+    public int timeBetweenWaves = 5;
     public int maxEnemies = 3;
-    public int enemyCount = 3; // modified later based on DDA
-    public Vector3 spawnAreaSize = new Vector3(10f, 5f, 10f); // area spawn di sekitar room
+
+    [Tooltip("This will be overridden by difficulty system")]
+    public int enemyCount = 3;
+
+    public Vector3 spawnAreaSize = new Vector3(10f, 5f, 10f);
     public LayerMask groundMask;
     public LayerMask obstacleMask;
     public float minSpawnDistance = 2f;
@@ -28,14 +38,20 @@ public class Room : MonoBehaviour
     [Header("Runtime Info")]
     public bool isCleared = false;
     public bool isInCombat = false;
+    public int currentWave = 1;
+
     public List<GameObject> spawnedEnemies = new List<GameObject>();
 
     public static System.Action<Room> OnRoomCleared;
+    public static System.Action<Room> OnWaveCleared;
     public static System.Action<Room> OnRoomCombatStarted;
 
     private bool isLocked = false;
-    public Vector3 playerSpawn = new Vector3(0, 0, 0);
-    private int lastEnterFrom = -1; // arah pintu terakhir dimasukin player
+    private int lastEnterFrom = -1;
+
+    public Vector3 playerSpawn = Vector3.zero;
+
+    #region Initialization
 
     public void Initialize(RoomData data)
     {
@@ -46,167 +62,58 @@ public class Room : MonoBehaviour
         distanceFromStart = data.distanceFromStart;
         difficultyWeight = data.difficultyWeight;
 
-        // Set doors active/inactive based on neighbors
-        for (int i = 0; i < 4; i++)
-        {
-            if (roomNeighbors[i] != 0)
-            {
-                doors[i].SetActive(true);
-                var trig = doors[i].GetComponent<DoorTrigger>();
-                trig.parentRoom = this;
-                trig.directionIndex = i;
-                if (spawnTrigger)
-                    spawnTrigger.parentRoom = this;
-                if (eventTrigger)
-                    eventTrigger.parentRoom = this;
-            }
-            else
-                doors[i].SetActive(false);
-        }
+        SetupDoors();
+        SetupTriggers();
     }
 
-    public void SpawnEnemiesInRoom()
+    private void SetupDoors()
     {
-        Debug.Log($"Spawning enemies in Room {roomIndex}");
-        ClearExistingEnemies();
-
-        List<GameObject> enemiesToSpawn = GetEnemiesForRoom();
-        if (enemiesToSpawn.Count == 0)
+        for (int i = 0; i < doors.Length; i++)
         {
-            Debug.LogWarning($"Room {roomIndex} has no enemy prefabs available to spawn.");
-            return;
-        }
+            bool hasNeighbor = roomNeighbors[i] != 0;
 
-        int attempts = 0;
-        int spawned = 0;
-        int maxAttempts = enemiesToSpawn.Count * 10; // pembatas biar ga infinite loop
+            if (doors[i] == null) continue;
 
-        while (spawned < enemiesToSpawn.Count && attempts < maxAttempts)
-        {
-            attempts++;
+            doors[i].SetActive(hasNeighbor);
 
-            // Tentukan posisi random dalam area room
-            Vector3 randomPos = transform.position + new Vector3(
-                Random.Range(-spawnAreaSize.x / 2, spawnAreaSize.x / 2),
-                spawnAreaSize.y / 2, // mulai di atas
-                Random.Range(-spawnAreaSize.z / 2, spawnAreaSize.z / 2)
-            );
+            if (!hasNeighbor) continue;
 
-            Debug.DrawRay(randomPos, Vector3.down * (spawnAreaSize.y + 1), Color.red, 2f);
-            // Raycast ke bawah untuk cari permukaan lantai
-            if (Physics.Raycast(randomPos, Vector3.down, out RaycastHit hit, spawnAreaSize.y, groundMask))
+            var trigger = doors[i].GetComponent<DoorTrigger>();
+            if (trigger != null)
             {
-                Vector3 spawnPos = hit.point + Vector3.up * 0.1f; // sedikit di atas lantai
-
-                // Cek apakah area sekitar spawnPos kosong (tidak kena obstacle)
-                bool blocked = Physics.CheckSphere(spawnPos, 0.5f, obstacleMask);
-                bool tooClose = false;
-
-                foreach (var e in spawnedEnemies)
-                {
-                    if (Vector3.Distance(spawnPos, e.transform.position) < minSpawnDistance)
-                    {
-                        tooClose = true;
-                        break;
-                    }
-                }
-
-                if (!blocked && !tooClose)
-                {
-                    GameObject prefabToSpawn = enemiesToSpawn[spawned];
-                    GameObject enemy = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity, transform);
-                    spawnedEnemies.Add(enemy);
-                    var h = enemy.GetComponent<Health>();
-                    if (h != null) h.onDeath += () =>
-                    {
-                        // MIGHT BE IMPORTANT FOR DYNAMIC DIFFICULTY ADJUSTMENT
-                        spawnedEnemies.Remove(enemy);
-                        if (spawnedEnemies.Count == 0)
-                        {
-                            isCleared = true;
-                            isInCombat = false;
-                            UnlockAllDoors();
-                            Debug.Log($"Room {roomIndex} Cleared!");
-
-                            OnRoomCleared?.Invoke(this);
-                            if(roomType == RoomType.Boss)
-                            {
-                                GameManager.Instance.OnBossRoomCleared();
-                            }
-                        }
-
-                        var minimap = FindObjectOfType<MinimapUI>();
-                        if (minimap != null) minimap.VisitRoom(roomIndex);
-                    };
-                    spawned++;
-                }
+                trigger.parentRoom = this;
+                trigger.directionIndex = i;
             }
         }
-
-        Debug.Log($"Spawned {spawned} enemies in Room {roomIndex}");
     }
 
-    void ClearExistingEnemies()
+    private void SetupTriggers()
     {
-        foreach (var e in spawnedEnemies)
-        {
-            if (e != null) Destroy(e);
-        }
-        spawnedEnemies.Clear();
+        if (spawnTrigger != null)
+            spawnTrigger.parentRoom = this;
+
+        if (eventTrigger != null)
+            eventTrigger.parentRoom = this;
     }
+
+    #endregion
+
+    #region Player Interaction
 
     public void OnPlayerEnter(int fromDirection)
     {
         lastEnterFrom = fromDirection;
-        // Debug.Log($"Player entered Room {roomIndex} from {fromDirection}");
-        if (isCleared || (roomType == RoomType.Start || roomType == RoomType.Shop))
+
+        if (IsSafeRoom() || isCleared)
         {
-            UnlockAllDoors();               // semua pintu boleh dipakai
-            if (spawnTrigger) spawnTrigger.gameObject.SetActive(false);
-            if (eventTrigger) eventTrigger.gameObject.SetActive(false);
-        }
-        else
-        {
-            // Belum clear: hanya boleh mundur ke pintu asal
-            LockAllDoors();
-            UnlockDoor(fromDirection);
-
-            // Tampilkan tombol start encounter
-            if (spawnTrigger) spawnTrigger.gameObject.SetActive(true);
-        }
-    }
-
-    public void BeginCombat()
-    {
-        if (isCleared || isInCombat) return;
-
-        isInCombat = true;
-
-        OnRoomCombatStarted?.Invoke(this);
-        ApplyDifficultySnapshots();
-
-
-        if (roomType == RoomType.Elite)
-        {
-            enemyCount = 1;
+            UnlockAllDoors();
+            DisableTriggers();
+            return;
         }
 
-        Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
-        SpawnEnemiesInRoom();
         LockAllDoors();
-    }
-
-    void ApplyDifficultySnapshots()
-    {
-        var diff = GlobalDifficultyState.Instance;
-        if (diff != null)
-        {
-            enemyCount = diff.GetEnemyCountForRoom(this);
-        }
-        else
-        {
-            enemyCount = Mathf.Clamp(enemyCount, 1, maxEnemies);
-        }
+        UnlockDoor(fromDirection);
+        EnableSpawnTrigger();
     }
 
     public void OnDoorInteract(int direction)
@@ -218,43 +125,9 @@ public class Room : MonoBehaviour
         }
 
         int nextRoomID = roomNeighbors[direction];
-        if (nextRoomID != 0)
-        {
-            GameManager.Instance.roomManager.MovePlayerToRoom(nextRoomID, GetOpposite(direction));
-        }
-    }
+        if (nextRoomID == 0) return;
 
-    public void LockAllDoors()
-    {
-        isLocked = true;
-        foreach (var door in doors)
-        {
-            if (door != null)
-            {
-                var trig = door.GetComponent<DoorTrigger>();
-                if (trig != null) trig.SetLocked(true);
-            }
-        }
-    }
-
-    public void UnlockAllDoors()
-    {
-        isLocked = false;
-        foreach (var door in doors)
-        {
-            if (door != null)
-            {
-                var trig = door.GetComponent<DoorTrigger>();
-                if (trig != null) trig.SetLocked(false);
-            }
-        }
-    }
-
-    void UnlockDoor(int dir)
-    {
-        if (dir < 0 || dir > 3) return;
-        if (doors[dir] && roomNeighbors[dir] != 0)
-            doors[dir].GetComponent<DoorTrigger>().SetLocked(false);
+        GameManager.Instance.roomManager.MovePlayerToRoom(nextRoomID, GetOpposite(direction));
     }
 
     public void GoToNeighbor(int direction)
@@ -265,9 +138,275 @@ public class Room : MonoBehaviour
         GameManager.Instance.roomManager.MovePlayerToRoom(nextRoomID, GetOpposite(direction));
     }
 
-    int GetOpposite(int dir)
+    private bool IsSafeRoom()
     {
-        // forward↔back, right↔left
+        return roomType == RoomType.Start || roomType == RoomType.Shop;
+    }
+
+    private void DisableTriggers()
+    {
+        if (spawnTrigger != null) spawnTrigger.gameObject.SetActive(false);
+        if (eventTrigger != null) eventTrigger.gameObject.SetActive(false);
+    }
+
+    private void EnableSpawnTrigger()
+    {
+        if (spawnTrigger != null) spawnTrigger.gameObject.SetActive(true);
+    }
+
+    #endregion
+
+    #region Combat
+
+    public void BeginCombat()
+    {
+        if (isCleared || isInCombat) return;
+
+        isInCombat = true;
+
+        OnRoomCombatStarted?.Invoke(this);
+
+        ApplyDifficultySnapshots();
+
+        if (roomType == RoomType.Elite)
+            enemyCount = 1;
+
+        Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
+
+        SpawnEnemiesInRoom();
+        LockAllDoors();
+    }
+
+    private void ApplyDifficultySnapshots()
+    {
+        var diff = GlobalDifficultyState.Instance;
+
+        if (diff != null)
+            enemyCount = diff.GetEnemyCountForRoom(this);
+
+        enemyCount = Mathf.Clamp(enemyCount, 1, maxEnemies);
+    }
+
+    private void HandleEnemyDeath(GameObject enemy)
+    {
+        spawnedEnemies.Remove(enemy);
+
+        if (spawnedEnemies.Count > 0) 
+            return;
+
+        if (currentWave >= waveCount)
+        {
+            ClearRoom();
+        }
+        else
+        {
+            StartNextWave();
+        }
+
+        var minimap = FindObjectOfType<MinimapUI>();
+        if (minimap != null)
+            minimap.VisitRoom(roomIndex);
+    }
+
+    private void ClearRoom()
+    {
+        isCleared = true;
+        isInCombat = false;
+
+        UnlockAllDoors();
+
+        Debug.Log($"Room {roomIndex} Cleared!");
+        OnRoomCleared?.Invoke(this);
+
+        if (roomType == RoomType.Boss)
+            GameManager.Instance.OnBossRoomCleared();
+    }
+
+    private void StartNextWave()
+    {
+        currentWave++;
+        Debug.Log($"Room {roomIndex} Wave {currentWave} cleared. Next wave in {timeBetweenWaves} seconds.");
+
+        OnWaveCleared?.Invoke(this);
+        StartCoroutine(SpawnNextWaveAfterDelay());
+    }
+
+    private IEnumerator SpawnNextWaveAfterDelay()
+    {
+        yield return new WaitForSeconds(timeBetweenWaves);
+        SpawnEnemiesInRoom();
+    }
+
+    #endregion
+
+    #region Enemy Spawning
+
+    public void SpawnEnemiesInRoom()
+    {
+        Debug.Log($"Spawning enemies in Room {roomIndex}");
+
+        ClearExistingEnemies();
+
+        List<GameObject> enemiesToSpawn = GetEnemiesForRoom();
+        if (enemiesToSpawn.Count == 0)
+        {
+            Debug.LogWarning($"Room {roomIndex} has no enemy prefabs available to spawn.");
+            return;
+        }
+
+        int spawned = 0;
+        int attempts = 0;
+        int maxAttempts = enemiesToSpawn.Count * 10;
+
+        while (spawned < enemiesToSpawn.Count && attempts < maxAttempts)
+        {
+            attempts++;
+
+            if (!TryGetSpawnPosition(out Vector3 spawnPos))
+                continue;
+
+            if (!IsSpawnPositionValid(spawnPos))
+                continue;
+
+            SpawnEnemy(enemiesToSpawn[spawned], spawnPos);
+            spawned++;
+        }
+
+        Debug.Log($"Spawned {spawned} enemies in Room {roomIndex}");
+    }
+
+    private bool TryGetSpawnPosition(out Vector3 spawnPos)
+    {
+        spawnPos = Vector3.zero;
+
+        Vector3 randomPos = transform.position + new Vector3(
+            Random.Range(-spawnAreaSize.x / 2f, spawnAreaSize.x / 2f),
+            spawnAreaSize.y / 2f,
+            Random.Range(-spawnAreaSize.z / 2f, spawnAreaSize.z / 2f)
+        );
+
+        Debug.DrawRay(randomPos, Vector3.down * (spawnAreaSize.y + 1f), Color.red, 2f);
+
+        if (Physics.Raycast(randomPos, Vector3.down, out RaycastHit hit, spawnAreaSize.y, groundMask))
+        {
+            spawnPos = hit.point + Vector3.up * 0.1f;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool IsSpawnPositionValid(Vector3 spawnPos)
+    {
+        bool blocked = Physics.CheckSphere(spawnPos, 0.5f, obstacleMask);
+        if (blocked) return false;
+
+        foreach (var enemy in spawnedEnemies)
+        {
+            if (enemy == null) continue;
+
+            if (Vector3.Distance(spawnPos, enemy.transform.position) < minSpawnDistance)
+                return false;
+        }
+
+        return true;
+    }
+
+    private void SpawnEnemy(GameObject prefab, Vector3 spawnPos)
+    {
+        GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
+        spawnedEnemies.Add(enemy);
+
+        var health = enemy.GetComponent<Health>();
+        if (health != null)
+        {
+            health.onDeath += () => HandleEnemyDeath(enemy);
+        }
+    }
+
+    private void ClearExistingEnemies()
+    {
+        foreach (var enemy in spawnedEnemies)
+        {
+            if (enemy != null)
+                Destroy(enemy);
+        }
+
+        spawnedEnemies.Clear();
+    }
+
+    private List<GameObject> GetEnemiesForRoom()
+    {
+        var library = Library.Instance;
+        var result = new List<GameObject>();
+
+        if (library != null)
+        {
+            List<GameObject> pool =
+                roomType == RoomType.Elite ? library.eliteEnemies : library.commonEnemies;
+
+            result = Helpers.GetRandomItemsAllowRepeats(pool, enemyCount, roomIndex);
+        }
+
+        if (result.Count == 0)
+        {
+            Debug.LogWarning($"Fallback enemy selection for Room {roomIndex}. Please populate {(roomType == RoomType.Elite ? "elite" : "common")} enemies in GlobalLibrary.");
+
+            if (enemyPrefab != null)
+            {
+                for (int i = 0; i < enemyCount; i++)
+                    result.Add(enemyPrefab);
+            }
+        }
+
+        return result;
+    }
+
+    #endregion
+
+    #region Doors
+
+    public void LockAllDoors()
+    {
+        isLocked = true;
+
+        foreach (var door in doors)
+        {
+            if (door == null) continue;
+
+            var trig = door.GetComponent<DoorTrigger>();
+            if (trig != null)
+                trig.SetLocked(true);
+        }
+    }
+
+    public void UnlockAllDoors()
+    {
+        isLocked = false;
+
+        foreach (var door in doors)
+        {
+            if (door == null) continue;
+
+            var trig = door.GetComponent<DoorTrigger>();
+            if (trig != null)
+                trig.SetLocked(false);
+        }
+    }
+
+    private void UnlockDoor(int dir)
+    {
+        if (dir < 0 || dir > 3) return;
+        if (doors[dir] == null) return;
+        if (roomNeighbors[dir] == 0) return;
+
+        var trig = doors[dir].GetComponent<DoorTrigger>();
+        if (trig != null)
+            trig.SetLocked(false);
+    }
+
+    private int GetOpposite(int dir)
+    {
         return dir switch
         {
             0 => 2,
@@ -278,42 +417,20 @@ public class Room : MonoBehaviour
         };
     }
 
-    #if UNITY_EDITOR
-    void OnDrawGizmosSelected()
+    #endregion
+
+    #region Gizmos
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
     {
-        // Warna transparan untuk area spawn
         Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
         Gizmos.DrawCube(transform.position, spawnAreaSize);
 
-        // Garis outline supaya jelas batasnya
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(transform.position, spawnAreaSize);
     }
-    #endif
+#endif
 
-    List<GameObject> GetEnemiesForRoom()
-    {
-        var result = new List<GameObject>();
-        var library = Library.Instance;
-
-        if (library != null)
-        {
-            List<GameObject> pool = roomType == RoomType.Elite ? library.eliteEnemies : library.commonEnemies;
-            result = Helpers.GetRandomItemsAllowRepeats(pool, enemyCount, roomIndex);
-        }
-
-        if (result.Count == 0)
-        {
-            Debug.LogWarning($"Fallback enemy selection for Room {roomIndex}. Please populate {(roomType == RoomType.Elite ? "elite" : "common")} enemies in GlobalLibrary.");
-            if (enemyPrefab != null)
-            {
-                for (int i = 0; i < enemyCount; i++)
-                {
-                    result.Add(enemyPrefab);
-                }
-            }
-        }
-
-        return result;
-    }
+    #endregion
 }

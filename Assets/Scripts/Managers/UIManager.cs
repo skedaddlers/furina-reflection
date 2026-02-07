@@ -13,10 +13,12 @@ public class UIManager : MonoBehaviour
     public SkillsUI skillsUI;
     public ShopUI shopUI;
     public EventRoomUI eventRoomUI;
+    public InventoryUI inventoryUI;
     public CursorController cursorController;
-    [Header("Door Interaction UI")]
+    [Header("Interaction UI")]
     public CanvasGroup doorPromptCanvas;
-    public TextMeshProUGUI doorPromptText; // atau pakai Text biasa kalau belum pakai TMP
+    public TextMeshProUGUI promptText; // atau pakai Text biasa kalau belum pakai TMP
+    public TextMeshProUGUI notificationText;
     [Header("Victory/Defeat UI")]
     public Button restartButton;
     public string mainSceneName = "MainScene";
@@ -67,6 +69,10 @@ public class UIManager : MonoBehaviour
         {
             eventRoomUI = GetComponent<EventRoomUI>();
         }
+        if (inventoryUI == null)
+        {
+            inventoryUI = GetComponent<InventoryUI>();
+        }
         InitUI();
         cursorController.LockCursor();
     }
@@ -84,6 +90,7 @@ public class UIManager : MonoBehaviour
         statsUI.UpdateGoldUI(playerStats.gold);
         statsUI.UpdateXPUI(playerStats.currentXP, playerStats.xpToNextLevel);
         shopUI.CloseShop();
+        inventoryUI.CloseInventory();
         restartButton.onClick.AddListener(() =>
         {
             SceneManager.LoadScene(mainSceneName);
@@ -101,6 +108,22 @@ public class UIManager : MonoBehaviour
                     cursorController.UnlockCursor();
                 else
                     cursorController.LockCursor();
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            Inventory inventory = Player.Instance.GetComponent<Inventory>();
+            if (inventory != null)
+            {
+                if (inventoryUI.inventoryPanel.activeSelf)
+                {
+                    inventoryUI.CloseInventory();
+                }
+                else
+                {
+                    inventoryUI.OpenInventoryUI(inventory.Items);
+                }
             }
         }
     }
@@ -134,12 +157,25 @@ public class UIManager : MonoBehaviour
     }
 
 
-    public void ShowInterractionUI(bool show, string promptText = "")
+    public void ShowInterractionUI(bool show, string text = "")
     {
         doorPromptCanvas.alpha = show ? 1 : 0;
         doorPromptCanvas.blocksRaycasts = show;
         doorPromptCanvas.interactable = show;
-        doorPromptText.text = promptText;
+        promptText.text = text;
+    }
+
+    public void ShowNotification(string message, float duration = 2f)
+    {
+        StartCoroutine(ShowNotificationCoroutine(message, duration));
+    }
+
+    private System.Collections.IEnumerator ShowNotificationCoroutine(string message, float duration)
+    {
+        notificationText.text = message;
+        notificationText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        notificationText.gameObject.SetActive(false);
     }
 
 }

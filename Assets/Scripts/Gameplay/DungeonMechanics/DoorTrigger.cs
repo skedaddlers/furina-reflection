@@ -29,6 +29,7 @@ public class DoorTrigger : MonoBehaviour
         {
             parentRoom.OnDoorInteract(directionIndex);
             isPlayerNearby = false;
+            UIManager.Instance.ShowInterractionUI(false, "");
         }
     }
 

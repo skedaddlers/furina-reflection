@@ -194,7 +194,8 @@ public class MinimapUI : MonoBehaviour
     
     public void InitializeMinimap(RoomManager rm)
     {
-        if (roomManager == null) return;
+        Debug.Log("Initializing Minimap UI...");
+        if (rm == null) return;
         roomManager = rm;
 
         var minimapData = roomManager.Layout; 

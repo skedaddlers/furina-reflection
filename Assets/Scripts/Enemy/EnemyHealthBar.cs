@@ -95,7 +95,6 @@ public class EnemyHealthBar : MonoBehaviour
     private void HandleHealthChanged(float current, float max)
     {
         if (healthSlider == null) return;
-
         // decaying healthbar
         decayingHealthSlider.maxValue = max;
         targetDecayingValue = current;

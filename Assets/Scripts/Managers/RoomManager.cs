@@ -6,6 +6,7 @@ public class RoomManager : MonoBehaviour
 {
     [Header("Prefabs & Refs")]
     public GameObject[] roomPrefabs;     // index = (int)RoomType
+    public GameObject[] normalRoomPrefabs;
     public Transform player;
 
     // runtime
@@ -20,20 +21,21 @@ public class RoomManager : MonoBehaviour
     {
         Layout = layout;
         InstantiateRooms();
-        MovePlayerToRoom(1, -1);
 
         var diff = GlobalDifficultyState.Instance;
         if (diff != null)
         {
             diff.SetTotalRooms(Layout?.roomDataMap?.Count ?? 0);
         }
-
+        // Debug.Log($"RoomManager initialized with {roomInstances.Count} rooms.");
         var minimap = FindObjectOfType<MinimapUI>();
         if (minimap != null)
         {
+            // Debug.Log("Initializing Minimap UI from RoomManager...");
             minimap.InitializeMinimap(this);   // ← overload baru yang menerima RoomManager
             minimap.SetCurrentRoom(1);
         }
+        MovePlayerToRoom(1, -1);
     }
 
     public void MovePlayerToRoom(int nextRoomID, int fromDoorIndex)
@@ -43,27 +45,35 @@ public class RoomManager : MonoBehaviour
         currentRoomID = nextRoomID;
         Room nextRoom = roomInstances[nextRoomID];
 
-        // default spawn
-        Vector3 spawnPos = nextRoom.transform.TransformPoint(nextRoom.playerSpawn);
+        // Parent first (important so local transforms behave predictably)
+        player.SetParent(nextRoom.transform);
 
-        // jika masuk lewat pintu tertentu
-        if (fromDoorIndex >= 0 && fromDoorIndex < nextRoom.doors.Length && nextRoom.doors[fromDoorIndex])
+        // Default spawn = local spawn point
+        Vector3 spawnWorldPos = nextRoom.transform.TransformPoint(nextRoom.playerSpawn);
+
+        // If entered from a door, override spawn
+        if (fromDoorIndex >= 0 && fromDoorIndex < nextRoom.doors.Length && nextRoom.doors[fromDoorIndex] != null)
         {
             Transform door = nextRoom.doors[fromDoorIndex].transform;
-            spawnPos = door.position + door.forward * 1.5f;
+            Vector3 toCenter = (nextRoom.transform.position - door.position).normalized;
+
+            spawnWorldPos = door.position + toCenter * 1.5f;
+            Debug.Log($"Spawning at door {fromDoorIndex} WORLD position {spawnWorldPos}");
         }
 
-        player.SetParent(null, true);
-        player.SetParent(nextRoom.transform, true);
-        Debug.Log($"Before move: Player Pos {player.position}, Room {nextRoomID} Pos {nextRoom.transform.position}");
-        player.position = spawnPos;
-        player.rotation = nextRoom.transform.rotation;
-        Debug.Log($"After move: Player Pos {player.position}, Room {nextRoomID} Pos {nextRoom.transform.position}");
+        Debug.Log($"Before move: Player World Pos {player.position}");
+        var cc = player.gameObject.GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+        player.position = spawnWorldPos;
+        player.rotation = Quaternion.identity;
+
+        Debug.Log($"After move: Player World Pos {player.position}");
 
         nextRoom.OnPlayerEnter(fromDoorIndex);
 
         var minimap = FindObjectOfType<MinimapUI>();
         if (minimap != null) minimap.SetCurrentRoom(nextRoomID);
+        if (cc != null) cc.enabled = true;
     }
 
     // ====== INTERNAL ======
@@ -71,7 +81,16 @@ public class RoomManager : MonoBehaviour
     {
         foreach (var data in Layout.roomDataMap.Values)
         {
-            GameObject prefab = roomPrefabs[(int)data.roomType];
+            GameObject prefab = null;
+            if(data.roomType == RoomType.Normal)
+            {
+                prefab = normalRoomPrefabs[Random.Range(0, normalRoomPrefabs.Length)];
+            }
+            else
+            {
+                prefab = roomPrefabs[(int)data.roomType];
+            }
+
             GameObject instance = Instantiate(prefab, data.worldPosition, Quaternion.identity);
             // set name agar gampang dicari di hierarchy
             instance.name = $"Room_{data.id}_{data.roomType}";
