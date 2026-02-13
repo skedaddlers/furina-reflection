@@ -6,10 +6,14 @@ public class SkillBase : ScriptableObject
 {
     [Header("Basic Information")]
     public string skillName;
+    public string upgradeName;
     public string description;
     public Sprite skillIcon;
+    public Rarity rarity;
     public int price;
     public int skillID;
+    [TextArea] public string goodPropertyText;
+    [TextArea] public string badPropertyText;
     
     [Header("Skill Type")]
     public SkillType skillType;
@@ -40,6 +44,7 @@ public class SkillBase : ScriptableObject
     
     // Can this skill be upgraded?
     public bool isUpgradeable = false;
+    public bool isUpgraded = false;
     public SkillBase nextLevelSkill; // Reference to upgraded version
     
     // Virtual method for custom skill behavior

@@ -50,7 +50,6 @@ public class MinimapUI : MonoBehaviour
     private Dictionary<int, MinimapRoomIcon> roomIcons = new Dictionary<int, MinimapRoomIcon>();
     private Dictionary<string, GameObject> connectionLines = new Dictionary<string, GameObject>();
     private RectTransform playerIndicator;
-    private HashSet<int> visitedRooms = new HashSet<int>();
     private int currentRoomId = -1;
     private RoomManager roomManager;
     private RectTransform playerCone;      // ← baru
@@ -419,15 +418,14 @@ public class MinimapUI : MonoBehaviour
     
     public void VisitRoom(int roomId)
     {
-        if (!visitedRooms.Contains(roomId))
+        roomManager.MarkRoomVisited(roomId);
+        if (roomManager.IsRoomVisited(roomId))
         {
-            visitedRooms.Add(roomId);
-            
             if (roomIcons.ContainsKey(roomId))
             {
                 roomIcons[roomId].SetVisited(true);
             }
-            
+
             // Update connected lines visibility
             UpdateConnectionVisibility(roomId);
         }

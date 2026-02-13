@@ -28,7 +28,8 @@ public class StatsUI : MonoBehaviour
 
     public void UpdateHealthUI(float currentHealth, float maxHealth)
     {
-        healthText.text = $"{currentHealth} / {maxHealth}";
+        // display only whole numbers for health
+        healthText.text = $"{Mathf.CeilToInt(currentHealth)} / {Mathf.CeilToInt(maxHealth)}";
 
         healthSlider.maxValue = maxHealth;
         healthSlider.value = currentHealth;
@@ -62,7 +63,7 @@ public class StatsUI : MonoBehaviour
 
     public void UpdateGoldUI(int gold)
     {
-        goldText.text = $"Gold: {gold}";
+        goldText.text = $"{gold}";
     }
 
     public void UpdateXPUI(int currentXP, int xpToNextLevel)

@@ -10,4 +10,6 @@ public class GlobalLibrary : ScriptableObject
     [Header("Enemies")]
     public List<GameObject> commonEnemies;
     public List<GameObject> eliteEnemies;
+
+    public List<Color> rarityColors;
 }

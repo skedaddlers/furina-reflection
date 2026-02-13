@@ -48,6 +48,7 @@ public class EventRoomUI : MonoBehaviour
                 {
                     currentManager.OnChoiceSelected(capturedIndex);
                     GameManager.Instance.ChangeState(GameState.Playing);
+                    GameManager.Instance.SetCursorState(false);
                 });
             }
             else

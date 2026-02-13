@@ -2,20 +2,22 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 
+[RequireComponent(typeof(EnemyStats))]
 public class EnemyAI : MonoBehaviour
 {
     public bool isRanged = false;
     public float attackRange = 1.5f;
     public float attackCooldown = 1.5f;
+    public float movementSpeed = 3f;
     public int damage = 10;
     public float detectionRange = 10f;
     public Projectile projectilePrefab;
 
     public bool isPerformingSpecialAttack = false;
     protected Transform player;
-    protected float movementSpeed = 3f;
     protected NavMeshAgent agent;
     protected Animator animator;
+    protected EnemyStats enemyStats;
     protected float lastAttackTime;
     private int baseDamage;
     private float baseAttackCooldown;
@@ -29,6 +31,7 @@ public class EnemyAI : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        enemyStats = GetComponent<EnemyStats>();
         CaptureBaseStats();
         ApplyDifficultyMultipliers();
     }
@@ -45,7 +48,31 @@ public class EnemyAI : MonoBehaviour
         {
             // further implementation include defense, resistances, etc.
             // but for now just directly reduce health
-            player.GetComponent<Health>()?.TakeDamage(damage);
+            var health = player.GetComponent<Health>();
+            if (health == null) return;
+
+            var playerStats = player.GetComponent<PlayerStats>();
+            float defense = playerStats != null ? playerStats.baseDefense : 0f;
+            float critChance = enemyStats != null ? enemyStats.critRate : 0f;
+            float critMultiplier = enemyStats != null ? enemyStats.critMultiplier : 1f;
+            int levelDiff = 0;
+            if (enemyStats != null && playerStats != null)
+            {
+                levelDiff = enemyStats.level - playerStats.level;
+            }
+
+            bool didCrit;
+            float finalDamage = Helpers.CalculateFinalDamage(
+                damage,
+                defense,
+                critChance,
+                critMultiplier,
+                levelDiff,
+                1f,
+                out didCrit
+            );
+
+            health.TakeDamage(finalDamage, didCrit);
         }
     }
 
@@ -80,6 +107,7 @@ public class EnemyAI : MonoBehaviour
     {
         agent.isStopped = false;
         agent.SetDestination(player.position);
+        agent.speed = movementSpeed;
         animator.SetFloat("WalkSpeed", 1f);
     }
 
@@ -136,6 +164,14 @@ public class EnemyAI : MonoBehaviour
     {
         // Default: common enemy nggak punya special
         return false;
+    }
+
+    public void ApplySpeedModifier(float multiplier)
+    {
+        if (agent != null)
+        {
+            agent.speed = movementSpeed * multiplier;
+        }
     }
 
     void CaptureBaseStats()

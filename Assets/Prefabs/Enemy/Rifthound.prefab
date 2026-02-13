@@ -909,6 +909,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 66095a916b9d86a46ad0ebe1edb8d792, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8221984826183684570}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 66095a916b9d86a46ad0ebe1edb8d792, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7197603961062520731}
   m_SourcePrefab: {fileID: 100100000, guid: 66095a916b9d86a46ad0ebe1edb8d792, type: 3}
 --- !u!4 &1493702758097355184 stripped
 Transform:
@@ -1022,6 +1025,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 1
+  enemyRenderer: {fileID: 7179545089949620145}
+  rendererColor: {r: 0, g: 0, b: 0, a: 0}
+  healthBar: {fileID: 8237243016429360707}
   xpReward: 15
   goldReward: 10
 --- !u!114 &7963045105340031469
@@ -1039,6 +1045,7 @@ MonoBehaviour:
   isRanged: 0
   attackRange: 1.5
   attackCooldown: 1.5
+  movementSpeed: 0.3
   damage: 10
   detectionRange: 10
   projectilePrefab: {fileID: 0}
@@ -1066,3 +1073,24 @@ MonoBehaviour:
   worldOffset: {x: 0, y: 2, z: 0}
   hideWhenFull: 1
   decayingSpeed: 20
+--- !u!114 &7197603961062520731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2301728714059832074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78e818e7f6d2655478b39fab284178d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  level: 1
+  defense: 0
+  critRate: 0
+  critMultiplier: 1.5
+--- !u!137 &7179545089949620145 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8111781155169087978, guid: 66095a916b9d86a46ad0ebe1edb8d792, type: 3}
+  m_PrefabInstance: {fileID: 1382618021622146651}
+  m_PrefabAsset: {fileID: 0}

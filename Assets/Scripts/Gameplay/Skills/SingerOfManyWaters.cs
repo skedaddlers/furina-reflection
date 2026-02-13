@@ -9,7 +9,9 @@ public class SingerOfManyWaters : SkillBase
     public float spawnDistance = 2f;
     public float healInterval = 1f;
     public float floatHeight = 1.5f;
+    public float staminaConsumptionReductionPercentBuff = 0.35f;
 
+    private PlayerStats activePlayerStats;
     private GameObject activeSinger;
     private bool isActive = false;
 
@@ -17,6 +19,7 @@ public class SingerOfManyWaters : SkillBase
     {
         isActive = false;
         activeSinger = null;
+        activePlayerStats = null;
     }
 
     public override void OnSkillActivate(GameObject caster)
@@ -33,6 +36,11 @@ public class SingerOfManyWaters : SkillBase
         if (castSound != null)
         {
             AudioSource.PlayClipAtPoint(castSound, caster.transform.position);
+        }
+        activePlayerStats = caster.GetComponent<PlayerStats>();
+        if(activePlayerStats != null && isUpgraded)
+        {
+            activePlayerStats.staminaConsumptionReductionPercent += staminaConsumptionReductionPercentBuff;
         }
 
         // Spawn singer
@@ -152,6 +160,11 @@ public class SingerOfManyWaters : SkillBase
         {
             Object.Destroy(activeSinger);
             activeSinger = null;
+        }
+
+        if(activePlayerStats != null && isUpgraded)
+        {
+            activePlayerStats.staminaConsumptionReductionPercent -= staminaConsumptionReductionPercentBuff;
         }
 
         isActive = false;

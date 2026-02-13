@@ -245,12 +245,8 @@ public class EventRoomManager : MonoBehaviour
             Debug.Log("[Event-Dice] FAIL! Applying curse.");
             if (playerHealth != null && option.curseDamage > 0)
             {
+                UIManager.Instance.ShowNotification($"You rolled a {roll} and failed! You take {option.curseDamage} damage.", 3f);
                 playerHealth.TakeDamage(option.curseDamage);
-            }
-            else
-            {
-                // fallback
-                Debug.Log("[Event-Dice] No Health reference, curse skipped.");
             }
         }
     }
@@ -271,23 +267,20 @@ public class EventRoomManager : MonoBehaviour
             playerHealth.Heal(option.healAmount); // pastikan Health punya Heal, kalau belum bisa ganti ke TakeDamage(-heal)
         }
 
-        Debug.Log($"[Event-Reward] Gold+{option.goldAmount}, XP+{option.xpAmount}, Heal+{option.healAmount}");
+        UIManager.Instance.ShowNotification("You Received your Reward!", 2f);
     }
 
     // 3. Gives buffs (30% more damage) for a few seconds
     private void ResolveTemporaryBuff(GameEventOption option)
     {
-        // Di sini kita cuma log + TODO hook ke sistem combat-mu
-        Debug.Log($"[Event-Buff] Apply damage buff x{option.damageBuffMultiplier} for {option.buffDuration} seconds (TODO: hook ke player combat)");
-
-        // Contoh kalau nanti kamu punya BuffManager di player:
-        // player.GetComponent<PlayerBuffManager>()?.ApplyDamageBuff(option.damageBuffMultiplier, option.buffDuration);
+        playerStats?.ApplyTemporaryDamageBuff(option.damageBuffMultiplier, option.buffDuration);
+        UIManager.Instance.ShowNotification($"Damage increased by {(option.damageBuffMultiplier - 1f) * 100f}% for {option.buffDuration} seconds!", 3f);
     }
 
     // 4. Gets skills/weapons
     private void ResolveGrantItem(GameEventOption option)
     {
-        Debug.Log("[Event-GrantItem] TODO: grant random skill/weapon ke player.");
+        
 
         // Contoh hook:
         // SkillManager.Instance?.GrantRandomSkill();

@@ -11,6 +11,9 @@ public enum EnemyType
 public class Enemy : MonoBehaviour
 {
     public EnemyType enemyType = EnemyType.Basic;
+    public Renderer enemyRenderer;
+    public Color rendererColor;
+    public Transform healthBar;
     public int xpReward = 15;
     public int goldReward = 10;
     public static event Action<Enemy> OnAnyDeath;
@@ -18,6 +21,10 @@ public class Enemy : MonoBehaviour
     void Awake()
     {
         GetComponent<Health>().onDeath += HandleDeath;
+        if (enemyRenderer != null)
+        {
+            rendererColor = enemyRenderer.material.color;
+        }
     }
 
     private void HandleDeath()

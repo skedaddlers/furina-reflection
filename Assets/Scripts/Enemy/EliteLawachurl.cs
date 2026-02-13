@@ -60,8 +60,30 @@ public class EliteLawachurl : EnemyAI
                 var hp = player.GetComponent<Health>();
                 if (hp != null)
                 {
-                    int heavyDamage = Mathf.RoundToInt(damage * heavyAttackDamageMultiplier);
-                    hp.TakeDamage(heavyDamage);
+                    float baseDamage = damage * heavyAttackDamageMultiplier;
+                    var playerStats = player.GetComponent<PlayerStats>();
+                    var enemyStats = GetComponent<EnemyStats>();
+                    float defense = playerStats != null ? playerStats.baseDefense : 0f;
+                    float critChance = enemyStats != null ? enemyStats.critRate : 0f;
+                    float critMultiplier = enemyStats != null ? enemyStats.critMultiplier : 1f;
+                    int levelDiff = 0;
+                    if (enemyStats != null && playerStats != null)
+                    {
+                        levelDiff = enemyStats.level - playerStats.level;
+                    }
+
+                    bool didCrit;
+                    float finalDamage = Helpers.CalculateFinalDamage(
+                        baseDamage,
+                        defense,
+                        critChance,
+                        critMultiplier,
+                        levelDiff,
+                        1f,
+                        out didCrit
+                    );
+
+                    hp.TakeDamage(finalDamage, didCrit);
                 }
             }
 

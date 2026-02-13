@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 [DisallowMultipleComponent]
 public class PlayerStats : MonoBehaviour
@@ -21,6 +22,7 @@ public class PlayerStats : MonoBehaviour
     public float maxStamina = 100f;
     public float staminaRegenPerSecond = 20f;
     public float staminaRegenDelay = 1.0f;
+    public float staminaConsumptionReductionPercent = 0f; // e.g., 0.2 for 20% reduction
     [SerializeField] private float _currentStamina;
     public float CurrentStamina => _currentStamina;
     private float _staminaRegenDelayTimer = 0f;
@@ -52,6 +54,9 @@ public class PlayerStats : MonoBehaviour
 
     public event Action<int, int> onManaChanged; // (current, max)
     public event Action<float, float> onStaminaChanged; // (current, max)
+
+    [SerializeField] private float _currentDamageBuffMultiplier = 1f;
+    private float _damageBuffTimer = 0f;
 
     void Awake()
     {
@@ -112,9 +117,10 @@ public class PlayerStats : MonoBehaviour
     public bool TrySpendStamina(float amount, bool resetDelay = true)
     {
         if (amount <= 0f) return true;
-        if (_currentStamina < amount) return false;
+        if (_currentStamina < amount * (1f - staminaConsumptionReductionPercent)) return false;
 
-        _currentStamina -= amount;
+        float reducedAmount = amount * (1f - staminaConsumptionReductionPercent);
+        _currentStamina -= reducedAmount;
         if (resetDelay) _staminaRegenDelayTimer = staminaRegenDelay;
         onStaminaChanged?.Invoke(_currentStamina, maxStamina);
         return true;
@@ -123,7 +129,8 @@ public class PlayerStats : MonoBehaviour
     public void SpendStamina(float amount, bool resetDelay = true)
     {
         if (amount <= 0f) return;
-        _currentStamina = Mathf.Max(0f, _currentStamina - amount);
+        float reducedAmount = amount * (1f - staminaConsumptionReductionPercent);
+        _currentStamina = Mathf.Max(0f, _currentStamina - reducedAmount);
         if (resetDelay) _staminaRegenDelayTimer = staminaRegenDelay;
         onStaminaChanged?.Invoke(_currentStamina, maxStamina);
     }
@@ -161,13 +168,6 @@ public class PlayerStats : MonoBehaviour
         if (amount <= 0) return;
         _currentMana = Mathf.Min(maxMana, _currentMana + amount);
         onManaChanged?.Invoke(_currentMana, maxMana);
-    }
-
-    public float RollDamage(float baseDmg)
-    {
-        // crit sederhana
-        bool isCrit = UnityEngine.Random.value < critRate;
-        return isCrit ? baseDmg * critMultiplier : baseDmg;
     }
 
     public void AddXP(int amount)
@@ -208,5 +208,33 @@ public class PlayerStats : MonoBehaviour
         UIManager.Instance.statsUI.UpdateLevelUI(level);
         UIManager.Instance.statsUI.UpdateXPUI(currentXP, xpToNextLevel);
         // You can add more logic here for what happens when the player levels up
+    }
+
+    public bool HasEnoughStamina(float amount)
+    {
+        float reducedAmount = amount * (1f - staminaConsumptionReductionPercent);
+        return _currentStamina >= reducedAmount;
+    }
+
+    public float GetCurrentDamageBuffMultiplier()
+    {
+        return _currentDamageBuffMultiplier;
+    }
+    public void ApplyTemporaryDamageBuff(float multiplier, float duration)
+    {
+        _currentDamageBuffMultiplier = multiplier;
+        _damageBuffTimer = duration;
+        StopAllCoroutines();
+        StartCoroutine(DamageBuffCoroutine());
+    }
+
+    private IEnumerator DamageBuffCoroutine()
+    {
+        while (_damageBuffTimer > 0f)
+        {
+            _damageBuffTimer -= Time.deltaTime;
+            yield return null;
+        }
+        _currentDamageBuffMultiplier = 1f;
     }
 }

@@ -760,7 +760,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6884360060731891085}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8641497623115844283}
   m_SourcePrefab: {fileID: 100100000, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
+--- !u!137 &7111225425522403523 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1630794972795428178, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
+  m_PrefabInstance: {fileID: 8363636114494059921}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8330291271976784506 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4cbcf77cc8c959945a2e0c5c8674786b, type: 3}
@@ -895,6 +903,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 0
+  enemyRenderer: {fileID: 7111225425522403523}
+  rendererColor: {r: 0, g: 0, b: 0, a: 0}
+  healthBar: {fileID: 2398677579558737384}
   xpReward: 15
   goldReward: 10
 --- !u!114 &6259348790908507245
@@ -912,6 +923,7 @@ MonoBehaviour:
   isRanged: 1
   attackRange: 5
   attackCooldown: 1.5
+  movementSpeed: 1.1
   damage: 10
   detectionRange: 10
   projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
@@ -934,3 +946,19 @@ MonoBehaviour:
   worldOffset: {x: 0, y: 2, z: 0}
   hideWhenFull: 1
   decayingSpeed: 20
+--- !u!114 &8641497623115844283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8705725717222443200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78e818e7f6d2655478b39fab284178d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  level: 1
+  defense: 0
+  critRate: 0
+  critMultiplier: 1.5

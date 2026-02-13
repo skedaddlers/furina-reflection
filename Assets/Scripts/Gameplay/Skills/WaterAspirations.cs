@@ -4,10 +4,15 @@ using System.Collections;
 [CreateAssetMenu(fileName = "WaterAspirations", menuName = "Furina/Skills/Water Aspirations")]
 public class WaterAspirations : SkillBase
 {
+    // upgraded ver give def when shield is broken before duration ends until the duration ends
+    public float defBonus = 15f;
+
     private GameObject activeCaster;
     private PlayerStats activePlayerStats;
     private float currentShieldAmount;
+    private float elapsed;
     private bool isActive = false;
+    private bool defBonusApplied = false;
 
     private void OnEnable()
     {
@@ -16,6 +21,7 @@ public class WaterAspirations : SkillBase
         activeCaster = null;
         activePlayerStats = null;
         currentShieldAmount = 0f;
+        elapsed = 0f;
     }
 
     public override void OnSkillActivate(GameObject caster)
@@ -74,15 +80,34 @@ public class WaterAspirations : SkillBase
 
     private IEnumerator ShieldDuration(GameObject caster)
     {
-        float elapsed = 0f;
-
-        while (elapsed < duration && isActive && currentShieldAmount > 0)
+        elapsed = 0f;
+        while (elapsed < duration && isActive)
         {
+            if (isUpgraded && !defBonusApplied && activePlayerStats.health.shieldAmount <= 0 && elapsed < duration)
+            {
+                ApplyDefBonus();
+            }
+            else if (!isUpgraded && activePlayerStats.health.shieldAmount <= 0)
+            {
+                // Shield broken, end skill early
+                Debug.Log($"{skillName}: Shield broke early, ending skill.");
+                break;
+            }
             yield return new WaitForSeconds(0.1f);
             elapsed += 0.1f;
         }
-
+        
         OnSkillEnd(caster);
+    }
+
+    private void ApplyDefBonus()
+    {
+        if (activePlayerStats != null)
+        {
+            activePlayerStats.baseDefense += defBonus;
+            defBonusApplied = true;
+            Debug.Log($"{skillName}: Shield broke early! DEF bonus applied: +{defBonus}");
+        }
     }
 
 
@@ -91,9 +116,18 @@ public class WaterAspirations : SkillBase
         if (!isActive) return;
 
         base.OnSkillEnd(caster);
+        
+        if (defBonusApplied && activePlayerStats != null)
+        {
+            activePlayerStats.baseDefense -= defBonus;
+            defBonusApplied = false;
+            Debug.Log($"{skillName}: DEF bonus removed.");
+        }
 
         isActive = false;
         activeCaster = null;
+
+
         if (activePlayerStats != null && activePlayerStats.health != null)
         {
             activePlayerStats.health.RemoveShield();

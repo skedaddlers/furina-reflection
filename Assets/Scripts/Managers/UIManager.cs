@@ -14,6 +14,7 @@ public class UIManager : MonoBehaviour
     public ShopUI shopUI;
     public EventRoomUI eventRoomUI;
     public InventoryUI inventoryUI;
+    public DamageNumberUI damageNumberUI;
     public CursorController cursorController;
     [Header("Interaction UI")]
     public CanvasGroup doorPromptCanvas;
@@ -72,6 +73,10 @@ public class UIManager : MonoBehaviour
         if (inventoryUI == null)
         {
             inventoryUI = GetComponent<InventoryUI>();
+        }
+        if (damageNumberUI == null)
+        {
+            damageNumberUI = GetComponent<DamageNumberUI>();
         }
         InitUI();
         cursorController.LockCursor();

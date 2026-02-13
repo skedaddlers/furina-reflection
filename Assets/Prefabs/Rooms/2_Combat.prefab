@@ -162,7 +162,8 @@ MonoBehaviour:
   timeBetweenWaves: 5
   maxEnemies: 15
   enemyCount: 1
-  spawnAreaSize: {x: 10, y: 5, z: 10}
+  spawnAreaSize: {x: 19.24, y: 5, z: 14.14}
+  spawnAreaCenterOffset: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 512
@@ -171,9 +172,18 @@ MonoBehaviour:
     m_Bits: 256
   minSpawnDistance: 2
   enemyPrefab: {fileID: 4228300383457371494, guid: 095290b4c328f1e4d896bbb01f409732, type: 3}
+  itemSpawnAreaSize: {x: 20.3, y: 0, z: 19.68}
+  itemSpawnCenterOffset: {x: 0, y: 0, z: -3.34}
+  possibleItems:
+  - {fileID: -9193937922690906773, guid: 04e0453bc2e03354f85db53d065f980c, type: 3}
+  - {fileID: -7085476695347001914, guid: ac72a6c5797397b4cbb49366381f852b, type: 3}
+  - {fileID: -6430465260758219358, guid: b38cd95b8e1e66c4a87ebdac32bee762, type: 3}
+  minItemSpawn: 0
+  maxItemSpawn: 2
   isCleared: 0
   isInCombat: 0
   currentWave: 1
+  isVisited: 0
   spawnedEnemies: []
   playerSpawn: {x: 0, y: 0, z: 0}
 --- !u!1 &6602246679421138243
@@ -367,7 +377,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: fe8fa144ac41bfb4a9ddc00f8fa3cf5d, type: 2}
+  m_NavMeshData: {fileID: 0}
   m_BuildHeightMesh: 0
 --- !u!1 &8260224556484374160
 GameObject:
@@ -6237,7 +6247,7 @@ PrefabInstance:
     - target: {fileID: 8276398144905778305, guid: f96442df40a0bf74bbd6431cf2ee05d9, type: 3}
       propertyPath: m_NavMeshData
       value: 
-      objectReference: {fileID: 23800000, guid: cc44992861a2b094c86fd2e95738fd33, type: 2}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6695,7 +6705,7 @@ PrefabInstance:
     - target: {fileID: 8276398144905778305, guid: f96442df40a0bf74bbd6431cf2ee05d9, type: 3}
       propertyPath: m_NavMeshData
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 23800000, guid: e1bf6716e9bb7db4a8844c46cdbd225b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

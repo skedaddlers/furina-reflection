@@ -6,119 +6,242 @@ using DG.Tweening;
 
 public class ShopUI : MonoBehaviour
 {
+    [Header("Main UI")]
     public GameObject shopPanel;
+    public GameObject detailPanel;
     public Button closeButton;
-    public List <GameObject> weaponSlots;
-    public List <GameObject> skillSlots;
+    public Button buyButton;
+    public float rarityColorAlpha = 0.5f;
+
+    [Header("Weapon UI")]
+    public List<GameObject> weaponSlots;
+    public List<Button> weaponButtons;
     public List<Image> weaponImages;
-    public List<Image> skillImages;
+    public List<Image> weaponRarityImageOverlay;
     public List<TextMeshProUGUI> weaponNames;
-    public List<TextMeshProUGUI> skillNames;
     public List<TextMeshProUGUI> weaponPrices;
+
+    [Header("Skill UI")]
+    public List<GameObject> skillSlots;
+    public List<Button> skillButtons;
+    public List<Image> skillImages;
+    public List<Image> skillRarityImageOverlay;
+    public List<TextMeshProUGUI> skillNames;
     public List<TextMeshProUGUI> skillPrices;
-    public List<TextMeshProUGUI> weaponDescriptions;
-    public List<TextMeshProUGUI> skillDescriptions;
-    public List<Button> weaponBuyButtons;
-    public List<Button> skillBuyButtons;
+
+    [Header("Detail Panel")]
+    public Image detailImage;
+    public Image detailRarityOverlay;
+    public TextMeshProUGUI detailNameText;
+    public TextMeshProUGUI detailRarityText;
+    public TextMeshProUGUI detailDescriptionText;
+    public TextMeshProUGUI detailPriceText;
+    public TextMeshProUGUI detailGoodPropertyText;
+    public TextMeshProUGUI detailBadPropertyText;
 
     private void Start()
     {
         closeButton.onClick.AddListener(CloseShop);
         shopPanel.SetActive(false);
+        detailPanel.SetActive(false);
     }
 
-    public void OpenShopUI(List<WeaponBase> weaponsForSale, List<SkillBase> skillsForSale)
+    #region Shop Open
+
+    public void OpenShopUI(List<WeaponBase> weapons, List<SkillBase> skills)
+    {
+        OpenPanel();
+        SetupWeapons(weapons);
+        SetupSkills(skills);
+    }
+
+    private void OpenPanel()
     {
         shopPanel.SetActive(true);
         shopPanel.transform.localScale = Vector3.zero;
         shopPanel.transform.DOScale(Vector3.one, 0.3f)
             .SetEase(Ease.OutBack)
             .SetUpdate(true);
+
         GameManager.Instance.ChangeState(GameState.InMenu);
         GameManager.Instance.SetCursorState(true);
-        // Setup weapon slots
+        detailPanel.SetActive(false);
+    }
+
+    #endregion
+
+    #region Weapons
+
+    private void SetupWeapons(List<WeaponBase> weapons)
+    {
         for (int i = 0; i < weaponSlots.Count; i++)
         {
-            if (i < weaponsForSale.Count)
-            {
-                int index = i; // Capture index for the listener
-                weaponBuyButtons[i].onClick.RemoveAllListeners();
-                WeaponBase weapon = weaponsForSale[i];
-                weaponSlots[i].SetActive(true);
-                weaponImages[i].sprite = weapon.icon;
-                weaponNames[i].text = weapon.weaponName;
-                weaponPrices[i].text = weapon.price.ToString() + " Gold";
-                weaponDescriptions[i].text = weapon.description;
-                if(Player.Instance.GetComponent<PlayerLoadout>().HasWeapon(weaponsForSale[i]))
-                {
-                    weaponImages[i].color = Color.gray; // Indicate already owned weapon
-                    weaponBuyButtons[i].interactable = false;
-                    continue;
-                }
-                weaponBuyButtons[i].onClick.AddListener(() => {
-                    // Implement purchase logic here
-                    if (PlayerStats.Instance.CanAfford(weapon.price))
-                    {
-                        Debug.Log("Purchased: " + weapon.weaponName);
-                        PlayerStats.Instance.SpendGold(weapon.price);
-                        Player.Instance.GetComponent<PlayerLoadout>().AddToLoadout(weapon);
-                        weaponImages[index].color = Color.gray; // Indicate already owned weapon
-                        weaponBuyButtons[index].interactable = false;
-                    }
-                    else
-                    {
-                        // Not enough gold feedback
-                    }
-                    // Debug.Log("Purchased: " + weapon.weaponName);
-                });
-            }
-            else
+            if (i >= weapons.Count)
             {
                 weaponSlots[i].SetActive(false);
+                continue;
             }
-        }
 
-        // Setup skill slots
-        for (int i = 0; i < skillSlots.Count; i++)
-        {
-            if (i < skillsForSale.Count)
+            WeaponBase weapon = weapons[i];
+            weaponSlots[i].SetActive(true);
+
+            weaponImages[i].sprite = weapon.icon;
+            weaponNames[i].text = weapon.weaponName;
+            weaponPrices[i].text = weapon.price.ToString();
+            Color rarityColor = Helpers.GetColorForRarity(weapon.rarity);
+            rarityColor.a = rarityColorAlpha;
+            weaponRarityImageOverlay[i].color = rarityColor;
+
+            weaponButtons[i].onClick.RemoveAllListeners();
+
+            bool owned = Player.Instance.GetComponent<PlayerLoadout>().HasWeapon(weapon);
+            SetItemState(weaponImages[i], weaponButtons[i], owned);
+
+            if (!owned)
             {
-                int index = i; // Capture index for the listener
-                skillBuyButtons[i].onClick.RemoveAllListeners();
-                SkillBase skill = skillsForSale[i];
-                skillSlots[i].SetActive(true);
-                skillImages[i].sprite = skill.skillIcon;
-                skillNames[i].text = skill.skillName;
-                skillPrices[i].text = skill.price.ToString() + " Gold";
-                skillDescriptions[i].text = skill.description;
-                if(Player.Instance.GetComponent<SkillManager>().HasSkill(skillsForSale[i]))
-                {
-                    skillImages[i].color = Color.gray; // Indicate already owned skill
-                    skillBuyButtons[i].interactable = false;
-                    continue;
-                }
-                skillBuyButtons[i].onClick.AddListener(() => {
-                    // Implement purchase logic here
-                    if (PlayerStats.Instance.CanAfford(skill.price))
-                    {
-                        Debug.Log("Purchased: " + skill.skillName);
-                        PlayerStats.Instance.SpendGold(skill.price);
-                        Player.Instance.GetComponent<SkillManager>().PurchaseSkill(skill);
-                        skillImages[index].color = Color.gray; // Indicate already owned skill
-                        skillBuyButtons[index   ].interactable = false;
-                    }
-                    else
-                    {
-                        // Not enough gold feedback
-                    }
-                });
-            }
-            else
-            {
-                skillSlots[i].SetActive(false);
+                int index = i;
+                weaponButtons[i].onClick.AddListener(() =>
+                    ShowWeaponDetails(weapon, index));
             }
         }
     }
+
+    private void ShowWeaponDetails(WeaponBase weapon, int index)
+    {
+        ShowDetails(
+            weapon.icon,
+            Helpers.GetColorForRarity(weapon.rarity),
+            weapon.weaponName,
+            weapon.description,
+            weapon.price,
+            weapon.goodPropertyText,
+            weapon.badPropertyText,
+            () => BuyWeapon(weapon, index)
+        );
+    }
+
+    private void BuyWeapon(WeaponBase weapon, int index)
+    {
+        if (!PlayerStats.Instance.CanAfford(weapon.price))
+        {
+            UIManager.Instance.ShowNotification("Not enough gold!", 2f);
+            return;
+        }
+
+        PlayerStats.Instance.SpendGold(weapon.price);
+        Player.Instance.GetComponent<PlayerLoadout>().AddToLoadout(weapon);
+
+        SetItemState(weaponImages[index], weaponButtons[index], true);
+        detailPanel.SetActive(false);
+    }
+
+    #endregion
+
+    #region Skills
+
+    private void SetupSkills(List<SkillBase> skills)
+    {
+        for (int i = 0; i < skillSlots.Count; i++)
+        {
+            if (i >= skills.Count)
+            {
+                skillSlots[i].SetActive(false);
+                continue;
+            }
+
+            SkillBase skill = skills[i];
+            skillSlots[i].SetActive(true);
+
+            skillImages[i].sprite = skill.skillIcon;
+            skillNames[i].text = skill.skillName;
+            skillPrices[i].text = skill.price.ToString();
+            Color rarityColor = Helpers.GetColorForRarity(skill.rarity);
+            rarityColor.a = rarityColorAlpha;
+            skillRarityImageOverlay[i].color = rarityColor;
+
+
+            skillButtons[i].onClick.RemoveAllListeners();
+
+            bool owned = Player.Instance.GetComponent<SkillManager>().HasSkill(skill);
+            SetItemState(skillImages[i], skillButtons[i], owned);
+
+            if (!owned)
+            {
+                int index = i;
+                skillButtons[i].onClick.AddListener(() =>
+                    ShowSkillDetails(skill, index));
+            }
+        }
+    }
+
+    private void ShowSkillDetails(SkillBase skill, int index)
+    {
+        ShowDetails(
+            skill.skillIcon,
+            Helpers.GetColorForRarity(skill.rarity),
+            skill.skillName,
+            skill.description,
+            skill.price,
+            skill.goodPropertyText,
+            skill.badPropertyText,
+            () => BuySkill(skill, index)
+        );
+    }
+
+    private void BuySkill(SkillBase skill, int index)
+    {
+        if (!PlayerStats.Instance.CanAfford(skill.price))
+        {
+            UIManager.Instance.ShowNotification("Not enough gold!", 2f);
+            return;
+        }
+
+        PlayerStats.Instance.SpendGold(skill.price);
+        Player.Instance.GetComponent<SkillManager>().AddSkill(skill);
+
+        SetItemState(skillImages[index], skillButtons[index], true);
+        detailPanel.SetActive(false);
+    }
+
+    #endregion
+
+    #region Detail Panel
+
+    private void ShowDetails(
+        Sprite icon,
+        Color rarityColor,
+        string name,
+        string description,
+        int price,
+        string good,
+        string bad,
+        UnityEngine.Events.UnityAction onBuy)
+    {
+        detailPanel.SetActive(true);
+
+        detailImage.sprite = icon;
+        detailRarityText.text = Helpers.GetRarityNameFromColor(rarityColor);
+        rarityColor.a = rarityColorAlpha;
+        detailRarityOverlay.color = rarityColor;
+        detailNameText.text = name;
+        detailDescriptionText.text = description;
+        detailPriceText.text = price.ToString();
+        detailGoodPropertyText.text = good;
+        detailBadPropertyText.text = bad;
+
+        buyButton.onClick.RemoveAllListeners();
+        buyButton.onClick.AddListener(onBuy);
+    }
+
+    private void SetItemState(Image image, Button button, bool owned)
+    {
+        image.color = owned ? Color.gray : Color.white;
+        button.interactable = !owned;
+    }
+
+    #endregion
+
+    #region Close
 
     public void CloseShop()
     {
@@ -126,4 +249,6 @@ public class ShopUI : MonoBehaviour
         GameManager.Instance.SetCursorState(false);
         GameManager.Instance.ChangeState(GameState.Playing);
     }
+
+    #endregion
 }

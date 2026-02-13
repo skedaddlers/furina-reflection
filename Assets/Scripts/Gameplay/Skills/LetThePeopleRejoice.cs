@@ -7,9 +7,11 @@ public class LetThePeopleRejoice : SkillBase
     [Header("Buff Settings")]
     public float attackBonus = 20f;
     public float healthDrainPerSecond = 5f;
+    public float movementSpeedBonusPercent = 0.2f;
 
     private GameObject activeCaster;
     private PlayerStats activePlayerStats;
+    private float originalMovementSpeed;
     private float originalBaseAttack;
     private bool isActive = false;
 
@@ -57,6 +59,11 @@ public class LetThePeopleRejoice : SkillBase
         // Store original attack and apply bonus
         originalBaseAttack = activePlayerStats.baseAttack;
         activePlayerStats.baseAttack += attackBonus;
+        if(isUpgraded)
+        {
+            originalMovementSpeed = activePlayerStats.moveSpeed;
+            activePlayerStats.moveSpeed += originalMovementSpeed * movementSpeedBonusPercent;
+        }
 
         Debug.Log($"{skillName} activated! Attack: {originalBaseAttack} -> {activePlayerStats.baseAttack} (+{attackBonus})");
 
@@ -127,6 +134,11 @@ public class LetThePeopleRejoice : SkillBase
         {
             Debug.Log($"{skillName} ended! Attack: {activePlayerStats.baseAttack} -> {originalBaseAttack}");
             activePlayerStats.baseAttack = originalBaseAttack;
+        }
+        if (activePlayerStats != null && isUpgraded)
+        {
+            Debug.Log($"{skillName} ended! Movement Speed: {activePlayerStats.moveSpeed} -> {originalMovementSpeed}");
+            activePlayerStats.moveSpeed -= originalMovementSpeed * movementSpeedBonusPercent;
         }
 
         // Unsubscribe from enemy death event

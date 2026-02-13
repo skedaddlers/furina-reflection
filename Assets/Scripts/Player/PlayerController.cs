@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
 
     private Animator animator;
     private PlayerCombat playerCombat;
+    private PlayerStats playerStats;
     private CharacterController controller;
     [SerializeField]
     private PlayerAnimationBinder _animBinder;
@@ -62,6 +63,7 @@ public class PlayerController : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         controller = GetComponent<CharacterController>();
         playerCombat = GetComponent<PlayerCombat>();
+        playerStats = GetComponent<PlayerStats>();
         skillManager = GetComponent<SkillManager>();
         _animBinder = GetComponent<PlayerAnimationBinder>();
         // find main camera with tag CinemachineCamera
@@ -70,6 +72,7 @@ public class PlayerController : MonoBehaviour
         {
             defaultFOV = mainCam.Lens.FieldOfView;
         }
+        walkSpeed = stats.moveSpeed;
     }
 
     void Update()
@@ -101,7 +104,7 @@ public class PlayerController : MonoBehaviour
             CancelCombatLock();
             shiftPressedTime = Time.time;
             shiftHeld = true;
-            if (HasEnoughStamina(dodgeStaminaCost))
+            if (stats.HasEnoughStamina(dodgeStaminaCost))
             {
                 StartCoroutine(Dodge()); // langsung dodge dulu
                 dashTriggered = true;
@@ -115,7 +118,7 @@ public class PlayerController : MonoBehaviour
             if (!dashTriggered && (Time.time - shiftPressedTime) < holdThreshold && !isDodging && isGrounded)
             {
                 // Tap -> dash
-                if (HasEnoughStamina(dodgeStaminaCost))
+                if (stats.HasEnoughStamina(dodgeStaminaCost))
                     StartCoroutine(Dodge());
             }
             else
@@ -126,7 +129,7 @@ public class PlayerController : MonoBehaviour
             dashTriggered = false; // Reset untuk input berikutnya
         }
 
-        bool wantsSprintNow = shiftHeld && (Time.time - shiftPressedTime) >= holdThreshold && !isDodging && isGrounded && HasEnoughStamina(sprintStaminaCostPerSecond * 0.25f);
+        bool wantsSprintNow = shiftHeld && (Time.time - shiftPressedTime) >= holdThreshold && !isDodging && isGrounded && stats.HasEnoughStamina(sprintStaminaCostPerSecond * 0.25f);
         if (wantsSprintNow)
         {
             isSprinting = true;
@@ -457,12 +460,6 @@ public class PlayerController : MonoBehaviour
         if (bowCrosshair != null)
             bowCrosshair.SetActive(false);
         stats?.health?.SetInvulnerable(false);
-    }
-
-    bool HasEnoughStamina(float amount)
-    {
-        if (stats == null) return true;
-        return stats.CurrentStamina >= amount;
     }
 
     bool HasBowEquipped

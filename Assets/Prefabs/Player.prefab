@@ -1563,7 +1563,7 @@ MonoBehaviour:
   level: 1
   health: {fileID: 0}
   baseAttack: 10
-  baseDefense: 0
+  baseDefense: 5
   moveSpeed: 6
   critRate: 0.1
   critMultiplier: 1.5
@@ -1580,6 +1580,7 @@ MonoBehaviour:
   xpGrowthRate: 1.2
   gold: 300
   _currentMana: 0
+  _currentDamageBuffMultiplier: 1
 --- !u!114 &6078093185230963454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1686,6 +1687,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Inventory
   maxCapacity: 20
+  itemUsageCooldown: 3
+  items: []
 --- !u!114 &5174770923303977975
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -25,20 +25,27 @@ public class Room : MonoBehaviour
     public int waveCount = 1;
     public int timeBetweenWaves = 5;
     public int maxEnemies = 3;
-
     [Tooltip("This will be overridden by difficulty system")]
     public int enemyCount = 3;
-
     public Vector3 spawnAreaSize = new Vector3(10f, 5f, 10f);
+    public Vector3 spawnAreaCenterOffset = Vector3.zero;
     public LayerMask groundMask;
     public LayerMask obstacleMask;
     public float minSpawnDistance = 2f;
     public GameObject enemyPrefab;
 
+    [Header("Item Spawn Settings")]
+    public Vector3 itemSpawnAreaSize = new Vector3(8f, 0f, 8f);
+    public Vector3 itemSpawnCenterOffset = Vector3.zero;
+    public List<Item> possibleItems = new List<Item>();
+    public int minItemSpawn = 0;
+    public int maxItemSpawn = 2;
+
     [Header("Runtime Info")]
     public bool isCleared = false;
     public bool isInCombat = false;
     public int currentWave = 1;
+    public bool isVisited = false;
 
     public List<GameObject> spawnedEnemies = new List<GameObject>();
 
@@ -239,6 +246,40 @@ public class Room : MonoBehaviour
 
     #endregion
 
+    #region Item Spawning
+    public void SpawnItemsInRoom(int itemCount)
+    {
+        Debug.Log($"Spawning {itemCount} items in Room {roomIndex}");
+        if (possibleItems.Count == 0 || itemCount <= 0)
+            return;
+
+        for (int i = 0; i < itemCount; i++)
+        {
+            Vector3 spawnPos = GetRandomItemSpawnPosition();
+            Item itemToSpawn = possibleItems[Random.Range(0, possibleItems.Count)];
+            if (itemToSpawn != null)
+            {
+                Item spawnedItem = Instantiate(itemToSpawn, spawnPos, Quaternion.identity);
+                spawnedItem.SetVisibleInWorld(true);
+            }
+        }
+    }
+
+    private Vector3 GetRandomItemSpawnPosition()
+    {
+        Vector3 randomPos =
+        transform.position +
+        itemSpawnCenterOffset +
+        new Vector3(
+            Random.Range(-itemSpawnAreaSize.x / 2f, itemSpawnAreaSize.x / 2f),
+            0f,
+            Random.Range(-itemSpawnAreaSize.z / 2f, itemSpawnAreaSize.z / 2f)
+        );
+
+        return randomPos;
+    }
+    #endregion
+
     #region Enemy Spawning
 
     public void SpawnEnemiesInRoom()
@@ -279,11 +320,15 @@ public class Room : MonoBehaviour
     {
         spawnPos = Vector3.zero;
 
-        Vector3 randomPos = transform.position + new Vector3(
+        Vector3 randomPos =
+        transform.position +
+        spawnAreaCenterOffset +
+        new Vector3(
             Random.Range(-spawnAreaSize.x / 2f, spawnAreaSize.x / 2f),
             spawnAreaSize.y / 2f,
             Random.Range(-spawnAreaSize.z / 2f, spawnAreaSize.z / 2f)
         );
+
 
         Debug.DrawRay(randomPos, Vector3.down * (spawnAreaSize.y + 1f), Color.red, 2f);
 
@@ -425,11 +470,17 @@ public class Room : MonoBehaviour
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = new Color(0f, 1f, 0f, 0.25f);
-        Gizmos.DrawCube(transform.position, spawnAreaSize);
+        Gizmos.DrawCube(transform.position + spawnAreaCenterOffset, spawnAreaSize);
 
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(transform.position, spawnAreaSize);
+        Gizmos.DrawWireCube(transform.position + spawnAreaCenterOffset, spawnAreaSize);
+
+        Gizmos.color = new Color(1f, 1f, 0f, 0.25f);
+        Gizmos.DrawCube(transform.position + itemSpawnCenterOffset, itemSpawnAreaSize);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(transform.position + itemSpawnCenterOffset, itemSpawnAreaSize);
     }
+
 #endif
 
     #endregion

@@ -14,14 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeWeapon
   id: weapon_id
   weaponName: Staff of Homa
+  rarity: 1
   description: Ei's grasscutter, with its double hit, it's effective on cutting other
     things too!
+  goodPropertyText: '+8 Damage (x2)
+
+    +4 Range'
+  badPropertyText: 1.2s Cooldown
   icon: {fileID: 21300000, guid: 4dec4b78d091b5446a22327316d70abe, type: 3}
   price: 80
   baseDamage: 8
   range: 4
   angle: 90
-  cooldown: 1
+  cooldown: 1.2
   manaCost: 0
   projectilePrefab: {fileID: 0}
   projectileSpeed: 20

@@ -14,7 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: weapon_id
   weaponName: Water Laser
+  rarity: 2
   description: FIRRIN THE LASERRR
+  goodPropertyText: '+15 Damage
+
+    Can pierce targets'
+  badPropertyText: '1.2s Cooldown
+
+    2 Mana cost'
   icon: {fileID: 21300000, guid: e347058d2faf9a847abdfd247b1ad7be, type: 3}
   price: 65
   baseDamage: 15

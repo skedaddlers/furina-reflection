@@ -66,6 +66,14 @@ public class SalonSolitaire : SkillBase
 
     private void SpawnSalonMembers(GameObject caster)
     {
+        if (isUpgraded)
+        {
+            memberCount = salonMemberPrefabs.Length;
+        }
+        else
+        {
+            memberCount = salonMemberPrefabs.Length - 1;
+        }
         for (int i = 0; i < memberCount; i++)
         {
             // Calculate spawn position around the caster

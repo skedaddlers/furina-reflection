@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 
 public class Health : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class Health : MonoBehaviour
         maxShield = maxHealth;
     }
 
-    public void TakeDamage(float amount)
+    public void TakeDamage(float amount, bool isCrit = false)
     {
         if (currentHealth <= 0) return;
         if (isInvulnerable)
@@ -47,6 +48,16 @@ public class Health : MonoBehaviour
         {
             currentHealth -= finalDamage;
             Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
+            Enemy enemy = GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, enemy.healthBar.position, isCrit);
+                StartCoroutine(HitFlash(enemy));
+            }
+            else if (CompareTag("Player"))
+            {
+                UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, transform.position + Vector3.up, isCrit);
+            }
         }
         else
         {
@@ -62,6 +73,17 @@ public class Health : MonoBehaviour
         {
             Die();
         }
+    }
+    
+    IEnumerator HitFlash(Enemy enemy)
+    {
+        if (enemy.enemyRenderer == null) yield break;
+
+        Color originalColor = enemy.rendererColor;
+        enemy.enemyRenderer.material.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        enemy.enemyRenderer.material.color = originalColor;
+        Debug.Log($"{gameObject.name} hit flash ended.");
     }
 
     public void AddShield(float amount)

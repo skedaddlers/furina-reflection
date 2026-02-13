@@ -20,6 +20,13 @@ public class PlayerCombat : MonoBehaviour
     [Header("Visual Effects")]
     public ParticleSystem hitEffect;
 
+    [Header("Hitlag")]
+    public bool enableHitlag = true;
+    [Range(0.01f, 0.5f)]
+    public float hitlagDuration = 0.05f;
+    [Range(0f, 1f)]
+    public float hitlagTimeScale = 0.1f;
+
     [Header("Attack Settings")]
     private bool _isAttacking = false;
     public bool IsAttacking => _isAttacking;
@@ -82,12 +89,24 @@ public class PlayerCombat : MonoBehaviour
     // Melee cone hit: deteksi musuh dalam jarak & sudut
     public void MeleeConeHit(float damage, float range, float angle)
     {
+        bool hasHit = false;
         Vector3 origin = attackOrigin != null ? attackOrigin.position : transform.position + transform.forward * 0.5f;
         Vector3 forward = (attackOrigin != null ? attackOrigin.forward : transform.forward).normalized;
 
         Collider[] hits = Physics.OverlapSphere(origin, range, enemyMask);
         foreach (var h in hits)
         {
+            var targetStats = h.GetComponent<EnemyStats>();
+            bool didCrit;
+            float finalDamage = Helpers.CalculateFinalDamage(
+                damage,
+                targetStats != null ? targetStats.defense : 0f,
+                stats?.critRate ?? 0f,
+                stats?.critMultiplier ?? 1f,
+                stats != null ? stats.level - (targetStats != null ? targetStats.level : 0) : 0,
+                stats != null ? stats.GetCurrentDamageBuffMultiplier() : 1f,
+                out didCrit
+            );
             Vector3 dir = (h.transform.position - origin);
             dir.y = 0f;
             float ang = Vector3.Angle(forward, dir);
@@ -95,8 +114,13 @@ public class PlayerCombat : MonoBehaviour
             {
                 GameObject particle = Instantiate(hitEffect.gameObject, h.ClosestPoint(origin), Quaternion.identity);
                 var health = h.GetComponent<Health>();
-                if (health != null) health.TakeDamage(damage);
+                if (health != null) health.TakeDamage(finalDamage, didCrit);
+                hasHit = true;
             }
+        }
+        if (hasHit && enableHitlag)
+        {
+            HitlagManager.Instance.Trigger(hitlagDuration, hitlagTimeScale);
         }
     }
 
@@ -149,7 +173,6 @@ public class PlayerCombat : MonoBehaviour
         Debug.Log($"Fired projectile {go.name} with dir {dir}");
     }
     
-
     public void SetIsAttacking(bool val)
     {
         _isAttacking = val;

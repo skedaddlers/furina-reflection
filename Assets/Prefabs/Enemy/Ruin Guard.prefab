@@ -705,6 +705,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character_output (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8111781155169087978, guid: 00722629c3f69e446b6ee16383b39b4d, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8111781155169087978, guid: 00722629c3f69e446b6ee16383b39b4d, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: defe1cc18e165944dae9ae8a7c2b674d, type: 2}
     m_RemovedComponents:
     - {fileID: 5866666021909216657, guid: 00722629c3f69e446b6ee16383b39b4d, type: 3}
     m_RemovedGameObjects: []
@@ -714,6 +722,11 @@ PrefabInstance:
 --- !u!4 &4033092325314801983 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 00722629c3f69e446b6ee16383b39b4d, type: 3}
+  m_PrefabInstance: {fileID: 3491087301570942676}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &4674737087311570750 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8111781155169087978, guid: 00722629c3f69e446b6ee16383b39b4d, type: 3}
   m_PrefabInstance: {fileID: 3491087301570942676}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3921677713346320439
@@ -1109,6 +1122,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1132621318322507302}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1759342616226106966}
   m_SourcePrefab: {fileID: 100100000, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
 --- !u!4 &3595596980550615004 stripped
 Transform:
@@ -1222,6 +1238,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 1
+  enemyRenderer: {fileID: 4674737087311570750}
+  rendererColor: {r: 0, g: 0, b: 0, a: 0}
+  healthBar: {fileID: 2958826883189367735}
   xpReward: 50
   goldReward: 15
 --- !u!114 &2774125957437581761
@@ -1239,6 +1258,7 @@ MonoBehaviour:
   isRanged: 0
   attackRange: 1.5
   attackCooldown: 1.5
+  movementSpeed: 0.93
   damage: 10
   detectionRange: 10
   projectilePrefab: {fileID: 7933930715022831805, guid: 3c6e7c7d27cc5d843b088f231b8ff4aa, type: 3}
@@ -1262,3 +1282,19 @@ MonoBehaviour:
   worldOffset: {x: 0, y: 3, z: 0}
   hideWhenFull: 1
   decayingSpeed: 20
+--- !u!114 &1759342616226106966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228300383457371494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78e818e7f6d2655478b39fab284178d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  level: 1
+  defense: 0
+  critRate: 0
+  critMultiplier: 1.5

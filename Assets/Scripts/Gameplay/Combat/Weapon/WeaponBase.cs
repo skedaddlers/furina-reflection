@@ -5,7 +5,10 @@ public abstract class WeaponBase : ScriptableObject
     [Header("Info")]
     public string id = "weapon_id";
     public string weaponName = "Weapon";
+    public Rarity rarity = Rarity.Common;
     [TextArea] public string description;
+    [TextArea] public string goodPropertyText;
+    [TextArea] public string badPropertyText;
     public Sprite icon;
     public int price = 100;
 

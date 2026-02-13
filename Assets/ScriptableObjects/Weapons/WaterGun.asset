@@ -16,6 +16,10 @@ MonoBehaviour:
   weaponName: Water Gun
   description: A gun that Furina made herself! Now Furina can shoot from afar! It
     spends mana to shoot though
+  goodPropertyText: +5 Damage
+  badPropertyText: '0.5s Cooldown
+
+    1 Mana cost'
   icon: {fileID: 21300000, guid: e347058d2faf9a847abdfd247b1ad7be, type: 3}
   price: 50
   baseDamage: 5

@@ -3,8 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
 
+public enum Rarity
+{
+    Common,
+    Rare,
+    Epic,
+    Legendary
+}
+
 public static class Helpers
 {
+
     public static T GetRandomElement<T>(this List<T> list, int seed = 0)
     {
         if (list == null || list.Count == 0)
@@ -45,5 +54,87 @@ public static class Helpers
         }
 
         return selectedItems;
+    }
+
+    public static float CalculateFinalDamage(
+        float baseDamage, 
+        float defense, 
+        float critChance, 
+        float critMultiplier,
+        int levelDifference = 0,
+        float damageMultiplier = 1f)
+    {
+        return CalculateFinalDamage(
+            baseDamage,
+            defense,
+            critChance,
+            critMultiplier,
+            levelDifference,
+            damageMultiplier,
+            out _);
+    }
+
+    public static float CalculateFinalDamage(
+        float baseDamage,
+        float defense,
+        float critChance,
+        float critMultiplier,
+        int levelDifference,
+        float damageMultiplier,
+        out bool didCrit)
+    {
+        float mitigatedDamage = baseDamage * ((1-(defense / (defense + 25 + 3 * (levelDifference)))));
+        float finalDamage = mitigatedDamage * damageMultiplier;
+        didCrit = Random.value <= critChance;
+        if (didCrit)
+        {
+            finalDamage *= critMultiplier;
+        }
+        // Debug.Log($"[Damage Calculation] Base: {baseDamage}, Defense: {defense}, LevelDiff: {levelDifference}, Mitigated: {mitigatedDamage}, Multiplier: {damageMultiplier}, CritChance: {critChance}, CritMultiplier: {critMultiplier}, Final: {finalDamage}");
+        return finalDamage;
+    }
+
+    public static Color GetColorForRarity(Rarity rarity)
+    {
+        GlobalLibrary library = Library.Instance;
+        if (library == null || library.rarityColors == null || library.rarityColors.Count < 4)
+        {
+            Debug.LogWarning("GlobalLibrary or rarityColors not properly set up.");
+            return Color.white;
+        }
+        switch (rarity)
+    {
+            case Rarity.Common:
+                return library.rarityColors[0];
+            case Rarity.Rare:
+                return library.rarityColors[1];
+            case Rarity.Epic:
+                return library.rarityColors[2];
+            case Rarity.Legendary:
+                return library.rarityColors[3];
+            default:
+                return Color.white;
+        }
+    }
+
+    public static string GetRarityNameFromColor(Color color)
+    {
+        GlobalLibrary library = Library.Instance;
+        if (library == null || library.rarityColors == null || library.rarityColors.Count < 4)
+        {
+            Debug.LogWarning("GlobalLibrary or rarityColors not properly set up.");
+            return "Unknown";
+        }
+
+        if (color == library.rarityColors[0])
+            return "Common";
+        else if (color == library.rarityColors[1])
+            return "Rare";
+        else if (color == library.rarityColors[2])
+            return "Epic";
+        else if (color == library.rarityColors[3])
+            return "Legendary";
+        else
+            return "Unknown";
     }
 }

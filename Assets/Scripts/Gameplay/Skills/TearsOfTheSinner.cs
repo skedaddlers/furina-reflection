@@ -6,6 +6,7 @@ public class TearsOfTheSinner : SkillBase
 {
     [Header("Rain Settings")]
     public float tickInterval = 1f;
+    public float additionalDurationUpgradeS= 2f;
     public string enemyTag = "Enemy";
 
     private bool isActive = false;
@@ -24,6 +25,10 @@ public class TearsOfTheSinner : SkillBase
         isActive = true;
 
         Debug.Log($"{skillName} activated by {caster.name}");
+        if(isUpgraded)
+        {
+            duration += additionalDurationUpgradeS;
+        }
 
         // Play cast sound
         if (castSound != null)
@@ -64,19 +69,26 @@ public class TearsOfTheSinner : SkillBase
     {
         // Get player stats for damage calculation
         PlayerStats playerStats = caster.GetComponent<PlayerStats>();
-        float finalDamage = damageAmount;
+        float baseDamage = damageAmount;
+        float critChance = 0f;
+        float critMultiplier = 1f;
+        int casterLevel = 0;
+        float damageMultiplier = 1f;
 
         // Add player attack stat and apply crit if available
         if (playerStats != null)
         {
-            finalDamage += playerStats.baseAttack;
-            finalDamage = playerStats.RollDamage(finalDamage);
+            baseDamage += playerStats.baseAttack;
+            critChance = playerStats.critRate;
+            critMultiplier = playerStats.critMultiplier;
+            casterLevel = playerStats.level;
+            damageMultiplier = playerStats.GetCurrentDamageBuffMultiplier();
         }
 
         // Find ALL enemies in the scene by tag
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);
 
-        Debug.Log($"{skillName}: Damaging {enemies.Length} enemies for {finalDamage} damage each");
+        Debug.Log($"{skillName}: Damaging {enemies.Length} enemies for {baseDamage} base damage each");
 
         foreach (GameObject enemy in enemies)
         {
@@ -86,7 +98,20 @@ public class TearsOfTheSinner : SkillBase
             Health health = enemy.GetComponent<Health>();
             if (health != null)
             {
-                health.TakeDamage(finalDamage);
+                var enemyStats = enemy.GetComponent<EnemyStats>();
+                float defense = enemyStats != null ? enemyStats.defense : 0f;
+                int levelDiff = casterLevel - (enemyStats != null ? enemyStats.level : 0);
+                bool didCrit;
+                float finalDamage = Helpers.CalculateFinalDamage(
+                    baseDamage,
+                    defense,
+                    critChance,
+                    critMultiplier,
+                    levelDiff,
+                    damageMultiplier,
+                    out didCrit
+                );
+                health.TakeDamage(finalDamage, didCrit);
 
                 // Play impact sound
                 if (impactSound != null)

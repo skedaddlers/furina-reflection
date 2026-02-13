@@ -16,6 +16,10 @@ MonoBehaviour:
   weaponName: Splendor of Tranquil Waters
   description: Furina de Fontaine's signature weapon itself! nothing can go wrong
     when Furina get her hands on this sword!
+  goodPropertyText: '+10 Damage
+
+    +3 Range'
+  badPropertyText: 1s Cooldown
   icon: {fileID: 21300000, guid: 2e6cbd10462bd034c9b1623077d04de7, type: 3}
   price: 70
   baseDamage: 10

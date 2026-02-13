@@ -92,7 +92,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 583b8df8916867e4bb33dae9c6669330, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 5a3c7085d2cb6994aaef3203734e4282, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &3505285273781154778
 GameObject:
@@ -340,9 +340,12 @@ MonoBehaviour:
   - {fileID: 3034041666097588974}
   - {fileID: 5567475832201832613}
   - {fileID: 8705788801835095017}
+  waveCount: 1
+  timeBetweenWaves: 5
   maxEnemies: 3
   enemyCount: 3
   spawnAreaSize: {x: 10, y: 5, z: 10}
+  spawnAreaCenterOffset: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 512
@@ -351,8 +354,15 @@ MonoBehaviour:
     m_Bits: 256
   minSpawnDistance: 2
   enemyPrefab: {fileID: 0}
+  itemSpawnAreaSize: {x: 8, y: 0, z: 8}
+  itemSpawnCenterOffset: {x: 0, y: 0, z: 0}
+  possibleItems: []
+  minItemSpawn: 0
+  maxItemSpawn: 2
   isCleared: 0
   isInCombat: 0
+  currentWave: 1
+  isVisited: 0
   spawnedEnemies: []
   playerSpawn: {x: 0, y: 0, z: 0}
 --- !u!114 &1943486101771266216
@@ -371,7 +381,7 @@ MonoBehaviour:
   availableEvents:
   - id: 
     displayName: Try Your Luck
-    description: Roll 4 or more to get rewards! Take 10 damage on failure
+    description: Roll 4 or more to get 150 golds! But you take 10 damage on failure!
     eventType: 0
     weight: 1
     goldAmount: 150
@@ -402,12 +412,12 @@ MonoBehaviour:
     description: Gain attack buff for 30 seconds!
     eventType: 2
     weight: 1
-    goldAmount: 100
+    goldAmount: 0
     xpAmount: 0
     healAmount: 0
-    diceSides: 6
-    successThreshold: 3
-    curseDamage: 10
+    diceSides: 0
+    successThreshold: 0
+    curseDamage: 0
     damageBuffMultiplier: 1.3
     buffDuration: 30
     battleEnemyCount: 0

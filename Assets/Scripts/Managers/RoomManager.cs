@@ -13,8 +13,8 @@ public class RoomManager : MonoBehaviour
     private Dictionary<int, Room> roomInstances = new();
     private int currentRoomID = 1;
 
-    // expose layout untuk UI
     public DungeonLayout Layout { get; private set; }
+    private HashSet<int> visitedRooms = new HashSet<int>();
 
     // ====== PUBLIC API ======
     public void Initialize(DungeonLayout layout)
@@ -41,7 +41,12 @@ public class RoomManager : MonoBehaviour
     public void MovePlayerToRoom(int nextRoomID, int fromDoorIndex)
     {
         if (!roomInstances.ContainsKey(nextRoomID)) return;
-
+        if (IsRoomVisited(nextRoomID) == false)
+        {
+            int totalItem = Random.Range(roomInstances[nextRoomID].minItemSpawn, roomInstances[nextRoomID].maxItemSpawn + 1);
+            roomInstances[nextRoomID].SpawnItemsInRoom(totalItem);
+            MarkRoomVisited(nextRoomID);
+        }
         currentRoomID = nextRoomID;
         Room nextRoom = roomInstances[nextRoomID];
 
@@ -98,5 +103,27 @@ public class RoomManager : MonoBehaviour
             room.Initialize(data);
             roomInstances[data.id] = room;
         }
+    }
+
+    public void MarkRoomVisited(int roomId)
+    {
+        if (!visitedRooms.Contains(roomId))
+        {
+            visitedRooms.Add(roomId);
+        }
+    }
+
+    public bool IsRoomVisited(int roomId)
+    {
+        return visitedRooms.Contains(roomId);
+    }
+
+    public Room GetRoomById(int roomId)
+    {
+        if (roomInstances.ContainsKey(roomId))
+        {
+            return roomInstances[roomId];
+        }
+        return null;
     }
 }

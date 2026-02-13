@@ -3,6 +3,8 @@ using System.Collections.Generic;
 public class Inventory : MonoBehaviour
 {
     public int maxCapacity = 20;
+    public float itemUsageCooldown = 3f;
+    private float lastItemUsageTime = -Mathf.Infinity;
     [SerializeField]
     private List<Item> items = new List<Item>();
 
@@ -46,8 +48,17 @@ public class Inventory : MonoBehaviour
     {
         if (items.Contains(item))
         {
-            item.Use(gameObject);
-            RemoveItem(item);
+            if (Time.time - lastItemUsageTime >= itemUsageCooldown)
+            {
+                item.Use(gameObject);
+                Destroy(item.gameObject);
+                items.Remove(item);
+                lastItemUsageTime = Time.time;
+            }
+            else
+            {
+                UIManager.Instance.ShowNotification("Wait before using another item!");
+            }
         }
         else
         {

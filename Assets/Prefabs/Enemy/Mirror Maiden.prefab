@@ -716,6 +716,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2eb6fc5d4d3b0eb4c821313e5c028e67, type: 3}
   m_PrefabInstance: {fileID: 1214226748839178755}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &6938667348884292585 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8111781155169087978, guid: 2eb6fc5d4d3b0eb4c821313e5c028e67, type: 3}
+  m_PrefabInstance: {fileID: 1214226748839178755}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3921677713346320439
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1109,6 +1114,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8825368182185908842}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1759342616226106966}
   m_SourcePrefab: {fileID: 100100000, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
 --- !u!4 &3595596980550615004 stripped
 Transform:
@@ -1222,6 +1230,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 1
+  enemyRenderer: {fileID: 6938667348884292585}
+  rendererColor: {r: 0, g: 0, b: 0, a: 0}
+  healthBar: {fileID: 7828804035071281119}
   xpReward: 50
   goldReward: 15
 --- !u!114 &-831069330320770944
@@ -1239,6 +1250,7 @@ MonoBehaviour:
   isRanged: 1
   attackRange: 8
   attackCooldown: 1.5
+  movementSpeed: 1
   damage: 10
   detectionRange: 15
   projectilePrefab: {fileID: 7933930715022831805, guid: 4729439d7bfd2ee41beea8f1b1f58e0e, type: 3}
@@ -1264,3 +1276,19 @@ MonoBehaviour:
   worldOffset: {x: 0, y: 2, z: 0}
   hideWhenFull: 1
   decayingSpeed: 20
+--- !u!114 &1759342616226106966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228300383457371494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78e818e7f6d2655478b39fab284178d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  level: 1
+  defense: 0
+  critRate: 0
+  critMultiplier: 1.5

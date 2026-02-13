@@ -176,9 +176,40 @@ public class Projectile : MonoBehaviour
     void DealDamage(Collider other)
     {
         var health = other.GetComponent<Health>();
+        float finalDamage = damage;
+        bool didCrit = false;
+        if(owner != null)
+        {
+            var ownerStats = owner.GetComponent<PlayerStats>();
+            if(ownerStats != null)
+            {
+                finalDamage = Helpers.CalculateFinalDamage(
+                    damage,
+                    other.GetComponent<EnemyStats>()?.defense ?? 0f,
+                    ownerStats.critRate,
+                    ownerStats.critMultiplier,
+                    ownerStats.level - (other.GetComponent<EnemyStats>()?.level ?? 0),
+                    ownerStats.GetCurrentDamageBuffMultiplier(),
+                    out didCrit
+                );
+            }
+            else if(owner.GetComponent<EnemyStats>() != null)
+            {
+                var enemyStats = owner.GetComponent<EnemyStats>();
+                finalDamage = Helpers.CalculateFinalDamage(
+                    damage,
+                    other.GetComponent<PlayerStats>()?.baseDefense ?? 0f,
+                    enemyStats.critRate,
+                    enemyStats.critMultiplier,
+                    enemyStats.level - (other.GetComponent<PlayerStats>()?.level ?? 0),
+                    1f,
+                    out didCrit
+                );
+            }
+        }
         if (health != null)
         {
-            health.TakeDamage(damage);
+            health.TakeDamage(finalDamage, didCrit);
         }
     }
 

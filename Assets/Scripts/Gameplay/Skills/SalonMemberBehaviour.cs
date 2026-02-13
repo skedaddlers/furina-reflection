@@ -81,18 +81,17 @@ public class SalonMemberBehaviour : MonoBehaviour
 
         transform.Rotate(-90f, 0f, 0f); // Adjust for model orientation if needed
         // Calculate damage
-        float finalDamage = skillData.damageAmount;
+        float baseDamage = skillData.damageAmount;
         if (owner != null)
         {
             PlayerStats playerStats = owner.GetComponent<PlayerStats>();
             if (playerStats != null)
             {
-                finalDamage += playerStats.baseAttack * 0.5f; // 50% of player's attack
-                finalDamage = playerStats.RollDamage(finalDamage);
+                baseDamage += playerStats.baseAttack * 0.5f; // 50% of player's attack
             }
         }
 
-        FireProjectile(finalDamage);
+        FireProjectile(baseDamage);
 
         // Play impact sound
         if (skillData.impactSound != null)

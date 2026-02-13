@@ -189,7 +189,8 @@ MonoBehaviour:
   timeBetweenWaves: 5
   maxEnemies: 15
   enemyCount: 1
-  spawnAreaSize: {x: 17.9, y: 5, z: 7.08}
+  spawnAreaSize: {x: 17.9, y: 5, z: 16.96}
+  spawnAreaCenterOffset: {x: 0, y: 0, z: -1.5}
   groundMask:
     serializedVersion: 2
     m_Bits: 512
@@ -198,9 +199,18 @@ MonoBehaviour:
     m_Bits: 256
   minSpawnDistance: 2
   enemyPrefab: {fileID: 4228300383457371494, guid: 095290b4c328f1e4d896bbb01f409732, type: 3}
+  itemSpawnAreaSize: {x: 21.3, y: 2.37, z: 17.1}
+  itemSpawnCenterOffset: {x: 0, y: 0, z: -1.9}
+  possibleItems:
+  - {fileID: -9193937922690906773, guid: 04e0453bc2e03354f85db53d065f980c, type: 3}
+  - {fileID: -7085476695347001914, guid: ac72a6c5797397b4cbb49366381f852b, type: 3}
+  - {fileID: -6430465260758219358, guid: b38cd95b8e1e66c4a87ebdac32bee762, type: 3}
+  minItemSpawn: 0
+  maxItemSpawn: 2
   isCleared: 0
   isInCombat: 0
   currentWave: 1
+  isVisited: 0
   spawnedEnemies: []
   playerSpawn: {x: 0, y: 0, z: 0}
 --- !u!1 &6816177915143928950

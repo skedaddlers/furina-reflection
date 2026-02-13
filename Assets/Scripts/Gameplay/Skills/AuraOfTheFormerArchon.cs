@@ -16,7 +16,7 @@ public class AuraOfTheFormerArchon : SkillBase
     [Range(0f, 1f)]
     public float slowPercent = 0.5f; // 0.5 = 50% slower
 
-    private Dictionary<NavMeshAgent, float> originalSpeeds = new Dictionary<NavMeshAgent, float>();
+    private Dictionary<EnemyAI, float> originalSpeeds = new Dictionary<EnemyAI, float>();
     private bool isActive = false;
 
     private void OnEnable()
@@ -62,7 +62,7 @@ public class AuraOfTheFormerArchon : SkillBase
 
         while (elapsed < duration && isActive)
         {
-            DamageAndSlowEnemiesInRadius(caster);
+            DamageEnemiesInRadius(caster);
             yield return new WaitForSeconds(tickInterval);
             elapsed += tickInterval;
         }
@@ -70,29 +70,43 @@ public class AuraOfTheFormerArchon : SkillBase
         OnSkillEnd(caster);
     }
 
-    private void DamageAndSlowEnemiesInRadius(GameObject caster)
+    private void DamageEnemiesInRadius(GameObject caster)
     {
         // Get player stats for damage calculation
         PlayerStats playerStats = caster.GetComponent<PlayerStats>();
         EnemyAI enemyCaster = caster.GetComponent<EnemyAI>();
-        float finalDamage = damageAmount;
+        EnemyStats enemyStats = caster.GetComponent<EnemyStats>();
+        float baseDamage = damageAmount;
+        float critChance = 0f;
+        float critMultiplier = 1f;
+        int casterLevel = 0;
+        float damageMultiplier = 1f;
 
         // Add attack stat and apply crit if available
         if (playerStats != null)
         {
-            finalDamage += playerStats.baseAttack;
-            finalDamage = playerStats.RollDamage(finalDamage);
+            baseDamage += playerStats.baseAttack;
+            critChance = playerStats.critRate;
+            critMultiplier = playerStats.critMultiplier;
+            casterLevel = playerStats.level;
+            damageMultiplier = playerStats.GetCurrentDamageBuffMultiplier();
         }
         else if (enemyCaster != null)
         {
-            finalDamage += enemyCaster.damage;
+            baseDamage += enemyCaster.damage;
+            if (enemyStats != null)
+            {
+                critChance = enemyStats.critRate;
+                critMultiplier = enemyStats.critMultiplier;
+                casterLevel = enemyStats.level;
+            }
         }
 
         // Find all colliders in radius
         Collider[] hitColliders = Physics.OverlapSphere(caster.transform.position, radius);
 
         // Track enemies currently in radius
-        HashSet<NavMeshAgent> enemiesInRadius = new HashSet<NavMeshAgent>();
+        HashSet<EnemyAI> enemiesInRadius = new HashSet<EnemyAI>();
 
         foreach (Collider hit in hitColliders)
         {
@@ -107,7 +121,32 @@ public class AuraOfTheFormerArchon : SkillBase
             Health health = hit.GetComponent<Health>();
             if (health != null)
             {
-                health.TakeDamage(finalDamage);
+                float defense = 0f;
+                int levelDiff = 0;
+                if (targetTag == enemyTag)
+                {
+                    var targetStats = hit.GetComponent<EnemyStats>();
+                    defense = targetStats != null ? targetStats.defense : 0f;
+                    levelDiff = casterLevel - (targetStats != null ? targetStats.level : 0);
+                }
+                else
+                {
+                    var targetStats = hit.GetComponent<PlayerStats>();
+                    defense = targetStats != null ? targetStats.baseDefense : 0f;
+                    levelDiff = casterLevel - (targetStats != null ? targetStats.level : 0);
+                }
+
+                bool didCrit;
+                float finalDamage = Helpers.CalculateFinalDamage(
+                    baseDamage,
+                    defense,
+                    critChance,
+                    critMultiplier,
+                    levelDiff,
+                    damageMultiplier,
+                    out didCrit
+                );
+                health.TakeDamage(finalDamage, didCrit);
                 Debug.Log($"{hit.name} took {finalDamage} damage from {skillName}");
 
                 // Play impact sound
@@ -117,39 +156,54 @@ public class AuraOfTheFormerArchon : SkillBase
                 }
             }
 
-            // Apply slow effect
-            NavMeshAgent agent = hit.GetComponent<NavMeshAgent>();
-            if (agent != null)
+            // if upgraded, apply slow effect
+            if(isUpgraded)
             {
-                enemiesInRadius.Add(agent);
-
-                // Store original speed if not already stored
-                if (!originalSpeeds.ContainsKey(agent))
+                EnemyAI enemy = hit.GetComponent<EnemyAI>();
+                if (enemy != null)
                 {
-                    originalSpeeds[agent] = agent.speed;
-                    agent.speed = originalSpeeds[agent] * (1f - slowPercent);
-                    Debug.Log($"{hit.name} slowed by {slowPercent * 100}%");
+                    enemiesInRadius.Add(enemy);
+                    if (!originalSpeeds.ContainsKey(enemy))
+                    {
+                        originalSpeeds[enemy] = enemy.movementSpeed;
+                        enemy.ApplySpeedModifier(1f - slowPercent);
+                    }
                 }
-            }
+            } 
         }
 
         // Restore speed for enemies that left the radius
-        List<NavMeshAgent> toRemove = new List<NavMeshAgent>();
+
+        if(isUpgraded)
+        {
+            RestoreSpeeds(enemiesInRadius);
+        } 
+    }
+
+    private void RestoreSpeeds(HashSet<EnemyAI> enemiesInRadius)
+    {
+        List<EnemyAI> enemiesToRestore = new List<EnemyAI>();
+
         foreach (var kvp in originalSpeeds)
         {
-            if (kvp.Key != null && !enemiesInRadius.Contains(kvp.Key))
+            if (!enemiesInRadius.Contains(kvp.Key))
             {
-                kvp.Key.speed = kvp.Value;
-                toRemove.Add(kvp.Key);
-                Debug.Log($"{kvp.Key.name} speed restored");
+                enemiesToRestore.Add(kvp.Key);
             }
         }
 
-        foreach (var agent in toRemove)
+        foreach (var enemy in enemiesToRestore)
         {
-            originalSpeeds.Remove(agent);
+            if (enemy != null)
+            {
+                enemy.ApplySpeedModifier(1f);
+                Debug.Log($"{enemy.name} speed restored after leaving aura");
+            }
+            originalSpeeds.Remove(enemy);
         }
     }
+
+    
 
     public override void OnSkillEnd(GameObject caster)
     {
@@ -162,7 +216,7 @@ public class AuraOfTheFormerArchon : SkillBase
         {
             if (kvp.Key != null)
             {
-                kvp.Key.speed = kvp.Value;
+                kvp.Key.ApplySpeedModifier(1f);
                 Debug.Log($"{kvp.Key.name} speed restored on skill end");
             }
         }

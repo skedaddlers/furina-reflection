@@ -387,6 +387,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3937061892430445551}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1759342616226106966}
   m_SourcePrefab: {fileID: 100100000, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
 --- !u!4 &3595596980550615004 stripped
 Transform:
@@ -500,6 +503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 2
+  enemyRenderer: {fileID: 7065071415207174372}
   xpReward: 50
   goldReward: 15
 --- !u!114 &3937061892430445551
@@ -562,6 +566,22 @@ MonoBehaviour:
     attackSpeedMultiplier: 1.5
     moveSpeedMultiplier: 1.5
     skillInterval: 8
+--- !u!114 &1759342616226106966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228300383457371494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78e818e7f6d2655478b39fab284178d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  level: 1
+  defense: 0
+  critRate: 0
+  critMultiplier: 1.5
 --- !u!1001 &8407537047208099254
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -619,6 +639,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e22e6604a8f65a4da42fcffd4a0d3b0, type: 3}
+--- !u!137 &7065071415207174372 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 1630794972795428178, guid: 2e22e6604a8f65a4da42fcffd4a0d3b0, type: 3}
+  m_PrefabInstance: {fileID: 8407537047208099254}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8297648234499349085 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2e22e6604a8f65a4da42fcffd4a0d3b0, type: 3}
