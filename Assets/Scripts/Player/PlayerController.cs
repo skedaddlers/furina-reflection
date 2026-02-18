@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections;
 using Unity.Cinemachine;
+
 public class PlayerController : MonoBehaviour
 {
     public PlayerStats stats;
     public SkillManager skillManager;
+
     [Header("Movement Settings")]
     public float walkSpeed = 2f;
     public float runSpeed = 5f;
@@ -13,305 +15,369 @@ public class PlayerController : MonoBehaviour
     public float jumpHeight = 1.5f;
     public float dashSpeed = 15f;
     public float dashDuration = 0.3f;
-    public float holdThreshold = 0.25f; // waktu untuk bedain tap vs hold (dalam detik)
+    public float holdThreshold = 0.25f;
     public float speedMultiplier = 1f;
     public Transform cameraTransform;
+
     [Header("Stamina Settings")]
     public float dodgeStaminaCost = 25f;
     public float sprintStaminaCostPerSecond = 15f;
-    // === Combat lock ===
+
     [Header("Combat Lock / Auto Aim")]
-    public float autoAimRadius = 12f;            // radius cari musuh
-    public float combatLockSeconds = 2.0f;       // durasi auto-face setelah serang
-    public float breakDistance = 15f;            // jarak putus lock
-    public LayerMask enemyMask;                  // optional: filter physics
-    
+    public float autoAimRadius = 12f;
+    public float combatLockSeconds = 2.0f;
+    public float breakDistance = 15f;
+    public LayerMask enemyMask;
+
     [Header("Bow Aim Settings")]
-    public GameObject bowCrosshair;      // assign di inspector
-    public float bowAimFOV = 40f;        // FOV saat aim
-    public float bowFovLerpSpeed = 15f;  // seberapa cepat lerp FOV
+    public GameObject bowCrosshair;
+    public float bowAimFOV = 40f;
+    public float bowFovLerpSpeed = 15f;
     public GameObject cameraTarget;
 
     private bool isBowAiming = false;
-    [SerializeField]
-    private CinemachineCamera mainCam;
+    [SerializeField] private CinemachineCamera mainCam;
+
     private float defaultFOV;
     private float _combatLockUntil = -1f;
     private Transform _combatTarget;
     private bool InCombatLock => Time.time < _combatLockUntil && _combatTarget != null;
 
-
     private Animator animator;
     private PlayerCombat playerCombat;
-    private PlayerStats playerStats;
     private CharacterController controller;
-    [SerializeField]
-    private PlayerAnimationBinder _animBinder;
+    [SerializeField] private PlayerAnimationBinder _animBinder;
+
     private Vector3 velocity;
     private bool isGrounded;
-    [SerializeField]
-    private bool isDodging = false;
+    [SerializeField] private bool isDodging = false;
     private bool isSprinting = false;
 
     private float shiftPressedTime;
     private bool shiftHeld = false;
     private bool dashTriggered = false;
-    
+
+    // =========================================================
+    // START
+    // =========================================================
+
     void Start()
     {
         animator = GetComponent<Animator>();
         stats = GetComponent<PlayerStats>();
         controller = GetComponent<CharacterController>();
         playerCombat = GetComponent<PlayerCombat>();
-        playerStats = GetComponent<PlayerStats>();
         skillManager = GetComponent<SkillManager>();
         _animBinder = GetComponent<PlayerAnimationBinder>();
-        // find main camera with tag CinemachineCamera
-        mainCam = GameObject.FindGameObjectWithTag("CinemachineCamera").GetComponent<CinemachineCamera>();
+
+        mainCam = GameObject.FindGameObjectWithTag("CinemachineCamera")
+            ?.GetComponent<CinemachineCamera>();
+
         if (mainCam != null)
-        {
             defaultFOV = mainCam.Lens.FieldOfView;
-        }
     }
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
 
     void Update()
     {
-        if (GameManager.Instance.IsPaused) 
+        if (HandlePause()) return;
+
+        UpdateGroundedState();
+        HandleShiftInput();
+        HandleCombatLockMaintenance();
+        HandleMovement();
+        ApplyGravity();
+        UpdateCamera();
+        HandleCombatInput();
+        HandleSkillInput();
+    }
+
+    // =========================================================
+    // CORE SECTIONS
+    // =========================================================
+
+    bool HandlePause()
+    {
+        if (!GameManager.Instance.IsPaused) return false;
+
+        if (isBowAiming)
         {
-            if (isBowAiming)
-            {
-                isBowAiming = false;
-                _animBinder?.SetAim(false);
-                if (bowCrosshair != null)
-                    bowCrosshair.SetActive(false);
-            }
-            return;
+            isBowAiming = false;
+            _animBinder?.SetAim(false);
+            bowCrosshair?.SetActive(false);
         }
 
-        // Cek apakah player nyentuh tanah
+        return true;
+    }
+
+    void UpdateGroundedState()
+    {
         isGrounded = controller.isGrounded;
+
         if (isGrounded && velocity.y < 0)
             velocity.y = -2f;
+    }
 
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        Vector3 inputDir = new Vector3(h, 0, v).normalized;
+    // =========================================================
+    // SHIFT / DODGE / SPRINT
+    // =========================================================
 
-        // Handle Dodge & Sprint
+    void HandleShiftInput()
+    {
         if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isDodging)
         {
             CancelCombatLock();
             shiftPressedTime = Time.time;
             shiftHeld = true;
+
             if (stats.HasEnoughStamina(dodgeStaminaCost))
             {
-                StartCoroutine(Dodge()); // langsung dodge dulu
+                StartCoroutine(Dodge());
                 dashTriggered = true;
-                playerCombat.ForceCancelAttack(); 
+                playerCombat.ForceCancelAttack();
             }
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             shiftHeld = false;
-            if (!dashTriggered && (Time.time - shiftPressedTime) < holdThreshold && !isDodging && isGrounded)
+
+            if (!dashTriggered &&
+                (Time.time - shiftPressedTime) < holdThreshold &&
+                !isDodging && isGrounded)
             {
-                // Tap -> dash
                 if (stats.HasEnoughStamina(dodgeStaminaCost))
                     StartCoroutine(Dodge());
             }
             else
             {
-                // Lepas sprint
                 isSprinting = false;
             }
-            dashTriggered = false; // Reset untuk input berikutnya
+
+            dashTriggered = false;
         }
 
-        bool wantsSprintNow = shiftHeld && (Time.time - shiftPressedTime) >= holdThreshold && !isDodging && isGrounded && stats.HasEnoughStamina(sprintStaminaCostPerSecond * 0.25f);
-        if (wantsSprintNow)
+        bool wantsSprint =
+            shiftHeld &&
+            (Time.time - shiftPressedTime) >= holdThreshold &&
+            !isDodging &&
+            isGrounded &&
+            stats.HasEnoughStamina(sprintStaminaCostPerSecond * 0.25f);
+
+        if (wantsSprint)
         {
             isSprinting = true;
             dashTriggered = true;
-            CancelCombatLock(); // sprint membatalkan auto-face
+            CancelCombatLock();
         }
-        
-        if (!isSprinting) {
-            // jaga target selama window aktif
-            if (InCombatLock) {
-                // putus kalau terlalu jauh / target lenyap
-                if (!_combatTarget || Vector3.Distance(transform.position, _combatTarget.position) > breakDistance) {
-                    _combatTarget = FindNearestEnemy(autoAimRadius);
-                    if (_combatTarget == null) CancelCombatLock();
-                }
-            } else {
-                // tidak dalam window, tapi kalau ada musuh sangat dekat, boleh reacquire halus
-                var nearby = FindNearestEnemy(autoAimRadius * 0.7f);
-                if (nearby) { _combatTarget = nearby; } // tanpa memperpanjang waktu; hanya quality-of-life facing
+    }
+
+    // =========================================================
+    // MOVEMENT
+    // =========================================================
+
+    void HandleCombatLockMaintenance()
+    {
+        if (InCombatLock)
+        {
+            if (_combatTarget == null ||
+                Vector3.Distance(transform.position, _combatTarget.position) > breakDistance)
+            {
+                CancelCombatLock();
             }
         }
+    }
+    
+    void HandleMovement()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float v = Input.GetAxis("Vertical");
 
-        // Movement: always derive current speed from PlayerStats.moveSpeed.
+        Vector3 inputDir = new Vector3(h, 0, v).normalized;
+
         float baseMoveSpeed = stats != null ? stats.moveSpeed : walkSpeed;
-        float sprintMoveSpeed = stats != null ? stats.moveSpeed + Mathf.Max(0f, runSpeed - walkSpeed) : runSpeed;
+        float sprintMoveSpeed = stats != null ?
+            stats.moveSpeed + Mathf.Max(0f, runSpeed - walkSpeed) :
+            runSpeed;
+
         float speed = (isSprinting ? sprintMoveSpeed : baseMoveSpeed) * speedMultiplier;
 
         if (isSprinting)
         {
-            bool success = stats == null || stats.TrySpendStamina(sprintStaminaCostPerSecond * Time.deltaTime);
-            if (!success)
-            {
+            if (!stats.TrySpendStamina(sprintStaminaCostPerSecond * Time.deltaTime))
                 isSprinting = false;
-            }
         }
 
         if (inputDir.magnitude >= 0.1f)
         {
-            if (isBowAiming)
-            {
-                // --- Rotate whole upper body (no need to edit animation) ---
-                Vector3 camFwd = cameraTransform.forward;
-                camFwd.y = 0;
-                camFwd.Normalize();
-
-                // --- Strafe movement style ---
-                Vector3 camRight = cameraTransform.right;
-                camRight.y = 0;
-
-                Quaternion lookRot = Quaternion.LookRotation(camRight);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    lookRot,
-                    Time.deltaTime * rotationSpeed * 2f // lebih cepat biar aim responsif
-                );
-                Vector3 moveDir =
-                    camFwd * Input.GetAxis("Vertical") +
-                    camRight * Input.GetAxis("Horizontal");
-
-                controller.Move(moveDir.normalized * baseMoveSpeed * speedMultiplier * Time.deltaTime);
-
-                animator.SetFloat("WalkSpeed", moveDir.magnitude > 0 ? 0.5f : 0f);
-            }
-            else
-            {
-                float targetAngle = Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-                Vector3 moveDir = Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
-
-                if (InCombatLock && !isSprinting)
-                {
-                    FaceTarget(_combatTarget, 1.0f);
-                }
-                else
-                {
-                    transform.rotation = Quaternion.Slerp(
-                        transform.rotation,
-                        Quaternion.LookRotation(moveDir),
-                        Time.deltaTime * rotationSpeed
-                    );
-                }
-
-                controller.Move(moveDir * speed * Time.deltaTime);
-                animator.SetFloat("WalkSpeed", isSprinting ? 1f : 0.5f, 0.1f, Time.deltaTime);
-            }
+            MoveWithInput(inputDir, speed, baseMoveSpeed);
         }
         else
         {
-            if (isBowAiming)
-            {
-                // diam tapi tetep hadap ke camera
-                Vector3 camRight = cameraTransform.right;
-                camRight.y = 0f;
-                if (camRight.sqrMagnitude > 0.0001f)
-                {
-                    Quaternion targetRot = Quaternion.LookRotation(camRight);
-                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed * 2f);
-                }
-            }
-            else
-            {
-                if (InCombatLock && !isSprinting) FaceTarget(_combatTarget, 1.2f);
-            }
-
+            HandleIdleRotation();
             animator.SetFloat("WalkSpeed", 0f, 0.1f, Time.deltaTime);
         }
+    }
 
-        // Lompat
-
-        // Gravity
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-
-        if (mainCam != null)
+    void MoveWithInput(Vector3 inputDir, float speed, float baseMoveSpeed)
+    {
+        if (isBowAiming)
         {
-            float targetFov = isBowAiming ? bowAimFOV : defaultFOV;
-            float sideOffset = isBowAiming ? 0.5f : 0f; // contoh offset saat aim
-            cameraTarget.transform.localPosition = Vector3.Lerp(
-                cameraTarget.transform.localPosition,
-                new Vector3(cameraTarget.transform.localPosition.x, cameraTarget.transform.localPosition.y, sideOffset),
-                Time.deltaTime * bowFovLerpSpeed
-            );
-            mainCam.Lens.FieldOfView = Mathf.Lerp(
-                mainCam.Lens.FieldOfView,
-                targetFov,
-                Time.deltaTime * bowFovLerpSpeed
-            );
+            HandleBowMovement(baseMoveSpeed);
+            return;
         }
 
-        // Attack dengan cooldown
+        float targetAngle =
+            Mathf.Atan2(inputDir.x, inputDir.z) * Mathf.Rad2Deg +
+            cameraTransform.eulerAngles.y;
+
+        Vector3 moveDir =
+            Quaternion.Euler(0, targetAngle, 0) * Vector3.forward;
+
+        if (InCombatLock && !isSprinting)
+            FaceTarget(_combatTarget, 1f);
+        else
+            transform.rotation = Quaternion.Slerp(
+                transform.rotation,
+                Quaternion.LookRotation(moveDir),
+                Time.deltaTime * rotationSpeed
+            );
+
+        controller.Move(moveDir * speed * Time.deltaTime);
+        animator.SetFloat("WalkSpeed", isSprinting ? 1f : 0.5f, 0.1f, Time.deltaTime);
+    }
+
+    void HandleBowMovement(float baseMoveSpeed)
+    {
+        Vector3 camFwd = cameraTransform.forward;
+        camFwd.y = 0;
+        camFwd.Normalize();
+
+        Vector3 camRight = cameraTransform.right;
+        camRight.y = 0;
+
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            Quaternion.LookRotation(camRight),
+            Time.deltaTime * rotationSpeed * 2f
+        );
+
+        Vector3 moveDir =
+            camFwd * Input.GetAxis("Vertical") +
+            camRight * Input.GetAxis("Horizontal");
+
+        controller.Move(moveDir.normalized * baseMoveSpeed * speedMultiplier * Time.deltaTime);
+        animator.SetFloat("WalkSpeed", moveDir.magnitude > 0 ? 0.5f : 0f);
+    }
+
+    void HandleIdleRotation()
+    {
+        if (isBowAiming)
+        {
+            Vector3 camRight = cameraTransform.right;
+            camRight.y = 0;
+
+            if (camRight.sqrMagnitude > 0.0001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(camRight);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRot,
+                    Time.deltaTime * rotationSpeed * 2f
+                );
+            }
+        }
+        else if (InCombatLock && !isSprinting)
+        {
+            FaceTarget(_combatTarget, 1.2f);
+        }
+    }
+
+    // =========================================================
+    // GRAVITY
+    // =========================================================
+
+    void ApplyGravity()
+    {
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+    }
+
+    // =========================================================
+    // CAMERA
+    // =========================================================
+
+    void UpdateCamera()
+    {
+        if (mainCam == null) return;
+
+        float targetFov = isBowAiming ? bowAimFOV : defaultFOV;
+        float sideOffset = isBowAiming ? 0.5f : 0f;
+
+        cameraTarget.transform.localPosition = Vector3.Lerp(
+            cameraTarget.transform.localPosition,
+            new Vector3(
+                cameraTarget.transform.localPosition.x,
+                cameraTarget.transform.localPosition.y,
+                sideOffset),
+            Time.deltaTime * bowFovLerpSpeed
+        );
+
+        mainCam.Lens.FieldOfView = Mathf.Lerp(
+            mainCam.Lens.FieldOfView,
+            targetFov,
+            Time.deltaTime * bowFovLerpSpeed
+        );
+    }
+
+    // =========================================================
+    // COMBAT INPUT
+    // =========================================================
+
+    void HandleCombatInput()
+    {
         if (!HasBowEquipped)
         {
-            // NORMAL weapon (melee / gun / laser, dll)
-            if (Input.GetMouseButtonDown(0) && !isDodging)
+            if (Input.GetMouseButtonDown(0) && !isDodging && !playerCombat.IsAttacking)
             {
-                if (!playerCombat.IsAttacking)
-                {
-                    bool success = playerCombat.TryUseWeapon();
-                    if (success)
-                    {
-                        PerformAttack();
-                    }
-                }
+                if (playerCombat.TryUseWeapon())
+                    PerformAttack();
             }
         }
         else
         {
-            // BOW: hold to aim, release to shoot
             HandleBowInput();
         }
+
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
             animator.SetTrigger("Jump");
             playerCombat.ForceCancelAttack();
         }
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             isBowAiming = false;
             playerCombat.loadout.Swap();
             playerCombat.ForceCancelAttack();
         }
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            skillManager.TryUseSkill(0);
-            playerCombat.ForceCancelAttack();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            skillManager.TryUseSkill(1);
-            playerCombat.ForceCancelAttack();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            skillManager.TryUseSkill(2);
-            playerCombat.ForceCancelAttack();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            skillManager.TryUseSkill(3);
-            playerCombat.ForceCancelAttack();
-        }
     }
+
+    void HandleSkillInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) skillManager.TryUseSkill(0);
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) skillManager.TryUseSkill(1);
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) skillManager.TryUseSkill(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha4)) skillManager.TryUseSkill(3);
+    }
+
+    // =========================================================
+    // REST OF YOUR ORIGINAL METHODS (UNCHANGED LOGIC)
+    // =========================================================
     
 
     void PerformAttack()

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb488dd5a88524645acee265c222ad2c, type: 3}
+  m_Name: UP_WaterAspirations 1
+  m_EditorClassIdentifier: 
+  skillName: Water's Aspiration+
+  upgradeName: 
+  description: Creates a damage-absorbing shield
+  skillIcon: {fileID: 21300000, guid: 3ea1c33b3a84d4a4dacfe28e9e3b258a, type: 3}
+  rarity: 1
+  price: 85
+  skillID: 5
+  goodPropertyText: '+75 Shield
+
+    8s Duration'
+  badPropertyText: '40 Mana cost
+
+    15s Cooldown'
+  skillType: 1
+  targetType: 0
+  manaCost: 40
+  cooldownTime: 15
+  levelRequired: 1
+  purchasePrice: 100
+  duration: 8
+  damageAmount: 0
+  healAmount: 0
+  shieldAmount: 75
+  effectPrefab: {fileID: 1289543790355709915, guid: b99922c2f59b1a542bdd06ae8bee47ae, type: 3}
+  castSound: {fileID: 8300000, guid: fc687439bd838bc4581874c625878e4f, type: 3}
+  impactSound: {fileID: 0}
+  statModifiers: []
+  animationTrigger: 
+  isUpgradeable: 0
+  isUpgraded: 1
+  upgradeDescription: 
+  nextLevelSkill: {fileID: 0}
+  defBonus: 15

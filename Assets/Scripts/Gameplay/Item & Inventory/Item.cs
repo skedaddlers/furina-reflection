@@ -18,8 +18,9 @@ public class Item : MonoBehaviour
         transform.position = position;
     }
     
-    public virtual void Use(GameObject user)
+    public virtual bool TryUse(GameObject user)
     {
         Debug.Log($"Using item: {itemName}");
+        return true;
     }
 }

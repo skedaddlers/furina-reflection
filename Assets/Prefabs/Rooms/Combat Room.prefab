@@ -202,9 +202,9 @@ MonoBehaviour:
   itemSpawnAreaSize: {x: 21.3, y: 2.37, z: 17.1}
   itemSpawnCenterOffset: {x: 0, y: 0, z: -1.9}
   possibleItems:
-  - {fileID: -9193937922690906773, guid: 04e0453bc2e03354f85db53d065f980c, type: 3}
-  - {fileID: -7085476695347001914, guid: ac72a6c5797397b4cbb49366381f852b, type: 3}
-  - {fileID: -6430465260758219358, guid: b38cd95b8e1e66c4a87ebdac32bee762, type: 3}
+  - {fileID: -6006270085673239047, guid: 04e0453bc2e03354f85db53d065f980c, type: 3}
+  - {fileID: 5133405388208357320, guid: ac72a6c5797397b4cbb49366381f852b, type: 3}
+  - {fileID: -2498180304274444174, guid: b38cd95b8e1e66c4a87ebdac32bee762, type: 3}
   minItemSpawn: 0
   maxItemSpawn: 2
   isCleared: 0

@@ -41,8 +41,9 @@ MonoBehaviour:
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 1
-  isUpgraded: 1
-  nextLevelSkill: {fileID: 0}
+  isUpgraded: 0
+  upgradeDescription: Now makes you consume less stamina!
+  nextLevelSkill: {fileID: 11400000, guid: c9b83e05f5e023b4a93d1e1da3a467a4, type: 2}
   singerPrefab: {fileID: 8502773717673982367, guid: ee515460cca89ad449ec9127df38a975, type: 3}
   spawnDistance: 1
   healInterval: 2

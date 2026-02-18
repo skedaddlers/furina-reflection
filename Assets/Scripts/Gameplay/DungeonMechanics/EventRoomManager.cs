@@ -46,6 +46,9 @@ public class GameEventOption
     [Header("Battle Event Settings")]
     [Tooltip("Berapa musuh yang akan dispawn saat event battle")]
     public int battleEnemyCount = 5;
+
+    [Header("Give Item Settings")]
+    public List<Item> itemsToGrant = new List<Item>();
 }
 
 public class EventRoomManager : MonoBehaviour
@@ -62,6 +65,9 @@ public class EventRoomManager : MonoBehaviour
     // cache ke player
     private PlayerStats playerStats;
     private Health playerHealth;
+    private SkillManager playerSkillManager;
+    private Inventory playerInventory;
+    private readonly Dictionary<int, SkillSlot> upgradeTargetsByChoiceIndex = new Dictionary<int, SkillSlot>();
 
     private void Awake()
     {
@@ -78,6 +84,8 @@ public class EventRoomManager : MonoBehaviour
         if (playerGO != null)
         {
             playerHealth = playerGO.GetComponent<Health>();
+            playerInventory = playerGO.GetComponent<Inventory>();
+            playerSkillManager = playerGO.GetComponent<SkillManager>();
         }
     }
 
@@ -97,17 +105,18 @@ public class EventRoomManager : MonoBehaviour
 
         // Pick 3 event berbeda by weighted random
         currentChoices = PickRandomEvents(choicesPerEvent);
+        List<GameEventOption> choicesForUI = BuildChoicesForUI(currentChoices);
 
         if (eventUI != null)
         {
-            eventUI.ShowChoices(currentChoices, this);
+            eventUI.ShowChoices(choicesForUI, this);
         }
         else
         {
             Debug.LogWarning("[EventRoom] eventUI belum di-assign, auto pilih opsi pertama (debug).");
             if (currentChoices.Count > 0)
             {
-                ExecuteEvent(currentChoices[0]);
+                ExecuteEvent(currentChoices[0], 0);
                 eventResolved = true;
             }
         }
@@ -125,7 +134,7 @@ public class EventRoomManager : MonoBehaviour
         if (eventUI != null)
             eventUI.Hide();
 
-        ExecuteEvent(chosen);
+        ExecuteEvent(chosen, index);
 
         // untuk semua event non-battle, room dianggap clear langsung
         // untuk StartBattle, room akan clear otomatis lewat sistem Room saat semua musuh mati
@@ -197,7 +206,7 @@ public class EventRoomManager : MonoBehaviour
     // =========================================
     //  EKSEKUSI EVENT
     // =========================================
-    private void ExecuteEvent(GameEventOption option)
+    private void ExecuteEvent(GameEventOption option, int choiceIndex = -1)
     {
         switch (option.eventType)
         {
@@ -218,7 +227,7 @@ public class EventRoomManager : MonoBehaviour
                 break;
 
             case GameEventType.UpgradeItem:
-                ResolveUpgradeItem(option);
+                ResolveUpgradeItem(option, choiceIndex);
                 break;
 
             case GameEventType.StartBattle:
@@ -254,20 +263,28 @@ public class EventRoomManager : MonoBehaviour
     // 2. Straight up gets gold/exp/health
     private void ResolveFlatReward(GameEventOption option)
     {
+        string rewardText = "";
         if (playerStats != null)
         {
             if (option.goldAmount > 0)
+            {
                 playerStats.AddGold(option.goldAmount);
+                rewardText += $"+{option.goldAmount} Gold\n";
+            }
             if (option.xpAmount > 0)
+            {
                 playerStats.AddXP(option.xpAmount);
+                rewardText += $"+{option.xpAmount} XP\n";
+            }
         }
 
         if (playerHealth != null && option.healAmount > 0)
         {
             playerHealth.Heal(option.healAmount); // pastikan Health punya Heal, kalau belum bisa ganti ke TakeDamage(-heal)
+            rewardText += $"+{option.healAmount} HP\n";
         }
 
-        UIManager.Instance.ShowNotification("You Received your Reward!", 2f);
+        UIManager.Instance.ShowNotification($"You Received your Reward!\n{rewardText}", 2f);
     }
 
     // 3. Gives buffs (30% more damage) for a few seconds
@@ -277,20 +294,74 @@ public class EventRoomManager : MonoBehaviour
         UIManager.Instance.ShowNotification($"Damage increased by {(option.damageBuffMultiplier - 1f) * 100f}% for {option.buffDuration} seconds!", 3f);
     }
 
-    // 4. Gets skills/weapons
+    // 4. Gets items 
     private void ResolveGrantItem(GameEventOption option)
     {
-        
+        if (playerInventory == null)
+        {
+            Debug.LogWarning("[Event-GrantItem] Inventory player tidak ditemukan.");
+            UIManager.Instance.ShowNotification("No inventory found.", 2.5f);
+            return;
+        }
 
-        // Contoh hook:
-        // SkillManager.Instance?.GrantRandomSkill();
-        // atau WeaponManager.Instance?.GrantRandomWeapon();
+        int grantedCount = 0;
+        foreach (var item in option.itemsToGrant)
+        {
+            if (item != null)
+            {
+                GameObject itemGO = Instantiate(item.gameObject);
+                itemGO.GetComponent<Item>().SetVisibleInWorld(false); // sembunyiin dulu di world
+                bool added = playerInventory.TryAddItem(itemGO.GetComponent<Item>());
+                if (added) grantedCount++;
+            }
+        }
+
+        if (grantedCount > 0)
+        {
+            UIManager.Instance.ShowNotification($"You received {grantedCount} item(s)!", 3f);
+        }
     }
 
     // 5. Upgrades skills/weapons
-    private void ResolveUpgradeItem(GameEventOption option)
+    private void ResolveUpgradeItem(GameEventOption option, int choiceIndex)
     {
-        Debug.Log("[Event-UpgradeItem] TODO: upgrade random skill/weapon player.");
+        if (playerSkillManager == null)
+        {
+            Debug.LogWarning("[Event-UpgradeItem] SkillManager player tidak ditemukan.");
+            UIManager.Instance.ShowNotification("No skill system found.", 2.5f);
+            return;
+        }
+
+        SkillSlot targetSlot = null;
+        if (!upgradeTargetsByChoiceIndex.TryGetValue(choiceIndex, out targetSlot) || targetSlot == null || targetSlot.skill == null)
+        {
+            List<SkillSlot> upgradeableSlots = playerSkillManager.GetUpgradeableOwnedSkills();
+            if (upgradeableSlots.Count > 0)
+                targetSlot = upgradeableSlots[Random.Range(0, upgradeableSlots.Count)];
+        }
+
+        if (targetSlot == null || targetSlot.skill == null)
+        {
+            Debug.Log("[Event-UpgradeItem] Tidak ada skill milik player yang bisa di-upgrade.");
+            UIManager.Instance.ShowNotification("No upgradeable owned skill.", 2.5f);
+            return;
+        }
+
+        if (playerSkillManager.TryUpgradeSkill(targetSlot, out SkillBase beforeUpgrade, out SkillBase afterUpgrade))
+        {
+            string beforeName = beforeUpgrade != null ? beforeUpgrade.skillName : "Skill";
+            string afterName = afterUpgrade != null ? afterUpgrade.skillName : beforeName;
+            string resultText = beforeName == afterName
+                ? $"Upgraded: {afterName}"
+                : $"Upgraded: {beforeName} -> {afterName}";
+
+            UIManager.Instance.ShowNotification(resultText, 3f);
+            Debug.Log($"[Event-UpgradeItem] {resultText}");
+            return;
+        }
+
+        Debug.Log("[Event-UpgradeItem] Upgrade gagal dijalankan.");
+        UIManager.Instance.ShowNotification("Skill upgrade failed.", 2.5f);
 
         // Contoh hook:
         // SkillManager.Instance?.UpgradeRandomSkill();
@@ -305,7 +376,7 @@ public class EventRoomManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"[Event-StartBattle] Starting battle with {option.battleEnemyCount} enemies in event room.");
+        UIManager.Instance.ShowNotification($"Prepare for battle! Complete to gain rewards.", 3f);
 
         // pastikan room di-mark belum clear supaya BeginCombat jalan normal
         parentRoom.isCleared = false;
@@ -315,5 +386,108 @@ public class EventRoomManager : MonoBehaviour
 
         // mulai combat di room ini
         parentRoom.BeginCombat();
+        parentRoom.OnRoomClearedLocal += OnEventBattleCleared(option);
+    }
+
+    private System.Action OnEventBattleCleared(GameEventOption option) => () =>
+    {
+        // skill upgrade / give health / gold / xp sebagai reward battle
+        ResolveFlatReward(option);
+
+        // Unsubscribe supaya event ini gak ke-trigger lagi kalau somehow room ini dipakai lagi
+        if (parentRoom != null)
+        {
+            parentRoom.OnRoomClearedLocal -= OnEventBattleCleared(option);
+        }
+    };
+
+
+
+    private List<GameEventOption> BuildChoicesForUI(List<GameEventOption> sourceChoices)
+    {
+        upgradeTargetsByChoiceIndex.Clear();
+
+        List<GameEventOption> result = new List<GameEventOption>();
+        if (sourceChoices == null) return result;
+
+        for (int i = 0; i < sourceChoices.Count; i++)
+        {
+            GameEventOption source = sourceChoices[i];
+            if (source == null) continue;
+
+            GameEventOption uiOption = CloneEventOption(source);
+            if (source.eventType == GameEventType.UpgradeItem)
+            {
+                SkillSlot previewSlot = PickRandomUpgradeableSkillSlot();
+                if (previewSlot != null && previewSlot.skill != null)
+                {
+                    upgradeTargetsByChoiceIndex[i] = previewSlot;
+                    string upgradePreview = BuildUpgradePreviewText(previewSlot.skill);
+                    if (!string.IsNullOrEmpty(upgradePreview))
+                    {
+                        uiOption.description = string.IsNullOrEmpty(uiOption.description)
+                            ? upgradePreview
+                            : $"{uiOption.description}\n{upgradePreview}";
+                    }
+                }
+                else
+                {
+                    string noTargetText = "No upgradeable owned skill available.";
+                    uiOption.description = string.IsNullOrEmpty(uiOption.description)
+                        ? noTargetText
+                        : $"{uiOption.description}\n{noTargetText}";
+                }
+            }
+
+            result.Add(uiOption);
+        }
+
+        return result;
+    }
+
+    private GameEventOption CloneEventOption(GameEventOption source)
+    {
+        return new GameEventOption
+        {
+            id = source.id,
+            displayName = source.displayName,
+            description = source.description,
+            eventType = source.eventType,
+            weight = source.weight,
+            goldAmount = source.goldAmount,
+            xpAmount = source.xpAmount,
+            healAmount = source.healAmount,
+            diceSides = source.diceSides,
+            successThreshold = source.successThreshold,
+            curseDamage = source.curseDamage,
+            damageBuffMultiplier = source.damageBuffMultiplier,
+            buffDuration = source.buffDuration,
+            battleEnemyCount = source.battleEnemyCount
+        };
+    }
+
+    private SkillSlot PickRandomUpgradeableSkillSlot()
+    {
+        if (playerSkillManager == null) return null;
+
+        List<SkillSlot> upgradeableSlots = playerSkillManager.GetUpgradeableOwnedSkills();
+        if (upgradeableSlots.Count == 0)
+            return null;
+
+        return upgradeableSlots[Random.Range(0, upgradeableSlots.Count)];
+    }
+
+    private string BuildUpgradePreviewText(SkillBase skill)
+    {
+        if (skill == null) return string.Empty;
+
+        string currentName = string.IsNullOrEmpty(skill.skillName) ? "Unknown Skill" : skill.skillName;
+        if (skill.nextLevelSkill != null)
+        {
+            string upgradeDesc = !string.IsNullOrEmpty(skill.upgradeDescription) ? skill.upgradeDescription : "No upgrade description.";
+            return $"Upgrades {currentName}:\n{upgradeDesc}";
+        }
+
+        return $"{currentName}";
     }
 }

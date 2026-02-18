@@ -41,8 +41,9 @@ MonoBehaviour:
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 1
-  isUpgraded: 1
-  nextLevelSkill: {fileID: 0}
+  isUpgraded: 0
+  upgradeDescription: Now spawns an additional salon member!
+  nextLevelSkill: {fileID: 11400000, guid: ba347684b2ecde544a766a6e7d151bb7, type: 2}
   salonMemberPrefabs:
   - {fileID: 8976042506686824731, guid: 9f534529175ccad4e8cff4eee0278d8e, type: 3}
   - {fileID: 7937071911852978319, guid: 2ecafd9e831e58f46a7ceb2b981cc5fb, type: 3}

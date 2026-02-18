@@ -41,6 +41,7 @@ MonoBehaviour:
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 1
-  isUpgraded: 1
-  nextLevelSkill: {fileID: 0}
+  isUpgraded: 0
+  upgradeDescription: Now gives extra defense when shield is broken!
+  nextLevelSkill: {fileID: 11400000, guid: ce2b1c8d28fb7464d965c211a38af925, type: 2}
   defBonus: 15

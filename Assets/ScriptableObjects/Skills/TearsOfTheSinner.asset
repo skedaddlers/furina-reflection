@@ -41,8 +41,9 @@ MonoBehaviour:
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 1
-  isUpgraded: 1
-  nextLevelSkill: {fileID: 0}
+  isUpgraded: 0
+  upgradeDescription: Now lasts longer!
+  nextLevelSkill: {fileID: 11400000, guid: 549d377a444ff2040a5efb127ed57106, type: 2}
   tickInterval: 1
   additionalDurationUpgradeS: 2
   enemyTag: Enemy

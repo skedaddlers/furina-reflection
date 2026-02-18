@@ -9780,7 +9780,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000010690109084}
   - component: {fileID: 3796773146311290952}
-  - component: {fileID: -9193937922690906773}
+  - component: {fileID: -6006270085673239047}
   m_Layer: 0
   m_Name: Health Pot
   m_TagString: Untagged
@@ -9826,7 +9826,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.4, y: 2.58, z: 1.5}
   m_Center: {x: 0, y: 1.15, z: 0}
---- !u!114 &-9193937922690906773
+--- !u!114 &-6006270085673239047
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9835,10 +9835,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012970591572}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50f40ba14d0cb36439bb18a328a82740, type: 3}
+  m_Script: {fileID: 11500000, guid: a10b5fcd3a37d734abebadf9ed15b67d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Item
-  itemName: HP Potion
-  itemDescription: Restores HP
+  m_EditorClassIdentifier: Assembly-CSharp::HPPotion
+  itemName: Health Potion
+  itemDescription: Restores 5 HP when used
   itemIcon: {fileID: 21300000, guid: 000b282402b8aef48b5b2c7a917a7d36, type: 3}
   itemPrefab: {fileID: 1000012970591572}
+  healAmount: 5
+  useSound: {fileID: 0}

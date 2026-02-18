@@ -336,6 +336,71 @@ public class SkillManager : MonoBehaviour
     {
         return ownedSkills;
     }
+
+    public List<SkillSlot> GetUpgradeableOwnedSkills()
+    {
+        return ownedSkills
+            .Where(slot => slot != null && slot.skill != null && CanUpgradeSkill(slot.skill))
+            .ToList();
+    }
+
+    public bool TryUpgradeRandomOwnedSkill(out SkillBase oldSkill, out SkillBase upgradedSkill)
+    {
+        oldSkill = null;
+        upgradedSkill = null;
+
+        List<SkillSlot> upgradeableSlots = GetUpgradeableOwnedSkills();
+        if (upgradeableSlots.Count == 0)
+            return false;
+
+        SkillSlot chosenSlot = upgradeableSlots[Random.Range(0, upgradeableSlots.Count)];
+        return TryUpgradeSkill(chosenSlot, out oldSkill, out upgradedSkill);
+    }
+
+    public bool TryUpgradeSkill(SkillSlot slot, out SkillBase oldSkill, out SkillBase upgradedSkill)
+    {
+        oldSkill = null;
+        upgradedSkill = null;
+
+        if (slot == null || slot.skill == null || !CanUpgradeSkill(slot.skill))
+            return false;
+
+        oldSkill = slot.skill;
+
+        // Prefer asset-to-asset upgrade path if configured.
+        if (oldSkill.nextLevelSkill != null)
+        {
+            slot.skill = oldSkill.nextLevelSkill;
+        }
+        else
+        {
+            slot.skill.isUpgraded = true;
+        }
+
+        slot.level = Mathf.Max(1, slot.level + 1);
+        upgradedSkill = slot.skill;
+
+        if (slot.isOnCooldown)
+        {
+            float maxCooldown = Mathf.Max(0f, upgradedSkill.cooldownTime);
+            slot.currentCooldown = Mathf.Min(slot.currentCooldown, maxCooldown);
+            if (maxCooldown <= 0f || slot.currentCooldown <= 0f)
+            {
+                slot.currentCooldown = 0f;
+                slot.isOnCooldown = false;
+            }
+        }
+
+        UIManager.Instance?.skillsUI?.UpdateSkillsUI(activeSkillSlots);
+        return true;
+    }
+
+    private bool CanUpgradeSkill(SkillBase skill)
+    {
+        if (skill == null) return false;
+        if (skill.nextLevelSkill != null) return true;
+        return skill.isUpgradeable && !skill.isUpgraded;
+    }
     
     public float GetSkillCooldownPercent(int slotIndex)
     {

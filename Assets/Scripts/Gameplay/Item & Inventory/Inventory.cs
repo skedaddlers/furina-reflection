@@ -50,10 +50,13 @@ public class Inventory : MonoBehaviour
         {
             if (Time.time - lastItemUsageTime >= itemUsageCooldown)
             {
-                item.Use(gameObject);
-                Destroy(item.gameObject);
-                items.Remove(item);
-                lastItemUsageTime = Time.time;
+                bool success = item.TryUse(gameObject);
+                if (success)
+                {
+                    Destroy(item.gameObject);
+                    items.Remove(item);
+                    lastItemUsageTime = Time.time;
+                }
             }
             else
             {

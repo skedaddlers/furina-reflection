@@ -45,6 +45,7 @@ public class SkillBase : ScriptableObject
     // Can this skill be upgraded?
     public bool isUpgradeable = false;
     public bool isUpgraded = false;
+    public string upgradeDescription;
     public SkillBase nextLevelSkill; // Reference to upgraded version
     
     // Virtual method for custom skill behavior

@@ -9748,7 +9748,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000013828724138}
   - component: {fileID: -677429079779878557}
-  - component: {fileID: -6430465260758219358}
+  - component: {fileID: -2498180304274444174}
   m_Layer: 0
   m_Name: Stamiina Pot
   m_TagString: Untagged
@@ -9794,7 +9794,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.4, y: 2.58, z: 1.5}
   m_Center: {x: 0, y: 1.15, z: 0}
---- !u!114 &-6430465260758219358
+--- !u!114 &-2498180304274444174
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9803,13 +9803,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000013846074356}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50f40ba14d0cb36439bb18a328a82740, type: 3}
+  m_Script: {fileID: 11500000, guid: 995d6734a3673664489439ca3a802668, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Item
+  m_EditorClassIdentifier: Assembly-CSharp::StaminaPotion
   itemName: Stamina Potion
-  itemDescription: Restores Stamina
+  itemDescription: Restores 40 stamina when used
   itemIcon: {fileID: 21300000, guid: 9ca25235f6a9241418a0ffae99690b27, type: 3}
   itemPrefab: {fileID: 1000013846074356}
+  staminaRestoreAmount: 40
+  useSound: {fileID: 0}
 --- !u!1 &1000014110595150
 GameObject:
   m_ObjectHideFlags: 0

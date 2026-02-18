@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06f9e05bf7ca8c943b8331e30a22c832, type: 3}
+  m_Name: UP_TearsOfTheSinner 1
+  m_EditorClassIdentifier: 
+  skillName: Tears of the SInner+
+  upgradeName: 
+  description: Damages ALL enemies in the room
+  skillIcon: {fileID: 21300000, guid: 69e694aa7cda0cb41b655bead521d8d8, type: 3}
+  rarity: 3
+  price: 150
+  skillID: 4
+  goodPropertyText: '5 Base Damage
+
+    5s Duration'
+  badPropertyText: '65 Mana cost
+
+    20s Cooldown'
+  skillType: 0
+  targetType: 2
+  manaCost: 65
+  cooldownTime: 20
+  levelRequired: 1
+  purchasePrice: 100
+  duration: 5
+  damageAmount: 5
+  healAmount: 0
+  shieldAmount: 0
+  effectPrefab: {fileID: 0}
+  castSound: {fileID: 8300000, guid: eaffd650c7b7876449fa2db08de752d6, type: 3}
+  impactSound: {fileID: 0}
+  statModifiers: []
+  animationTrigger: 
+  isUpgradeable: 0
+  isUpgraded: 1
+  upgradeDescription: 
+  nextLevelSkill: {fileID: 0}
+  tickInterval: 1
+  additionalDurationUpgradeS: 2
+  enemyTag: Enemy

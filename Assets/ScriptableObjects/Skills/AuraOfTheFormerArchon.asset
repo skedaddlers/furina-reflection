@@ -41,8 +41,9 @@ MonoBehaviour:
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 1
-  isUpgraded: 1
-  nextLevelSkill: {fileID: 0}
+  isUpgraded: 0
+  upgradeDescription: Now also slows down enemies in the area!
+  nextLevelSkill: {fileID: 11400000, guid: 75538d2822e79ab499032c5599da40ea, type: 2}
   radius: 5
   tickInterval: 1
   enemyTag: Enemy

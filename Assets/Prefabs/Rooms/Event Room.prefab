@@ -393,6 +393,7 @@ MonoBehaviour:
     damageBuffMultiplier: 0
     buffDuration: 0
     battleEnemyCount: 0
+    itemsToGrant: []
   - id: 
     displayName: Midas Touch
     description: Get 100 Gold!
@@ -407,6 +408,7 @@ MonoBehaviour:
     damageBuffMultiplier: 0
     buffDuration: 0
     battleEnemyCount: 0
+    itemsToGrant: []
   - id: 
     displayName: Blessing of Egeria
     description: Gain attack buff for 30 seconds!
@@ -421,9 +423,10 @@ MonoBehaviour:
     damageBuffMultiplier: 1.3
     buffDuration: 30
     battleEnemyCount: 0
+    itemsToGrant: []
   - id: 
-    displayName: Wish Upon a Lantern
-    description: Recieve weapon
+    displayName: Wish Upon a Star
+    description: Recieve a certain amount of items!
     eventType: 3
     weight: 1
     goldAmount: 100
@@ -435,9 +438,14 @@ MonoBehaviour:
     damageBuffMultiplier: 1.3
     buffDuration: 30
     battleEnemyCount: 0
+    itemsToGrant:
+    - {fileID: -6006270085673239047, guid: 04e0453bc2e03354f85db53d065f980c, type: 3}
+    - {fileID: 5133405388208357320, guid: ac72a6c5797397b4cbb49366381f852b, type: 3}
+    - {fileID: -2498180304274444174, guid: b38cd95b8e1e66c4a87ebdac32bee762, type: 3}
+    - {fileID: -6006270085673239047, guid: 04e0453bc2e03354f85db53d065f980c, type: 3}
   - id: 
     displayName: Hydro Enhancement
-    description: Upgrades one of your skills!
+    description: 
     eventType: 4
     weight: 1
     goldAmount: 100
@@ -449,20 +457,22 @@ MonoBehaviour:
     damageBuffMultiplier: 1.3
     buffDuration: 30
     battleEnemyCount: 0
+    itemsToGrant: []
   - id: 
     displayName: Special Guest
-    description: Start battle, gain rewards upon completing
+    description: Start battle, gain rewards upon defeating all the enemies!
     eventType: 5
     weight: 1
-    goldAmount: 100
-    xpAmount: 0
-    healAmount: 0
+    goldAmount: 80
+    xpAmount: 50
+    healAmount: 20
     diceSides: 6
     successThreshold: 3
     curseDamage: 10
     damageBuffMultiplier: 1.3
     buffDuration: 30
     battleEnemyCount: 3
+    itemsToGrant: []
   choicesPerEvent: 3
   eventUI: {fileID: 0}
 --- !u!1 &8235411151096158427

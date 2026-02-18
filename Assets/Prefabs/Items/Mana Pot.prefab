@@ -4968,7 +4968,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4000011650569256}
   - component: {fileID: 3214227740464902578}
-  - component: {fileID: -7085476695347001914}
+  - component: {fileID: 5133405388208357320}
   m_Layer: 0
   m_Name: Mana Pot
   m_TagString: Untagged
@@ -5014,7 +5014,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.4, y: 2.58, z: 1.5}
   m_Center: {x: 0, y: 1.15, z: 0}
---- !u!114 &-7085476695347001914
+--- !u!114 &5133405388208357320
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5023,13 +5023,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000013317980782}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50f40ba14d0cb36439bb18a328a82740, type: 3}
+  m_Script: {fileID: 11500000, guid: e10e11b64005df048b0a3e429b03c628, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Item
+  m_EditorClassIdentifier: Assembly-CSharp::ManaPotion
   itemName: Mana Potion
-  itemDescription: Restores Mana
+  itemDescription: Restores 10 mana when used
   itemIcon: {fileID: 21300000, guid: a13f1e72486a8214a81e7ebe21c349ef, type: 3}
   itemPrefab: {fileID: 1000013317980782}
+  manaRestoreAmount: 10
+  useSound: {fileID: 0}
 --- !u!1 &1000013970829164
 GameObject:
   m_ObjectHideFlags: 0

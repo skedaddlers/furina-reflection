@@ -53,6 +53,8 @@ public class Room : MonoBehaviour
     public static System.Action<Room> OnWaveCleared;
     public static System.Action<Room> OnRoomCombatStarted;
 
+    public System.Action OnRoomClearedLocal;
+
     private bool isLocked = false;
     private int lastEnterFrom = -1;
 
@@ -224,6 +226,7 @@ public class Room : MonoBehaviour
 
         Debug.Log($"Room {roomIndex} Cleared!");
         OnRoomCleared?.Invoke(this);
+        OnRoomClearedLocal?.Invoke();
 
         if (roomType == RoomType.Boss)
             GameManager.Instance.OnBossRoomCleared();
