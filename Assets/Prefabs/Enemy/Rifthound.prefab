@@ -979,10 +979,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.33
-  m_Height: 0.15
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.5, z: 0.3}
+  m_Radius: 0.83
+  m_Height: 3.01
+  m_Direction: 2
+  m_Center: {x: 0, y: 0.98, z: 0.52}
 --- !u!114 &8076984840741471441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1048,6 +1048,7 @@ MonoBehaviour:
   movementSpeed: 0.3
   damage: 10
   detectionRange: 10
+  turnSpeed: 8
   projectilePrefab: {fileID: 0}
   isPerformingSpecialAttack: 0
   specialAttackCooldown: 8
@@ -1055,6 +1056,11 @@ MonoBehaviour:
   bleedDamagePerTick: 3
   bleedTickInterval: 0.1
   bleedTicks: 5
+  telegraphPrefab: {fileID: 9056453673954427339, guid: 1e309eb610c108846b9f962d8903ff20, type: 3}
+  telegraphDuration: 1.1
+  telegraphRadius: 1.25
+  telegraphSegments: 24
+  telegraphYOffset: 0.05
 --- !u!114 &8221984826183684570
 MonoBehaviour:
   m_ObjectHideFlags: 0

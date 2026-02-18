@@ -380,14 +380,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonConfig:
-    minRooms: 13
-    maxRooms: 14
-    normalRoomRatio: 0
+    minRooms: 3
+    maxRooms: 9
+    normalRoomRatio: 0.45
     shopRoomRatio: 0
     eventRoomRatio: 0
     eliteRoomRatio: 1
     guaranteedShops: 0
-    guaranteedElites: 10
+    guaranteedElites: 3
     guaranteedEvents: 0
     guaranteeEarlyShop: 0
     minDistanceBetweenShops: 3

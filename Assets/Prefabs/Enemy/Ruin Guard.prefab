@@ -1261,9 +1261,16 @@ MonoBehaviour:
   movementSpeed: 0.93
   damage: 10
   detectionRange: 10
+  turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: 3c6e7c7d27cc5d843b088f231b8ff4aa, type: 3}
   isPerformingSpecialAttack: 0
   specialAttackCooldown: 5
+  telegraphPrefab: {fileID: 9056453673954427339, guid: 1e309eb610c108846b9f962d8903ff20, type: 3}
+  telegraphDuration: 1
+  telegraphRadiusOverride: -1
+  telegraphSegments: 24
+  telegraphYOffset: 0.01
+  trajectoryPredictionStep: 0.05
 --- !u!114 &1132621318322507302
 MonoBehaviour:
   m_ObjectHideFlags: 0

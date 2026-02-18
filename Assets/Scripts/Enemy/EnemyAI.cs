@@ -11,6 +11,7 @@ public class EnemyAI : MonoBehaviour
     public float movementSpeed = 3f;
     public int damage = 10;
     public float detectionRange = 10f;
+    public float turnSpeed = 8f;
     public Projectile projectilePrefab;
 
     public bool isPerformingSpecialAttack = false;
@@ -19,6 +20,7 @@ public class EnemyAI : MonoBehaviour
     protected Animator animator;
     protected EnemyStats enemyStats;
     protected float lastAttackTime;
+    private Coroutine rotateCoroutine;
     private int baseDamage;
     private float baseAttackCooldown;
     private float baseDetectionRange;
@@ -38,7 +40,7 @@ public class EnemyAI : MonoBehaviour
 
     protected virtual void Update()
     {
-        
+        UpdateMovementFacing();
     }
 
     // Panggil dari animation event di animasi Attack
@@ -136,11 +138,18 @@ public class EnemyAI : MonoBehaviour
 
     public virtual void LookAtPlayer()
     {
+        if (player == null)
+            return;
+
         Vector3 direction = (player.position - transform.position).normalized;
         direction.y = 0; // keep only horizontal rotation
-        if (direction != Vector3.zero)
+        if (direction.sqrMagnitude > 0.0001f)
         {
-            StartCoroutine(RotateTowards(direction));
+            if (rotateCoroutine != null)
+            {
+                StopCoroutine(rotateCoroutine);
+            }
+            rotateCoroutine = StartCoroutine(RotateTowards(direction.normalized));
         }
     }
 
@@ -149,10 +158,33 @@ public class EnemyAI : MonoBehaviour
         Quaternion targetRotation = Quaternion.LookRotation(direction);
         while (Quaternion.Angle(transform.rotation, targetRotation) > 0.5f)
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
             yield return null;
         }
         transform.rotation = targetRotation;
+        rotateCoroutine = null;
+    }
+
+    protected void UpdateMovementFacing()
+    {
+        if (agent == null || agent.isStopped)
+            return;
+
+        Vector3 direction = agent.desiredVelocity.sqrMagnitude > 0.0001f
+            ? agent.desiredVelocity
+            : agent.velocity;
+
+        if (direction.sqrMagnitude <= 0.0001f && player != null)
+        {
+            direction = player.position - transform.position;
+        }
+
+        direction.y = 0f;
+        if (direction.sqrMagnitude <= 0.0001f)
+            return;
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
     }
 
     public virtual void SpecialAttack()

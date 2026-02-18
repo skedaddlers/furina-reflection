@@ -16,11 +16,25 @@ public class EliteRifthound : EnemyAI
     public float bleedTickInterval = 1f;
     public int bleedTicks = 5;
 
+    [Header("Teleport Telegraph")]
+    public GameObject telegraphPrefab;
+    public float telegraphDuration = 0.4f;
+    public float telegraphRadius = 1.25f;
+    public int telegraphSegments = 24;
+    public float telegraphYOffset = 0.05f;
+
+    private GameObject activeTelegraph;
+
     public override bool CanPerformSpecialAttack()
     {
         return !isPerformingSpecialAttack &&
                Time.time - lastSpecialAttackTime >= specialAttackCooldown &&
                player != null;
+    }
+
+    private void OnDisable()
+    {
+        HideTelegraph();
     }
 
     public override void SpecialAttack()
@@ -35,38 +49,91 @@ public class EliteRifthound : EnemyAI
     private IEnumerator DoRifthoundSpecial()
     {
         isPerformingSpecialAttack = true;
+        lastSpecialAttackTime = Time.time;
+
+        if (player == null || agent == null)
+        {
+            isPerformingSpecialAttack = false;
+            yield break;
+        }
 
         // Anim khusus kalau ada
         if (animator != null)
             animator.SetTrigger("SpecialAttack");
 
-        // Sedikit delay telegraph
-        yield return new WaitForSeconds(0.2f);
-
-        // 1. Teleport di belakang / dekat player
-        if (agent != null && player != null)
+        // Telegraph destination before warp
+        Vector3 teleportTarget;
+        if (TryGetTeleportDestination(out teleportTarget))
         {
-            Vector3 targetPos = player.position - player.forward * teleportDistanceFromPlayer;
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(targetPos, out hit, 2f, NavMesh.AllAreas))
+            ShowTeleportTelegraph(teleportTarget);
+            if (telegraphDuration > 0f)
             {
-                agent.Warp(hit.position);
-                transform.rotation = Quaternion.LookRotation(player.position - transform.position);
+                yield return new WaitForSeconds(telegraphDuration);
             }
-            else
-            {
-                // fallback: teleport ke posisi sekarang aja
-                agent.Warp(transform.position);
-            }
+            HideTelegraph();
+
+            agent.Warp(teleportTarget);
+            FacePlayer();
         }
 
-        // 2. Hit awal (melee biasa)
+        // Hit awal (melee biasa)
         DealDamage();
 
-        // 3. Apply bleed (damage over time)
+        // Apply bleed (damage over time)
         // to be implemented: apply bleed effect to player
 
-        lastSpecialAttackTime = Time.time;
         isPerformingSpecialAttack = false;
+    }
+
+    private bool TryGetTeleportDestination(out Vector3 destination)
+    {
+        destination = transform.position;
+        if (player == null)
+            return false;
+
+        Vector3 desiredPosition = player.position - player.forward * teleportDistanceFromPlayer;
+        NavMeshHit hit;
+        if (!NavMesh.SamplePosition(desiredPosition, out hit, 2f, NavMesh.AllAreas))
+            return false;
+
+        destination = hit.position;
+        return true;
+    }
+
+    private void FacePlayer()
+    {
+        if (player == null)
+            return;
+
+        Vector3 toPlayer = player.position - transform.position;
+        toPlayer.y = 0f;
+        if (toPlayer.sqrMagnitude <= 0.0001f)
+            return;
+
+        transform.rotation = Quaternion.LookRotation(toPlayer.normalized);
+    }
+
+    private void ShowTeleportTelegraph(Vector3 targetPosition)
+    {
+        if (telegraphPrefab == null)
+            return;
+
+        HideTelegraph();
+        activeTelegraph = Instantiate(telegraphPrefab, targetPosition + Vector3.up * telegraphYOffset, Quaternion.identity);
+
+        Telegraph telegraph = activeTelegraph.GetComponent<Telegraph>();
+        if (telegraph != null)
+        {
+            telegraph.ConfigureCircle(telegraphRadius, telegraphSegments);
+        }
+    }
+
+    private void HideTelegraph()
+    {
+        if (activeTelegraph != null)
+        {
+            Destroy(activeTelegraph);
+            activeTelegraph = null;
+        }
     }
 }
