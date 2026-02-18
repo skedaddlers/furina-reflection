@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: SInger of Many Waters
   upgradeName: 
   description: Summons a healer companion
-  skillIcon: {fileID: 21300000, guid: 2fad783e0625ec7468a8e745e58ec697, type: 3}
+  skillIcon: {fileID: 21300000, guid: 3cd716a0358b8d64894fe0e80eab7c51, type: 3}
   rarity: 2
   price: 145
   skillID: 3

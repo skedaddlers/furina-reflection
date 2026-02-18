@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Tears of the SInner
   upgradeName: 
   description: Damages ALL enemies in the room
-  skillIcon: {fileID: 21300000, guid: 1ced4dfe993272d46949340469242750, type: 3}
+  skillIcon: {fileID: 21300000, guid: fbd4665561ff4c6409d98249febc7166, type: 3}
   rarity: 3
   price: 150
   skillID: 4

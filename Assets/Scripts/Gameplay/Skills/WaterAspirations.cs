@@ -8,6 +8,7 @@ public class WaterAspirations : SkillBase
     public float defBonus = 15f;
 
     private GameObject activeCaster;
+    private GameObject currentEffectInstance;
     private PlayerStats activePlayerStats;
     private float currentShieldAmount;
     private float elapsed;
@@ -57,8 +58,9 @@ public class WaterAspirations : SkillBase
         // Spawn effect prefab
         if (effectPrefab != null)
         {
-            GameObject effect = Object.Instantiate(effectPrefab, caster.transform.position, Quaternion.identity, caster.transform);
-            Object.Destroy(effect, duration);
+            GameObject effect = Instantiate(effectPrefab, caster.transform.position, Quaternion.identity, caster.transform);
+            currentEffectInstance = effect;
+            Destroy(effect, duration);
         }
 
         // Apply shield
@@ -86,6 +88,8 @@ public class WaterAspirations : SkillBase
             if (isUpgraded && !defBonusApplied && activePlayerStats.health.shieldAmount <= 0 && elapsed < duration)
             {
                 ApplyDefBonus();
+                Destroy(currentEffectInstance);
+                currentEffectInstance = null; // prevent multiple applications
             }
             else if (!isUpgraded && activePlayerStats.health.shieldAmount <= 0)
             {
@@ -126,7 +130,11 @@ public class WaterAspirations : SkillBase
 
         isActive = false;
         activeCaster = null;
-
+        if (currentEffectInstance != null)
+        {
+            Destroy(currentEffectInstance);
+            currentEffectInstance = null;
+        }
 
         if (activePlayerStats != null && activePlayerStats.health != null)
         {

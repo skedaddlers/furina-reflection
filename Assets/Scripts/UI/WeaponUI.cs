@@ -5,6 +5,7 @@ public class WeaponUI : MonoBehaviour
 {
     public Image currentWeaponIcon;
     public Image otherWeaponIcon;
+    public Image switchIcon;
     
     public void UpdateWeaponIcon(PlayerLoadout loadout)
     {
@@ -17,6 +18,7 @@ public class WeaponUI : MonoBehaviour
         }
         else
         {
+            switchIcon.gameObject.SetActive(false);
             currentWeaponIcon.sprite = null;
             currentWeaponIcon.color = new Color(1, 1, 1, 0); // transparan
         }
@@ -36,11 +38,13 @@ public class WeaponUI : MonoBehaviour
         {
             otherWeaponIcon.sprite = otherWeapon.icon;
             otherWeaponIcon.color = Color.white;
+            switchIcon.gameObject.SetActive(true);
         }
         else
         {
             otherWeaponIcon.sprite = null;
             otherWeaponIcon.color = new Color(1, 1, 1, 0); // transparan
+            switchIcon.gameObject.SetActive(false);
         }
     }
 }

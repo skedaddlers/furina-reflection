@@ -15,14 +15,15 @@ MonoBehaviour:
   id: weapon_id
   weaponName: Bomb Launcher
   rarity: 3
-  description: DA BOMB
+  description: Furina was bored and she made this beast of a weapon, this thing shoots
+    bombs that explode on contact!
   goodPropertyText: '+15 Damage
 
     Area of Effects'
   badPropertyText: '1.6s Cooldown
 
     4 Mana cost'
-  icon: {fileID: 21300000, guid: 3ce4e499461d5df4793f3bef66754aae, type: 3}
+  icon: {fileID: 21300000, guid: 0b46d568cc6aced44a17b269f05ebb56, type: 3}
   price: 78
   baseDamage: 15
   range: 2

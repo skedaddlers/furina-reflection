@@ -72,7 +72,6 @@ public class PlayerController : MonoBehaviour
         {
             defaultFOV = mainCam.Lens.FieldOfView;
         }
-        walkSpeed = stats.moveSpeed;
     }
 
     void Update()
@@ -152,8 +151,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Movement
-        float speed = (isSprinting ? runSpeed : walkSpeed) * speedMultiplier;
+        // Movement: always derive current speed from PlayerStats.moveSpeed.
+        float baseMoveSpeed = stats != null ? stats.moveSpeed : walkSpeed;
+        float sprintMoveSpeed = stats != null ? stats.moveSpeed + Mathf.Max(0f, runSpeed - walkSpeed) : runSpeed;
+        float speed = (isSprinting ? sprintMoveSpeed : baseMoveSpeed) * speedMultiplier;
 
         if (isSprinting)
         {
@@ -187,7 +188,7 @@ public class PlayerController : MonoBehaviour
                     camFwd * Input.GetAxis("Vertical") +
                     camRight * Input.GetAxis("Horizontal");
 
-                controller.Move(moveDir.normalized * walkSpeed * speedMultiplier * Time.deltaTime);
+                controller.Move(moveDir.normalized * baseMoveSpeed * speedMultiplier * Time.deltaTime);
 
                 animator.SetFloat("WalkSpeed", moveDir.magnitude > 0 ? 0.5f : 0f);
             }
@@ -471,3 +472,4 @@ public class PlayerController : MonoBehaviour
         }
     }
 }
+

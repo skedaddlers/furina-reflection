@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Polearm
   m_EditorClassIdentifier: Assembly-CSharp::MeleeWeapon
   id: weapon_id
-  weaponName: Staff of Homa
+  weaponName: Engulfing Lightning
   rarity: 1
   description: Ei's grasscutter, with its double hit, it's effective on cutting other
     things too!
@@ -21,7 +21,7 @@ MonoBehaviour:
 
     +4 Range'
   badPropertyText: 1.2s Cooldown
-  icon: {fileID: 21300000, guid: 4dec4b78d091b5446a22327316d70abe, type: 3}
+  icon: {fileID: 21300000, guid: 5dd4daf107f064846a100ea4adca6e50, type: 3}
   price: 80
   baseDamage: 8
   range: 4

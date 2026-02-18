@@ -15,7 +15,7 @@ MonoBehaviour:
   skillName: Salon Solitaire
   upgradeName: 
   description: Summons Furina's besites to fight alongside you!
-  skillIcon: {fileID: 21300000, guid: 33dcf26d179f4034399608c15d01b524, type: 3}
+  skillIcon: {fileID: 21300000, guid: a2779f0e401116c4d89d083160819371, type: 3}
   rarity: 1
   price: 60
   skillID: 2
@@ -47,7 +47,7 @@ MonoBehaviour:
   - {fileID: 8976042506686824731, guid: 9f534529175ccad4e8cff4eee0278d8e, type: 3}
   - {fileID: 7937071911852978319, guid: 2ecafd9e831e58f46a7ceb2b981cc5fb, type: 3}
   - {fileID: 8054609030304198596, guid: 6e97f5589e86fdb449fd17068363c8ad, type: 3}
-  memberCount: 2
+  memberCount: 3
   spawnRadius: 2
   attackRange: 10
   attackInterval: 2
