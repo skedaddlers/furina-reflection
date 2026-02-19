@@ -7,6 +7,7 @@ public class SkillBase : ScriptableObject
     [Header("Basic Information")]
     public string skillName;
     public string upgradeName;
+    [TextArea]
     public string description;
     public Sprite skillIcon;
     public Rarity rarity;

@@ -24,9 +24,10 @@ public class EnemyAI : MonoBehaviour
     private int baseDamage;
     private float baseAttackCooldown;
     private float baseDetectionRange;
-    private float baseAgentSpeed;
+    private float baseMovementSpeed;
     private float baseMaxHealth;
     private bool baseCaptured = false;
+    private float currentSpeedModifier = 1f;
 
     protected virtual void Awake()
     {
@@ -109,7 +110,7 @@ public class EnemyAI : MonoBehaviour
     {
         agent.isStopped = false;
         agent.SetDestination(player.position);
-        agent.speed = movementSpeed;
+        ApplyEffectiveSpeed();
         animator.SetFloat("WalkSpeed", 1f);
     }
 
@@ -200,10 +201,8 @@ public class EnemyAI : MonoBehaviour
 
     public void ApplySpeedModifier(float multiplier)
     {
-        if (agent != null)
-        {
-            agent.speed = movementSpeed * multiplier;
-        }
+        currentSpeedModifier = Mathf.Max(0f, multiplier);
+        ApplyEffectiveSpeed();
     }
 
     void CaptureBaseStats()
@@ -212,7 +211,7 @@ public class EnemyAI : MonoBehaviour
         baseDamage = damage;
         baseAttackCooldown = attackCooldown;
         baseDetectionRange = detectionRange;
-        baseAgentSpeed = agent != null ? agent.speed : 3f;
+        baseMovementSpeed = movementSpeed;
         var h = GetComponent<Health>();
         if (h != null) baseMaxHealth = h.maxHealth;
         baseCaptured = true;
@@ -228,10 +227,8 @@ public class EnemyAI : MonoBehaviour
         attackCooldown = Mathf.Max(0.1f, baseAttackCooldown / Mathf.Max(0.01f, snap.attackSpeed));
         detectionRange = baseDetectionRange * snap.aggro;
 
-        if (agent != null)
-        {
-            agent.speed = Mathf.Max(0.5f, baseAgentSpeed * snap.speed);
-        }
+        movementSpeed = Mathf.Max(0.5f, baseMovementSpeed * snap.speed);
+        ApplyEffectiveSpeed();
 
         var h = GetComponent<Health>();
         if (h != null && baseMaxHealth > 0f)
@@ -239,5 +236,12 @@ public class EnemyAI : MonoBehaviour
             float newMax = Mathf.Max(1f, baseMaxHealth * snap.health);
             h.SetMaxHealth(newMax, keepCurrentRatio: true, fillOnIncrease: true);
         }
+    }
+
+    private void ApplyEffectiveSpeed()
+    {
+        if (agent == null) return;
+        float effectiveSpeed = Mathf.Max(0f, movementSpeed * currentSpeedModifier);
+        agent.speed = effectiveSpeed;
     }
 }

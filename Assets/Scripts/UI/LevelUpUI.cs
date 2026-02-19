@@ -2,10 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using DG.Tweening;
 
 public class LevelUpUI : MonoBehaviour
 {
     public GameObject levelUpButton;
+    [SerializeField] private Vector3 levelUpButtonPulseScale = new Vector3(1.08f, 1.08f, 1f);
+    [SerializeField] private float levelUpButtonPulseDuration = 0.45f;
 
     public GameObject levelUpPanel;
     public Button healthUpgradeButton;
@@ -20,6 +23,8 @@ public class LevelUpUI : MonoBehaviour
     private int upgradeAmount = 1; 
 
     private PlayerStats playerStats;
+    private Tween levelUpButtonPulseTween;
+    private Vector3 levelUpButtonBaseScale;
 
     void Start()
     {
@@ -32,6 +37,12 @@ public class LevelUpUI : MonoBehaviour
         moveSpeedUpgradeButton.onClick.AddListener(() => UpgradeMoveSpeed());
         critUpgradeButton.onClick.AddListener(() => UpgradeCrit());
 
+        if (levelUpButton != null)
+        {
+            levelUpButtonBaseScale = levelUpButton.transform.localScale;
+            levelUpButton.transform.StopPulse(levelUpButtonBaseScale);
+        }
+
         levelUpButton.SetActive(false);
         levelUpPanel.SetActive(false);
     }
@@ -39,6 +50,7 @@ public class LevelUpUI : MonoBehaviour
     public void ShowLevelUp(int upgradesToBeDone)
     {
         levelUpButton.SetActive(true);
+        StartLevelUpButtonPulse();
         upgradeAmount = upgradesToBeDone;
         upgradeAmountText.text = "You can upgrade " + upgradeAmount + " more time(s)";
     }
@@ -50,10 +62,51 @@ public class LevelUpUI : MonoBehaviour
         {
             GameManager.Instance.cursorController.UnlockCursor();
             GameManager.Instance.ChangeState(GameState.InMenu);
+            StopLevelUpButtonPulse();
             levelUpButton.SetActive(false);
             levelUpPanel.SetActive(true);
             SetupButtonTexts();
         }
+    }
+
+    private void OnDisable()
+    {
+        StopLevelUpButtonPulse();
+    }
+
+    private void OnDestroy()
+    {
+        StopLevelUpButtonPulse();
+    }
+
+    private void StartLevelUpButtonPulse()
+    {
+        if (levelUpButton == null)
+        {
+            return;
+        }
+
+        if (levelUpButtonPulseTween != null && levelUpButtonPulseTween.IsActive())
+        {
+            return;
+        }
+
+        levelUpButtonPulseTween = levelUpButton.transform.PulseLoop(
+            levelUpButtonBaseScale,
+            levelUpButtonPulseScale,
+            levelUpButtonPulseDuration
+        );
+    }
+
+    private void StopLevelUpButtonPulse()
+    {
+        if (levelUpButton == null)
+        {
+            return;
+        }
+
+        levelUpButtonPulseTween = null;
+        levelUpButton.transform.StopPulse(levelUpButtonBaseScale);
     }
 
     private void SetupButtonTexts()

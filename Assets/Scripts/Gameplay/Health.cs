@@ -8,6 +8,7 @@ public class Health : MonoBehaviour
     public float shieldAmount = 0;
     public float maxShield = 100;
     private float currentHealth;
+    public float CurrentHealth => currentHealth;
     private bool isInvulnerable = false;
 
     // on death event

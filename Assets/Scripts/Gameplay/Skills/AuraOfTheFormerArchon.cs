@@ -160,6 +160,10 @@ public class AuraOfTheFormerArchon : SkillBase
             if(isUpgraded)
             {
                 EnemyAI enemy = hit.GetComponent<EnemyAI>();
+                if (enemy == null)
+                {
+                    enemy = hit.GetComponentInParent<EnemyAI>();
+                }
                 if (enemy != null)
                 {
                     enemiesInRadius.Add(enemy);

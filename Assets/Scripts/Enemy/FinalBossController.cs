@@ -185,7 +185,8 @@ public class FinalBossController : EnemyAI
 
         if (agent != null)
         {
-            agent.speed = Mathf.Max(0.5f, _baseAgentSpeed * Mathf.Max(0.1f, phase.moveSpeedMultiplier));
+            movementSpeed = Mathf.Max(0.5f, _baseAgentSpeed * Mathf.Max(0.1f, phase.moveSpeedMultiplier));
+            agent.speed = movementSpeed;
         }
 
         // Small delay before next skill to telegraph phase change
