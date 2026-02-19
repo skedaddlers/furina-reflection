@@ -38,6 +38,8 @@ public class PlayerStats : MonoBehaviour
     public int xpToNextLevel = 100;
     public float xpMultiplier = 1.0f;
     public float xpGrowthRate = 1.2f;
+    public LevelManager levelManager;
+    public UpgradeManager upgradeManager;
 
     [Header("Economy")]
     public int gold = 0;
@@ -75,6 +77,8 @@ public class PlayerStats : MonoBehaviour
         _currentStamina = maxStamina;
         onStaminaChanged?.Invoke(_currentStamina, maxStamina);
         health = GetComponent<Health>();
+        levelManager = GetComponent<LevelManager>();
+        upgradeManager = GetComponent<UpgradeManager>();
     }
 
     void Update()
@@ -207,7 +211,7 @@ public class PlayerStats : MonoBehaviour
         xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * xpGrowthRate); // Increase XP needed for next level by growth rate
         UIManager.Instance.statsUI.UpdateLevelUI(level);
         UIManager.Instance.statsUI.UpdateXPUI(currentXP, xpToNextLevel);
-        // You can add more logic here for what happens when the player levels up
+        levelManager.OnLevelUp(level);
     }
 
     public bool HasEnoughStamina(float amount)
@@ -237,4 +241,44 @@ public class PlayerStats : MonoBehaviour
         }
         _currentDamageBuffMultiplier = 1f;
     }
+
+    // Upgrade methods called by LevelUpUI
+    public void UpgradeHealth()
+    {
+        float healthIncrease = upgradeManager.GetHealthUpgradeAmount();
+        health.SetMaxHealth(health.maxHealth + healthIncrease);
+    }
+
+    public void UpgradeAttack()
+    {
+        baseAttack += upgradeManager.GetAttackUpgradeAmount();
+    }
+
+    public void UpgradeDefense()
+    {
+        baseDefense += upgradeManager.GetDefenseUpgradeAmount();
+    }
+
+    public void UpgradeMaxMana()
+    {
+        maxMana = Mathf.RoundToInt(maxMana + upgradeManager.GetMaxManaUpgradeAmount());
+        _currentMana = maxMana; // Refill mana on upgrade
+        onManaChanged?.Invoke(_currentMana, maxMana);
+    }
+
+    public void UpgradeMoveSpeed()
+    {
+        moveSpeed += upgradeManager.GetMoveSpeedUpgradeAmount(); // Increase move speed by the upgrade amount
+    }
+    
+
+    public void UpgradeCrit()
+    {
+        float critRateIncrease = upgradeManager.GetCritRateUpgradeAmount();
+        float critMultiplierIncrease = upgradeManager.GetCritMultiplierUpgradeAmount();
+        critRate = Mathf.Min(1f, critRate + critRateIncrease); // Increase crit rate by an additional 5%, cap at 100%
+        critMultiplier += critMultiplierIncrease; // Increase crit multiplier by the upgrade amount
+    }
+
+
 }

@@ -117,6 +117,14 @@ public class SkillManager : MonoBehaviour
         UIManager.Instance.skillsUI.UpdateSkillsUI(activeSkillSlots);
         OnSkillEquipped?.Invoke(skill);
     }
+
+    public void TryUpgradeRandomSkill()
+    {
+        if (TryUpgradeRandomOwnedSkill(out SkillBase oldSkill, out SkillBase upgradedSkill))
+        {
+            UIManager.Instance.ShowNotification($"Upgraded {oldSkill.skillName} to {upgradedSkill.skillName}!");
+        }
+    }
     
     // Check if player has a specific skill
     public bool HasSkill(SkillBase skill)

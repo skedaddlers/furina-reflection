@@ -1156,7 +1156,7 @@ MonoBehaviour:
   enemyRenderer: {fileID: 7450258361694064253}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 1223118301296987611}
-  xpReward: 15
+  xpReward: 40
   goldReward: 10
 --- !u!114 &9184170250974352647
 MonoBehaviour:
@@ -1176,6 +1176,7 @@ MonoBehaviour:
   movementSpeed: 1.9
   damage: 10
   detectionRange: 10
+  turnSpeed: 8
   projectilePrefab: {fileID: 0}
   isPerformingSpecialAttack: 0
 --- !u!114 &6779822399096051496

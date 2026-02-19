@@ -5202,6 +5202,7 @@ MonoBehaviour:
   inventoryUI: {fileID: 0}
   damageNumberUI: {fileID: 0}
   cursorController: {fileID: 50898957}
+  levelUpUI: {fileID: 0}
   doorPromptCanvas: {fileID: 1126277177}
   promptText: {fileID: 1717151482}
   notificationText: {fileID: 947693642}
@@ -8609,7 +8610,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4044326400695588259, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1052895781}
   m_SourcePrefab: {fileID: 100100000, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
 --- !u!4 &855542997 stripped
 Transform:
@@ -8621,7 +8625,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6536990159064562789, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
   m_PrefabInstance: {fileID: 855542996}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1052895770}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ca4cbd9d105133844b13578d24873d61, type: 3}
@@ -10762,7 +10766,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8038310731941394173, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
   m_PrefabInstance: {fileID: 855542996}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1052895770}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 757450ca3bf66554b807f62e8d7a401d, type: 3}
@@ -10773,12 +10777,31 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
   m_PrefabInstance: {fileID: 855542996}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1052895770}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d5053e0a9b06b0647b0c81877b34d2e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1052895770 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4044326400695588259, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+  m_PrefabInstance: {fileID: 855542996}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1052895781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1052895770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a77acc93f9d89c4dab21974acb2b3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  upgradesToBeDone: 0
+  randomSkillUpgradeEveryXLevels: 5
 --- !u!1 &1053427112
 GameObject:
   m_ObjectHideFlags: 0
