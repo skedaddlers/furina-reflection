@@ -50,12 +50,12 @@ public class Health : MonoBehaviour
             currentHealth -= finalDamage;
             Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
             Enemy enemy = GetComponent<Enemy>();
-            if (enemy != null)
+            if (enemy != null && enemy.healthBar != null)
             {
                 UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, enemy.healthBar.position, isCrit);
                 StartCoroutine(HitFlash(enemy));
             }
-            else if (CompareTag("Player"))
+            else
             {
                 UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, transform.position + Vector3.up, isCrit);
             }

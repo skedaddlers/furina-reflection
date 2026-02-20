@@ -380,16 +380,16 @@ PrefabInstance:
       addedObject: {fileID: -7009851693733620221}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 8923154997231941624}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 3905815751628404084}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3937061892430445551}
+      addedObject: {fileID: 1759342616226106966}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1759342616226106966}
+      addedObject: {fileID: -1436175480533962860}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3616912778467009686}
   m_SourcePrefab: {fileID: 100100000, guid: 7fe90b12a91d2eb4a8306332d33b8fa3, type: 3}
 --- !u!4 &3595596980550615004 stripped
 Transform:
@@ -461,35 +461,6 @@ CapsuleCollider:
   m_Height: 2.81
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8923154997231941624
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4228300383457371494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Graph: {fileID: -2212167153873125606, guid: ec461624294b6484280cbf7195e5131a, type: 2}
-  m_BlackboardVariableOverridesList:
-  - rid: 8801865873015701504
-  m_OriginalGraph: {fileID: 0}
-  m_IsInitialised: 0
-  m_IsStarted: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 8801865873015701504
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1
-          m_Value1: 0
-        Name: Self
-        m_Value: {fileID: 4228300383457371494}
 --- !u!114 &3905815751628404084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -508,68 +479,6 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   xpReward: 50
   goldReward: 15
---- !u!114 &3937061892430445551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4228300383457371494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e0f01200b03b134baeab0953b5aedf0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isRanged: 1
-  attackRange: 7
-  attackCooldown: 1.5
-  movementSpeed: 3
-  damage: 10
-  detectionRange: 20
-  turnSpeed: 8
-  projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
-  isPerformingSpecialAttack: 0
-  attackCheckInterval: 0.1
-  baseSkills: []
-  defaultSkillInterval: 8
-  phases:
-  - name: Observation
-    hpThreshold: 1
-    skills:
-    - {fileID: 11400000, guid: 3611da32711d9e64ca3605ba86cca725, type: 2}
-    damageMultiplier: 0.5
-    attackSpeedMultiplier: 0.5
-    moveSpeedMultiplier: 0.3
-    skillInterval: 20
-  - name: Aggression
-    hpThreshold: 0.9
-    skills:
-    - {fileID: 11400000, guid: 57c61b53f4aa0ba4383814468b834793, type: 2}
-    - {fileID: 11400000, guid: 3611da32711d9e64ca3605ba86cca725, type: 2}
-    damageMultiplier: 1
-    attackSpeedMultiplier: 1
-    moveSpeedMultiplier: 1
-    skillInterval: 15
-  - name: Transendence
-    hpThreshold: 0.6
-    skills:
-    - {fileID: 11400000, guid: 3611da32711d9e64ca3605ba86cca725, type: 2}
-    - {fileID: 11400000, guid: 6e165cf67a866c543b3bd4cbf4fc8ebe, type: 2}
-    - {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
-    damageMultiplier: 1.2
-    attackSpeedMultiplier: 1.2
-    moveSpeedMultiplier: 1.2
-    skillInterval: 12
-  - name: Transendence
-    hpThreshold: 0.3
-    skills:
-    - {fileID: 11400000, guid: 3611da32711d9e64ca3605ba86cca725, type: 2}
-    - {fileID: 11400000, guid: 6e165cf67a866c543b3bd4cbf4fc8ebe, type: 2}
-    - {fileID: 11400000, guid: dc00c0bc3799b9943b4cbcb2ef4dd03c, type: 2}
-    damageMultiplier: 1.5
-    attackSpeedMultiplier: 1.5
-    moveSpeedMultiplier: 1.5
-    skillInterval: 8
 --- !u!114 &1759342616226106966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -586,6 +495,63 @@ MonoBehaviour:
   defense: 0
   critRate: 0
   critMultiplier: 1.5
+--- !u!114 &-1436175480533962860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228300383457371494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 228ff4156e95d8547b62d201252aeb6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FocalorsPhase1AI
+  isRanged: 1
+  attackRange: 1.5
+  attackCooldown: 1.5
+  movementSpeed: 1
+  damage: 10
+  detectionRange: 10
+  turnSpeed: 8
+  projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
+  isPerformingSpecialAttack: 0
+  telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
+  skillCooldown: 5
+  castWindupTime: 0.5
+  waitAfterCastTime: 2
+  useVerdictArc: 1
+  verdictArcRange: 8
+  verdictArcAngle: 70
+  verdictArcSegments: 30
+  verdictArcTelegraphTime: 1.2
+  verdictArcEffectPrefab: {fileID: 3156866507962234106, guid: 44bb64ca62c9b4344a1625914707200c, type: 3}
+  verdictArcEffectRotationOffset: {x: 0, y: -90, z: 0}
+  useRippleCourt: 1
+  rippleCount: 3
+  rippleSpawnRadius: 10
+  rippleCircleRadius: 3
+  rippleSegments: 30
+  rippleTelegraphTime: 1
+  rippleEffectPrefab: {fileID: 8974203713140315807, guid: 3c339117b2de5fe459f62b63cda3cbc9, type: 3}
+  useJudicialLine: 1
+  lineWidth: 2
+  lineLength: 10
+  lineTelegraphTime: 1
+  lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
+  lineEffectOffset: {x: 0, y: 1, z: 0}
+--- !u!114 &-3616912778467009686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4228300383457371494}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403a65a6f66fd6b488b298426acedec5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossHealthBar
 --- !u!1001 &8407537047208099254
 PrefabInstance:
   m_ObjectHideFlags: 0

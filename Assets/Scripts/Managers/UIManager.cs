@@ -17,6 +17,8 @@ public class UIManager : MonoBehaviour
     public DamageNumberUI damageNumberUI;
     public CursorController cursorController;
     public LevelUpUI levelUpUI;
+    public BossHPBarUI bossHPBarUI;
+
     [Header("Interaction UI")]
     public CanvasGroup doorPromptCanvas;
     public TextMeshProUGUI promptText; // atau pakai Text biasa kalau belum pakai TMP
@@ -82,6 +84,10 @@ public class UIManager : MonoBehaviour
         if (levelUpUI == null)
         {
             levelUpUI = GetComponent<LevelUpUI>();
+        }
+        if (bossHPBarUI == null)
+        {
+            bossHPBarUI = GetComponent<BossHPBarUI>();
         }
         InitUI();
         cursorController.LockCursor();

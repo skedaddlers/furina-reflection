@@ -1185,6 +1185,7 @@ MonoBehaviour:
   movementSpeed: 1.3
   damage: 10
   detectionRange: 10
+  turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: ca0b59d9d1fd7e74e9e7cb4ba75bfe1a, type: 3}
   isPerformingSpecialAttack: 0
   specialAttackCooldown: 10
@@ -1222,7 +1223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 0
+  defense: 5
   critRate: 0
   critMultiplier: 1.5
 --- !u!1001 &4514391359204033523

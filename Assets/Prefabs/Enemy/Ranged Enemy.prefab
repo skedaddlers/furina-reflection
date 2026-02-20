@@ -960,6 +960,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 0
+  defense: 2
   critRate: 0
   critMultiplier: 1.5

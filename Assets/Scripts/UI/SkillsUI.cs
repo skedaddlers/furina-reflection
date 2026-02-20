@@ -6,6 +6,7 @@ public class SkillsUI : MonoBehaviour
     [Header("UI References")]
     public Image[] skillIcons;
     public TextMeshProUGUI[] manaCosts;
+    public TextMeshProUGUI[] skillKeybindings;
     public TextMeshProUGUI[] cooldownTexts;
     public Image[] cooldownOverlays;
     public SkillManager skillManager;
@@ -51,6 +52,7 @@ public class SkillsUI : MonoBehaviour
                 manaCosts[i].enabled = true;
                 cooldownTexts[i].enabled = true;
                 cooldownOverlays[i].enabled = true;
+                skillKeybindings[i].enabled = true;
                 SkillBase skill = activeSkillSlots[i].skill;
                 skillIcons[i].sprite = skill.skillIcon;
                 manaCosts[i].text = skill.manaCost.ToString();
@@ -67,6 +69,7 @@ public class SkillsUI : MonoBehaviour
                 manaCosts[i].text = "";
                 cooldownTexts[i].text = "";
                 cooldownOverlays[i].fillAmount = 0f;
+                skillKeybindings[i].enabled = false;
             }
         }
     }

@@ -114,3 +114,6 @@ MonoBehaviour:
   pulse: 1
   pulseSpeed: 10
   pulseAmount: 0.05
+  telegraphDuration: 1
+  startAlpha: 0.05
+  maxAlpha: 0.5

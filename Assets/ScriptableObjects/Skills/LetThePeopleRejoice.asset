@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Let The People Rejoice
   upgradeName: 
-  description: Increases your attack power, but gradually drains health, while gaining
+  description: Increases your attack, but gradually drains health, while gaining
     health after successfully killing enemies
   skillIcon: {fileID: 21300000, guid: df459ac19e5d9d24386843a679ba1d5e, type: 3}
   rarity: 2

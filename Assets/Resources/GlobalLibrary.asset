@@ -32,6 +32,12 @@ MonoBehaviour:
   - {fileID: 8705725717222443200, guid: 97fd4f131dd65d845b42df81910399ef, type: 3}
   eliteEnemies:
   - {fileID: 4228300383457371494, guid: 7ed8639719b5a754395321b01e5ee567, type: 3}
+  - {fileID: 4228300383457371494, guid: 57f03885d42c4c445ac864518aa31b53, type: 3}
+  - {fileID: 4228300383457371494, guid: da51b011059c3034e8da71e2c05d8ea0, type: 3}
+  - {fileID: 2301728714059832074, guid: 15899c84aa6f5f44d97d0bc2c944cf2b, type: 3}
+  - {fileID: 4228300383457371494, guid: 095290b4c328f1e4d896bbb01f409732, type: 3}
+  bossEnemies:
+  - {fileID: 4228300383457371494, guid: b15517f9f5d7af541a11b98f5c0eb4cf, type: 3}
   rarityColors:
   - {r: 0.553637, g: 0.5849056, b: 0.5849056, a: 1}
   - {r: 0.133796, g: 0.4580329, b: 0.7735849, a: 1}

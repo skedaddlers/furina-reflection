@@ -1148,7 +1148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 200
+  maxHealth: 150
   shieldAmount: 0
   maxShield: 100
 --- !u!195 &-313271174845791396
@@ -1302,6 +1302,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 0
+  defense: 15
   critRate: 0
   critMultiplier: 1.5

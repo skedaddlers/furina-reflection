@@ -391,8 +391,8 @@ public class Room : MonoBehaviour
         if (library != null)
         {
             List<GameObject> pool =
-                roomType == RoomType.Elite ? library.eliteEnemies : library.commonEnemies;
-
+                roomType == RoomType.Elite ? library.eliteEnemies : (roomType == RoomType.Boss ? library.bossEnemies : library.commonEnemies);
+            
             result = Helpers.GetRandomItemsAllowRepeats(pool, enemyCount, roomIndex);
         }
 

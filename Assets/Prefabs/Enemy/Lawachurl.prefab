@@ -3099,7 +3099,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 200
+  maxHealth: 180
   shieldAmount: 0
   maxShield: 100
 --- !u!195 &-313271174845791396
@@ -3194,6 +3194,7 @@ MonoBehaviour:
   movementSpeed: 1
   damage: 15
   detectionRange: 10
+  turnSpeed: 8
   projectilePrefab: {fileID: 0}
   isPerformingSpecialAttack: 0
   specialAttackCooldown: 9
@@ -3257,6 +3258,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 0
+  defense: 10
   critRate: 0
   critMultiplier: 1.5

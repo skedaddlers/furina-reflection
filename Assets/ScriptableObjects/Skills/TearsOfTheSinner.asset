@@ -35,7 +35,7 @@ MonoBehaviour:
   damageAmount: 5
   healAmount: 0
   shieldAmount: 0
-  effectPrefab: {fileID: 0}
+  effectPrefab: {fileID: 1750317307060666, guid: 9e760e98cdf85a24790af0c971e3df00, type: 3}
   castSound: {fileID: 8300000, guid: eaffd650c7b7876449fa2db08de752d6, type: 3}
   impactSound: {fileID: 0}
   statModifiers: []
@@ -45,5 +45,5 @@ MonoBehaviour:
   upgradeDescription: Now lasts longer!
   nextLevelSkill: {fileID: 11400000, guid: 549d377a444ff2040a5efb127ed57106, type: 2}
   tickInterval: 1
-  additionalDurationUpgradeS: 2
+  additionalDurationUpgrade: 2
   enemyTag: Enemy

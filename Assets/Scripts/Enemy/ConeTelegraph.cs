@@ -31,9 +31,16 @@ public class Telegraph : MonoBehaviour
     public float pulseSpeed = 10f;
     public float pulseAmount = 0.05f;
 
+    [Header("Fade In")]
+    public float telegraphDuration = 1f;
+    [Range(0f, 1f)] public float startAlpha = 0.15f;
+    [Range(0f, 1f)] public float maxAlpha = 0.7f;
+
     private Mesh mesh;
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
+    private float timer = 0f;
+    private bool fading = false;
 
     void Awake()
     {
@@ -44,11 +51,24 @@ public class Telegraph : MonoBehaviour
 
     void Update()
     {
-        if (!pulse)
-            return;
+        if (pulse)
+        {
+            transform.localScale = Vector3.one * (1f + Mathf.Sin(Time.time * pulseSpeed) * pulseAmount);
+        }
 
-        transform.localScale = Vector3.one * (1f + Mathf.Sin(Time.time * pulseSpeed) * pulseAmount);
+        if (fading)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.Clamp01(timer / telegraphDuration);
+            float currentAlpha = Mathf.Lerp(startAlpha, maxAlpha, t);
+
+            SetAlpha(currentAlpha);
+
+            if (timer >= telegraphDuration)
+                fading = false;
+        }
     }
+    
 
     void OnValidate()
     {
@@ -96,28 +116,37 @@ public class Telegraph : MonoBehaviour
         GenerateMesh();
     }
 
-    public void ConfigureCone(float newRadius, float newAngle, int newSegments)
+    public void ConfigureCone(float newRadius, float newAngle, int newSegments, float duration = 1f)
     {
         shape = TelegraphShape.Cone;
         radius = Mathf.Max(0f, newRadius);
         angle = Mathf.Clamp(newAngle, 1f, 360f);
         segments = Mathf.Max(3, newSegments);
+        telegraphDuration = duration;
+        fading = true;
+        timer = 0f;
         GenerateMesh();
     }
 
-    public void ConfigureCircle(float newRadius, int newSegments)
+    public void ConfigureCircle(float newRadius, int newSegments, float duration = 1f)
     {
         shape = TelegraphShape.Circle;
         circleRadius = Mathf.Max(0f, newRadius);
         circleSegments = Mathf.Max(3, newSegments);
+        telegraphDuration = duration;
+        fading = true;
+        timer = 0f;
         GenerateMesh();
     }
 
-    public void ConfigureRectangle(float width, float length)
+    public void ConfigureRectangle(float width, float length, float duration = 1f)
     {
         shape = TelegraphShape.Rectangle;
         rectangleWidth = Mathf.Max(0f, width);
         rectangleLength = Mathf.Max(0f, length);
+        telegraphDuration = duration;
+        fading = true;
+        timer = 0f;
         GenerateMesh();
     }
 
@@ -211,5 +240,4 @@ public class Telegraph : MonoBehaviour
         c.a = alpha;
         meshRenderer.material.color = c;
     }
-
 }

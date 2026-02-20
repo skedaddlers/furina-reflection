@@ -1092,7 +1092,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 0
+  defense: 5
   critRate: 0
   critMultiplier: 1.5
 --- !u!137 &7179545089949620145 stripped

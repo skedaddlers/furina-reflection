@@ -92,7 +92,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 583b8df8916867e4bb33dae9c6669330, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: ce7937d288013bf42bec53cf1a1f782f, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &3505285273781154778
 GameObject:
@@ -441,9 +441,12 @@ MonoBehaviour:
   - {fileID: 3034041666097588974}
   - {fileID: 5567475832201832613}
   - {fileID: 8705788801835095017}
+  waveCount: 1
+  timeBetweenWaves: 5
   maxEnemies: 1
   enemyCount: 1
   spawnAreaSize: {x: 1.83, y: 5, z: 2.3}
+  spawnAreaCenterOffset: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
     m_Bits: 512
@@ -452,8 +455,15 @@ MonoBehaviour:
     m_Bits: 256
   minSpawnDistance: 2
   enemyPrefab: {fileID: 4228300383457371494, guid: b15517f9f5d7af541a11b98f5c0eb4cf, type: 3}
+  itemSpawnAreaSize: {x: 8, y: 0, z: 8}
+  itemSpawnCenterOffset: {x: 0, y: 0, z: 0}
+  possibleItems: []
+  minItemSpawn: 0
+  maxItemSpawn: 2
   isCleared: 0
   isInCombat: 0
+  currentWave: 1
+  isVisited: 0
   spawnedEnemies: []
   playerSpawn: {x: 0, y: 0, z: 0}
 --- !u!1 &8976143123333419841
@@ -9674,11 +9684,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.44
+      value: 0.62
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.6445165
+      value: -2.99
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: d9e871a4a3ebfdd41920ab550c788b35, type: 3}
       propertyPath: m_LocalRotation.w
