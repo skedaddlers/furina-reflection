@@ -20,6 +20,7 @@ public class PlayerInformationUI : MonoBehaviour
     public TextMeshProUGUI attackText;
     public TextMeshProUGUI defenseText;
     public TextMeshProUGUI maxManaText;
+    public TextMeshProUGUI manaRegenText;
     public TextMeshProUGUI moveSpeedText;
     public TextMeshProUGUI critRateText;
     public TextMeshProUGUI critMultiplierText;
@@ -74,12 +75,13 @@ public class PlayerInformationUI : MonoBehaviour
 
         if (Input.GetKeyDown(toggleKey))
         {
-            playerInfoPanel.SetActive(!playerInfoPanel.activeSelf);
             if (playerInfoPanel.activeSelf)
             {
-                GameManager.Instance.cursorController.UnlockCursor();
-                GameManager.Instance.ChangeState(GameState.InMenu);
-                UpdatePlayerInfo();
+                ClosePanel();
+            }
+            else
+            {
+                OpenPanel();
             }
         }
 
@@ -142,6 +144,17 @@ public class PlayerInformationUI : MonoBehaviour
         }
     }
 
+    private void OpenPanel()
+    {
+        if (playerInfoPanel != null)
+        {
+            playerInfoPanel.OpenPanel();
+            GameManager.Instance.cursorController.UnlockCursor();
+            GameManager.Instance.ChangeState(GameState.InMenu);
+            UpdatePlayerInfo();
+        }
+    }
+
     private void UpdateProgressSection()
     {
         SetText(levelText, $"Level: {playerStats.level}");
@@ -162,10 +175,11 @@ public class PlayerInformationUI : MonoBehaviour
         SetText(attackText, $"{Mathf.RoundToInt(playerStats.baseAttack)}");
         SetText(defenseText, $"{Mathf.RoundToInt(playerStats.baseDefense)}");
         SetText(maxManaText, $"{playerStats.CurrentMana} / {playerStats.maxMana}");
+        SetText(manaRegenText, $"{playerStats.manaRegenPerSecond:F1}/sec");
         SetText(moveSpeedText, $"{playerStats.moveSpeed:F1}");
         SetText(critRateText, $"{(playerStats.critRate * 100f):F1}%");
         SetText(critMultiplierText, $"{(playerStats.critMultiplier * 100f):F1}%");
-        SetText(staminaText, $"{Mathf.RoundToInt(playerStats.CurrentStamina)} / {playerStats.maxStamina}");
+        SetText(staminaText, $"{Mathf.RoundToInt(playerStats.CurrentStamina)} / {Mathf.RoundToInt(playerStats.maxStamina)}");
     }
 
     private void UpdateSkillsSection()

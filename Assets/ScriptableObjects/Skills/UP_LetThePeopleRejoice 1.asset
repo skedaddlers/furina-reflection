@@ -15,7 +15,8 @@ MonoBehaviour:
   skillName: Let The People Rejoice+
   upgradeName: 
   description: Increases your attack power, but gradually drains health, while gaining
-    health after successfully killing enemies
+    health after successfully killing enemies. Your speed is also increased while
+    this skill is active.
   skillIcon: {fileID: 21300000, guid: 8ee1fdf233b14c9419bd741cb26bf915, type: 3}
   rarity: 2
   price: 120

@@ -7,7 +7,9 @@ public class UpgradeManager : MonoBehaviour
     public float attackGrowthPerLevel = 0.1f; // 10% increase per level
     public float defenseGrowthPerLevel = 0.1f; // 10% increase per level
     public float maxManaGrowthPerLevel = 0.1f; // 10% increase per level
+    public float manaRegenGrowthPerLevel = 0.1f; // 10% increase per level
     public float moveSpeedGrowthPerLevel = 0.05f; // 5%
+    public float staminaGrowthPerLevel = 0.05f; // 5%
     public float critRateGrowthPerLevel = 0.025f; // 2.5% increase per level
     public float critMultiplierGrowthPerLevel = 0.05f; // 5% increase per level
 
@@ -17,10 +19,11 @@ public class UpgradeManager : MonoBehaviour
     private float baseAttack;
     private float baseDefense;
     private int baseMaxMana;
+    private float baseManaRegen;
     private float baseMoveSpeed;
+    private float baseStamina;
     private float baseCritRate;
     private float baseCritMultiplier;
-    
 
     private void Start()
     {
@@ -31,9 +34,12 @@ public class UpgradeManager : MonoBehaviour
         baseAttack = playerStats.baseAttack;
         baseDefense = playerStats.baseDefense;
         baseMaxMana = playerStats.maxMana;
+        baseManaRegen = playerStats.manaRegenPerSecond;
         baseMoveSpeed = playerStats.moveSpeed;
+        baseStamina = playerStats.maxStamina;
         baseCritRate = playerStats.critRate;
         baseCritMultiplier = playerStats.critMultiplier;
+        baseManaRegen = playerStats.manaRegenPerSecond;
     }
 
     
@@ -61,7 +67,15 @@ public class UpgradeManager : MonoBehaviour
     public int GetMaxManaUpgradeAmount()
     {
         int manaIncrease = Mathf.RoundToInt(baseMaxMana * 0.1f);
+        baseMaxMana += manaIncrease; // Update base for next level
         return manaIncrease;
+    }
+
+    public float GetManaRegenUpgradeAmount()
+    {
+        float manaRegenIncrease = baseManaRegen * 0.1f;
+        baseManaRegen += manaRegenIncrease; // Update base for next level
+        return manaRegenIncrease;
     }
 
     public float GetMoveSpeedUpgradeAmount()
@@ -69,6 +83,13 @@ public class UpgradeManager : MonoBehaviour
         float moveSpeedIncrease = baseMoveSpeed * 0.1f;
         baseMoveSpeed += moveSpeedIncrease; // Update base for next level
         return moveSpeedIncrease;
+    }
+
+    public float GetStaminaUpgradeAmount()
+    {
+        float staminaIncrease = baseStamina * staminaGrowthPerLevel; // Scale stamina increase based on stamina growth per level
+        baseStamina += staminaIncrease; // Update base for next level
+        return staminaIncrease;
     }
 
     public float GetCritRateUpgradeAmount()

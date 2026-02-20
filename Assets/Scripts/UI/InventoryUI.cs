@@ -66,7 +66,7 @@ public class InventoryUI : MonoBehaviour
 
     public void OpenInventoryUI(List<Item> items)
     {
-        inventoryPanel.SetActive(true);
+        inventoryPanel.OpenPanel();
         GameManager.Instance.ChangeState(GameState.InMenu);
         GameManager.Instance.SetCursorState(true);
         for (int i = 0; i < itemSlots.Count; i++)

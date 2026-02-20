@@ -33,7 +33,7 @@ public class LevelUpUI : MonoBehaviour
         healthUpgradeButton.onClick.AddListener(() => UpgradeHealth());
         attackUpgradeButton.onClick.AddListener(() => UpgradeAttack());
         defenseUpgradeButton.onClick.AddListener(() => UpgradeDefense());
-        maxManaUpgradeButton.onClick.AddListener(() => UpgradeMaxMana());
+        maxManaUpgradeButton.onClick.AddListener(() => UpgradeMana());
         moveSpeedUpgradeButton.onClick.AddListener(() => UpgradeMoveSpeed());
         critUpgradeButton.onClick.AddListener(() => UpgradeCrit());
 
@@ -64,7 +64,7 @@ public class LevelUpUI : MonoBehaviour
             GameManager.Instance.ChangeState(GameState.InMenu);
             StopLevelUpButtonPulse();
             levelUpButton.SetActive(false);
-            levelUpPanel.SetActive(true);
+            levelUpPanel.OpenPanel();
             SetupButtonTexts();
         }
     }
@@ -121,13 +121,13 @@ public class LevelUpUI : MonoBehaviour
         $"Increase defense by {playerStats.upgradeManager.defenseGrowthPerLevel * 100}%";
 
         maxManaUpgradeButton.GetComponentInChildren<TextMeshProUGUI>().text =
-        $"Increase max mana by {playerStats.upgradeManager.maxManaGrowthPerLevel * 100}%";
+        $"Increase max mana by {playerStats.upgradeManager.maxManaGrowthPerLevel * 100}% and mana regen by {playerStats.upgradeManager.manaRegenGrowthPerLevel * 100}%";
 
         moveSpeedUpgradeButton.GetComponentInChildren<TextMeshProUGUI>().text =
-        $"Increase move speed by {playerStats.upgradeManager.moveSpeedGrowthPerLevel * 100}%";
+        $"Increase move speed by {playerStats.upgradeManager.moveSpeedGrowthPerLevel * 100}% and stamina by {playerStats.upgradeManager.staminaGrowthPerLevel * 100}%";
 
         critUpgradeButton.GetComponentInChildren<TextMeshProUGUI>().text =
-        $"Increase crit rate by {playerStats.upgradeManager.critRateGrowthPerLevel * 100}% and crit damage by {playerStats.upgradeManager.critMultiplierGrowthPerLevel * 100}%";
+        $"Increase crit rate by an additional {playerStats.upgradeManager.critRateGrowthPerLevel * 100}% and crit damage by an additional {playerStats.upgradeManager.critMultiplierGrowthPerLevel * 100}%";
     }
 
     private void UpgradeHealth()
@@ -148,9 +148,9 @@ public class LevelUpUI : MonoBehaviour
         DeductUpgradeToBeDone();
     }
 
-    private void UpgradeMaxMana()
+    private void UpgradeMana()
     {
-        playerStats.UpgradeMaxMana();
+        playerStats.UpgradeMana();
         DeductUpgradeToBeDone();
     }
 

@@ -6,10 +6,11 @@ public class TearsOfTheSinner : SkillBase
 {
     [Header("Rain Settings")]
     public float tickInterval = 1f;
-    public float additionalDurationUpgradeS= 2f;
+    public float additionalDurationUpgrade= 2f;
     public string enemyTag = "Enemy";
 
     private bool isActive = false;
+    private float finalDuration;
 
     private void OnEnable()
     {
@@ -27,7 +28,11 @@ public class TearsOfTheSinner : SkillBase
         Debug.Log($"{skillName} activated by {caster.name}");
         if(isUpgraded)
         {
-            duration += additionalDurationUpgradeS;
+            finalDuration = duration + additionalDurationUpgrade;
+        }
+        else
+        {
+            finalDuration = duration;
         }
 
         // Play cast sound
@@ -40,7 +45,7 @@ public class TearsOfTheSinner : SkillBase
         if (effectPrefab != null)
         {
             GameObject effect = Object.Instantiate(effectPrefab, caster.transform.position, Quaternion.identity);
-            Object.Destroy(effect, duration);
+            Object.Destroy(effect, finalDuration);
         }
 
         // Start the rain damage coroutine
@@ -55,7 +60,7 @@ public class TearsOfTheSinner : SkillBase
     {
         float elapsed = 0f;
 
-        while (elapsed < duration && isActive)
+        while (elapsed < finalDuration && isActive)
         {
             DamageAllEnemies(caster);
             yield return new WaitForSeconds(tickInterval);

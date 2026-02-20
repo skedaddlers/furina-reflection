@@ -29,7 +29,7 @@ public class EventRoomUI : MonoBehaviour
         GameManager.Instance.SetCursorState(true);
         currentManager = manager;
         if (eventPanel != null)
-            eventPanel.SetActive(true);
+            eventPanel.OpenPanel();
 
         for (int i = 0; i < choiceWidgets.Length; i++)
         {

@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class ShopUI : MonoBehaviour
 {
@@ -57,11 +56,7 @@ public class ShopUI : MonoBehaviour
 
     private void OpenPanel()
     {
-        shopPanel.SetActive(true);
-        shopPanel.transform.localScale = Vector3.zero;
-        shopPanel.transform.DOScale(Vector3.one, 0.3f)
-            .SetEase(Ease.OutBack)
-            .SetUpdate(true);
+        shopPanel.OpenPanel();
 
         GameManager.Instance.ChangeState(GameState.InMenu);
         GameManager.Instance.SetCursorState(true);

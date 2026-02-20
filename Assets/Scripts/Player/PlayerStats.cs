@@ -259,16 +259,18 @@ public class PlayerStats : MonoBehaviour
         baseDefense += upgradeManager.GetDefenseUpgradeAmount();
     }
 
-    public void UpgradeMaxMana()
+    public void UpgradeMana()
     {
         maxMana = Mathf.RoundToInt(maxMana + upgradeManager.GetMaxManaUpgradeAmount());
         _currentMana = maxMana; // Refill mana on upgrade
         onManaChanged?.Invoke(_currentMana, maxMana);
+        manaRegenPerSecond += upgradeManager.GetManaRegenUpgradeAmount();
     }
 
     public void UpgradeMoveSpeed()
     {
         moveSpeed += upgradeManager.GetMoveSpeedUpgradeAmount(); // Increase move speed by the upgrade amount
+        maxStamina += upgradeManager.GetStaminaUpgradeAmount(); // Also increase stamina by a scaled amount of the move speed upgrade
     }
     
 

@@ -4,6 +4,42 @@ using DG.Tweening;
 
 public static class DOTweenHelper
 {
+    public static Sequence OpenPanel(this GameObject panel, float scaleDuration = 0.3f, float fadeDuration = 0.2f, Ease easeType = Ease.OutBack, float startScale = 0f)
+    {
+        if (panel == null)
+        {
+            return null;
+        }
+
+        panel.SetActive(true);
+
+        Transform panelTransform = panel.transform;
+        panelTransform.DOKill(true);
+
+        CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = panel.AddComponent<CanvasGroup>();
+        }
+
+        canvasGroup.DOKill(true);
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+        panelTransform.localScale = Vector3.one * startScale;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Append(panelTransform.DOScale(Vector3.one, scaleDuration).SetEase(easeType));
+        seq.Join(DOTween.To(() => canvasGroup.alpha, x => canvasGroup.alpha = x, 1f, fadeDuration).SetEase(Ease.OutQuad));
+        seq.OnComplete(() =>
+        {
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+        });
+
+        return seq.SetTarget(panelTransform).SetUpdate(true);
+    }
+
     public static Tweener AnchoredMoveTo(this RectTransform target, Vector2 endValue, float duration = 0.5f, Ease easeType = Ease.Linear)
     {
         target.DOKill(true);
