@@ -15,4 +15,19 @@ public class Player : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public bool HasNoWeaponsOrSkills()
+    {
+        PlayerLoadout loadout = GetComponent<PlayerLoadout>();
+        if (loadout != null && loadout.HasWeapons())
+        {
+            return false; // Player has weapons
+        }
+        SkillManager skillManager = GetComponent<SkillManager>();
+        if (skillManager != null && skillManager.HasSkills())
+        {
+            return false; // Player has skills
+        }
+        return true;
+    }
 }

@@ -5,16 +5,22 @@ public class EventTrigger : MonoBehaviour
 {
     public Room parentRoom;
     private bool isPlayerNearby = false;
+    private Vector3 initialPosition;
 
     void Start()
     {
         // Pastikan collider-nya trigger
         Collider col = GetComponent<Collider>();
         col.isTrigger = true;
+        initialPosition = transform.position;
     }
 
     void Update()
     {
+        // rotate y
+        transform.Rotate(Vector3.up, 30f * Time.deltaTime);
+        float bobbing = Mathf.Sin(Time.time * 2f) * 0.05f; // bobbing effect
+        transform.position = initialPosition + Vector3.up * bobbing;
         // Kalau player di area & menekan F → pindah ke room tetangga
         if (isPlayerNearby && Input.GetKeyDown(KeyCode.F))
         {

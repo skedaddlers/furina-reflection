@@ -24,6 +24,7 @@ MonoBehaviour:
 
     4 Mana cost'
   icon: {fileID: 21300000, guid: 0b46d568cc6aced44a17b269f05ebb56, type: 3}
+  worldDropPrefab: {fileID: 6293921768137552695, guid: e750a1b3cfa6e6d43bbbbaae34df4b11, type: 3}
   price: 78
   baseDamage: 15
   range: 2

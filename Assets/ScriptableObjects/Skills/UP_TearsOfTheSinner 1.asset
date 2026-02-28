@@ -31,7 +31,7 @@ MonoBehaviour:
   cooldownTime: 20
   levelRequired: 1
   purchasePrice: 100
-  duration: 5
+  duration: 7
   damageAmount: 5
   healAmount: 0
   shieldAmount: 0
@@ -45,5 +45,4 @@ MonoBehaviour:
   upgradeDescription: 
   nextLevelSkill: {fileID: 0}
   tickInterval: 1
-  additionalDurationUpgrade: 2
   enemyTag: Enemy

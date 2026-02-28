@@ -49,6 +49,25 @@ public class PlayerLoadout : MonoBehaviour
 
     public void AddToLoadout(WeaponBase w)
     {
+        AddToLoadoutInternal(w, null);
+    }
+
+    public bool TryPickupDroppedWeapon(WeaponDrop droppedWeapon)
+    {
+        if (droppedWeapon == null || droppedWeapon.Weapon == null) return false;
+
+        WeaponBase pickedWeapon = droppedWeapon.Weapon;
+        Vector3 swapDropPosition = droppedWeapon.transform.position;
+
+        Destroy(droppedWeapon.gameObject);
+        AddToLoadoutInternal(pickedWeapon, swapDropPosition);
+        return true;
+    }
+
+    private void AddToLoadoutInternal(WeaponBase w, Vector3? swapDropPosition)
+    {
+        if (w == null) return;
+
         int currentIndex = System.Array.IndexOf(loadout, current);
 
         // Case spesifik: slot 0 isi, slot 1 kosong
@@ -71,8 +90,14 @@ public class PlayerLoadout : MonoBehaviour
 
         // Kalau full, replace current
         if (currentIndex == -1) currentIndex = 0;
+        WeaponBase replacedWeapon = loadout[currentIndex];
         loadout[currentIndex] = w;
         Equip(currentIndex);
+
+        if (replacedWeapon != null)
+        {
+            DropWeapon(replacedWeapon, swapDropPosition);
+        }
     }
 
     public bool HasWeapon(WeaponBase w)
@@ -82,5 +107,27 @@ public class PlayerLoadout : MonoBehaviour
             if (weapon == w) return true;
         }
         return false;
+    }
+
+    public bool HasWeapons()
+    {
+        foreach (var weapon in loadout)
+        {
+            if (weapon != null) return true;
+        }
+        return false;
+    }
+
+    private void DropWeapon(WeaponBase weaponToDrop, Vector3? overrideDropPosition = null)
+    {
+        if (weaponToDrop == null) return;
+
+        Vector3 dropPosition = overrideDropPosition ?? (transform.position + transform.forward * 1.5f);
+        WeaponDrop.Spawn(weaponToDrop, dropPosition);
+
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowNotification($"{weaponToDrop.weaponName} dropped to make space.", 2f);
+        }
     }
 }

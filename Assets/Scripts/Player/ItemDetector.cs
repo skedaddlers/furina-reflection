@@ -4,10 +4,25 @@ using System.Collections.Generic;
 public class ItemDetector : MonoBehaviour
 {
     public Item nearestItem;
+    public WeaponDrop nearestWeaponDrop;
 
     void Update()
     {
-        if (nearestItem != null && Input.GetKeyDown(KeyCode.E))
+        if (!Input.GetKeyDown(KeyCode.E))
+            return;
+
+        if (nearestWeaponDrop != null)
+        {
+            PlayerLoadout loadout = GetComponent<PlayerLoadout>();
+            if (loadout != null && loadout.TryPickupDroppedWeapon(nearestWeaponDrop))
+            {
+                nearestWeaponDrop = null;
+                RefreshInteractionUI();
+            }
+            return;
+        }
+
+        if (nearestItem != null)
         {
             Inventory inventory = GetComponent<Inventory>();
             if (inventory != null)
@@ -21,28 +36,62 @@ public class ItemDetector : MonoBehaviour
             }
         }
     }
+
     public void ClearNearestItem()
     {
         nearestItem = null;
-        UIManager.Instance.ShowInterractionUI(false, "");
+        RefreshInteractionUI();
     }
     
     private void OnTriggerEnter(Collider other)
     {
+        WeaponDrop weaponDrop = other.GetComponent<WeaponDrop>();
+        if (weaponDrop != null)
+        {
+            nearestWeaponDrop = weaponDrop;
+            RefreshInteractionUI();
+            return;
+        }
+
         Item item = other.GetComponent<Item>();
         if (item != null)
         {
             nearestItem = item;
-            UIManager.Instance.ShowInterractionUI(true, $"Press 'E' to pick up {item.itemName}");
+            RefreshInteractionUI();
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        WeaponDrop weaponDrop = other.GetComponent<WeaponDrop>();
+        if (weaponDrop != null && weaponDrop == nearestWeaponDrop)
+        {
+            nearestWeaponDrop = null;
+            RefreshInteractionUI();
+            return;
+        }
+
         Item item = other.GetComponent<Item>();
         if (item != null && item == nearestItem)
         {
             ClearNearestItem();
         }
+    }
+
+    private void RefreshInteractionUI()
+    {
+        if (nearestWeaponDrop != null)
+        {
+            UIManager.Instance.ShowInterractionUI(true, nearestWeaponDrop.GetPickupPrompt());
+            return;
+        }
+
+        if (nearestItem != null)
+        {
+            UIManager.Instance.ShowInterractionUI(true, $"Press E to pick up {nearestItem.itemName}");
+            return;
+        }
+
+        UIManager.Instance.ShowInterractionUI(false, "");
     }
 }

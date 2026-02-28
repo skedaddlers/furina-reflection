@@ -10,6 +10,8 @@ public abstract class WeaponBase : ScriptableObject
     [TextArea] public string goodPropertyText;
     [TextArea] public string badPropertyText;
     public Sprite icon;
+    [Tooltip("3D world model used when this weapon is dropped on the ground.")]
+    public GameObject worldDropPrefab;
     public int price = 100;
 
     [Header("Stats")]

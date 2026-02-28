@@ -41,6 +41,9 @@ public class Room : MonoBehaviour
     public int minItemSpawn = 0;
     public int maxItemSpawn = 2;
 
+    [Header("Boss Settings")]
+    public BossManager bossManager;
+
     [Header("Runtime Info")]
     public bool isCleared = false;
     public bool isInCombat = false;
@@ -73,6 +76,7 @@ public class Room : MonoBehaviour
 
         SetupDoors();
         SetupTriggers();
+        bossManager = GetComponent<BossManager>();
     }
 
     private void SetupDoors()
@@ -125,18 +129,30 @@ public class Room : MonoBehaviour
         EnableSpawnTrigger();
     }
 
-    public void OnDoorInteract(int direction)
+    public bool OnDoorInteract(int direction)
     {
         if (isLocked && direction != lastEnterFrom)
         {
             Debug.Log("Room is locked! Cannot exit through this door.");
-            return;
+            return false;
+        }
+        
+        Player player = FindObjectOfType<Player>();
+        if (player != null)
+        {
+            // if has no weapons or skills, show warning and don't allow to leave
+            if (player.HasNoWeaponsOrSkills())
+            {
+                UIManager.Instance.ShowNotification("You must have at least one weapon or skill equipped to leave the room!");
+                return false;
+            }
         }
 
         int nextRoomID = roomNeighbors[direction];
-        if (nextRoomID == 0) return;
+        if (nextRoomID == 0) return false;
 
         GameManager.Instance.roomManager.MovePlayerToRoom(nextRoomID, GetOpposite(direction));
+        return true;
     }
 
     public void GoToNeighbor(int direction)
@@ -229,7 +245,7 @@ public class Room : MonoBehaviour
         OnRoomClearedLocal?.Invoke();
 
         if (roomType == RoomType.Boss)
-            GameManager.Instance.OnBossRoomCleared();
+            bossManager.OnBossDefeated();
     }
 
     private void StartNextWave()

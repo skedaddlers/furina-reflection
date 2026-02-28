@@ -335,6 +335,10 @@ public class SkillManager : MonoBehaviour
     
     #region Getters
     
+    public bool HasSkills()
+    {
+        return ownedSkills.Count > 0;
+    }
     public SkillSlot[] GetActiveSkills()
     {
         return activeSkillSlots;

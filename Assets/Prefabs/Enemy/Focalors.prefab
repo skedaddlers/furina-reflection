@@ -413,7 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 400
+  maxHealth: 100
   shieldAmount: 0
   maxShield: 100
 --- !u!195 &-313271174845791396
@@ -536,7 +536,7 @@ MonoBehaviour:
   rippleEffectPrefab: {fileID: 8974203713140315807, guid: 3c339117b2de5fe459f62b63cda3cbc9, type: 3}
   useJudicialLine: 1
   lineWidth: 2
-  lineLength: 10
+  lineLength: 8
   lineTelegraphTime: 1
   lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
   lineEffectOffset: {x: 0, y: 1, z: 0}
