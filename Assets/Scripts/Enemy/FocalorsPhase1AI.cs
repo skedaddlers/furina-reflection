@@ -42,9 +42,10 @@ public class FocalorsPhase1AI : EnemyAI
     [SerializeField] private GameObject lineEffectPrefab;
     [SerializeField] private Vector3 lineEffectOffset;
 
+    private bool canAct = true;
     protected override void Update()
     {
-        if (player == null || isCasting) return;
+        if (player == null || isCasting || !canAct) return;
 
         float distance = Vector3.Distance(player.position, transform.position);
 
@@ -70,6 +71,18 @@ public class FocalorsPhase1AI : EnemyAI
         {
             ChasePlayer();
         }
+    }
+
+    public void SetCanAct(bool value)
+    {
+        canAct = value;
+        if (!value)
+        {
+            StopChasing();
+            isCasting = false;
+            animator.ResetTrigger("Cast");
+        }
+        return;
     }
 
     bool CanUseSkill()

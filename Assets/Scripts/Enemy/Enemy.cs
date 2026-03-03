@@ -11,6 +11,8 @@ public enum EnemyType
 public class Enemy : MonoBehaviour
 {
     public EnemyType enemyType = EnemyType.Basic;
+    [Tooltip("If true, rewards/event/destroy on death are handled externally.")]
+    public bool SuppressDefaultDeathHandling = false;
     public Renderer enemyRenderer;
     public Color rendererColor;
     public Transform healthBar;
@@ -29,6 +31,8 @@ public class Enemy : MonoBehaviour
 
     private void HandleDeath()
     {
+        if (SuppressDefaultDeathHandling)
+            return;
 
         // Reward player with XP and Gold upon enemy death
         if (PlayerStats.Instance != null)

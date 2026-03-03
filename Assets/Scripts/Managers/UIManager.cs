@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     public CursorController cursorController;
     public LevelUpUI levelUpUI;
     public BossHPBarUI bossHPBarUI;
+    public DialogueUI dialogueUI;
 
     [Header("Interaction UI")]
     public CanvasGroup doorPromptCanvas;
@@ -88,6 +89,10 @@ public class UIManager : MonoBehaviour
         if (bossHPBarUI == null)
         {
             bossHPBarUI = GetComponent<BossHPBarUI>();
+        }
+        if (dialogueUI == null)
+        {
+            dialogueUI = GetComponent<DialogueUI>();
         }
         InitUI();
         cursorController.LockCursor();

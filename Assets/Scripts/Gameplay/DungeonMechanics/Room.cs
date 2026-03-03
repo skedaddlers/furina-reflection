@@ -197,7 +197,11 @@ public class Room : MonoBehaviour
             enemyCount = 1;
 
         Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
-
+        if (roomType == RoomType.Boss && bossManager != null)
+        {
+            bossManager.SpawnFocalorsPhase1();
+            return;
+        }
         SpawnEnemiesInRoom();
         LockAllDoors();
     }

@@ -15,7 +15,6 @@ public class BossHealthBar : MonoBehaviour
         if (_health != null)
         {
             _health.onHealthChanged += HandleHealthChanged;
-            UIManager.Instance.bossHPBarUI.Initialize(this);
         }
     }
 

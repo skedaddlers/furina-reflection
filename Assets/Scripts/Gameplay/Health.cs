@@ -18,7 +18,7 @@ public class Health : MonoBehaviour
     // Shield system - returns remaining damage after absorption
     public Func<float, float> onTakeDamage;
 
-    void Start()
+    void Awake()
     {
         currentHealth = maxHealth;
         maxShield = maxHealth;
