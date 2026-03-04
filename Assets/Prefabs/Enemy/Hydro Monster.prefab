@@ -801,8 +801,8 @@ GameObject:
   - component: {fileID: 4789685701494955129}
   - component: {fileID: -3298448340650791108}
   - component: {fileID: -3851192223676009071}
-  - component: {fileID: 5047597675947135822}
   - component: {fileID: -2398299191158659386}
+  - component: {fileID: 7973930422294884215}
   m_Layer: 6
   m_Name: Hydro Monster
   m_TagString: Enemy
@@ -860,7 +860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHealth: 1000
+  maxHealth: 80
   shieldAmount: 0
   maxShield: 100
 --- !u!136 &2844401194418832028
@@ -920,7 +920,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1723927270b6754f8f6d4365da49217, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  enemyType: 0
+  enemyType: 2
+  SuppressDefaultDeathHandling: 0
   enemyRenderer: {fileID: 0}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
@@ -942,51 +943,6 @@ MonoBehaviour:
   defense: 10
   critRate: 0
   critMultiplier: 1.5
---- !u!114 &5047597675947135822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8608688983982256369}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 228ff4156e95d8547b62d201252aeb6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FocalorsPhase1AI
-  isRanged: 1
-  attackRange: 1.5
-  attackCooldown: 1.5
-  movementSpeed: 1
-  damage: 10
-  detectionRange: 10
-  turnSpeed: 8
-  projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
-  isPerformingSpecialAttack: 0
-  telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
-  skillCooldown: 5
-  castWindupTime: 0.5
-  waitAfterCastTime: 2
-  useVerdictArc: 1
-  verdictArcRange: 8
-  verdictArcAngle: 70
-  verdictArcSegments: 30
-  verdictArcTelegraphTime: 1.2
-  verdictArcEffectPrefab: {fileID: 3156866507962234106, guid: 44bb64ca62c9b4344a1625914707200c, type: 3}
-  verdictArcEffectRotationOffset: {x: 0, y: -90, z: 0}
-  useRippleCourt: 1
-  rippleCount: 3
-  rippleSpawnRadius: 10
-  rippleCircleRadius: 3
-  rippleSegments: 30
-  rippleTelegraphTime: 1
-  rippleEffectPrefab: {fileID: 8974203713140315807, guid: 3c339117b2de5fe459f62b63cda3cbc9, type: 3}
-  useJudicialLine: 1
-  lineWidth: 2
-  lineLength: 8
-  lineTelegraphTime: 1
-  lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
-  lineEffectOffset: {x: 0, y: 1, z: 0}
 --- !u!114 &-2398299191158659386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -999,6 +955,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 403a65a6f66fd6b488b298426acedec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossHealthBar
+  bossName: 'Focalors: The True Reflection of Self'
+--- !u!114 &7973930422294884215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8608688983982256369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2baa89a97d37f034cb85518278fc3bbd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FocalorsPhase2AI
+  isRanged: 0
+  attackRange: 1.5
+  attackCooldown: 1.5
+  movementSpeed: 3
+  damage: 10
+  detectionRange: 10
+  turnSpeed: 8
+  projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
+  isPerformingSpecialAttack: 0
+  clonePrefab: {fileID: 8608688983982256369, guid: d64cf01b5a48cd74781b719cab5f1ac1, type: 3}
+  jumpHeight: 7
+  jumpDuration: 1
+  cloneSpawnPoint: {fileID: 0}
+  telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
+  skillCooldown: 5
+  castWindupTime: 0.5
+  waitAfterCastTime: 0.5
+  useCloseCollapse: 1
+  closeCollapseRadius: 4
+  closeCollapseSegments: 30
+  closeCollapseTelegraphTime: 1
+  closeCollapseEffectPrefab: {fileID: 0}
+  useBackstepTidalBurst: 1
+  backstepDistance: 6
+  backstepDuration: 0.3
+  backstepRadius: 5
+  backstepTelegraphTime: 1.2
+  useHydroDash: 1
+  dashWidth: 3
+  dashLength: 12
+  dashTelegraphTime: 1.2
+  dashDuration: 0.2
+  dashEffectPrefab: {fileID: 0}
+  useTidalSpearFan: 1
+  spearCount: 3
+  spearRange: 10
+  spearAngle: 20
+  spearSpreadAngle: 35
+  spearTelegraphTime: 1.2
+  useTriplePulseRing: 1
+  pulseInitialRadius: 3
+  pulseRadiusIncrement: 3
+  pulseDelayBetween: 0.8
+  pulseEffectPrefab: {fileID: 0}
 --- !u!1 &8712777044120169847
 GameObject:
   m_ObjectHideFlags: 0

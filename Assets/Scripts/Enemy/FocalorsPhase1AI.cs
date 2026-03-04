@@ -45,8 +45,12 @@ public class FocalorsPhase1AI : EnemyAI
     private bool canAct = true;
     protected override void Update()
     {
-        if (player == null || isCasting || !canAct) return;
-
+        if (player == null || isCasting) return;
+        if (!canAct)
+        {
+            LookAtPlayer();
+            return;
+        }
         float distance = Vector3.Distance(player.position, transform.position);
 
         if (!SeePlayer())
@@ -83,6 +87,13 @@ public class FocalorsPhase1AI : EnemyAI
             animator.ResetTrigger("Cast");
         }
         return;
+    }
+
+    public void SetImmune(bool value)
+    {
+        var health = GetComponent<Health>();
+        if (health != null)
+            health.SetImmune(value);
     }
 
     bool CanUseSkill()

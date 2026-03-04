@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class BossHealthBar : MonoBehaviour
 {
+    public string bossName = "Boss Name";
     private Health _health;
     public Health Health => _health;
 

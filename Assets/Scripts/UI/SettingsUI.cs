@@ -8,6 +8,8 @@ public class SettingsUI : MonoBehaviour
     public Slider sfxVolumeSlider;
     public Button closeSettingsButton;
 
+    private GameState previousState;
+
     void Start()
     {
         settingsPanel.SetActive(false);
@@ -43,14 +45,18 @@ public class SettingsUI : MonoBehaviour
     void OpenSettings()
     {
         GameManager.Instance.SetCursorState(true);
-        GameManager.Instance.ChangeState(GameState.InMenu);
+        previousState = GameManager.Instance.CurrentState;
+        GameManager.Instance.ChangeState(GameState.Paused);
         settingsPanel.SetActive(true);
     }
 
     void CloseSettings()
     {
-        GameManager.Instance.SetCursorState(false);
+        if(previousState == GameState.Playing)
+        {
+            GameManager.Instance.SetCursorState(false);
+        }
         settingsPanel.SetActive(false);
-        GameManager.Instance.ChangeState(GameState.Playing);
+        GameManager.Instance.ChangeState(previousState);
     }
 }

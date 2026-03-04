@@ -413,7 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 80
   shieldAmount: 0
   maxShield: 100
 --- !u!195 &-313271174845791396
@@ -474,6 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 2
+  SuppressDefaultDeathHandling: 0
   enemyRenderer: {fileID: 7065071415207174372}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
@@ -552,6 +553,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 403a65a6f66fd6b488b298426acedec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossHealthBar
+  bossName: 'Focalors '
 --- !u!1001 &8407537047208099254
 PrefabInstance:
   m_ObjectHideFlags: 0

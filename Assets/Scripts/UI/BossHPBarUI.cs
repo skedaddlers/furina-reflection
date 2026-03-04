@@ -1,12 +1,14 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class BossHPBarUI : MonoBehaviour
 {
     public Slider healthSlider;
     public Slider decayingHealthSlider;
     public GameObject bossHPBarCanvas;
+    public TextMeshProUGUI bossNameText;
     public float fillSpeed = 2f;
 
     public float decayingSpeed = 1f;
@@ -24,6 +26,8 @@ public class BossHPBarUI : MonoBehaviour
 
         decayingHealthSlider.maxValue = max;
         decayingHealthSlider.value = current;
+
+        bossNameText.text = bossHealthBar.bossName;
     }
 
     public void SetActive(bool isActive)
@@ -40,6 +44,7 @@ public class BossHPBarUI : MonoBehaviour
         }
 
         isInitializing = true;
+        bossNameText.text = bossHealthBar.bossName;
         // slowly fill the health bar from 0 to current health for dramatic effect
         healthSlider.value = 0;
         decayingHealthSlider.value = 0;

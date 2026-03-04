@@ -87,6 +87,11 @@ public class Health : MonoBehaviour
         Debug.Log($"{gameObject.name} hit flash ended.");
     }
 
+    public void SetImmune(bool value)
+    {
+        isInvulnerable = value;
+    }
+
     public void AddShield(float amount)
     {
         if (amount <= 0) return;
