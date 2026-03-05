@@ -370,6 +370,147 @@ Transform:
   - {fileID: 7124415616042234101}
   m_Father: {fileID: 1438692667617235713}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3831473759004684775
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5700381010099489120}
+  - component: {fileID: 7234862165136803496}
+  - component: {fileID: 3699650799774129196}
+  - component: {fileID: 8714184819658014539}
+  - component: {fileID: 4671802102429263476}
+  - component: {fileID: 6904321324761796370}
+  m_Layer: 6
+  m_Name: Skills
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5700381010099489120
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3831473759004684775}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8949749401524693579}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7234862165136803496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3831473759004684775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c922dbcae69300a4fb342d06d34df128, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillBackstepTidalBurst
+  skillName: New Skill
+  animationTrigger: CastSkill
+  windUpAnimationTrigger: WindUp
+  isEnabled: 0
+  backstepDistance: 6
+  backstepDuration: 0.3
+  backstepRadius: 5
+  backstepTelegraphTime: 1.2
+  backstepEffectPrefab: {fileID: 0}
+--- !u!114 &3699650799774129196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3831473759004684775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3ab862e54179345a3cc1ca5dd37261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillCloseCollapse
+  skillName: New Skill
+  animationTrigger: A
+  windUpAnimationTrigger: W
+  isEnabled: 0
+  closeCollapseRadius: 4
+  closeCollapseSegments: 30
+  closeCollapseTelegraphTime: 1
+  closeCollapseEffectPrefab: {fileID: 0}
+--- !u!114 &8714184819658014539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3831473759004684775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ae44f4fc95409d42bcb5fe054eba0d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillHydroDash
+  skillName: New Skill
+  animationTrigger: A_Dash
+  windUpAnimationTrigger: W_Dash
+  isEnabled: 1
+  dashWidth: 3
+  dashLength: 12
+  dashTelegraphTime: 1.2
+  dashDuration: 0.2
+  dashEffectPrefab: {fileID: 0}
+  endAnimationTrigger: StopDash
+--- !u!114 &4671802102429263476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3831473759004684775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3979115703f54104bbc479196e68d7d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTriplePulseRing
+  skillName: New Skill
+  animationTrigger: CastSkill
+  windUpAnimationTrigger: WindUp
+  isEnabled: 0
+  pulseInitialRadius: 2
+  pulseRadiusIncrement: 1
+  pulseDelayBetween: 0.8
+  pulseEffectPrefab: {fileID: 0}
+--- !u!114 &6904321324761796370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3831473759004684775}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bc873bbf06f06a4ca281b20c705625c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillTidalSpearFan
+  skillName: New Skill
+  animationTrigger: CastSkill
+  windUpAnimationTrigger: WindUp
+  isEnabled: 0
+  spearCount: 3
+  spearRange: 10
+  spearAngle: 20
+  spearSpreadAngle: 35
+  spearTelegraphTime: 1.2
+  spearEffectPrefab: {fileID: 0}
 --- !u!1 &4347696321660300063
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,6 +944,7 @@ GameObject:
   - component: {fileID: -3851192223676009071}
   - component: {fileID: -2398299191158659386}
   - component: {fileID: 7973930422294884215}
+  - component: {fileID: 8771158007694925196}
   m_Layer: 6
   m_Name: Hydro Monster
   m_TagString: Enemy
@@ -824,6 +966,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 9118492221767753917}
+  - {fileID: 5700381010099489120}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &3086031709323997233
@@ -979,39 +1122,26 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   clonePrefab: {fileID: 8608688983982256369, guid: d64cf01b5a48cd74781b719cab5f1ac1, type: 3}
   jumpHeight: 7
-  jumpDuration: 1
+  jumpDuration: 2
   cloneSpawnPoint: {fileID: 0}
+  phase2DeathEffectPrefab: {fileID: 4809171458859421548, guid: f017938ec90b46442abb783943ec8205, type: 3}
   telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
   skillCooldown: 5
   castWindupTime: 0.5
   waitAfterCastTime: 0.5
-  useCloseCollapse: 1
-  closeCollapseRadius: 4
-  closeCollapseSegments: 30
-  closeCollapseTelegraphTime: 1
-  closeCollapseEffectPrefab: {fileID: 0}
-  useBackstepTidalBurst: 1
-  backstepDistance: 6
-  backstepDuration: 0.3
-  backstepRadius: 5
-  backstepTelegraphTime: 1.2
-  useHydroDash: 1
-  dashWidth: 3
-  dashLength: 12
-  dashTelegraphTime: 1.2
-  dashDuration: 0.2
-  dashEffectPrefab: {fileID: 0}
-  useTidalSpearFan: 1
-  spearCount: 3
-  spearRange: 10
-  spearAngle: 20
-  spearSpreadAngle: 35
-  spearTelegraphTime: 1.2
-  useTriplePulseRing: 1
-  pulseInitialRadius: 3
-  pulseRadiusIncrement: 3
-  pulseDelayBetween: 0.8
-  pulseEffectPrefab: {fileID: 0}
+--- !u!114 &8771158007694925196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8608688983982256369}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14abf8f639ce14d47b8e1e2c683c05a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossSkillManager
+  skills: []
 --- !u!1 &8712777044120169847
 GameObject:
   m_ObjectHideFlags: 0

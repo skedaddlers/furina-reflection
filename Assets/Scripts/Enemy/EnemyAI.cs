@@ -18,6 +18,7 @@ public class EnemyAI : MonoBehaviour
     protected Transform player;
     protected NavMeshAgent agent;
     protected Animator animator;
+    public Animator Animator => animator; // Expose animator to skills that might need it
     protected EnemyStats enemyStats;
     protected float lastAttackTime;
     private Coroutine rotateCoroutine;
@@ -29,6 +30,7 @@ public class EnemyAI : MonoBehaviour
     private bool baseCaptured = false;
     private float currentSpeedModifier = 1f;
 
+    
     protected virtual void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -37,6 +39,11 @@ public class EnemyAI : MonoBehaviour
         enemyStats = GetComponent<EnemyStats>();
         CaptureBaseStats();
         ApplyDifficultyMultipliers();
+    }
+
+    protected virtual void Start()
+    {
+        // Base enemy AI doesn't do anything in Start, but this allows derived classes to call base.Start() if needed
     }
 
     protected virtual void Update()

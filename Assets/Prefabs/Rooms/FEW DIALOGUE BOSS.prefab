@@ -423,7 +423,7 @@ GameObject:
   - component: {fileID: 3122027807920853622}
   - component: {fileID: 8976820154549254855}
   m_Layer: 0
-  m_Name: Boss Room
+  m_Name: FEW DIALOGUE BOSS
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -524,96 +524,21 @@ MonoBehaviour:
   - speakerName: Focalors
     dialogueText: So... you finally reached the end.
     voiceLine: {fileID: 8300000, guid: b7b5fe7330e23594aa005fb6c18471a9, type: 3}
-  - speakerName: Furina
-    dialogueText: Focalors...? Why are you here?
-    voiceLine: {fileID: 8300000, guid: 7e3ffaee023f11c4c94f4120586a2ca2, type: 3}
-  - speakerName: Focalors
-    dialogueText: "Don\u2019t act surprised. I have been here since you entered this
-      dungeon."
-    voiceLine: {fileID: 8300000, guid: c087e4a7f46efe543be29768062dda00, type: 3}
-  - speakerName: Furina
-    dialogueText: No...
-    voiceLine: {fileID: 8300000, guid: dfc2653086a8da443a63f2ca587bbba0, type: 3}
-  - speakerName: Focalors
-    dialogueText: "I watched every attack. Every dodge. Every spell. Every panic.
-      Every habit you call \u2018strategy'."
-    voiceLine: {fileID: 8300000, guid: e72fabfa4249444469ee0c7d03ff8e19, type: 3}
-  - speakerName: Focalors
-    dialogueText: "You didn\u2019t clear the dungeon, Furina. You rehearsed."
-    voiceLine: {fileID: 8300000, guid: cb36b99d5426d1a4993d22b7c7892774, type: 3}
-  - speakerName: Furina
-    dialogueText: Rehearsed for what?
-    voiceLine: {fileID: 8300000, guid: 75e065d7065c9c04097381c9a0eab50d, type: 3}
-  - speakerName: Focalors
-    dialogueText: For me!
-    voiceLine: {fileID: 8300000, guid: c42d6887f005bfa4cb11bd42831493c9, type: 3}
-  - speakerName: Focalors
-    dialogueText: "Now... show me the performance you\u2019ve been hiding behind."
-    voiceLine: {fileID: 8300000, guid: 466d85d21b8824f4a96a132fbe998091, type: 3}
-  showPhase1BossHPBarAtIndex: 8
+  showPhase1BossHPBarAtIndex: 0
   phase1EndDialogues:
   - speakerName: Focalors
     dialogueText: "Ugh... you still don\u2019t understand"
     voiceLine: {fileID: 8300000, guid: 838a4264b62e66548a9eb8d1e2b2cd45, type: 3}
-  - speakerName: Furina
-    dialogueText: Understand what? Clearly, I defeated you that easily
-    voiceLine: {fileID: 8300000, guid: 76958ecb7678b3243b8a2550a486a937, type: 3}
-  - speakerName: Focalors
-    dialogueText: "This dungeon isn\u2019t your prison."
-    voiceLine: {fileID: 8300000, guid: 4a17d87c09146d24c92255550895e628, type: 3}
-  - speakerName: Focalors
-    dialogueText: It is your mirror.
-    voiceLine: {fileID: 8300000, guid: c2ffa3c8b6ecab4429a512d98249594d, type: 3}
-  - speakerName: Furina
-    dialogueText: Wait... what do you mean by that?
-    voiceLine: {fileID: 8300000, guid: ce1c17e3749ea9846bec1b4084995c59, type: 3}
-  - speakerName: Focalors
-    dialogueText: And you... cannot escape your reflection.
-    voiceLine: {fileID: 8300000, guid: e1abc1bea5ed5c34bb8340ac7ccf7e05, type: 3}
   transformationEffectDelay: 2.8
   phase2StartDialogues:
   - speakerName: Furina
     dialogueText: "This isn\u2019t you..."
     voiceLine: {fileID: 8300000, guid: 148501f2bb960c246b3861f97ae216a4, type: 3}
-  - speakerName: Focalors?
-    dialogueText: Wrong! This is what you made me.
-    voiceLine: {fileID: 8300000, guid: 8caa5a45713164a4f8a3022aef939bde, type: 3}
-  - speakerName: Furina
-    dialogueText: I made you?!
-    voiceLine: {fileID: 8300000, guid: 9b739391c745c1b418489142cb20402b, type: 3}
-  - speakerName: Focalors?
-    dialogueText: "Every time you smiled when you wanted to scream...\nEvery time
-      you bowed while drowning inside...\nEvery time you said \u2018I\u2019m fine\u2019..."
-    voiceLine: {fileID: 8300000, guid: 29b17f2fceb40c940827ba34a1794f37, type: 3}
-  - speakerName: Focalors?
-    dialogueText: I grew.
-    voiceLine: {fileID: 8300000, guid: e96e13a02174aee45846464cb39e214f, type: 3}
-  - speakerName: Furina
-    dialogueText: I did what I had to do!
-    voiceLine: {fileID: 8300000, guid: fbccdca9de007e142987bf32b59bc79e, type: 3}
-  - speakerName: Focalors?
-    dialogueText: And now... you will face what you refused to feel.
-    voiceLine: {fileID: 8300000, guid: 159084c3670ad7d40b733925bdc44cb1, type: 3}
-  - speakerName: Focalors?
-    dialogueText: 'COME, FURINA.
-
-      LET US SEE IF YOUR ACT CAN SURVIVE THE TRUTH
-      AND FACE... YOUR OWN AGONY!
-
-'
-    voiceLine: {fileID: 8300000, guid: 0a64ffe1d72f3a94db7ae3976a064665, type: 3}
   showPhase2BossHPBarAtIndex: 8
   phase2CloneDeathDialogues:
   - speakerName: Focalors
     dialogueText: So this is how you fight.
     voiceLine: {fileID: 8300000, guid: 4e361743652705e45a191db3504c7534, type: 3}
-  - speakerName: Focalors
-    dialogueText: You are predictable as always, Furina.
-    voiceLine: {fileID: 8300000, guid: bc58cbe3738aa5c48895315e0ac197b1, type: 3}
-  - speakerName: Focalors
-    dialogueText: "And now... I will show you why you shouldn\u2019t always rely
-      on your old self!"
-    voiceLine: {fileID: 8300000, guid: e892aec88a4b4104ebe035dac48f69f5, type: 3}
   healthBasedPhase2Dialogues:
   - speakerName: Focalors
     dialogueText: Do you know why I exist?
@@ -662,32 +587,6 @@ MonoBehaviour:
   - speakerName: Furina
     dialogueText: Is it over?
     voiceLine: {fileID: 8300000, guid: 3cf5d3f81c3c1564883228029eb66594, type: 3}
-  - speakerName: Focalors
-    dialogueText: Only if you stop lying to yourself.
-    voiceLine: {fileID: 8300000, guid: 3c3c057f125dbd741bc7b006785fa5c1, type: 3}
-  - speakerName: Furina
-    dialogueText: "You\u2019re not my enemy."
-    voiceLine: {fileID: 8300000, guid: eecd62244053e2e479fc8e93e4634bdb, type: 3}
-  - speakerName: Focalors
-    dialogueText: I never was.
-    voiceLine: {fileID: 8300000, guid: 3108af32ccaef2749bdbc76b65444e2b, type: 3}
-  - speakerName: Focalors
-    dialogueText: I was the part of you that remembered.
-    voiceLine: {fileID: 8300000, guid: cc63153c160e1814aa507a3740b55db1, type: 3}
-  - speakerName: Furina
-    dialogueText: Remembered what?
-    voiceLine: {fileID: 8300000, guid: 0256991b407cce34f927a17b00ee9c27, type: 3}
-  - speakerName: Focalors
-    dialogueText: That you are allowed to be afraid... That you are allowed to fail...
-      That you do not need an audience to exist.
-    voiceLine: {fileID: 8300000, guid: eacdd47d5fa32504fb416beb9d8f7bb2, type: 3}
-  - speakerName: Focalors
-    dialogueText: If you wish to be free... Do not destroy your reflection, but try
-      to understand it, be honest with yourself... And become... A new you
-    voiceLine: {fileID: 8300000, guid: 649b9a13108a35649a366e3bcfb35fd9, type: 3}
-  - speakerName: Focalors
-    dialogueText: And Furina... No more rehearsals.
-    voiceLine: {fileID: 8300000, guid: 58a31253d549075418c4c61e075b9c81, type: 3}
 --- !u!1 &7686554196724947285
 GameObject:
   m_ObjectHideFlags: 0

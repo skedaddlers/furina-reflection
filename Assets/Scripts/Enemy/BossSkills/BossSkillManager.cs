@@ -1,0 +1,88 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+
+// --- BASE SKILL CLASS ---
+[System.Serializable]
+public abstract class BossSkill : MonoBehaviour
+{
+    [Header("Base Skill Settings")]
+    public string skillName = "New Skill";
+    public string animationTrigger = "CastSkill";
+    public string windUpAnimationTrigger = "WindUp";
+    public bool isEnabled = true;
+    
+    protected FocalorsPhase2AI boss;
+
+    public virtual void Initialize(FocalorsPhase2AI bossInstance)
+    {
+        boss = bossInstance;
+    }
+
+    // Every skill must implement this routine
+    public abstract IEnumerator ExecuteRoutine();
+}
+
+// --- SKILL MANAGER ---
+public class BossSkillManager : MonoBehaviour
+{
+    public List<BossSkill> skills = new List<BossSkill>();
+    private FocalorsPhase2AI boss;
+
+    void Awake()
+    {
+        if (boss == null)
+        {
+            boss = GetComponent<FocalorsPhase2AI>();
+        }
+        if (boss != null)
+        {
+            Initialize(boss);
+        }
+        else
+        {
+            Debug.LogError("BossSkillManager could not find a FocalorsPhase2AI in its parents!");
+        }
+    }
+    public void Initialize(FocalorsPhase2AI bossInstance)
+    {
+        boss = bossInstance;
+        
+        // Find all BossSkill components attached to this GameObject or its children
+        if (skills.Count == 0)
+        {
+            List<BossSkill> foundSkills = new List<BossSkill>(GetComponentsInChildren<BossSkill>());
+            if (foundSkills.Count == 0)            {
+                Debug.LogWarning("No BossSkill components found in BossSkillManager or its children!");
+            }
+            else
+            {
+
+                foreach (var skill in foundSkills)
+                {
+                    if (!skills.Contains(skill) && skill.isEnabled)
+                    {
+                        skills.Add(skill);
+                    }
+                }
+            }
+        }
+        foreach (var skill in skills)
+        {
+            skill.Initialize(boss);
+        }
+    }
+
+    public BossSkill GetRandomAvailableSkill()
+    {
+        List<BossSkill> available = skills.FindAll(s => s.isEnabled);
+        
+        if (available.Count == 0)
+        {
+            Debug.LogWarning("No skills are enabled or attached to the BossSkillManager!");
+            return null;
+        }
+
+        return available[Random.Range(0, available.Count)];
+    }
+}

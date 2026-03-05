@@ -11,13 +11,18 @@ public class FocalorsPhase2AI : EnemyAI
     public float jumpDuration = 1f;
     public Transform cloneSpawnPoint; // Optional: where the clone appears
     public System.Action onCloneDies; // Event to notify BossManager that clone has died
+
+    [Header("Phase 2 Outro Mechanics")]
+    public GameObject phase2DeathEffectPrefab;
+    public System.Action onPhase2Death; // Event to notify BossManager that phase 2 death animation has finished
+
     private bool hasDoneIntro = false;
     private bool isWaitingForClone = false;
     private Health cloneHealth;
 
-    [Header("Telegraph & General Settings")]
-    [SerializeField] private Telegraph telegraphPrefab;
-    [SerializeField] private float skillCooldown = 4f; // slightly faster than Phase 1
+    [Header("Core Skill Dependencies")]
+    public Telegraph telegraphPrefab; 
+    [SerializeField] private float skillCooldown = 4f; 
     [SerializeField] private float castWindupTime = 0.5f;
     [SerializeField] private float waitAfterCastTime = 0.5f;
 
@@ -25,42 +30,26 @@ public class FocalorsPhase2AI : EnemyAI
     private bool isCasting = false;
     private bool canAct = true;
 
-    [Header("Skill: Close Collapse")]
-    public bool useCloseCollapse = true;
-    [SerializeField] private float closeCollapseRadius = 4f;
-    [SerializeField] private int closeCollapseSegments = 30;
-    [SerializeField] private float closeCollapseTelegraphTime = 1f;
-    [SerializeField] private GameObject closeCollapseEffectPrefab;
+    private BossSkillManager skillManager;
 
-    [Header("Skill: Backstep Tidal Burst")]
-    public bool useBackstepTidalBurst = true;
-    [SerializeField] private float backstepDistance = 6f;
-    [SerializeField] private float backstepDuration = 0.3f;
-    [SerializeField] private float backstepRadius = 5f;
-    [SerializeField] private float backstepTelegraphTime = 1.2f;
+    // Expose protected EnemyAI variables to the skills
+    public Transform TargetPlayer => player;
 
-    [Header("Skill: Hydro Dash")]
-    public bool useHydroDash = true;
-    [SerializeField] private float dashWidth = 3f;
-    [SerializeField] private float dashLength = 12f;
-    [SerializeField] private float dashTelegraphTime = 1.2f;
-    [SerializeField] private float dashDuration = 0.2f;
-    [SerializeField] private GameObject dashEffectPrefab;
-
-    [Header("Skill: Tidal Spear Fan")]
-    public bool useTidalSpearFan = true;
-    [SerializeField] private int spearCount = 3;
-    [SerializeField] private float spearRange = 10f;
-    [SerializeField] private float spearAngle = 20f; // Narrow cone
-    [SerializeField] private float spearSpreadAngle = 35f; // Angle between each cone
-    [SerializeField] private float spearTelegraphTime = 1.2f;
-
-    [Header("Skill: Triple Pulse Ring")]
-    public bool useTriplePulseRing = true;
-    [SerializeField] private float pulseInitialRadius = 3f;
-    [SerializeField] private float pulseRadiusIncrement = 3f;
-    [SerializeField] private float pulseDelayBetween = 0.8f;
-    [SerializeField] private GameObject pulseEffectPrefab;
+    void Start()
+    {
+        base.Start();
+        
+        // Initialize the Skill Manager
+        skillManager = GetComponent<BossSkillManager>();
+        if (skillManager != null)
+        {
+            skillManager.Initialize(this);
+        }
+        else
+        {
+            Debug.LogError("BossSkillManager missing from FocalorsPhase2AI or its children!");
+        }
+    }
 
     protected override void Update()
     {
@@ -84,7 +73,7 @@ public class FocalorsPhase2AI : EnemyAI
 
         if (CanUseSkill())
         {
-            StartCoroutine(PerformRandomSkill());
+            StartCoroutine(PerformSkillSequence());
             return;
         }
 
@@ -112,12 +101,14 @@ public class FocalorsPhase2AI : EnemyAI
         if (agent != null) agent.enabled = false; // Disable NavMeshAgent during intro
 
         var collider = GetComponent<Collider>();
-        if (collider != null) collider.enabled = false; // Disable collider to prevent weird
+        if (collider != null) collider.enabled = false; // Disable collider to prevent weird behavior
 
         // 1. Jump up and become immune
         SetImmune(true);
         animator.SetTrigger("JumpUp"); // Make sure you have this trigger in Animator
         
+        // wait for the jump animation to reach the point where she should be at the peak (you can use an Animation Event for this, or just wait a fixed time)
+        yield return new WaitForSeconds(jumpDuration * 0.5f); // Assuming the peak is at half the jump duration, adjust as needed
         Vector3 startPos = transform.position;
         Vector3 peakPos = startPos + Vector3.up * jumpHeight;
         
@@ -154,8 +145,8 @@ public class FocalorsPhase2AI : EnemyAI
 
     private IEnumerator JumpDownRoutine()
     {
-        animator.SetTrigger("JumpDown");
         
+        animator.SetTrigger("JumpDown");
         Vector3 startPos = transform.position;
         // Raycast down to find ground, or just subtract jumpHeight
         Vector3 groundPos = startPos - Vector3.up * jumpHeight; 
@@ -200,218 +191,60 @@ public class FocalorsPhase2AI : EnemyAI
         if (health != null) health.SetImmune(value);
     }
 
-    bool CanUseSkill()
-    {
-        return Time.time - lastSkillTime >= skillCooldown;
-    }
-
     public void NotifyCloneDeath()
     {
         StartCoroutine(JumpDownRoutine());
     }
 
+    public void DeathAndTransform()
+    {
+        // Play death animation, disable boss, etc.
+        SetCanAct(false);
+        animator.SetTrigger("Die");
+    }
+
+    public void OnDeathAnimationEvent() // Call this from an animation event at the end of the death animation
+    {
+        if (phase2DeathEffectPrefab != null)
+        {
+            GameObject effect = Instantiate(phase2DeathEffectPrefab, transform.position, Quaternion.identity);
+            Destroy(effect, 2f); // Destroy the effect after 2 seconds
+        }
+
+        onPhase2Death?.Invoke();
+    }
+
+
     #endregion
 
-    #region Phase 2 Skills
+    #region Skill Execution
 
-    IEnumerator PerformRandomSkill()
+    bool CanUseSkill()
     {
+        return Time.time - lastSkillTime >= skillCooldown;
+    }
+
+    IEnumerator PerformSkillSequence()
+    {
+        BossSkill chosenSkill = skillManager.GetRandomAvailableSkill();
+        if (chosenSkill == null) yield break;
+
         isCasting = true;
         StopChasing();
         LookAtPlayer();
 
-        animator.SetTrigger("Cast");
+        // Let the boss wind up
+        animator.SetTrigger(chosenSkill.windUpAnimationTrigger);
         yield return new WaitForSeconds(castWindupTime);
 
-        List<int> availableSkills = new List<int>();
-        if (useCloseCollapse) availableSkills.Add(0);
-        if (useBackstepTidalBurst) availableSkills.Add(1);
-        if (useHydroDash) availableSkills.Add(2);
-        if (useTidalSpearFan) availableSkills.Add(3);
-        if (useTriplePulseRing) availableSkills.Add(4);
+        // Execute the specific skill's logic
+        yield return StartCoroutine(chosenSkill.ExecuteRoutine());
 
-        if (availableSkills.Count > 0)
-        {
-            int choice = availableSkills[Random.Range(0, availableSkills.Count)];
-            switch (choice)
-            {
-                case 0: yield return StartCoroutine(CloseCollapse()); break;
-                case 1: yield return StartCoroutine(BackstepTidalBurst()); break;
-                case 2: yield return StartCoroutine(HydroDash()); break;
-                case 3: yield return StartCoroutine(TidalSpearFan()); break;
-                case 4: yield return StartCoroutine(TriplePulseRing()); break;
-            }
-        }
-
+        // Wait a moment after finishing
         yield return new WaitForSeconds(waitAfterCastTime);
 
         lastSkillTime = Time.time;
         isCasting = false;
-    }
-
-    IEnumerator CloseCollapse()
-    {
-        Telegraph t = Instantiate(telegraphPrefab, transform.position, Quaternion.identity);
-        t.ConfigureCircle(closeCollapseRadius, closeCollapseSegments);
-
-        yield return new WaitForSeconds(closeCollapseTelegraphTime);
-
-        if (closeCollapseEffectPrefab != null)
-        {
-            GameObject effect = Instantiate(closeCollapseEffectPrefab, transform.position, Quaternion.identity);
-            Destroy(effect, 2f);
-        }
-
-        if (Vector3.Distance(player.position, transform.position) <= closeCollapseRadius)
-        {
-            DealSpecialDamage();
-        }
-
-        Destroy(t.gameObject);
-    }
-
-    IEnumerator BackstepTidalBurst()
-    {
-        Vector3 burstCenter = transform.position;
-        
-        Telegraph t = Instantiate(telegraphPrefab, burstCenter, Quaternion.identity);
-        t.ConfigureCircle(backstepRadius, 30);
-
-        // Perform backstep immediately while telegraph is charging
-        Vector3 backstepTarget = transform.position - (transform.forward * backstepDistance);
-        
-        float time = 0;
-        while (time < backstepDuration)
-        {
-            time += Time.deltaTime;
-            transform.position = Vector3.Lerp(burstCenter, backstepTarget, time / backstepDuration);
-            yield return null;
-        }
-
-        // Wait remaining telegraph time
-        float remainingTime = backstepTelegraphTime - backstepDuration;
-        if (remainingTime > 0) yield return new WaitForSeconds(remainingTime);
-
-        if (Vector3.Distance(player.position, burstCenter) <= backstepRadius)
-        {
-            DealSpecialDamage();
-        }
-
-        Destroy(t.gameObject);
-    }
-
-    IEnumerator HydroDash()
-    {
-        LookAtPlayer();
-        Vector3 startPos = transform.position;
-        Quaternion dashRotation = transform.rotation;
-
-        Telegraph t = Instantiate(telegraphPrefab, startPos, dashRotation);
-        t.ConfigureRectangle(dashWidth, dashLength);
-
-        yield return new WaitForSeconds(dashTelegraphTime);
-
-        // Check Damage
-        Vector3 toPlayer = player.position - startPos;
-        toPlayer.y = 0f;
-        Vector3 local = Quaternion.Inverse(dashRotation) * toPlayer;
-        float halfWidth = dashWidth * 0.5f;
-
-        if (local.z >= 0f && local.z <= dashLength && Mathf.Abs(local.x) <= halfWidth)
-        {
-            DealSpecialDamage();
-        }
-
-        Destroy(t.gameObject);
-
-        // Dash Forward
-        Vector3 endPos = startPos + (transform.forward * dashLength);
-        if (dashEffectPrefab != null)
-        {
-            GameObject effect = Instantiate(dashEffectPrefab, transform.position, dashRotation);
-            Destroy(effect, 2f);
-        }
-
-        float time = 0;
-        while (time < dashDuration)
-        {
-            time += Time.deltaTime;
-            transform.position = Vector3.Lerp(startPos, endPos, time / dashDuration);
-            yield return null;
-        }
-    }
-
-    IEnumerator TidalSpearFan()
-    {
-        List<Telegraph> spears = new List<Telegraph>();
-        
-        // Calculate starting angle based on odd/even count
-        float startAngle = -spearSpreadAngle * (spearCount - 1) / 2f;
-
-        for (int i = 0; i < spearCount; i++)
-        {
-            float currentAngle = startAngle + (i * spearSpreadAngle);
-            Quaternion rotation = transform.rotation * Quaternion.Euler(0, currentAngle, 0);
-            
-            Telegraph t = Instantiate(telegraphPrefab, transform.position, rotation);
-            t.ConfigureCone(spearRange, spearAngle, 20);
-            spears.Add(t);
-        }
-
-        yield return new WaitForSeconds(spearTelegraphTime);
-
-        // Calculate hits
-        foreach (var t in spears)
-        {
-            if (Vector3.Distance(player.position, transform.position) <= spearRange)
-            {
-                Vector3 dirToPlayer = (player.position - transform.position).normalized;
-                float angle = Vector3.Angle(t.transform.forward, dirToPlayer);
-
-                if (angle <= spearAngle * 0.5f)
-                {
-                    DealSpecialDamage();
-                    // We shouldn't deal damage multiple times if they overlap, so break after one hit
-                    break; 
-                }
-            }
-        }
-
-        foreach (var t in spears)
-        {
-            Destroy(t.gameObject);
-        }
-    }
-
-    IEnumerator TriplePulseRing()
-    {
-
-        for (int i = 0; i < 3; i++)
-        {
-            float currentRadius = pulseInitialRadius + (i * pulseRadiusIncrement);
-            
-            Vector3 pulseCenter = player.position; // Center on player at time of cast
-
-            Telegraph t = Instantiate(telegraphPrefab, pulseCenter, Quaternion.identity);
-            t.ConfigureCircle(currentRadius, 40);
-
-            yield return new WaitForSeconds(pulseDelayBetween);
-
-            if (pulseEffectPrefab != null)
-            {
-                GameObject effect = Instantiate(pulseEffectPrefab, pulseCenter, Quaternion.identity);
-                // Scale effect to match radius
-                effect.transform.localScale = new Vector3(currentRadius, currentRadius, currentRadius);
-                Destroy(effect, 2f);
-            }
-
-            if (Vector3.Distance(player.position, pulseCenter) <= currentRadius)
-            {
-                DealSpecialDamage();
-            }
-
-            Destroy(t.gameObject);
-        }
     }
 
     #endregion

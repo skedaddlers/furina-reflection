@@ -248,6 +248,8 @@ public class EliteRuinGuard : EnemyAI
             telegraph.ConfigureCircle(radius, telegraphSegments);
         }
 
+        Destroy(activeTelegraph, telegraphDuration + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
+
         if (telegraphDuration > 0f)
         {
             if (telegraphLifetimeCoroutine != null)

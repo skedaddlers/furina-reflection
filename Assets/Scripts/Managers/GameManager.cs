@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     public RoomGenerator roomGenerator;
     public CursorController cursorController;
 
+    public bool withDialogue = true;
+
     public GameState CurrentState { get; private set; }
 
     void Awake()

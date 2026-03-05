@@ -29,6 +29,7 @@ public class BossManager : MonoBehaviour
     public int showPhase2BossHPBarAtIndex;
     public List<Dialogue> phase2CloneDeathDialogues;
     public List<Dialogue> healthBasedPhase2Dialogues;
+    public float healthDialogueTriggerPercentage = 0.5f;
     public List<Dialogue> phase2EndDialogues;
 
     public BossPhase CurrentBossPhase { get; private set; } = BossPhase.Phase1;
@@ -43,6 +44,10 @@ public class BossManager : MonoBehaviour
 
     #region Phase 1
 
+    void Start()
+    {
+        withDialogue =GameManager.Instance.withDialogue;
+    }
     public void SpawnFocalorsPhase1()
     {
         if (currentBoss != null || isTransitioning)
@@ -199,16 +204,21 @@ public class BossManager : MonoBehaviour
 
         currentBoss = Instantiate(focalorsPhase2Prefab, pos, Quaternion.identity);
         currentBoss.transform.SetParent(transform);
-
+        Enemy f2 = currentBoss.GetComponent<Enemy>();
+        f2.SuppressDefaultDeathHandling = true;
         focalorsPhase2Instance = currentBoss.GetComponent<FocalorsPhase2AI>();
         focalorsPhase2Instance.onCloneDies -= StartCloneDeathDialogue;
         focalorsPhase2Instance.onCloneDies += StartCloneDeathDialogue;
+        focalorsPhase2Instance.onPhase2Death -= TransformAfterDefeat;
+        focalorsPhase2Instance.onPhase2Death += TransformAfterDefeat;
         phase2Health = currentBoss.GetComponent<Health>();
 
         if (phase2Health != null)
         {
             phase2Health.onDeath -= OnBossDefeated;
             phase2Health.onDeath += OnBossDefeated;
+            phase2Health.onHealthChanged -= CheckPhase2HealthForDialogue;
+            phase2Health.onHealthChanged += CheckPhase2HealthForDialogue;
         }
 
         if (!withDialogue)
@@ -218,6 +228,23 @@ public class BossManager : MonoBehaviour
         }
 
         StartPhase2Dialogue();
+    }
+
+    private void CheckPhase2HealthForDialogue(float currentHealth, float maxHealth)
+    {
+        if (currentHealth / maxHealth <= healthDialogueTriggerPercentage)
+        {
+            phase2Health.onHealthChanged -= CheckPhase2HealthForDialogue;
+            StartHealthBasedDialogue();
+        }
+    }
+
+    private void StartHealthBasedDialogue()
+    {
+        if (UIManager.Instance?.dialogueUI == null || !withDialogue)
+            return;
+
+        UIManager.Instance.dialogueUI.StartDialogueSequence(healthBasedPhase2Dialogues);
     }
 
     private void StartPhase2Dialogue()
@@ -315,18 +342,41 @@ public class BossManager : MonoBehaviour
 
         if (phase2Health != null)
             phase2Health.onDeath -= OnBossDefeated;
+        UIManager.Instance?.dialogueUI?.StopDialogueSequence();
 
-        if (withDialogue)
+        // death animation > transfor to phase 1 > dialogue > cleanup
+        focalorsPhase2Instance.DeathAndTransform();
+    }
+
+    public void TransformAfterDefeat() // anim event at the end of phase 2 death animation
+    {
+        Vector3 pos = focalorsPhase2Instance != null
+            ? focalorsPhase2Instance.transform.position
+            : focalorsPhase2SpawnPoint.position;
+        CleanupAfterBossDefeat();
+        GameObject f = Instantiate(focalorsPhase1Prefab, pos, Quaternion.identity);
+        f.transform.SetParent(transform);
+        f.GetComponent<FocalorsPhase1AI>().SetCanAct(false);
+        f.GetComponent<FocalorsPhase1AI>().SetImmune(true);
+
+        // phase 2 death dialogue 
+        if(withDialogue)
         {
-            UIManager.Instance?.dialogueUI?.StartDialogueSequence(phase2EndDialogues);
+            UIManager.Instance.dialogueUI.StartDialogueSequence(phase2EndDialogues);
             float duration = UIManager.Instance.dialogueUI
                 .GetTotalDialogueSequenceDuration(phase2EndDialogues);
-            Invoke(nameof(CleanupAfterBossDefeat), duration);
+
+            Invoke(nameof(Win), duration);
         }
         else
         {
-            CleanupAfterBossDefeat();
+            Win();
         }
+    }
+
+    private void Win()
+    {
+        GameManager.Instance.OnBossRoomCleared();
     }
 
     private void CleanupAfterBossDefeat()
@@ -341,7 +391,6 @@ public class BossManager : MonoBehaviour
             UIManager.Instance.bossHPBarUI.SetActive(false);
 
         currentBoss = null;
-        GameManager.Instance.OnBossRoomCleared();
     }
 
     private void OnDestroy()

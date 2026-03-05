@@ -206,6 +206,8 @@ public class EliteLawachurl : EnemyAI
                     break;
             }
         }
+
+        Destroy(activeTelegraph, telegraphDuration + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
     }
 
     private void HideTelegraph()

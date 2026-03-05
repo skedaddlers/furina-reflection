@@ -70,8 +70,7 @@ public class EliteRifthound : EnemyAI
             {
                 yield return new WaitForSeconds(telegraphDuration);
             }
-            HideTelegraph();
-
+        
             agent.Warp(teleportTarget);
             FacePlayer();
         }
@@ -122,6 +121,8 @@ public class EliteRifthound : EnemyAI
         activeTelegraph = Instantiate(telegraphPrefab, targetPosition + Vector3.up * telegraphYOffset, Quaternion.identity);
 
         Telegraph telegraph = activeTelegraph.GetComponent<Telegraph>();
+
+        Destroy(activeTelegraph, telegraphDuration + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
         if (telegraph != null)
         {
             telegraph.ConfigureCircle(telegraphRadius, telegraphSegments);

@@ -37,6 +37,11 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
+    public void StopVoiceLine()
+    {
+        voiceLineSource.Stop();
+    }
+
     public void PlayVoiceLine(AudioClip clip)
     {
         voiceLineSource.volume = sfxVolume;

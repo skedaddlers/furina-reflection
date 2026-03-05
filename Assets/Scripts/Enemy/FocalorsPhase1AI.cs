@@ -144,11 +144,11 @@ public class FocalorsPhase1AI : EnemyAI
         Telegraph t = Instantiate(telegraphPrefab, transform.position, transform.rotation);
         t.ConfigureCone(verdictArcRange, verdictArcAngle, verdictArcSegments);
 
+        Destroy(t.gameObject, verdictArcTelegraphTime + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
         yield return new WaitForSeconds(verdictArcTelegraphTime);
         GameObject effect = Instantiate(verdictArcEffectPrefab, transform.position, transform.rotation * Quaternion.Euler(verdictArcEffectRotationOffset));
         Destroy(effect, 2f);
 
-        Destroy(t.gameObject);
 
         if (Vector3.Distance(player.position, transform.position) <= verdictArcRange)
         {
@@ -174,6 +174,7 @@ public class FocalorsPhase1AI : EnemyAI
             Telegraph t = Instantiate(telegraphPrefab, randomPos, Quaternion.identity);
             t.ConfigureCircle(rippleCircleRadius, rippleSegments);
             circles[i] = t;
+            Destroy(t.gameObject, rippleTelegraphTime + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
         }
 
         yield return new WaitForSeconds(rippleTelegraphTime);
@@ -186,7 +187,6 @@ public class FocalorsPhase1AI : EnemyAI
             {
                 DealSpecialDamage();
             }
-            Destroy(t.gameObject);
         }
     }
 
@@ -201,11 +201,11 @@ public class FocalorsPhase1AI : EnemyAI
         Vector3 lineOrigin = t.transform.position;
         Quaternion lineRotation = t.transform.rotation;
 
+        Destroy(t.gameObject, lineTelegraphTime + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
         yield return new WaitForSeconds(lineTelegraphTime);
         GameObject effect = Instantiate(lineEffectPrefab, lineOrigin + lineEffectOffset, lineRotation);
         Destroy(effect, 2f);
 
-        Destroy(t.gameObject);
 
         Vector3 toPlayer = player.position - lineOrigin;
         toPlayer.y = 0f;
