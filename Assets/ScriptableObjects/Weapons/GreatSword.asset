@@ -24,6 +24,10 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 57e0afee7336ff54596d74f01378210e, type: 3}
   worldDropPrefab: {fileID: 6001974414004402544, guid: 67874dd90f0300c4e8e1b158b8a02d9b, type: 3}
   price: 80
+  attackSound: {fileID: 8300000, guid: 8b7b5517fa4bbf0429e75e5476b9e259, type: 3}
+  attackEffectPrefab: {fileID: 3153472991145048103, guid: 496c261d4975b0643acf069cef875973, type: 3}
+  attackEffectOffset: {x: 0, y: 0, z: 0}
+  attackEffectRotation: {x: -71.2, y: 2.1, z: -91.506}
   baseDamage: 15
   range: 4
   angle: 180

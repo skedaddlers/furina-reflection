@@ -73,6 +73,17 @@ public class PlayerCombat : MonoBehaviour
     {
         if (loadout.current == null) return;
         loadout.current.PerformAttack(this);
+        if (loadout.current.attackEffectPrefab != null)
+        {
+            Vector3 effectPos = (attackOrigin != null ? attackOrigin.position : transform.position) + loadout.current.attackEffectOffset;
+            Quaternion effectRot = Quaternion.Euler(loadout.current.attackEffectRotation);
+            GameObject effect = Instantiate(loadout.current.attackEffectPrefab, effectPos, transform.rotation * effectRot);
+            Destroy(effect, loadout.current.effectDuration); // Hapus efek setelah 1 detik (sesuaikan dengan durasi partikel)
+        }
+        if (loadout.current.attackSound != null)
+        {
+            AudioManager.Instance.PlayWithVaryingPitch(loadout.current.attackSound);
+        }
     }
     public void EndAttack()
     {

@@ -69,6 +69,7 @@ public class InventoryUI : MonoBehaviour
         inventoryPanel.OpenPanel();
         GameManager.Instance.ChangeState(GameState.InMenu);
         GameManager.Instance.SetCursorState(true);
+        GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         for (int i = 0; i < itemSlots.Count; i++)
         {
             if (i < items.Count)

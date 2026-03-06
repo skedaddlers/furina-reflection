@@ -27,6 +27,7 @@ public class EventRoomUI : MonoBehaviour
     {
         GameManager.Instance.ChangeState(GameState.InMenu);
         GameManager.Instance.SetCursorState(true);
+        GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         currentManager = manager;
         if (eventPanel != null)
             eventPanel.OpenPanel();

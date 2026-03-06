@@ -534,7 +534,7 @@ MonoBehaviour:
   - speakerName: Furina
     dialogueText: "This isn\u2019t you..."
     voiceLine: {fileID: 8300000, guid: 148501f2bb960c246b3861f97ae216a4, type: 3}
-  showPhase2BossHPBarAtIndex: 8
+  showPhase2BossHPBarAtIndex: 0
   phase2CloneDeathDialogues:
   - speakerName: Focalors
     dialogueText: So this is how you fight.

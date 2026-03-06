@@ -60,6 +60,7 @@ public class ShopUI : MonoBehaviour
 
         GameManager.Instance.ChangeState(GameState.InMenu);
         GameManager.Instance.SetCursorState(true);
+        GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         detailPanel.SetActive(false);
     }
 

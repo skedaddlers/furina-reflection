@@ -7,9 +7,12 @@ public class AudioManager : MonoBehaviour
     public AudioSource musicSource;
     public float musicVolume = 0.5f;
     public float sfxVolume = 1.0f;
+    public float voiceLineVolume = 1.0f;
     public AudioSource sfxSource;
     public AudioSource voiceLineSource;
     public AudioClip gameplayMusic;
+    public float pitchVariationMin = 0.9f;
+    public float pitchVariationMax = 1.1f;
 
     void Awake()
     {
@@ -33,8 +36,16 @@ public class AudioManager : MonoBehaviour
 
     public void PlaySFX(AudioClip clip)
     {
+        sfxSource.pitch = 1f; // reset pitch to default
         sfxSource.volume = sfxVolume;
         sfxSource.PlayOneShot(clip);
+    }
+
+    public void PlayWithVaryingPitch(AudioClip clip)
+    {
+        sfxSource.pitch = Random.Range(pitchVariationMin, pitchVariationMax);
+        sfxSource.PlayOneShot(clip, sfxVolume);
+        // sfxSource.pitch = 1f; // reset pitch after playing
     }
 
     public void StopVoiceLine()
@@ -44,7 +55,7 @@ public class AudioManager : MonoBehaviour
 
     public void PlayVoiceLine(AudioClip clip)
     {
-        voiceLineSource.volume = sfxVolume;
+        voiceLineSource.volume = voiceLineVolume;
         voiceLineSource.PlayOneShot(clip);
     }
 
@@ -59,5 +70,11 @@ public class AudioManager : MonoBehaviour
         sfxVolume = volume;
         sfxSource.volume = sfxVolume;
         voiceLineSource.volume = sfxVolume;
+    }
+
+    public void SetVoiceLineVolume(float volume)
+    {
+        voiceLineVolume = volume;
+        voiceLineSource.volume = voiceLineVolume;
     }
 }

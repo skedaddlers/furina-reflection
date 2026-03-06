@@ -18,6 +18,7 @@ public class EnemyHealthBar : MonoBehaviour
     public Vector3 worldOffset = new Vector3(0, 2f, 0);
     public bool hideWhenFull = true;
     public float decayingSpeed = 1.0f;
+    public bool useParentPosition = false;
 
     private Health _health;
     private float targetDecayingValue;
@@ -68,7 +69,8 @@ public class EnemyHealthBar : MonoBehaviour
         if (healthCanvas == null || _health == null) return;
 
         // Position above enemy
-        healthCanvas.transform.position = transform.position + worldOffset;
+        if(!useParentPosition)
+            healthCanvas.transform.position = transform.position + worldOffset;
 
         // Always face camera
         if (_mainCamera != null)

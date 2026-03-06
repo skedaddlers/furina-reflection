@@ -53,6 +53,7 @@ public class LevelUpUI : MonoBehaviour
         StartLevelUpButtonPulse();
         upgradeAmount = upgradesToBeDone;
         upgradeAmountText.text = "You can upgrade " + upgradeAmount + " more time(s)";
+        GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
     }
 
 

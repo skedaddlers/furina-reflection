@@ -6,6 +6,7 @@ public class SettingsUI : MonoBehaviour
     public GameObject settingsPanel;
     public Slider musicVolumeSlider;
     public Slider sfxVolumeSlider;
+    public Slider voicelineVolumeSlider;
     public Button closeSettingsButton;
 
     private GameState previousState;
@@ -15,8 +16,10 @@ public class SettingsUI : MonoBehaviour
         settingsPanel.SetActive(false);
         musicVolumeSlider.value = AudioManager.Instance.musicVolume;
         sfxVolumeSlider.value = AudioManager.Instance.sfxVolume;
+        voicelineVolumeSlider.value = AudioManager.Instance.voiceLineVolume;
         musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
         sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
+        voicelineVolumeSlider.onValueChanged.AddListener(OnVoiceLineVolumeChanged);
 
         closeSettingsButton.onClick.AddListener(CloseSettings);
     }
@@ -42,12 +45,18 @@ public class SettingsUI : MonoBehaviour
         AudioManager.Instance.SetSFXVolume(value);
     }
 
+    void OnVoiceLineVolumeChanged(float value)
+    {
+        AudioManager.Instance.SetVoiceLineVolume(value);
+    }
+
     void OpenSettings()
     {
         GameManager.Instance.SetCursorState(true);
         previousState = GameManager.Instance.CurrentState;
         GameManager.Instance.ChangeState(GameState.Paused);
         settingsPanel.SetActive(true);
+        GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
     }
 
     void CloseSettings()

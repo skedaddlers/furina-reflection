@@ -29,6 +29,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e329ce488c6754f4483e5c4229d9d4c4, type: 2}
   commonEnemies:
   - {fileID: 4228300383457371494, guid: 04b67d2fa47ec9345b6ff287a639f317, type: 3}
+  - {fileID: 4228300383457371494, guid: f7ab8a4a77171e34b87c42ca13d0678e, type: 3}
+  - {fileID: 4228300383457371494, guid: 48cc24deb5ea7254d8283e3d4b57e8e1, type: 3}
   - {fileID: 8705725717222443200, guid: 97fd4f131dd65d845b42df81910399ef, type: 3}
   eliteEnemies:
   - {fileID: 4228300383457371494, guid: 7ed8639719b5a754395321b01e5ee567, type: 3}

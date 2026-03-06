@@ -152,6 +152,7 @@ public class PlayerInformationUI : MonoBehaviour
             GameManager.Instance.cursorController.UnlockCursor();
             GameManager.Instance.ChangeState(GameState.InMenu);
             UpdatePlayerInfo();
+            GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         }
     }
 

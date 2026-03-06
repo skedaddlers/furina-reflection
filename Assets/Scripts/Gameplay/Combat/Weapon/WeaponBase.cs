@@ -13,6 +13,11 @@ public abstract class WeaponBase : ScriptableObject
     [Tooltip("3D world model used when this weapon is dropped on the ground.")]
     public GameObject worldDropPrefab;
     public int price = 100;
+    public AudioClip attackSound;
+    public GameObject attackEffectPrefab;
+    public Vector3 attackEffectOffset;
+    public Vector3 attackEffectRotation;
+    public float effectDuration = 1f;
 
     [Header("Stats")]
     public int baseDamage = 5;
