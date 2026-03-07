@@ -13,6 +13,15 @@ public class Player : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 

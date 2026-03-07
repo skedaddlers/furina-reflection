@@ -18,6 +18,14 @@ public class HitlagManager : MonoBehaviour
         }
     }
 
+    public static void DestroyInstanceForRestart()
+    {
+        if (_instance == null) return;
+        var go = _instance.gameObject;
+        _instance = null;
+        Object.Destroy(go);
+    }
+
     private Coroutine _hitlagRoutine;
     private float _endTimeUnscaled;
     private float _targetTimeScale = 1f;
@@ -56,5 +64,14 @@ public class HitlagManager : MonoBehaviour
         {
             Time.timeScale = _previousTimeScale;
         }
+    }
+
+    void OnDestroy()
+    {
+        if (_instance == this)
+        {
+            _instance = null;
+        }
+        Time.timeScale = 1f;
     }
 }

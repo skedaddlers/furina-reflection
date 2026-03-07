@@ -50,6 +50,22 @@ public class GlobalDifficultyState : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public static void DestroyInstanceForRestart()
+    {
+        if (Instance == null) return;
+        var go = Instance.gameObject;
+        Instance = null;
+        Object.Destroy(go);
+    }
+
     private void OnEnable()
     {
         Room.OnRoomCleared += HandleRoomCleared;

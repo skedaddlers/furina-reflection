@@ -24,7 +24,24 @@ public class AudioManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public static void DestroyInstanceForRestart()
+    {
+        if (Instance == null) return;
+        var go = Instance.gameObject;
+        Instance = null;
+        Object.Destroy(go);
     }
 
     public void PlayMusic(AudioClip clip)

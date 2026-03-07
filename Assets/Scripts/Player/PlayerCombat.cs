@@ -36,7 +36,11 @@ public class PlayerCombat : MonoBehaviour
     void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
         if (stats == null) stats = GetComponent<PlayerStats>();
         if (animBinder == null) animBinder = GetComponent<PlayerAnimationBinder>();
         if (loadout == null) loadout = GetComponent<PlayerLoadout>();
@@ -48,6 +52,14 @@ public class PlayerCombat : MonoBehaviour
         {
             var cam = Camera.main;
             if (cam != null) aimCamera = cam.transform;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
         }
     }
 

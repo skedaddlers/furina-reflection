@@ -72,6 +72,25 @@ namespace DDAMAPEKitFramework
             DontDestroyOnLoad(gameObject);
         }
 
+        void OnDestroy()
+        {
+            if (instance == this)
+            {
+                instance = null;
+            }
+            isInitialized = false;
+            sensors.Clear();
+            effectors.Clear();
+        }
+
+        public static void DestroyInstanceForRestart()
+        {
+            if (instance == null) return;
+            var go = instance.gameObject;
+            instance = null;
+            Object.Destroy(go);
+        }
+
         void Start()
         {
             Initialize();

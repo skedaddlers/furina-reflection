@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public CursorController cursorController;
 
     public bool withDialogue = true;
+    private bool _isRestarting;
 
     public GameState CurrentState { get; private set; }
 
@@ -31,6 +32,7 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
     }
 
@@ -42,14 +44,50 @@ public class GameManager : MonoBehaviour
         StartGame();
     }
 
-    public void Restart()
+    void OnDestroy()
     {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public static void DestroyInstanceForRestart()
+    {
+        if (Instance == null) return;
+        var go = Instance.gameObject;
+        Instance = null;
+        Object.Destroy(go);
+    }
+
+    public void Restart(string sceneName = null)
+    {
+        if (_isRestarting) return;
+        _isRestarting = true;
+
+        string targetSceneName = string.IsNullOrEmpty(sceneName)
+            ? UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+            : sceneName;
+
+        Time.timeScale = 1f;
+        UIManager.DestroyInstanceForRestart();
+        PlayerStats.DestroyInstanceForRestart();
+        AudioManager.DestroyInstanceForRestart();
+        GlobalDifficultyState.DestroyInstanceForRestart();
+        DDAMAPEKitFramework.DDAMAPEKit.DestroyInstanceForRestart();
+        HitlagManager.DestroyInstanceForRestart();
+        DestroyInstanceForRestart();
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(targetSceneName);
     }
 
     public void StartGame()
     {
         ChangeState(GameState.Playing);
-        AudioManager.Instance.PlayMusic(AudioManager.Instance.gameplayMusic);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMusic(AudioManager.Instance.gameplayMusic);
+        }
     }
     
 
@@ -96,13 +134,19 @@ public class GameManager : MonoBehaviour
 
     public void OnBossRoomCleared()
     {
-        UIManager.Instance.ShowVictoryScreen();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowVictoryScreen();
+        }
         ChangeState(GameState.GameOver);
     }
 
     public void OnPlayerDeath()
     {
-        UIManager.Instance.ShowDefeatScreen();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ShowDefeatScreen();
+        }
         ChangeState(GameState.GameOver);
     }
 

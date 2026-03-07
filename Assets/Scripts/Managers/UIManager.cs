@@ -41,9 +41,26 @@ public class UIManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         ShowInterractionUI(false, "");        
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public static void DestroyInstanceForRestart()
+    {
+        if (Instance == null) return;
+        var go = Instance.gameObject;
+        Instance = null;
+        Object.Destroy(go);
     }
 
     void Start()
@@ -112,10 +129,13 @@ public class UIManager : MonoBehaviour
         statsUI.UpdateXPUI(playerStats.currentXP, playerStats.xpToNextLevel);
         shopUI.CloseShop();
         inventoryUI.CloseInventory();
+        restartButton.onClick.RemoveAllListeners();
         restartButton.onClick.AddListener(() =>
         {
-            SceneManager.LoadScene(mainSceneName);
-            GameManager.Instance.Restart();
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.Restart(mainSceneName);
+            }
         });
     }
 
@@ -134,6 +154,7 @@ public class UIManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.I))
         {
+            if (Player.Instance == null) return;
             Inventory inventory = Player.Instance.GetComponent<Inventory>();
             if (inventory != null)
             {

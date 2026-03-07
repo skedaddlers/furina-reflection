@@ -81,6 +81,22 @@ public class PlayerStats : MonoBehaviour
         upgradeManager = GetComponent<UpgradeManager>();
     }
 
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    public static void DestroyInstanceForRestart()
+    {
+        if (Instance == null) return;
+        var go = Instance.gameObject;
+        Instance = null;
+        Object.Destroy(go);
+    }
+
     void Update()
     {
         HandleStaminaRegen();
