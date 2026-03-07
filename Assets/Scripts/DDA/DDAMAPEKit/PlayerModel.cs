@@ -14,6 +14,18 @@ namespace DDAMAPEKitFramework
         private List<PlayerProfile> profiles = new List<PlayerProfile>();
         private PlayerProfile currentProfile;
         private Dictionary<PlayerProfile, float> profileScores = new Dictionary<PlayerProfile, float>();
+        private Dictionary<PlayerMetricType, PlayerMetric> metrics = new Dictionary<PlayerMetricType, PlayerMetric>();
+        private Dictionary<PlayerMetricType, float> profilingMetrics = new Dictionary<PlayerMetricType, float>();
+        // profile distribution mapping (profile -> normalized percentage)
+        private Dictionary<PlayerProfile, float> profileDistribution = new Dictionary<PlayerProfile, float>();
+
+        public float smoothingAlpha = 0.35f;
+
+        // tie threshold to decide hybrid vs dominant (e.g., 0.10 = if top two within 10% => hybrid)
+        public float tieThreshold = 0.1f;
+
+        // last time we computed profile distribution (used to get window duration for DPS)
+        private float lastProfileCalcTime = 0f;
         private float lastProfileUpdateTime;
 
         public PlayerModel()
@@ -21,8 +33,11 @@ namespace DDAMAPEKitFramework
             attributes = new List<PlayerAttribute>();
             profiles = new List<PlayerProfile>();
             profileScores = new Dictionary<PlayerProfile, float>();
+            metrics = new Dictionary<PlayerMetricType, PlayerMetric>();
+            profileDistribution = new Dictionary<PlayerProfile, float>();
             currentProfile = null;
             lastProfileUpdateTime = 0f;
+            lastProfileCalcTime = Time.time;
         }
 
         public void InitProfiles(List<PlayerProfile> initialProfiles)
@@ -70,6 +85,120 @@ namespace DDAMAPEKitFramework
             }
         }
 
+        public void SetProfilingMetric(PlayerMetricType metric, float value)
+        {
+            profilingMetrics[metric] = value;
+        }
+
+        public float GetProfilingMetric(PlayerMetricType metric)
+        {
+            if (profilingMetrics.ContainsKey(metric))
+                return profilingMetrics[metric];
+
+            return 0f;
+        }
+
+        public void RegisterMetricRange(PlayerMetricType metric, float minExpected, float maxExpected)
+        {
+            if (!metrics.ContainsKey(metric))
+            {
+                metrics[metric] = new PlayerMetric(metric, minExpected, maxExpected);
+            }
+            else
+            {
+                metrics[metric].minExpected = minExpected;
+                metrics[metric].maxExpected = maxExpected;
+            }
+        }
+
+        public void IncrementMetric(PlayerMetricType metric, float amount = 1f)
+        {
+            if (!metrics.ContainsKey(metric))
+            {
+                // default range if not registered
+                RegisterMetricRange(metric, 0f, 10f);
+            }
+            metrics[metric].Accumulate(amount);
+        }
+
+        public float GetMetricEMA(PlayerMetricType metric)
+        {
+            if (metrics.ContainsKey(metric)) return metrics[metric].emaValue;
+            return 0f;
+        }
+
+        public void CalculateProfileDistribution()
+        {
+            Dictionary<PlayerProfile, float> scores = new();
+
+            float totalScore = 0;
+
+            foreach (var profile in profiles)
+            {
+                float score = 0;
+
+                foreach (var weight in profile.weights)
+                {
+                    float metricValue = GetProfilingMetric(weight.metric);
+                    score += metricValue * weight.weight;
+                }
+
+                score = Mathf.Max(0, score);
+
+                scores[profile] = score;
+                totalScore += score;
+            }
+
+            profileDistribution.Clear();
+
+            if (totalScore == 0) return;
+
+            foreach (var kvp in scores)
+            {
+                profileDistribution[kvp.Key] = kvp.Value / totalScore;
+            }
+        }
+
+        public PlayerProfile GetDominantProfile()
+        {
+            if (profileDistribution == null || profileDistribution.Count == 0)
+            {
+                return profiles.FirstOrDefault();
+            }
+
+            return profileDistribution.OrderByDescending(k => k.Value).First().Key;
+        }
+
+        public Dictionary<PlayerProfile, float> GetProfileDistribution()
+        {
+            return new Dictionary<PlayerProfile, float>(profileDistribution);
+        }
+
+        public List<KeyValuePair<PlayerProfile, float>> GetSortedProfiles()
+        {
+            return profileDistribution.OrderByDescending(k => k.Value).ToList();
+        }
+
+        public bool TryGetHybridProfiles(out List<KeyValuePair<PlayerProfile, float>> hybridOut)
+        {
+            hybridOut = new List<KeyValuePair<PlayerProfile, float>>();
+            var sorted = GetSortedProfiles();
+            if (sorted.Count < 2) return false;
+
+            var top = sorted[0];
+            var second = sorted[1];
+
+            if (top.Value - second.Value <= tieThreshold)
+            {
+                // include any profiles within the top.Value - tieThreshold window
+                float cutoff = top.Value - tieThreshold;
+                hybridOut = sorted.Where(x => x.Value >= cutoff).ToList();
+                return true;
+            }
+            return false;
+        }
+
+        
         public void UpdatePlayerProfile(float explorationRate)
         {
             // Multi-Armed Bandit approach for profile selection
@@ -86,6 +215,7 @@ namespace DDAMAPEKitFramework
 
             Debug.Log($"[PlayerModel] Current Profile: {currentProfile.name}, Score: {profileScores[currentProfile]}");
         }
+
 
         public void UpdateProfileScore(float performance)
         {
@@ -194,6 +324,26 @@ namespace DDAMAPEKitFramework
         }
     }
 
+    public enum PlayerMetricType
+    {
+        MeleeUsage,     // count of melee hits
+        RangedUsage,    // count of ranged hits
+        SkillUsage,     // count of skill uses
+        DodgeRate,      // count of dodges (will be normalized against window)
+        DamageTaken,    // damage taken in window
+        HealingUsed,    // healing used in window
+        AverageDistance,// average distance to target (0..maxDistance)
+        ManaUsed,       // mana consumed in window
+        DamageDealt     // total damage dealt in window (used to compute DPS-like metric)
+    }
+
+    [System.Serializable]
+    public class ProfileAttributeWeight
+    {
+        public PlayerMetricType metric;
+        public float weight;
+    }
+
     /// <summary>
     /// Player profile (e.g., Killer, Achiever, Explorer)
     /// </summary>
@@ -202,6 +352,7 @@ namespace DDAMAPEKitFramework
     {
         public int id;
         public string name;
+        public List<ProfileAttributeWeight> weights = new List<ProfileAttributeWeight>();
 
         public PlayerProfile(int id, string name)
         {

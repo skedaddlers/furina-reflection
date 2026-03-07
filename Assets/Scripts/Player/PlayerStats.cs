@@ -94,7 +94,7 @@ public class PlayerStats : MonoBehaviour
         if (Instance == null) return;
         var go = Instance.gameObject;
         Instance = null;
-        Object.Destroy(go);
+        Destroy(go);
     }
 
     void Update()

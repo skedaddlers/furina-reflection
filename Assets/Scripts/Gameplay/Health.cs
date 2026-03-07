@@ -1,6 +1,14 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using DDAMAPEKitFramework;
+
+public enum DamageSource
+{
+    Melee,
+    Ranged,
+    Skill
+}
 
 public class Health : MonoBehaviour
 {
@@ -24,11 +32,15 @@ public class Health : MonoBehaviour
         maxShield = maxHealth;
     }
 
-    public void TakeDamage(float amount, bool isCrit = false)
+    public void TakeDamage(float amount, bool isCrit = false, DamageSource source = DamageSource.Melee)
     {
         if (currentHealth <= 0) return;
         if (isInvulnerable)
         {
+            if (CompareTag("Player"))
+            {
+                CombatEventManager.RaiseSuccessfulDodge();
+            }
             Debug.Log($"{gameObject.name} is invulnerable. Damage ignored.");
             return;
         }
@@ -54,6 +66,18 @@ public class Health : MonoBehaviour
             {
                 UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, enemy.healthBar.position, isCrit);
                 StartCoroutine(HitFlash(enemy));
+                if (source == DamageSource.Melee)
+                {
+                    CombatEventManager.RaiseMeleeAttack(finalDamage);
+                }
+                else if (source == DamageSource.Ranged)
+                {
+                    CombatEventManager.RaiseRangedAttack(finalDamage);
+                }
+                else if (source == DamageSource.Skill)
+                {
+                    CombatEventManager.RaiseSkillAttack(finalDamage);
+                }
             }
             else
             {

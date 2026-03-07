@@ -22,6 +22,7 @@ public class Projectile : MonoBehaviour
     [Header("Ownership")]
     public Transform owner;        // siapa yang nembak
     public bool ignoreOwner = true; // biar nggak nabrak diri sendiri
+    public bool fromSkill = false; // buat bedain damage source di Health
 
     [Header("Visuals")]
     public ParticleSystem hitEffect;
@@ -70,12 +71,13 @@ public class Projectile : MonoBehaviour
         }
 
     }
-    public void Init(Vector3 dir, float speed, float lifeTime, float damage, Transform owner = null, LayerMask? customHitMask = null)
+    public void Init(Vector3 dir, float speed, float lifeTime, float damage, Transform owner = null, LayerMask? customHitMask = null, bool isFromSkill = false)
     {
         _dir = dir.normalized;
         this.speed = speed;
         this.lifeTime = lifeTime;
         this.damage = damage;
+        this.fromSkill = isFromSkill;
         this.owner = owner;
         _timer = 0f;
 
@@ -209,7 +211,12 @@ public class Projectile : MonoBehaviour
         }
         if (health != null)
         {
-            health.TakeDamage(finalDamage, didCrit);
+            health.TakeDamage(
+                finalDamage, 
+                didCrit, 
+                owner != null && 
+                owner.CompareTag("Player") && !fromSkill
+                ? DamageSource.Ranged : DamageSource.Skill);
         }
     }
 

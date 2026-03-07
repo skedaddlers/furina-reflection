@@ -108,7 +108,7 @@ public class SalonMemberBehaviour : MonoBehaviour
         LayerMask targetMask = LayerMask.GetMask(skillData.targetTag);
         if (projComponent != null)
         {
-            projComponent.Init(direction, skillData.projectileSpeed, projComponent.lifeTime, damage, owner.transform, targetMask);
+            projComponent.Init(direction, skillData.projectileSpeed, projComponent.lifeTime, damage, owner.transform, targetMask, true);
         }
     }
 }

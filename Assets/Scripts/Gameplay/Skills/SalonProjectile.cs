@@ -58,7 +58,7 @@ public class SalonProjectile : MonoBehaviour
             Health health = other.GetComponent<Health>();
             if (health != null)
             {
-                health.TakeDamage(damage);
+                health.TakeDamage(damage, false, DamageSource.Skill);
             }
 
             // Destroy projectile on hit

@@ -106,7 +106,7 @@ public class TearsOfTheSinner : SkillBase
                     damageMultiplier,
                     out didCrit
                 );
-                health.TakeDamage(finalDamage, didCrit);
+                health.TakeDamage(finalDamage, didCrit, DamageSource.Skill);
 
                 // Play impact sound
                 if (impactSound != null)

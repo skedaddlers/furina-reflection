@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using Unity.Cinemachine;
+using DDAMAPEKitFramework;
 
 public class PlayerController : MonoBehaviour
 {
@@ -414,7 +415,7 @@ public class PlayerController : MonoBehaviour
         float startTime = Time.time;
         Vector3 dodgeDir = transform.forward;
         stats?.health?.SetInvulnerable(true);
-
+        CombatEventManager.RaiseDodgeAttempt();
         while (Time.time < startTime + dashDuration)
         {
             dodgeDir = transform.forward;

@@ -154,7 +154,6 @@ namespace DDAMAPEKitFramework
         {
             if (!isInitialized) return;
             RunMAPEKLoop();
-
             playerModel.UpdatePlayerProfile(explorationRate);
         }
 

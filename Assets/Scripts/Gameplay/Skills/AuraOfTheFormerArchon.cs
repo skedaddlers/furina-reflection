@@ -146,7 +146,7 @@ public class AuraOfTheFormerArchon : SkillBase
                     damageMultiplier,
                     out didCrit
                 );
-                health.TakeDamage(finalDamage, didCrit);
+                health.TakeDamage(finalDamage, didCrit, DamageSource.Skill);
                 Debug.Log($"{hit.name} took {finalDamage} damage from {skillName}");
 
                 // Play impact sound

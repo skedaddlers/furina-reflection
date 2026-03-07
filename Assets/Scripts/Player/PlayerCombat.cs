@@ -137,7 +137,7 @@ public class PlayerCombat : MonoBehaviour
             {
                 GameObject particle = Instantiate(hitEffect.gameObject, h.ClosestPoint(origin), Quaternion.identity);
                 var health = h.GetComponent<Health>();
-                if (health != null) health.TakeDamage(finalDamage, didCrit);
+                if (health != null) health.TakeDamage(finalDamage, didCrit, DamageSource.Melee);
                 hasHit = true;
             }
         }

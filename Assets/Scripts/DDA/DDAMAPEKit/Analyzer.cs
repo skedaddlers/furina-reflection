@@ -35,6 +35,7 @@ namespace DDAMAPEKitFramework
             
             // Update player profile score
             playerModel.UpdateProfileScore(performance);
+            playerModel.CalculateProfileDistribution();
 
             // Store in history for moving average
             performanceHistory.Enqueue(performance);

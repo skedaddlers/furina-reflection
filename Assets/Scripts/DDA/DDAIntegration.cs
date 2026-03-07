@@ -11,6 +11,8 @@ public class DDAIntegration : MonoBehaviour
     [SerializeField] private bool enableDDA = true;
     [SerializeField] private bool debugMode = true;
 
+    public CombatMetricCollector combatMetricCollector;
+
     private DDAConfigurationManager configManager;
     private ScoreSensor scoreSensor;
     private AccuracySensor accuracySensor;
@@ -34,6 +36,10 @@ public class DDAIntegration : MonoBehaviour
     {
         if (!enableDDA) return;
 
+        if(combatMetricCollector == null)
+        {
+            combatMetricCollector = gameObject.AddComponent<CombatMetricCollector>();
+        }
         // Get sensor references for game events
         scoreSensor = GetComponent<ScoreSensor>();
         accuracySensor = GetComponent<AccuracySensor>();
@@ -44,6 +50,7 @@ public class DDAIntegration : MonoBehaviour
         Room.OnRoomCleared += (room) =>
         {
             // Trigger DDA loop on room cleared
+            combatMetricCollector?.FinalizeWaveMetrics();
             DDAMAPEKit.Instance?.TriggerMAPEKLoop();
         };
 

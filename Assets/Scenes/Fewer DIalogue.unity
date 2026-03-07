@@ -21890,13 +21890,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1130029147}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 36301bdabcf7b8241889698779c65c16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableDDA: 0
+  enableDDA: 1
   debugMode: 0
+  combatMetricCollector: {fileID: 0}
 --- !u!4 &1130029149
 Transform:
   m_ObjectHideFlags: 0
@@ -21919,7 +21920,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1130029147}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9d2ff02010bd07e42a3792c709377d6e, type: 3}
   m_Name: 
@@ -21934,12 +21935,20 @@ MonoBehaviour:
   profiles:
   - id: 0
     name: Melee Lover
+    weights:
+    - metric: 0
+      weight: 0
+    - metric: 0
+      weight: 0
   - id: 1
     name: Ranged Lover
+    weights: []
   - id: 2
     name: Dodger
+    weights: []
   - id: 3
     name: Skill Spam
+    weights: []
   profileUpdateFrequency: 10
   explorationRate: 0.2
   useDefaultSymptoms: 1
@@ -21951,7 +21960,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1130029147}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e9890b8b96be894d8c23303430fbb36, type: 3}
   m_Name: 
@@ -33721,7 +33730,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2731315852063966013, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: maxHealth
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 3705202193683549977, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: m_LocalPosition.x
