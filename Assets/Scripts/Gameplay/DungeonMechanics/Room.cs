@@ -43,6 +43,7 @@ public class Room : MonoBehaviour
 
     [Header("Boss Settings")]
     public BossManager bossManager;
+    public List<Transform> arenaPoints; // Predefined points in the arena for repositioning
 
     [Header("Runtime Info")]
     public bool isCleared = false;

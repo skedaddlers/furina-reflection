@@ -12,5 +12,8 @@ public class GlobalLibrary : ScriptableObject
     public List<GameObject> eliteEnemies;
     public List<GameObject> bossEnemies;
 
+    [Header("Boss Sequences")]
+    public List<BossSequence> bossSequences;
+
     public List<Color> rarityColors;
 }

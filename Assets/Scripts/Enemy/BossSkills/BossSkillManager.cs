@@ -51,25 +51,22 @@ public class BossSkillManager : MonoBehaviour
         // Find all BossSkill components attached to this GameObject or its children
         if (skills.Count == 0)
         {
-            List<BossSkill> foundSkills = new List<BossSkill>(GetComponentsInChildren<BossSkill>());
-            if (foundSkills.Count == 0)            {
-                Debug.LogWarning("No BossSkill components found in BossSkillManager or its children!");
-            }
-            else
+            List<BossSkill> foundSkills = new List<BossSkill>();
+            List<BossSequence> bossSequences = bossInstance.sequences;
+            if (bossSequences != null)
             {
-
-                foreach (var skill in foundSkills)
+                foreach (var sequence in bossSequences)
                 {
-                    if (!skills.Contains(skill) && skill.isEnabled)
+                    foreach (var action in sequence.actions)
                     {
-                        skills.Add(skill);
+                        if (action.type == ActionType.Skill && action.skill != null && !foundSkills.Contains(action.skill))
+                        {
+                            foundSkills.Add(action.skill);
+                            action.skill.Initialize(bossInstance);
+                        }
                     }
                 }
             }
-        }
-        foreach (var skill in skills)
-        {
-            skill.Initialize(boss);
         }
     }
 

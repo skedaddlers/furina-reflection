@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
 using System.Collections.Generic;
+using DDAMAPEKitFramework;
 
 public class FocalorsPhase2AI : EnemyAI
 {
@@ -21,12 +22,15 @@ public class FocalorsPhase2AI : EnemyAI
     private Health cloneHealth;
 
     [Header("Core Skill Dependencies")]
+    public List<Transform> arenaPoints; // Predefined points in the arena for repositioning
+    public List<BossSequence> sequences; // List of possible skill sequences to choose from
     public Telegraph telegraphPrefab; 
-    [SerializeField] private float skillCooldown = 4f; 
+    [SerializeField] private float sequenceCooldown = 4f; 
     [SerializeField] private float castWindupTime = 0.5f;
     [SerializeField] private float waitAfterCastTime = 0.5f;
 
-    private float lastSkillTime;
+    private float lastSequenceTime;
+    private Coroutine currentActionRoutine;
     private bool isCasting = false;
     private bool canAct = true;
 
@@ -38,7 +42,15 @@ public class FocalorsPhase2AI : EnemyAI
     void Start()
     {
         base.Start();
-        
+        List<BossSequence> librarySequences = Library.Instance.bossSequences;
+        if (librarySequences != null && librarySequences.Count > 0)
+        {
+            sequences = SelectForProfile(librarySequences);
+        }
+        if (arenaPoints == null || arenaPoints.Count == 0)
+        {
+            GetComponentInParent<Room>()?.arenaPoints?.ForEach(p => arenaPoints.Add(p));
+        }
         // Initialize the Skill Manager
         skillManager = GetComponent<BossSkillManager>();
         if (skillManager != null)
@@ -65,28 +77,23 @@ public class FocalorsPhase2AI : EnemyAI
 
         float distance = Vector3.Distance(player.position, transform.position);
 
-        if (!SeePlayer())
-        {
-            StopChasing();
-            return;
-        }
-
         if (CanUseSkill())
         {
-            StartCoroutine(PerformSkillSequence());
+            BossSequence chosenSequence = ChooseSequence();
+            currentActionRoutine = StartCoroutine(ExecuteSequence(chosenSequence));
             return;
         }
 
-        if (distance <= attackRange)
-        {
-            StopChasing();
-            LookAtPlayer();
-            AttackPlayer();
-        }
-        else
-        {
-            ChasePlayer();
-        }
+        // if (distance <= attackRange)
+        // {
+        //     StopChasing();
+        //     LookAtPlayer();
+        //     AttackPlayer();
+        // }
+        // else
+        // {
+        //     ChasePlayer();
+        // }
     }
 
     #region Intro & Clone Mechanics
@@ -160,14 +167,18 @@ public class FocalorsPhase2AI : EnemyAI
         }
 
         var agent = GetComponent<NavMeshAgent>();
-        if (agent != null) agent.enabled = true; // Re-enable NavMeshAgent
+        if (agent != null)
+        {
+            agent.enabled = true; // Re-enable NavMeshAgent
+            agent.isStopped = false; // Ensure movement can resume after intro
+        }
 
         var collider = GetComponent<Collider>();
         if (collider != null) collider.enabled = true; // Re-enable collider
 
         SetImmune(false);
         isWaitingForClone = false;
-        lastSkillTime = Time.time; // Reset skill timer so she doesn't instantly cast
+        lastSequenceTime = Time.time; // Reset sequence timer so she doesn't instantly cast
     }
 
     #endregion
@@ -221,14 +232,68 @@ public class FocalorsPhase2AI : EnemyAI
 
     bool CanUseSkill()
     {
-        return Time.time - lastSkillTime >= skillCooldown;
+        return Time.time - lastSequenceTime >= sequenceCooldown && currentActionRoutine == null;
     }
 
-    IEnumerator PerformSkillSequence()
+    BossSequence ChooseSequence()
     {
-        BossSkill chosenSkill = skillManager.GetRandomAvailableSkill();
-        if (chosenSkill == null) yield break;
+        float totalWeight = 0;
 
+        List<float> adjustedWeights = new();
+
+        foreach(var seq in sequences)
+        {
+            float recencyPenalty = Mathf.Clamp01(
+                (Time.time - seq.lastUsedTime) / 5f
+            );
+
+            float usagePenalty = 1f / (1f + seq.usageCount * 0.5f);
+
+            float adjusted = seq.baseWeight * recencyPenalty * usagePenalty;
+
+            adjustedWeights.Add(adjusted);
+            totalWeight += adjusted;
+        }
+
+        float r = Random.value * totalWeight;
+
+        float sum = 0;
+
+        for(int i=0;i<sequences.Count;i++)
+        {
+            sum += adjustedWeights[i];
+
+            if(r <= sum)
+                return sequences[i];
+        }
+
+        return sequences[sequences.Count-1];
+    }
+
+    IEnumerator ExecuteSequence(BossSequence seq)
+    {
+        foreach(var action in seq.actions)
+        {
+            if(action.type == ActionType.Movement)
+            {
+                Debug.Log($"Executing Movement: {action.movement.movementType}");
+                yield return ExecuteMovement(action.movement);
+            }
+            else
+            {
+                Debug.Log($"Executing Skill: {action.skill.name}");
+                yield return ExecuteSkill(action.skill);
+            }
+        }
+        ResetActionRoutine();
+        lastSequenceTime = Time.time;
+        seq.lastUsedTime = Time.time;
+    }
+
+    IEnumerator ExecuteSkill(BossSkill chosenSkill)
+    {
+        if (chosenSkill == null) yield break;
+        if (isCasting) yield break;
         isCasting = true;
         StopChasing();
         LookAtPlayer();
@@ -243,8 +308,54 @@ public class FocalorsPhase2AI : EnemyAI
         // Wait a moment after finishing
         yield return new WaitForSeconds(waitAfterCastTime);
 
-        lastSkillTime = Time.time;
         isCasting = false;
+    }
+
+
+    IEnumerator ExecuteMovement(MovementAction m)
+    {
+        if (agent == null || !agent.enabled) yield break;
+
+        // Skill execution calls StopChasing(), so movement actions must explicitly resume the agent.
+        agent.isStopped = false;
+
+        switch(m.movementType)
+        {
+            case MovementType.DashToPlayer:
+                agent.speed = m.speed;
+                agent.SetDestination(player.position);
+                Debug.DrawLine(transform.position, player.position, Color.red, m.duration);
+                break;
+
+            case MovementType.StrafePlayer:
+                Vector3 dir = (transform.position - player.position).normalized;
+                Vector3 side = Vector3.Cross(Vector3.up, dir);
+                agent.SetDestination(player.position + side * m.distance);
+                Debug.DrawLine(transform.position, player.position + side * m.distance, Color.blue, m.duration);
+                break;
+
+            case MovementType.Retreat:
+                Vector3 retreat = (transform.position - player.position).normalized;
+                agent.SetDestination(transform.position + retreat * m.distance);
+                Debug.DrawLine(transform.position, transform.position + retreat * m.distance, Color.green, m.duration);
+                break;
+
+            case MovementType.Reposition:
+                agent.SetDestination(arenaPoints[Random.Range(0, arenaPoints.Count)].position);
+                Debug.DrawLine(transform.position, arenaPoints[Random.Range(0, arenaPoints.Count)].position, Color.yellow, m.duration);
+                break;
+        }
+
+        yield return new WaitForSeconds(m.duration);
+    }
+
+    void ResetActionRoutine()
+    {
+        if (currentActionRoutine != null)
+        {
+            StopCoroutine(currentActionRoutine);
+            currentActionRoutine = null;
+        }
     }
 
     #endregion
@@ -275,5 +386,20 @@ public class FocalorsPhase2AI : EnemyAI
         );
 
         health.TakeDamage(finalDamage, didCrit);
+    }
+
+    List<BossSequence> SelectForProfile(List<BossSequence> allSequences)
+    {
+        PlayerProfile profile = DDAMAPEKit.Instance.GetPlayerModel().GetDominantProfile();
+        List<BossSequence> selected = new();
+        foreach(var seq in allSequences)
+        {
+            if (string.IsNullOrEmpty(seq.profileName) || seq.profileName == profile.name)
+            {
+                selected.Add(seq);
+            }
+        }
+
+        return selected;
     }
 }
