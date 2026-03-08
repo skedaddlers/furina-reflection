@@ -141,6 +141,7 @@ namespace DDAMAPEKitFramework
                 {
                     float metricValue = GetProfilingMetric(weight.metric);
                     score += metricValue * weight.weight;
+                    Debug.Log($"[PlayerModel] Profile: {profile.name}, Metric: {weight.metric}, Value: {metricValue:F2}, Weight: {weight.weight:F2}, Partial Score: {metricValue * weight.weight:F2}");
                 }
 
                 score = Mathf.Max(0, score);
@@ -234,7 +235,23 @@ namespace DDAMAPEKitFramework
                 reward = Mathf.Floor(maxR * Mathf.Pow(gR, -1f * Mathf.Abs(performance - 1f)));
             }
 
-            profileScores[currentProfile] += reward;
+            UpdateProfileScoresPerDistribution(reward);
+        }
+
+        private void UpdateProfileScoresPerDistribution(float reward)
+        {
+            foreach (var kvp in profileDistribution)
+            {
+                var profile = kvp.Key;
+                var distribution = kvp.Value;
+
+                // Update score with EMA
+                float currentScore = profileScores.ContainsKey(profile) ? profileScores[profile] : 0f;
+                float newScore = currentScore + smoothingAlpha * (reward * distribution - currentScore);
+                profileScores[profile] = newScore;
+
+                Debug.Log($"[PlayerModel] Updated Score for {profile.name}: {newScore:F2} (Reward: {reward:F2}, Distribution: {distribution:F2})");
+            }
         }
 
         public PlayerProfile GetCurrentProfile()

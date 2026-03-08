@@ -133,7 +133,7 @@ public class Room : MonoBehaviour
     {
         if (isLocked && direction != lastEnterFrom)
         {
-            Debug.Log("Room is locked! Cannot exit through this door.");
+            // Debug.Log("Room is locked! Cannot exit through this door.");
             return false;
         }
         
@@ -307,7 +307,7 @@ public class Room : MonoBehaviour
 
     public void SpawnEnemiesInRoom()
     {
-        Debug.Log($"Spawning enemies in Room {roomIndex}");
+        // Debug.Log($"Spawning enemies in Room {roomIndex}");
 
         ClearExistingEnemies();
 
@@ -336,7 +336,7 @@ public class Room : MonoBehaviour
             spawned++;
         }
 
-        Debug.Log($"Spawned {spawned} enemies in Room {roomIndex}");
+        // Debug.Log($"Spawned {spawned} enemies in Room {roomIndex}");
     }
 
     private bool TryGetSpawnPosition(out Vector3 spawnPos)

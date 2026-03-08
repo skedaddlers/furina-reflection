@@ -20,7 +20,7 @@ public class Item : MonoBehaviour
     
     public virtual bool TryUse(GameObject user)
     {
-        Debug.Log($"Using item: {itemName}");
+        // Debug.Log($"Using item: {itemName}");
         return true;
     }
 }

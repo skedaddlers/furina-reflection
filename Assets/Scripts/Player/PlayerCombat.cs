@@ -193,7 +193,7 @@ public class PlayerCombat : MonoBehaviour
         if (proj == null) proj = go.AddComponent<Projectile>();
         proj.Init(dir, speed, lifeTime, damage, this.transform);
 
-        Debug.Log($"Fired projectile {go.name} with dir {dir}");
+        // Debug.Log($"Fired projectile {go.name} with dir {dir}");
     }
     
     public void SetIsAttacking(bool val)

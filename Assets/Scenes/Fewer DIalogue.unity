@@ -21876,6 +21876,7 @@ GameObject:
   - component: {fileID: 1130029148}
   - component: {fileID: 1130029151}
   - component: {fileID: 1130029150}
+  - component: {fileID: 1130029152}
   m_Layer: 0
   m_Name: DDA
   m_TagString: Untagged
@@ -21897,7 +21898,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enableDDA: 1
   debugMode: 0
-  combatMetricCollector: {fileID: 0}
+  combatMetricCollector: {fileID: 1130029152}
 --- !u!4 &1130029149
 Transform:
   m_ObjectHideFlags: 0
@@ -21937,18 +21938,43 @@ MonoBehaviour:
     name: Melee Lover
     weights:
     - metric: 0
-      weight: 0
-    - metric: 0
-      weight: 0
+      weight: 0.8
+    - metric: 3
+      weight: 0.2
   - id: 1
     name: Ranged Lover
-    weights: []
-  - id: 2
-    name: Dodger
-    weights: []
+    weights:
+    - metric: 1
+      weight: 0.8
+    - metric: 3
+      weight: 0.2
   - id: 3
     name: Skill Spam
-    weights: []
+    weights:
+    - metric: 2
+      weight: 0.8
+    - metric: 4
+      weight: 0.2
+  - id: 2
+    name: Dodger
+    weights:
+    - metric: 3
+      weight: 0.8
+    - metric: 4
+      weight: 0.2
+  - id: 4
+    name: Defensive
+    weights:
+    - metric: 4
+      weight: 0.5
+    - metric: 5
+      weight: 0.2
+    - metric: 0
+      weight: 0.1
+    - metric: 1
+      weight: 0.1
+    - metric: 2
+      weight: 0.1
   profileUpdateFrequency: 10
   explorationRate: 0.2
   useDefaultSymptoms: 1
@@ -22223,6 +22249,37 @@ MonoBehaviour:
       delta: 1.25
     - variableName: enemySpeedMultiplier
       delta: 1.2
+--- !u!114 &1130029152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1130029147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bc12a8c7a8d40b43918746d10032153, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatMetricCollector
+  profilingMetrics:
+  - type: 4
+    rawAccumulated: 0
+    emaValue: 0
+    lastNormalized: 0
+    minExpected: 0
+    maxExpected: 100
+  - type: 5
+    rawAccumulated: 0
+    emaValue: 0
+    lastNormalized: 0
+    minExpected: 0
+    maxExpected: 100
+  - type: 7
+    rawAccumulated: 0
+    emaValue: 0
+    lastNormalized: 0
+    minExpected: 0
+    maxExpected: 100
 --- !u!1 &1137845891
 GameObject:
   m_ObjectHideFlags: 0

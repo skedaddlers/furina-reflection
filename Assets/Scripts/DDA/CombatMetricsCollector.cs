@@ -1,145 +1,207 @@
 using UnityEngine;
 using System;
-
+using System.Collections.Generic;
 using DDAMAPEKitFramework;
 
-    public class CombatWaveStats
+public class CombatMetricCollector : MonoBehaviour
+{
+    public List<PlayerMetric> profilingMetrics = new List<PlayerMetric>();
+    private CombatWaveStats waveStats = new CombatWaveStats();
+    private PlayerModel playerModel;
+
+    void Start()
     {
-        public float meleeDamage;
-        public float rangedDamage;
-        public float skillDamage;
+        playerModel = DDAMAPEKit.Instance.GetPlayerModel();
 
-        public float damageTaken;
+        CombatEventManager.OnMeleeAttack += OnMeleeAttack;
+        CombatEventManager.OnRangedAttack += OnRangedAttack;
+        CombatEventManager.OnSkillAttack += OnSkillAttack;
+        CombatEventManager.OnDodgeAttempt += OnDodgeAttempt;
+        CombatEventManager.OnSuccessfulDodge += OnSuccessfulDodge;
+        CombatEventManager.OnDamageTaken += OnDamageTaken;
+        CombatEventManager.OnHeal += OnHeal;
+        CombatEventManager.OnManaUsed += OnManaUsed;
+    }
 
-        public int dodgeAttempts;
-        public int successfulDodges;
-        public float manaUsed;
+    void OnDestroy()
+    {
+        CombatEventManager.OnMeleeAttack -= OnMeleeAttack;
+        CombatEventManager.OnRangedAttack -= OnRangedAttack;
+        CombatEventManager.OnSkillAttack -= OnSkillAttack;
+        CombatEventManager.OnDodgeAttempt -= OnDodgeAttempt;
+        CombatEventManager.OnSuccessfulDodge -= OnSuccessfulDodge;
+        CombatEventManager.OnDamageTaken -= OnDamageTaken;
+        CombatEventManager.OnHeal -= OnHeal;
+        CombatEventManager.OnManaUsed -= OnManaUsed;
+    }
 
-        public float healingUsed;
+    void OnMeleeAttack(float damage)
+    {
+        waveStats.meleeDamage += damage;
+    }
 
-        public void Reset()
+    void OnRangedAttack(float damage)
+    {
+        waveStats.rangedDamage += damage;
+    }
+
+    void OnSkillAttack(float damage)
+    {
+        waveStats.skillDamage += damage;
+    }
+
+    void OnDodgeAttempt()
+    {
+        waveStats.dodgeAttempts++;
+    }
+
+    void OnSuccessfulDodge()
+    {
+        waveStats.successfulDodges++;
+    }
+
+    void OnDamageTaken(float damage)
+    {
+        foreach (PlayerMetric metric in profilingMetrics)
         {
-            meleeDamage = 0;
-            rangedDamage = 0;
-            skillDamage = 0;
-            damageTaken = 0;
-
-            dodgeAttempts = 0;
-            successfulDodges = 0;
-            manaUsed = 0;
-
-            healingUsed = 0;
+            if (metric.type == PlayerMetricType.DamageTaken)
+            {
+                metric.Accumulate(damage);
+                break;
+            }
         }
     }
 
-    public class CombatMetricCollector : MonoBehaviour
+    void OnHeal(float heal)
     {
-        private CombatWaveStats waveStats = new CombatWaveStats();
-        private PlayerModel playerModel;
+        waveStats.healingUsed += heal;
+        foreach (PlayerMetric metric in profilingMetrics)
+        {
+            if (metric.type == PlayerMetricType.HealingUsed)
+            {
+                metric.Accumulate(heal);
+                break;
+            }
+        }
+    }
 
-        void Start()
+    void OnManaUsed(float mana)
+    {
+        waveStats.manaUsed += mana;
+        foreach (PlayerMetric metric in profilingMetrics)
+        {
+            if (metric.type == PlayerMetricType.ManaUsed)
+            {
+                metric.Accumulate(mana);
+                break;
+            }
+        }
+    }
+
+    /// Called by your wave manager when combat wave ends
+    public void FinalizeWaveMetrics()
+    {
+        if (playerModel == null)
         {
             playerModel = DDAMAPEKit.Instance.GetPlayerModel();
-
-            CombatEventManager.OnMeleeAttack += OnMeleeAttack;
-            CombatEventManager.OnRangedAttack += OnRangedAttack;
-            CombatEventManager.OnSkillAttack += OnSkillAttack;
-            CombatEventManager.OnDodgeAttempt += OnDodgeAttempt;
-            CombatEventManager.OnSuccessfulDodge += OnSuccessfulDodge;
-            CombatEventManager.OnDamageTaken += OnDamageTaken;
-            CombatEventManager.OnHeal += OnHeal;
-            CombatEventManager.OnManaUsed += OnManaUsed;
         }
 
-        void OnDestroy()
+        float totalDamage =
+            waveStats.meleeDamage +
+            waveStats.rangedDamage +
+            waveStats.skillDamage;
+
+        float meleeRatio = 0;
+        float rangedRatio = 0;
+        float skillRatio = 0;
+
+        if (totalDamage > 0)
         {
-            CombatEventManager.OnMeleeAttack -= OnMeleeAttack;
-            CombatEventManager.OnRangedAttack -= OnRangedAttack;
-            CombatEventManager.OnSkillAttack -= OnSkillAttack;
-            CombatEventManager.OnDodgeAttempt -= OnDodgeAttempt;
-            CombatEventManager.OnSuccessfulDodge -= OnSuccessfulDodge;
-            CombatEventManager.OnDamageTaken -= OnDamageTaken;
-            CombatEventManager.OnHeal -= OnHeal;
-            CombatEventManager.OnManaUsed -= OnManaUsed;
+            meleeRatio = waveStats.meleeDamage / totalDamage;
+            rangedRatio = waveStats.rangedDamage / totalDamage;
+            skillRatio = waveStats.skillDamage / totalDamage;
         }
 
-        void OnMeleeAttack(float damage)
+        float dodgeRate = 0;
+
+        if (waveStats.dodgeAttempts > 0)
         {
-            waveStats.meleeDamage += damage;
+            dodgeRate = (float)waveStats.successfulDodges / waveStats.dodgeAttempts;
         }
 
-        void OnRangedAttack(float damage)
+        float damageTaken = 0f;
+        foreach (PlayerMetric metric in profilingMetrics)
         {
-            waveStats.rangedDamage += damage;
-        }
-
-        void OnSkillAttack(float damage)
-        {
-            waveStats.skillDamage += damage;
-        }
-
-        void OnDodgeAttempt()
-        {
-            waveStats.dodgeAttempts++;
-        }
-
-        void OnSuccessfulDodge()
-        {
-            waveStats.successfulDodges++;
-        }
-
-        void OnDamageTaken(float damage)
-        {
-            waveStats.damageTaken += damage;
-        }
-
-        void OnHeal(float heal)
-        {
-            waveStats.healingUsed += heal;
-        }
-
-        void OnManaUsed(float mana)
-        {
-            waveStats.manaUsed += mana;
-        }
-
-        /// Called by your wave manager when combat wave ends
-        public void FinalizeWaveMetrics()
-        {
-            float totalDamage =
-                waveStats.meleeDamage +
-                waveStats.rangedDamage +
-                waveStats.skillDamage;
-
-            float meleeRatio = 0;
-            float rangedRatio = 0;
-            float skillRatio = 0;
-
-            if (totalDamage > 0)
+            if (metric.type == PlayerMetricType.DamageTaken)
             {
-                meleeRatio = waveStats.meleeDamage / totalDamage;
-                rangedRatio = waveStats.rangedDamage / totalDamage;
-                skillRatio = waveStats.skillDamage / totalDamage;
+                damageTaken = metric.NormalizeRaw();
+                metric.ResetRaw();
+                break;
             }
-
-            float dodgeRate = 0;
-
-            if (waveStats.dodgeAttempts > 0)
-            {
-                dodgeRate = (float)waveStats.successfulDodges / waveStats.dodgeAttempts;
-            }
-
-            // Send to player model
-            playerModel.SetProfilingMetric(PlayerMetricType.MeleeUsage, meleeRatio);
-            playerModel.SetProfilingMetric(PlayerMetricType.RangedUsage, rangedRatio);
-            playerModel.SetProfilingMetric(PlayerMetricType.SkillUsage, skillRatio);
-            playerModel.SetProfilingMetric(PlayerMetricType.DodgeRate, dodgeRate);
-
-            playerModel.SetProfilingMetric(PlayerMetricType.DamageTaken, waveStats.damageTaken);
-            playerModel.SetProfilingMetric(PlayerMetricType.HealingUsed, waveStats.healingUsed);
-            playerModel.SetProfilingMetric(PlayerMetricType.ManaUsed, waveStats.manaUsed);
-            waveStats.Reset();
-
-            Debug.Log($"[CombatMetricCollector] Wave finalized. Melee: {meleeRatio:P1}, Ranged: {rangedRatio:P1}, Skill: {skillRatio:P1}, Dodge Rate: {dodgeRate:P1}, Damage Taken: {waveStats.damageTaken}, Healing Used: {waveStats.healingUsed}, Mana Used: {waveStats.manaUsed}");
         }
+
+        float healingUsed = 0f;
+        foreach (PlayerMetric metric in profilingMetrics)
+        {
+            if (metric.type == PlayerMetricType.HealingUsed)
+            {
+                healingUsed = metric.NormalizeRaw();
+                metric.ResetRaw();
+                break;
+            }
+        }
+
+        float manaUsed = 0f;
+        foreach (PlayerMetric metric in profilingMetrics)
+        {
+            if (metric.type == PlayerMetricType.ManaUsed)
+            {
+                manaUsed = metric.NormalizeRaw();
+                metric.ResetRaw();
+                break;
+            }
+        }
+
+        // Send to player model
+        playerModel.SetProfilingMetric(PlayerMetricType.MeleeUsage, meleeRatio);
+        playerModel.SetProfilingMetric(PlayerMetricType.RangedUsage, rangedRatio);
+        playerModel.SetProfilingMetric(PlayerMetricType.SkillUsage, skillRatio);
+        playerModel.SetProfilingMetric(PlayerMetricType.DodgeRate, dodgeRate);
+
+        playerModel.SetProfilingMetric(PlayerMetricType.DamageTaken, damageTaken);
+        playerModel.SetProfilingMetric(PlayerMetricType.HealingUsed, healingUsed);
+        playerModel.SetProfilingMetric(PlayerMetricType.ManaUsed, manaUsed);
+        waveStats.Reset();
+
+        Debug.Log($"[CombatMetricCollector] Wave finalized. Melee: {meleeRatio:P1}, Ranged: {rangedRatio:P1}, Skill: {skillRatio:P1}, Dodge Rate: {dodgeRate:P1}, Damage Taken: {damageTaken}, Healing Used: {healingUsed}, Mana Used: {manaUsed}");
     }
+}
+
+public class CombatWaveStats
+{
+    public float meleeDamage;
+    public float rangedDamage;
+    public float skillDamage;
+
+    public float damageTaken;
+
+    public int dodgeAttempts;
+    public int successfulDodges;
+    public float manaUsed;
+
+    public float healingUsed;
+
+    public void Reset()
+    {
+        meleeDamage = 0;
+        rangedDamage = 0;
+        skillDamage = 0;
+        damageTaken = 0;
+
+        dodgeAttempts = 0;
+        successfulDodges = 0;
+        manaUsed = 0;
+
+        healingUsed = 0;
+    }
+}

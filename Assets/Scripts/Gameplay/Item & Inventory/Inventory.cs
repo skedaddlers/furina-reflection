@@ -22,7 +22,7 @@ public class Inventory : MonoBehaviour
             return false;
         }
         items.Add(item);
-        Debug.Log($"Added item to inventory: {item.itemName}");
+        // Debug.Log($"Added item to inventory: {item.itemName}");
         return true;
     }
 
@@ -30,11 +30,11 @@ public class Inventory : MonoBehaviour
     {
         if (items.Remove(item))
         {
-            Debug.Log($"Removed item from inventory: {item.itemName}");
+            // Debug.Log($"Removed item from inventory: {item.itemName}");
         }
         else
         {
-            Debug.Log($"Item not found in inventory: {item.itemName}");
+            // Debug.Log($"Item not found in inventory: {item.itemName}");
         }
         if (item != null)
         {

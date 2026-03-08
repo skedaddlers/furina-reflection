@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace DDAMAPEKitFramework
 {
+    [Serializable]
     public class PlayerMetric
     {
         public PlayerMetricType type;

@@ -60,7 +60,7 @@ public class Health : MonoBehaviour
         if (finalDamage > 0)
         {
             currentHealth -= finalDamage;
-            Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
+            // Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
             Enemy enemy = GetComponent<Enemy>();
             if (enemy != null && enemy.healthBar != null)
             {
@@ -81,6 +81,7 @@ public class Health : MonoBehaviour
             }
             else
             {
+                CombatEventManager.RaiseDamageTaken(finalDamage);
                 UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, transform.position + Vector3.up, isCrit);
             }
         }
@@ -108,7 +109,7 @@ public class Health : MonoBehaviour
         enemy.enemyRenderer.material.color = Color.red;
         yield return new WaitForSeconds(0.1f);
         enemy.enemyRenderer.material.color = originalColor;
-        Debug.Log($"{gameObject.name} hit flash ended.");
+        // Debug.Log($"{gameObject.name} hit flash ended.");
     }
 
     public void SetImmune(bool value)
@@ -120,13 +121,13 @@ public class Health : MonoBehaviour
     {
         if (amount <= 0) return;
         shieldAmount = Mathf.Min(maxShield, shieldAmount + amount);
-        Debug.Log($"{gameObject.name} gained {amount} shield. Current shield: {shieldAmount}");
+        // Debug.Log($"{gameObject.name} gained {amount} shield. Current shield: {shieldAmount}");
     }
 
     public void RemoveShield()
     {
         shieldAmount = 0;
-        Debug.Log($"{gameObject.name} shield removed.");
+        // Debug.Log($"{gameObject.name} shield removed.");
     }
 
     public void Heal(float amount)
@@ -134,7 +135,11 @@ public class Health : MonoBehaviour
         if (amount <= 0) return;
         currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
         onHealthChanged?.Invoke(currentHealth, maxHealth);
-        Debug.Log($"{gameObject.name} healed {amount}. Current health: {currentHealth}");
+        if (CompareTag("Player"))
+        {
+            CombatEventManager.RaiseHeal(amount);
+        }
+        // Debug.Log($"{gameObject.name} healed {amount}. Current health: {currentHealth}");
     }
 
     public void SetInvulnerable(bool value)
@@ -186,7 +191,7 @@ public class Health : MonoBehaviour
         if (CompareTag("Player"))
         {
             GameManager.Instance.OnPlayerDeath();
-            Debug.Log("Player Died!");
+            // Debug.Log("Player Died!");
         }
     }
 
