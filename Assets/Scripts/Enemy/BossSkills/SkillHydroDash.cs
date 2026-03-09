@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
 public class SkillHydroDash : BossSkill
 {
@@ -13,9 +14,17 @@ public class SkillHydroDash : BossSkill
 
     public override IEnumerator ExecuteRoutine()
     {
-        // 1. Setup Telegraph
+        if (boss.TargetPlayer == null) yield break;
+        
+        // 1. Snapshot dash origin and direction once so telegraph/movement/hitbox stay in sync.
         Vector3 startPos = boss.transform.position;
-        Quaternion dashRotation = boss.transform.rotation;
+        Vector3 toPlayer = boss.TargetPlayer.position - startPos;
+        toPlayer.y = 0f;
+        Vector3 dashDirection = toPlayer.sqrMagnitude > 0.0001f
+            ? toPlayer.normalized
+            : boss.transform.forward;
+        Quaternion dashRotation = Quaternion.LookRotation(dashDirection, Vector3.up);
+        boss.transform.rotation = dashRotation;
 
         Telegraph t = Instantiate(boss.telegraphPrefab, startPos, dashRotation);
         t.ConfigureRectangle(dashWidth, dashLength);
@@ -24,7 +33,7 @@ public class SkillHydroDash : BossSkill
         yield return new WaitForSeconds(dashTelegraphTime);
 
         // 2. Perform Dash Movement & Effects
-        Vector3 endPos = startPos + (boss.transform.forward * dashLength);
+        Vector3 endPos = startPos + (dashDirection * dashLength);
         if (dashEffectPrefab != null)
         {
             GameObject effect = Instantiate(dashEffectPrefab, boss.transform.position, dashRotation);
@@ -41,10 +50,17 @@ public class SkillHydroDash : BossSkill
         }
         boss.Animator.SetTrigger(endAnimationTrigger);
 
+        // Keep NavMeshAgent state aligned after manual transform movement.
+        NavMeshAgent nav = boss.GetComponent<NavMeshAgent>();
+        if (nav != null && nav.enabled)
+        {
+            nav.Warp(boss.transform.position);
+        }
+
          // 2. Check Damage
-        Vector3 toPlayer = boss.TargetPlayer.position - startPos;
-        toPlayer.y = 0f;
-        Vector3 local = Quaternion.Inverse(dashRotation) * toPlayer;
+        Vector3 toPlayerNow = boss.TargetPlayer.position - startPos;
+        toPlayerNow.y = 0f;
+        Vector3 local = Quaternion.Inverse(dashRotation) * toPlayerNow;
         float halfWidth = dashWidth * 0.5f;
 
         if (local.z >= 0f && local.z <= dashLength && Mathf.Abs(local.x) <= halfWidth)

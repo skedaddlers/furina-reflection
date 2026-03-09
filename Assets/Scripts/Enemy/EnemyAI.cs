@@ -175,7 +175,7 @@ public class EnemyAI : MonoBehaviour
 
     protected void UpdateMovementFacing()
     {
-        if (agent == null || agent.isStopped)
+        if (agent == null || agent.isStopped || !agent.updateRotation)
             return;
 
         Vector3 direction = agent.desiredVelocity.sqrMagnitude > 0.0001f

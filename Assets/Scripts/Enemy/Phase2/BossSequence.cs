@@ -33,6 +33,10 @@ public class MovementAction
     public float duration;
     public float speed;
     public float distance;
+
+    [Header("Dash Settings")]
+    public float distanceToStop = 0.1f; // Minimum distance to target to consider dash complete
+
 }
 
 public enum ActionType

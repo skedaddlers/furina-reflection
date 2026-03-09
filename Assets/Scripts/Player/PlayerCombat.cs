@@ -145,6 +145,7 @@ public class PlayerCombat : MonoBehaviour
         {
             HitlagManager.Instance.Trigger(hitlagDuration, hitlagTimeScale);
         }
+        PlayerActionTracker.Instance.RegisterMelee();
     }
 
     // Projectile fire
@@ -192,6 +193,7 @@ public class PlayerCombat : MonoBehaviour
         var proj = go.GetComponent<Projectile>();
         if (proj == null) proj = go.AddComponent<Projectile>();
         proj.Init(dir, speed, lifeTime, damage, this.transform);
+        PlayerActionTracker.Instance.RegisterRanged();
 
         // Debug.Log($"Fired projectile {go.name} with dir {dir}");
     }

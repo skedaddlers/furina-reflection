@@ -211,6 +211,8 @@ public class SkillManager : MonoBehaviour
             }
             activeSkillCoroutines[slotIndex] = StartCoroutine(SkillDurationCoroutine(skill, slotIndex));
         }
+
+        PlayerActionTracker.Instance.RegisterSkill();
         
         OnSkillActivated?.Invoke(skill);
     }

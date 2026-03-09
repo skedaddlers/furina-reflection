@@ -40,6 +40,7 @@ public class Health : MonoBehaviour
             if (CompareTag("Player"))
             {
                 CombatEventManager.RaiseSuccessfulDodge();
+                PlayerActionTracker.Instance.RegisterDodge();
             }
             Debug.Log($"{gameObject.name} is invulnerable. Damage ignored.");
             return;

@@ -33,6 +33,7 @@ public class FocalorsPhase2AI : EnemyAI
     private Coroutine currentActionRoutine;
     private bool isCasting = false;
     private bool canAct = true;
+    private int strafeDirection = 1;
 
     private BossSkillManager skillManager;
 
@@ -288,6 +289,8 @@ public class FocalorsPhase2AI : EnemyAI
         ResetActionRoutine();
         lastSequenceTime = Time.time;
         seq.lastUsedTime = Time.time;
+        LookAtPlayer();
+        seq.usageCount++;
     }
 
     IEnumerator ExecuteSkill(BossSkill chosenSkill)
@@ -315,38 +318,101 @@ public class FocalorsPhase2AI : EnemyAI
     IEnumerator ExecuteMovement(MovementAction m)
     {
         if (agent == null || !agent.enabled) yield break;
-
+        float angularSpeedBackup = agent.angularSpeed;
         // Skill execution calls StopChasing(), so movement actions must explicitly resume the agent.
         agent.isStopped = false;
 
         switch(m.movementType)
         {
             case MovementType.DashToPlayer:
-                agent.speed = m.speed;
-                agent.SetDestination(player.position);
-                Debug.DrawLine(transform.position, player.position, Color.red, m.duration);
-                break;
+                yield return DashToPlayer(m);
+                animator.SetFloat("WalkSpeed", 0f);
+                yield break;
 
             case MovementType.StrafePlayer:
-                Vector3 dir = (transform.position - player.position).normalized;
-                Vector3 side = Vector3.Cross(Vector3.up, dir);
-                agent.SetDestination(player.position + side * m.distance);
-                Debug.DrawLine(transform.position, player.position + side * m.distance, Color.blue, m.duration);
-                break;
+                yield return StrafeAroundPlayer(m);
+                animator.SetFloat("WalkSpeed", 0f);
+                yield break;
 
             case MovementType.Retreat:
-                Vector3 retreat = (transform.position - player.position).normalized;
-                agent.SetDestination(transform.position + retreat * m.distance);
-                Debug.DrawLine(transform.position, transform.position + retreat * m.distance, Color.green, m.duration);
-                break;
+                LookAtPlayer();
+                agent.updateRotation = false; // Prevent NavMeshAgent from rotating the boss, we'll handle it manually
+                agent.angularSpeed = 0f; // Stop automatic rotation
+                yield return RetreatFromPlayer(m);
+                animator.SetFloat("WalkSpeed", 0f);
+                agent.updateRotation = true; // Re-enable automatic rotation after retreating
+                agent.angularSpeed = angularSpeedBackup;
+                agent.Warp(transform.position); // Ensure NavMeshAgent's internal position is synced after manual movement
+                yield break;
 
             case MovementType.Reposition:
                 agent.SetDestination(arenaPoints[Random.Range(0, arenaPoints.Count)].position);
+                animator.SetFloat("WalkSpeed", 1f);
                 Debug.DrawLine(transform.position, arenaPoints[Random.Range(0, arenaPoints.Count)].position, Color.yellow, m.duration);
-                break;
+                yield break;
         }
 
         yield return new WaitForSeconds(m.duration);
+        animator.SetFloat("WalkSpeed", 0f);
+        animator.SetBool("Retreat", false);
+        agent.angularSpeed = angularSpeedBackup;
+        agent.updateRotation = true;
+    }
+    
+
+    private IEnumerator DashToPlayer(MovementAction movement)
+    {
+        if (agent == null || !agent.enabled) yield break;
+        LookAtPlayer();
+        agent.speed = movement.speed > 0f ? movement.speed : movementSpeed;
+        agent.SetDestination(player.position);
+        animator.SetFloat("WalkSpeed", 2f);
+        yield return new WaitForSeconds(movement.duration);
+    }
+
+    private IEnumerator StrafeAroundPlayer(MovementAction movement)
+    {
+        float orbitRadius = Mathf.Max(1f, movement.distance);
+        float sideStepDistance = Mathf.Max(0.5f, orbitRadius * 0.6f);
+        float speed = movement.speed > 0f ? movement.speed : movementSpeed;
+        float elapsed = 0f;
+
+        int direction = strafeDirection;
+        strafeDirection *= -1;
+
+        agent.speed = speed;
+        animator.SetFloat("WalkSpeed", 1f);
+
+        while (elapsed < movement.duration)
+        {
+            if (player == null || !agent.enabled) yield break;
+
+            Vector3 radial = transform.position - player.position;
+            radial.y = 0f;
+            if (radial.sqrMagnitude <= 0.0001f)
+            {
+                radial = transform.right;
+            }
+
+            radial = radial.normalized;
+            Vector3 tangent = Vector3.Cross(Vector3.up, radial).normalized * direction;
+            Vector3 target = player.position + radial * orbitRadius + tangent * sideStepDistance;
+
+            agent.SetDestination(target);
+            Debug.DrawLine(transform.position, target, Color.blue, Time.deltaTime);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private IEnumerator RetreatFromPlayer(MovementAction movement)
+    {
+        if (agent == null || !agent.enabled) yield break;
+        Vector3 retreat = (transform.position - player.position).normalized;
+        agent.SetDestination(transform.position + retreat * movement.distance);
+        animator.SetFloat("WalkSpeed", 1f);
+        yield return new WaitForSeconds(movement.duration);
     }
 
     void ResetActionRoutine()
