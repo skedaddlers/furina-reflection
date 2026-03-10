@@ -3,7 +3,7 @@ using System.Collections;
 using Unity.Cinemachine;
 using DDAMAPEKitFramework;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IStaggerable
 {
     public PlayerStats stats;
     public SkillManager skillManager;
@@ -57,6 +57,12 @@ public class PlayerController : MonoBehaviour
     private float shiftPressedTime;
     private bool shiftHeld = false;
     private bool dashTriggered = false;
+    private bool isStaggered = false;
+    private Coroutine dodgeRoutine;
+    private Coroutine staggerRoutine;
+    public bool IsStaggered => isStaggered;
+    [Header("Stagger Settings")]
+    [SerializeField] private string staggerTrigger = "Hit";
 
     // =========================================================
     // START
@@ -87,6 +93,12 @@ public class PlayerController : MonoBehaviour
         if (HandlePause()) return;
 
         UpdateGroundedState();
+        if (isStaggered)
+        {
+            ApplyGravity();
+            UpdateCamera();
+            return;
+        }
         HandleShiftInput();
         HandleCombatLockMaintenance();
         HandleMovement();
@@ -104,12 +116,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!GameManager.Instance.IsPaused) return false;
 
-        if (isBowAiming)
-        {
-            isBowAiming = false;
-            _animBinder?.SetAim(false);
-            bowCrosshair?.SetActive(false);
-        }
+        ExitBowAim();
 
         return true;
     }
@@ -130,17 +137,17 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isDodging)
         {
-            CancelCombatLock();
-            shiftPressedTime = Time.time;
-            shiftHeld = true;
+                CancelCombatLock();
+                shiftPressedTime = Time.time;
+                shiftHeld = true;
 
-            if (stats.HasEnoughStamina(dodgeStaminaCost))
-            {
-                StartCoroutine(Dodge());
-                dashTriggered = true;
-                playerCombat.ForceCancelAttack();
+                if (stats.HasEnoughStamina(dodgeStaminaCost))
+                {
+                    StartDodge();
+                    dashTriggered = true;
+                    playerCombat.ForceCancelAttack();
+                }
             }
-        }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
@@ -151,7 +158,7 @@ public class PlayerController : MonoBehaviour
                 !isDodging && isGrounded)
             {
                 if (stats.HasEnoughStamina(dodgeStaminaCost))
-                    StartCoroutine(Dodge());
+                    StartDodge();
             }
             else
             {
@@ -362,7 +369,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            isBowAiming = false;
+            ExitBowAim();
             playerCombat.loadout.Swap();
             playerCombat.ForceCancelAttack();
         }
@@ -402,10 +409,19 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    void StartDodge()
+    {
+        if (dodgeRoutine != null)
+            StopCoroutine(dodgeRoutine);
+
+        dodgeRoutine = StartCoroutine(Dodge());
+    }
+
     IEnumerator Dodge()
     {
         if (stats != null && !stats.TrySpendStamina(dodgeStaminaCost))
         {
+            dodgeRoutine = null;
             yield break;
         }
 
@@ -425,6 +441,7 @@ public class PlayerController : MonoBehaviour
 
         isDodging = false;
         stats?.health?.SetInvulnerable(false);
+        dodgeRoutine = null;
     }
 
     void HandleBowInput()
@@ -462,11 +479,7 @@ public class PlayerController : MonoBehaviour
 
     void ReleaseBowShot()
     {
-        isBowAiming = false;
-
-        _animBinder?.SetAim(false);
-        if (bowCrosshair != null)
-            bowCrosshair.SetActive(false);
+        ExitBowAim();
 
         // baru beneran pake weapon (cek mana, cooldown, dll)
         // if (!playerCombat.IsAttacking)
@@ -477,6 +490,14 @@ public class PlayerController : MonoBehaviour
         //         PerformAttack(); // ini bakal mainin anim bow (Attack / Shoot) sesuai animSet
         //     }
         // }
+    }
+
+    void ExitBowAim()
+    {
+        isBowAiming = false;
+        _animBinder?.SetAim(false);
+        if (bowCrosshair != null)
+            bowCrosshair.SetActive(false);
     }
 
     
@@ -516,17 +537,108 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed * rotSpeedMul);
     }
 
+    public void ApplyStagger(StaggerInfo info)
+    {
+        if (!isActiveAndEnabled || info.duration <= 0f)
+            return;
+
+        CancelActionsForStagger();
+        if (staggerRoutine != null)
+            StopCoroutine(staggerRoutine);
+
+        staggerRoutine = StartCoroutine(StaggerRoutine(info));
+    }
+
+    private void CancelActionsForStagger()
+    {
+        if (dodgeRoutine != null)
+        {
+            StopCoroutine(dodgeRoutine);
+            dodgeRoutine = null;
+        }
+
+        isDodging = false;
+        isSprinting = false;
+        shiftHeld = false;
+        dashTriggered = false;
+        isStaggered = false;
+
+        stats?.health?.SetInvulnerable(false);
+        playerCombat?.ForceCancelAttack();
+        skillManager?.ForceCancelAllSkills();
+        CancelCombatLock();
+        ExitBowAim();
+        _animBinder?.SetChannel(false);
+
+        if (animator != null)
+        {
+            animator.SetFloat("WalkSpeed", 0f);
+            animator.ResetTrigger("Attack");
+            animator.ResetTrigger("Shoot");
+            animator.ResetTrigger("Dodge");
+            animator.ResetTrigger("Jump");
+            if (_animBinder != null && _animBinder.currentAnimSet != null)
+            {
+                animator.ResetTrigger(_animBinder.currentAnimSet.attackTrigger);
+                animator.ResetTrigger(_animBinder.currentAnimSet.shootTrigger);
+            }
+        }
+    }
+
+    private IEnumerator StaggerRoutine(StaggerInfo info)
+    {
+        isStaggered = true;
+        if (animator != null && !string.IsNullOrEmpty(staggerTrigger))
+            animator.SetTrigger(staggerTrigger);
+
+        float elapsed = 0f;
+        float knockbackDuration = info.causesKnockback && info.knockbackDistance > 0f
+            ? Mathf.Min(0.15f, info.duration)
+            : 0f;
+        Vector3 knockbackDirection = info.ResolveKnockbackDirection(transform);
+        float knockbackSpeed = knockbackDuration > 0f
+            ? info.knockbackDistance / knockbackDuration
+            : 0f;
+
+        while (elapsed < info.duration)
+        {
+            float dt = Time.deltaTime;
+            if (knockbackDuration > 0f && elapsed < knockbackDuration)
+            {
+                controller?.Move(knockbackDirection * knockbackSpeed * dt);
+            }
+
+            elapsed += dt;
+            yield return null;
+        }
+
+        isStaggered = false;
+        staggerRoutine = null;
+    }
+
     public void ResetAllStates()
     {
+        if (staggerRoutine != null)
+        {
+            StopCoroutine(staggerRoutine);
+            staggerRoutine = null;
+        }
+        if (dodgeRoutine != null)
+        {
+            StopCoroutine(dodgeRoutine);
+            dodgeRoutine = null;
+        }
+        isStaggered = false;
         isBowAiming = false;
         isDodging = false;
         isSprinting = false;
         shiftHeld = false;
         dashTriggered = false;
         CancelCombatLock();
-        _animBinder?.SetAim(false);
-        if (bowCrosshair != null)
-            bowCrosshair.SetActive(false);
+        ExitBowAim();
+        _animBinder?.SetChannel(false);
+        playerCombat?.ForceCancelAttack();
+        skillManager?.ForceCancelAllSkills();
         stats?.health?.SetInvulnerable(false);
     }
 

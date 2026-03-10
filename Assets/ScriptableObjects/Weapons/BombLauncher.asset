@@ -36,6 +36,10 @@ MonoBehaviour:
   angle: 60
   cooldown: 1.6
   manaCost: 4
+  causesStagger: 1
+  staggerDuration: 0.3
+  causesKnockback: 1
+  knockbackDistance: 0.7
   projectilePrefab: {fileID: 3897606349267117842, guid: 33ba2d9309d319b46ba413c3bc39ff18, type: 3}
   projectileSpeed: 12
   projectileLifeTime: 4

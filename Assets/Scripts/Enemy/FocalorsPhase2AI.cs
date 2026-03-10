@@ -67,6 +67,8 @@ public class FocalorsPhase2AI : EnemyAI
 
     protected override void Update()
     {
+        if (IsStaggered) return;
+
         // 1. Check if we need to do the Phase 2 intro (jump & clone)
         if (canAct && !hasDoneIntro)
         {
@@ -437,6 +439,7 @@ public class FocalorsPhase2AI : EnemyAI
 
     public void DealSpecialDamage()
     {
+        if (IsStaggered) return;
         var health = player.GetComponent<Health>();
         if (health == null) return;
 
@@ -460,7 +463,28 @@ public class FocalorsPhase2AI : EnemyAI
             out didCrit
         );
 
-        health.TakeDamage(finalDamage, didCrit);
+        health.TakeDamage(
+            finalDamage,
+            didCrit,
+            DamageSource.Skill,
+            applyStagger: true,
+            staggerDuration: -1f,
+            causesKnockback: true,
+            knockbackDistance: 1.2f,
+            hitInstigator: transform
+        );
+    }
+
+    protected override void OnStaggerStarted()
+    {
+        ResetActionRoutine();
+        isCasting = false;
+        if (animator != null)
+        {
+            animator.ResetTrigger("Cast");
+            animator.SetFloat("WalkSpeed", 0f);
+            animator.SetBool("Retreat", false);
+        }
     }
 
     List<BossSequence> SelectForProfile(List<BossSequence> allSequences)

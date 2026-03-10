@@ -7,6 +7,6 @@ public class MeleeWeapon : WeaponBase
     {
         // Debug.Log($"Melee attack with {weaponName}");
         float baseDmg = baseDamage + ctx.stats.baseAttack;
-        ctx.MeleeConeHit(baseDmg, range, angle);
+        ctx.MeleeConeHit(baseDmg, range, angle, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
     }
 }

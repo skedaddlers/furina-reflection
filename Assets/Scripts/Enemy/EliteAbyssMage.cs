@@ -78,4 +78,13 @@ public class EliteAbyssMage : EnemyAI
                Time.time - lastSpecialAttackTime >= specialAttackCooldown &&
                player != null;
     }
+
+    protected override void OnStaggerStarted()
+    {
+        if (isShieldActive)
+        {
+            GetComponent<Health>()?.RemoveShield();
+            isShieldActive = false;
+        }
+    }
 }

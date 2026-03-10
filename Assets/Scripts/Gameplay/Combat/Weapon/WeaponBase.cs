@@ -25,6 +25,10 @@ public abstract class WeaponBase : ScriptableObject
     public float angle = 60f;        // untuk melee cone
     public float cooldown = 0.4f;    // detik
     public int manaCost = 0;
+    public bool causesStagger = false;
+    public float staggerDuration = 0.5f;
+    public bool causesKnockback = false;
+    public float knockbackDistance = 1f;
 
     [Header("Optional Projectile")]
     public GameObject projectilePrefab; // null kalau melee

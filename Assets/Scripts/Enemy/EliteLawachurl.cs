@@ -145,7 +145,16 @@ public class EliteLawachurl : EnemyAI
                     out didCrit
                 );
 
-                hp.TakeDamage(finalDamage, didCrit);
+                hp.TakeDamage(
+                    finalDamage,
+                    didCrit,
+                    DamageSource.Melee,
+                    applyStagger: true,
+                    staggerDuration: -1f,
+                    causesKnockback: true,
+                    knockbackDistance: 2f,
+                    hitInstigator: transform
+                );
             }
         }
 
@@ -214,6 +223,17 @@ public class EliteLawachurl : EnemyAI
     {
         if (activeTelegraph != null)
             Destroy(activeTelegraph);
+    }
+
+    protected override void OnStaggerStarted()
+    {
+        heavyAttackTriggered = false;
+        HideTelegraph();
+        if (agent != null)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
     }
 
 

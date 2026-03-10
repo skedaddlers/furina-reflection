@@ -137,4 +137,9 @@ public class EliteRifthound : EnemyAI
             activeTelegraph = null;
         }
     }
+
+    protected override void OnStaggerStarted()
+    {
+        HideTelegraph();
+    }
 }

@@ -1442,6 +1442,10 @@ MonoBehaviour:
   maxHealth: 80
   shieldAmount: 0
   maxShield: 100
+  enableStaggerOnHit: 1
+  defaultMeleeStaggerDuration: 0.2
+  defaultRangedStaggerDuration: 0.14
+  defaultSkillStaggerDuration: 0.18
 --- !u!136 &2844401194418832028
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1562,6 +1566,8 @@ MonoBehaviour:
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
   isPerformingSpecialAttack: 0
+  canBeStaggered: 0
+  staggerTrigger: Hit
   sequences:
   - {fileID: 11400000, guid: e9ace31415844664a8125bf9f6c6a953, type: 2}
   - {fileID: 11400000, guid: 8c4b61673c4c0bd4fbc298bcdcee6e40, type: 2}

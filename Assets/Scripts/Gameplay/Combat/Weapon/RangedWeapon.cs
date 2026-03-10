@@ -22,7 +22,11 @@ public class RangedWeapon : WeaponBase
             projectileLifeTime,
             baseDmg,
             range,
-            aimWithCam
+            aimWithCam,
+            causesStagger,
+            staggerDuration,
+            causesKnockback,
+            knockbackDistance
         );
     }
 }

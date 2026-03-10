@@ -11,6 +11,7 @@ public class BossCloneAI : EnemyAI
 
     private Dictionary<CloneProfileTag, float> profileDistribution;
     private int strafeDirection = 1;
+    private Coroutine cloneLoopRoutine;
 
     protected override void Start()
     {
@@ -18,7 +19,7 @@ public class BossCloneAI : EnemyAI
 
         LoadProfileDistribution();
 
-        StartCoroutine(CloneLoop());
+        cloneLoopRoutine = StartCoroutine(CloneLoop());
     }
 
     void LoadProfileDistribution()
@@ -193,5 +194,18 @@ public class BossCloneAI : EnemyAI
         mirror.type = action;
 
         yield return ExecuteAction(mirror);
+    }
+
+    protected override void OnStaggerStarted()
+    {
+        cloneLoopRoutine = null;
+    }
+
+    protected override void OnStaggerEnded()
+    {
+        if (!isActiveAndEnabled || cloneLoopRoutine != null)
+            return;
+
+        cloneLoopRoutine = StartCoroutine(CloneLoop());
     }
 }

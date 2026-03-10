@@ -255,7 +255,12 @@ public class EventRoomManager : MonoBehaviour
             if (playerHealth != null && option.curseDamage > 0)
             {
                 UIManager.Instance.ShowNotification($"You rolled a {roll} and failed! You take {option.curseDamage} damage.", 3f);
-                playerHealth.TakeDamage(option.curseDamage);
+                playerHealth.TakeDamage(
+                    option.curseDamage,
+                    isCrit: false,
+                    source: DamageSource.Skill,
+                    applyStagger: false
+                );
             }
         }
     }

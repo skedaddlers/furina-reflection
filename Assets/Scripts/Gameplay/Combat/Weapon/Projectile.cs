@@ -17,6 +17,10 @@ public class Projectile : MonoBehaviour
     public float speed = 20f;
     public float lifeTime = 3f;
     public float damage = 5f;
+    public bool causesStagger = false;
+    public float staggerDuration = 0.5f;
+    public bool causesKnockback = false;
+    public float knockbackDistance = 1f;
     public LayerMask hitMask; // set agar kena Enemy/Obstacle
 
     [Header("Ownership")]
@@ -71,7 +75,19 @@ public class Projectile : MonoBehaviour
         }
 
     }
-    public void Init(Vector3 dir, float speed, float lifeTime, float damage, Transform owner = null, LayerMask? customHitMask = null, bool isFromSkill = false)
+    public void Init(
+        Vector3 dir, 
+        float speed, 
+        float lifeTime, 
+        float damage, 
+        Transform owner = null, 
+        LayerMask? customHitMask = null, 
+        bool isFromSkill = false,
+        bool causesStagger = false,
+        float staggerDuration = 0.5f,
+        bool causesKnockback = false,
+        float knockbackDistance = 1f
+    )
     {
         _dir = dir.normalized;
         this.speed = speed;
@@ -79,6 +95,10 @@ public class Projectile : MonoBehaviour
         this.damage = damage;
         this.fromSkill = isFromSkill;
         this.owner = owner;
+        this.causesStagger = causesStagger;
+        this.staggerDuration = staggerDuration;
+        this.causesKnockback = causesKnockback;
+        this.knockbackDistance = knockbackDistance;
         _timer = 0f;
 
         if(mode == ProjectileMode.Trajectory)
@@ -216,7 +236,13 @@ public class Projectile : MonoBehaviour
                 didCrit, 
                 owner != null && 
                 owner.CompareTag("Player") && !fromSkill
-                ? DamageSource.Ranged : DamageSource.Skill);
+                ? DamageSource.Ranged : DamageSource.Skill,
+                applyStagger: causesStagger,
+                staggerDuration: staggerDuration,
+                causesKnockback: causesKnockback,
+                knockbackDistance: knockbackDistance,
+                hitInstigator: owner
+            );
         }
     }
 

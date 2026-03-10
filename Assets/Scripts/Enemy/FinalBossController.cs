@@ -74,6 +74,7 @@ public class FinalBossController : EnemyAI
     protected override void Update()
     {
         base.Update();
+        if (IsStaggered) return;
         if (player == null) return;
 
         float dist = Vector3.Distance(transform.position, player.position);

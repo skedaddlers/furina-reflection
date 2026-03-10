@@ -11,12 +11,19 @@ public class EliteMirrorMaiden : EnemyAI
     [Header("Special Attack Settings")]
     public float imprisonDuration = 2.0f;
     public ParticleSystem imprisonEffect;
+    private PlayerController imprisonedPlayerController;
 
     protected override void Awake()
     {
         base.Awake();
         // Additional initialization for Elite Lawachurl if needed
     }
+
+    private void OnDisable()
+    {
+        ReleaseImprisonedPlayer();
+    }
+
     public override void SpecialAttack()
     {
         if (!CanPerformSpecialAttack())
@@ -75,20 +82,17 @@ public class EliteMirrorMaiden : EnemyAI
         }
 
         // Disable player movement
-        var playerController = player.GetComponent<PlayerController>();
-        if (playerController != null)
+        imprisonedPlayerController = player.GetComponent<PlayerController>();
+        if (imprisonedPlayerController != null)
         {
-            playerController.speedMultiplier = 0.1f; 
+            imprisonedPlayerController.speedMultiplier = 0.1f; 
         }
 
         // Wait for duration
         yield return new WaitForSeconds(imprisonDuration);
 
         // Enable player movement
-        if (playerController != null)
-        {
-            playerController.speedMultiplier = 1f;
-        }
+        ReleaseImprisonedPlayer();
         isPerformingSpecialAttack = false;
     }
 
@@ -97,5 +101,19 @@ public class EliteMirrorMaiden : EnemyAI
         return !isPerformingSpecialAttack &&
                Time.time - lastSpecialAttackTime >= specialAttackCooldown &&
                player != null;
+    }
+
+    private void ReleaseImprisonedPlayer()
+    {
+        if (imprisonedPlayerController != null)
+        {
+            imprisonedPlayerController.speedMultiplier = 1f;
+            imprisonedPlayerController = null;
+        }
+    }
+
+    protected override void OnStaggerStarted()
+    {
+        ReleaseImprisonedPlayer();
     }
 }

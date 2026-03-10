@@ -28,11 +28,16 @@ MonoBehaviour:
   attackEffectPrefab: {fileID: 3153472991145048103, guid: 496c261d4975b0643acf069cef875973, type: 3}
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: -71.2, y: 2.1, z: -91.506}
+  effectDuration: 1
   baseDamage: 15
   range: 4
   angle: 180
   cooldown: 1.6
   manaCost: 0
+  causesStagger: 1
+  staggerDuration: 0.5
+  causesKnockback: 1
+  knockbackDistance: 1.2
   projectilePrefab: {fileID: 0}
   projectileSpeed: 20
   projectileLifeTime: 4

@@ -45,6 +45,7 @@ public class FocalorsPhase1AI : EnemyAI
     private bool canAct = true;
     protected override void Update()
     {
+        if (IsStaggered) return;
         if (player == null || isCasting) return;
         if (!canAct)
         {
@@ -220,6 +221,7 @@ public class FocalorsPhase1AI : EnemyAI
 
     public void DealSpecialDamage()
     {
+        if (IsStaggered) return;
         var health = player.GetComponent<Health>();
         if (health == null) return;
 
@@ -243,6 +245,25 @@ public class FocalorsPhase1AI : EnemyAI
             out didCrit
         );
 
-        health.TakeDamage(finalDamage, didCrit);
+        health.TakeDamage(
+            finalDamage,
+            didCrit,
+            DamageSource.Skill,
+            applyStagger: true,
+            staggerDuration: -1f,
+            causesKnockback: true,
+            knockbackDistance: 1.1f,
+            hitInstigator: transform
+        );
+    }
+
+    protected override void OnStaggerStarted()
+    {
+        isCasting = false;
+        if (animator != null)
+        {
+            animator.ResetTrigger("Cast");
+            animator.SetFloat("WalkSpeed", 0f);
+        }
     }
 }

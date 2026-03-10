@@ -83,6 +83,7 @@ public class PlayerCombat : MonoBehaviour
     // Dipanggil oleh anim event atau input (lihat PlayerController patch)
     public void TriggerAttackHit()
     {
+        // if (!_isAttacking) return;
         if (loadout.current == null) return;
         loadout.current.PerformAttack(this);
         if (loadout.current.attackEffectPrefab != null)
@@ -110,7 +111,15 @@ public class PlayerCombat : MonoBehaviour
     // ==== UTIL UNTUK WEAPON ====
 
     // Melee cone hit: deteksi musuh dalam jarak & sudut
-    public void MeleeConeHit(float damage, float range, float angle)
+    public void MeleeConeHit(
+        float damage, 
+        float range, 
+        float angle, 
+        bool stagger = false, 
+        float staggerDuration = 0.5f, 
+        bool causesKnockback = false, 
+        float knockbackDistance = 1f
+    )
     {
         bool hasHit = false;
         Vector3 origin = attackOrigin != null ? attackOrigin.position : transform.position + transform.forward * 0.5f;
@@ -137,7 +146,19 @@ public class PlayerCombat : MonoBehaviour
             {
                 GameObject particle = Instantiate(hitEffect.gameObject, h.ClosestPoint(origin), Quaternion.identity);
                 var health = h.GetComponent<Health>();
-                if (health != null) health.TakeDamage(finalDamage, didCrit, DamageSource.Melee);
+                if (health != null)
+                {
+                    health.TakeDamage(
+                        finalDamage,
+                        didCrit,
+                        DamageSource.Melee,
+                        applyStagger: stagger,
+                        staggerDuration: staggerDuration,
+                        causesKnockback: causesKnockback,
+                        knockbackDistance: knockbackDistance,
+                        hitInstigator: transform
+                    );
+                }
                 hasHit = true;
             }
         }
@@ -155,7 +176,11 @@ public class PlayerCombat : MonoBehaviour
         float lifeTime,
         float damage,
         float maxRange,
-        bool useCameraAim = false
+        bool useCameraAim = false,
+        bool causesStagger = false,
+        float staggerDuration = 0.5f,
+        bool causesKnockback = false,
+        float knockbackDistance = 1f
     )
     {
         if (projPrefab == null) return;

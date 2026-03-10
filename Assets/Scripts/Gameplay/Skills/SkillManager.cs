@@ -216,6 +216,36 @@ public class SkillManager : MonoBehaviour
         
         OnSkillActivated?.Invoke(skill);
     }
+
+    public void ForceCancelAllSkills(bool invokeEndCallbacks = true)
+    {
+        if (activeSkillCoroutines.Count == 0)
+            return;
+
+        List<int> activeSlots = new List<int>(activeSkillCoroutines.Keys);
+        foreach (int slotIndex in activeSlots)
+        {
+            if (activeSkillCoroutines.TryGetValue(slotIndex, out Coroutine routine) && routine != null)
+            {
+                StopCoroutine(routine);
+            }
+
+            activeSkillCoroutines.Remove(slotIndex);
+
+            if (!invokeEndCallbacks)
+                continue;
+
+            if (slotIndex < 0 || slotIndex >= activeSkillSlots.Length)
+                continue;
+
+            SkillBase skill = activeSkillSlots[slotIndex]?.skill;
+            if (skill == null)
+                continue;
+
+            skill.OnSkillEnd(gameObject);
+            OnSkillEnded?.Invoke(skill);
+        }
+    }
     
     private void ApplySelfSkill(SkillBase skill)
     {

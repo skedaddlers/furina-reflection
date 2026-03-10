@@ -18,6 +18,11 @@ public class Health : MonoBehaviour
     private float currentHealth;
     public float CurrentHealth => currentHealth;
     private bool isInvulnerable = false;
+    [Header("Stagger Defaults")]
+    [SerializeField] private bool enableStaggerOnHit = true;
+    [SerializeField] private float defaultMeleeStaggerDuration = 0.2f;
+    [SerializeField] private float defaultRangedStaggerDuration = 0.14f;
+    [SerializeField] private float defaultSkillStaggerDuration = 0.18f;
 
     // on death event
     public Action onDeath;
@@ -32,7 +37,16 @@ public class Health : MonoBehaviour
         maxShield = maxHealth;
     }
 
-    public void TakeDamage(float amount, bool isCrit = false, DamageSource source = DamageSource.Melee)
+    public void TakeDamage(
+        float amount,
+        bool isCrit = false,
+        DamageSource source = DamageSource.Melee,
+        bool applyStagger = true,
+        float staggerDuration = -1f,
+        bool causesKnockback = false,
+        float knockbackDistance = 0f,
+        Transform hitInstigator = null
+    )
     {
         if (currentHealth <= 0) return;
         if (isInvulnerable)
@@ -99,7 +113,18 @@ public class Health : MonoBehaviour
         if (currentHealth <= 0)
         {
             Die();
+            return;
         }
+
+        TryApplyStagger(
+            source,
+            finalDamage,
+            applyStagger,
+            staggerDuration,
+            causesKnockback,
+            knockbackDistance,
+            hitInstigator
+        );
     }
     
     IEnumerator HitFlash(Enemy enemy)
@@ -146,6 +171,55 @@ public class Health : MonoBehaviour
     public void SetInvulnerable(bool value)
     {
         isInvulnerable = value;
+    }
+
+    private void TryApplyStagger(
+        DamageSource source,
+        float finalDamage,
+        bool applyStagger,
+        float staggerDuration,
+        bool causesKnockback,
+        float knockbackDistance,
+        Transform hitInstigator
+    )
+    {
+        if (!enableStaggerOnHit || !applyStagger || finalDamage <= 0f)
+            return;
+
+        var staggerable = GetComponent<IStaggerable>();
+        if (staggerable == null)
+            return;
+
+        float duration = ResolveStaggerDuration(source, staggerDuration);
+        if (duration <= 0f)
+            return;
+
+        var info = new StaggerInfo(
+            duration,
+            causesKnockback,
+            Mathf.Max(0f, knockbackDistance),
+            hitInstigator != null ? hitInstigator.position : Vector3.zero,
+            hitInstigator != null
+        );
+        staggerable.ApplyStagger(info);
+    }
+
+    private float ResolveStaggerDuration(DamageSource source, float overrideDuration)
+    {
+        if (overrideDuration >= 0f)
+            return overrideDuration;
+
+        switch (source)
+        {
+            case DamageSource.Melee:
+                return defaultMeleeStaggerDuration;
+            case DamageSource.Ranged:
+                return defaultRangedStaggerDuration;
+            case DamageSource.Skill:
+                return defaultSkillStaggerDuration;
+            default:
+                return defaultMeleeStaggerDuration;
+        }
     }
 
     public void SetMaxHealth(float newMaxHealth, bool keepCurrentRatio = true, bool fillOnIncrease = true)

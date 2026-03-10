@@ -286,4 +286,9 @@ public class EliteRuinGuard : EnemyAI
                Time.time - lastSpecialAttackTime >= specialAttackCooldown &&
                player != null;
     }
+
+    protected override void OnStaggerStarted()
+    {
+        HideTelegraph();
+    }
 }

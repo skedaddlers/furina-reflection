@@ -3,7 +3,7 @@ using UnityEngine.AI;
 using System.Collections;
 
 [RequireComponent(typeof(EnemyStats))]
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IStaggerable
 {
     public bool isRanged = false;
     public float attackRange = 1.5f;
@@ -29,6 +29,12 @@ public class EnemyAI : MonoBehaviour
     private float baseMaxHealth;
     private bool baseCaptured = false;
     private float currentSpeedModifier = 1f;
+    [Header("Stagger Settings")]
+    public bool canBeStaggered = true;
+    [SerializeField] private string staggerTrigger = "Hit";
+    protected bool isStaggered = false;
+    private Coroutine staggerRoutine;
+    public bool IsStaggered => isStaggered;
 
     
     protected virtual void Awake()
@@ -48,12 +54,18 @@ public class EnemyAI : MonoBehaviour
 
     protected virtual void Update()
     {
+        if (isStaggered)
+            return;
+
         UpdateMovementFacing();
     }
 
     // Panggil dari animation event di animasi Attack
     public virtual void DealDamage()
     {
+        if (isStaggered)
+            return;
+
         if (Vector3.Distance(player.position, transform.position) <= attackRange + 0.5f)
         {
             // further implementation include defense, resistances, etc.
@@ -82,12 +94,24 @@ public class EnemyAI : MonoBehaviour
                 out didCrit
             );
 
-            health.TakeDamage(finalDamage, didCrit);
+            health.TakeDamage(
+                finalDamage,
+                didCrit,
+                DamageSource.Melee,
+                applyStagger: false,
+                staggerDuration: -1f,
+                causesKnockback: false,
+                knockbackDistance: 1f,
+                hitInstigator: transform
+            );
         }
     }
 
     public virtual void RangedAttack()
     {
+        if (isStaggered)
+            return;
+
         LookAtPlayer();
         if (Vector3.Distance(player.position, transform.position) <= attackRange + 0.5f)
         {
@@ -105,16 +129,25 @@ public class EnemyAI : MonoBehaviour
 
     public virtual bool SeePlayer()
     {
+        if (isStaggered)
+            return false;
+
         return Vector3.Distance(player.position, transform.position) <= detectionRange;
     }
 
     public virtual bool InAttackRange()
     {
+        if (isStaggered)
+            return false;
+
         return Vector3.Distance(player.position, transform.position) <= attackRange;
     }
 
     public virtual void ChasePlayer()
     {
+        if (isStaggered)
+            return;
+
         agent.isStopped = false;
         agent.SetDestination(player.position);
         ApplyEffectiveSpeed();
@@ -124,12 +157,18 @@ public class EnemyAI : MonoBehaviour
 
     public virtual void StopChasing()
     {
+        if (agent == null)
+            return;
+
         agent.isStopped = true;
         animator.SetFloat("WalkSpeed", 0f);
     }
     
     public virtual void AttackPlayer()
     {
+        if (isStaggered)
+            return;
+
         if (Time.time - lastAttackTime >= attackCooldown)
         {
             if(isRanged)
@@ -146,6 +185,9 @@ public class EnemyAI : MonoBehaviour
 
     public virtual void LookAtPlayer()
     {
+        if (isStaggered)
+            return;
+
         if (player == null)
             return;
 
@@ -210,6 +252,102 @@ public class EnemyAI : MonoBehaviour
     {
         currentSpeedModifier = Mathf.Max(0f, multiplier);
         ApplyEffectiveSpeed();
+    }
+
+    public virtual void ApplyStagger(StaggerInfo info)
+    {
+        if (!canBeStaggered || !isActiveAndEnabled || info.duration <= 0f)
+            return;
+
+        isStaggered = true;
+        StopAllCoroutines();
+        rotateCoroutine = null;
+        isPerformingSpecialAttack = false;
+
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+
+        if (animator != null)
+        {
+            animator.SetFloat("WalkSpeed", 0f);
+            animator.ResetTrigger("Attack");
+            animator.ResetTrigger("RangedAttack");
+            animator.ResetTrigger("SpecialAttack");
+            animator.ResetTrigger("Cast");
+            animator.SetBool("IsCharging", false);
+            animator.SetBool("Stance", false);
+            animator.SetBool("Retreat", false);
+            if (!string.IsNullOrEmpty(staggerTrigger))
+                animator.SetTrigger(staggerTrigger);
+        }
+
+        OnStaggerStarted();
+        staggerRoutine = StartCoroutine(StaggerRoutine(info));
+    }
+
+    private IEnumerator StaggerRoutine(StaggerInfo info)
+    {
+        isStaggered = true;
+
+        float elapsed = 0f;
+        float knockbackDuration = info.causesKnockback && info.knockbackDistance > 0f
+            ? Mathf.Min(0.12f, info.duration)
+            : 0f;
+        Vector3 knockbackDirection = info.ResolveKnockbackDirection(transform);
+        float knockbackSpeed = knockbackDuration > 0f
+            ? info.knockbackDistance / knockbackDuration
+            : 0f;
+
+        while (elapsed < info.duration)
+        {
+            float dt = Time.deltaTime;
+            if (knockbackDuration > 0f && elapsed < knockbackDuration)
+            {
+                ApplyKnockbackStep(knockbackDirection, knockbackSpeed * dt);
+            }
+
+            elapsed += dt;
+            yield return null;
+        }
+
+        isStaggered = false;
+        staggerRoutine = null;
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = false;
+        }
+        OnStaggerEnded();
+    }
+
+    protected virtual void OnStaggerStarted()
+    {
+    }
+
+    protected virtual void OnStaggerEnded()
+    {
+    }
+
+    private void ApplyKnockbackStep(Vector3 direction, float distanceStep)
+    {
+        if (direction.sqrMagnitude <= 0.0001f || distanceStep <= 0f)
+            return;
+
+        Vector3 target = transform.position + direction.normalized * distanceStep;
+
+        if (agent != null && agent.enabled && agent.isOnNavMesh)
+        {
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(target, out hit, distanceStep + 0.5f, NavMesh.AllAreas))
+            {
+                agent.Warp(hit.position);
+                return;
+            }
+        }
+
+        transform.position = target;
     }
 
     void CaptureBaseStats()
