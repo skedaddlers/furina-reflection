@@ -134,7 +134,7 @@ public class UIManager : MonoBehaviour
         {
             if (GameManager.Instance != null)
             {
-                GameManager.Instance.Restart(mainSceneName);
+                GameManager.Instance.Restart();
             }
         });
     }

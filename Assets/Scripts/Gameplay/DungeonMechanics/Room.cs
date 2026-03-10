@@ -201,10 +201,10 @@ public class Room : MonoBehaviour
         if (roomType == RoomType.Boss && bossManager != null)
         {
             bossManager.SpawnFocalorsPhase1();
+            LockAllDoors();
             return;
         }
         SpawnEnemiesInRoom();
-        LockAllDoors();
     }
 
     private void ApplyDifficultySnapshots()

@@ -7,6 +7,7 @@ public class SettingsUI : MonoBehaviour
     public Slider musicVolumeSlider;
     public Slider sfxVolumeSlider;
     public Slider voicelineVolumeSlider;
+    public Button restartButton;
     public Button closeSettingsButton;
 
     private GameState previousState;
@@ -21,6 +22,7 @@ public class SettingsUI : MonoBehaviour
         sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
         voicelineVolumeSlider.onValueChanged.AddListener(OnVoiceLineVolumeChanged);
 
+        restartButton.onClick.AddListener(() => GameManager.Instance.Restart());
         closeSettingsButton.onClick.AddListener(CloseSettings);
     }
 

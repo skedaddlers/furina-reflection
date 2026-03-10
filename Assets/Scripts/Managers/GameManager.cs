@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     public RoomManager roomManager;
     public RoomGenerator roomGenerator;
     public CursorController cursorController;
+    public string mainSceneName = "MainScene";
 
     public bool withDialogue = true;
     private bool _isRestarting;
@@ -60,14 +61,14 @@ public class GameManager : MonoBehaviour
         Object.Destroy(go);
     }
 
-    public void Restart(string sceneName = null)
+    public void Restart()
     {
         if (_isRestarting) return;
         _isRestarting = true;
 
-        string targetSceneName = string.IsNullOrEmpty(sceneName)
+        string targetSceneName = string.IsNullOrEmpty(mainSceneName)
             ? UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
-            : sceneName;
+            : mainSceneName;
 
         Time.timeScale = 1f;
         UIManager.DestroyInstanceForRestart();

@@ -7,6 +7,7 @@ using DDAMAPEKitFramework;
 public class FocalorsPhase2AI : EnemyAI
 {
     [Header("Phase 2 Intro Mechanics")]
+    public bool useCloneMechanic = true;
     public GameObject clonePrefab;
     public float jumpHeight = 5f;
     public float jumpDuration = 1f;
@@ -69,7 +70,14 @@ public class FocalorsPhase2AI : EnemyAI
         // 1. Check if we need to do the Phase 2 intro (jump & clone)
         if (canAct && !hasDoneIntro)
         {
-            StartCoroutine(Phase2IntroRoutine());
+            if(useCloneMechanic)
+            {
+                StartCoroutine(Phase2IntroRoutine());
+            }
+            else
+            {
+                hasDoneIntro = true;
+            }
             return;
         }
 
@@ -210,6 +218,7 @@ public class FocalorsPhase2AI : EnemyAI
 
     public void DeathAndTransform()
     {
+        ResetActionRoutine();
         // Play death animation, disable boss, etc.
         SetCanAct(false);
         animator.SetTrigger("Die");

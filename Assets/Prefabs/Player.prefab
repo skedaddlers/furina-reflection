@@ -1421,6 +1421,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ccfb490d4f1e289449e786010a6314c6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5174770923303977975}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ccfb490d4f1e289449e786010a6314c6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9130662134584987900}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ccfb490d4f1e289449e786010a6314c6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5296157779000915545}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ccfb490d4f1e289449e786010a6314c6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6358762700698287287}
   m_SourcePrefab: {fileID: 100100000, guid: ccfb490d4f1e289449e786010a6314c6, type: 3}
 --- !u!4 &3705202193683549977 stripped
 Transform:
@@ -1509,6 +1518,9 @@ MonoBehaviour:
   loadout: {fileID: 0}
   currentIndex: 0
   hitEffect: {fileID: 419406480085702754, guid: 8c8d8385f96bd054a88a3df780d77bcc, type: 3}
+  enableHitlag: 1
+  hitlagDuration: 0.05
+  hitlagTimeScale: 0.1
 --- !u!114 &5143592966940413264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1564,13 +1576,14 @@ MonoBehaviour:
   health: {fileID: 0}
   baseAttack: 10
   baseDefense: 5
-  moveSpeed: 6
+  moveSpeed: 3
   critRate: 0.1
   critMultiplier: 1.5
   luck: 0
-  maxStamina: 100
+  maxStamina: 150
   staminaRegenPerSecond: 20
   staminaRegenDelay: 1
+  staminaConsumptionReductionPercent: 0
   _currentStamina: 0
   maxMana: 100
   manaRegenPerSecond: 0.8
@@ -1578,6 +1591,8 @@ MonoBehaviour:
   xpToNextLevel: 100
   xpMultiplier: 1
   xpGrowthRate: 1.2
+  levelManager: {fileID: 0}
+  upgradeManager: {fileID: 0}
   gold: 300
   _currentMana: 0
   _currentDamageBuffMultiplier: 1
@@ -1702,6 +1717,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDetector
   nearestItem: {fileID: 0}
+  nearestWeaponDrop: {fileID: 0}
+--- !u!114 &9130662134584987900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4044326400695588259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a77acc93f9d89c4dab21974acb2b3a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelManager
+  upgradesToBeDone: 0
+  randomSkillUpgradeEveryXLevels: 5
+--- !u!114 &5296157779000915545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4044326400695588259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce43ae3846709804a895060e046c9e73, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeManager
+  hpGrowthPerLevel: 0.1
+  attackGrowthPerLevel: 0.1
+  defenseGrowthPerLevel: 0.15
+  maxManaGrowthPerLevel: 0.1
+  manaRegenGrowthPerLevel: 0.15
+  moveSpeedGrowthPerLevel: 0.05
+  staminaGrowthPerLevel: 0.05
+  critRateGrowthPerLevel: 0.025
+  critMultiplierGrowthPerLevel: 0.05
+--- !u!114 &6358762700698287287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4044326400695588259}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a68fde736fec65d4581c9c79e7400be8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerActionTracker
+  lastPlayerAction: 0
 --- !u!4 &7162018679287225886 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -2916741891282405652, guid: ccfb490d4f1e289449e786010a6314c6, type: 3}

@@ -17,7 +17,9 @@ public class BossManager : MonoBehaviour
     public GameObject focalorsPhase2Prefab;
     public GameObject transformationEffectPrefab;
 
+    [Header("Debug Settings")]
     public bool withDialogue = true;
+    public bool skipPhase1 = false;
 
     public List<Dialogue> phase1StartDialogues;
     public int showPhase1BossHPBarAtIndex;
@@ -52,6 +54,13 @@ public class BossManager : MonoBehaviour
     {
         if (currentBoss != null || isTransitioning)
             return;
+
+        if (skipPhase1)
+        {
+            CurrentBossPhase = BossPhase.Phase2;
+            SpawnFocalorsPhase2(focalorsPhase1SpawnPoint.position);
+            return;
+        }
 
         currentBoss = Instantiate(focalorsPhase1Prefab, focalorsPhase1SpawnPoint.position, Quaternion.identity);
         currentBoss.transform.SetParent(transform);
