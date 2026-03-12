@@ -18,6 +18,8 @@ public class Health : MonoBehaviour
     private float currentHealth;
     public float CurrentHealth => currentHealth;
     private bool isInvulnerable = false;
+    private readonly System.Collections.Generic.Dictionary<int, float> _externalHealingMultipliers =
+        new System.Collections.Generic.Dictionary<int, float>();
     [Header("Stagger Defaults")]
     [SerializeField] private bool enableStaggerOnHit = true;
     [SerializeField] private float defaultMeleeStaggerDuration = 0.2f;
@@ -159,13 +161,49 @@ public class Health : MonoBehaviour
     public void Heal(float amount)
     {
         if (amount <= 0) return;
-        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        float effectiveAmount = amount * GetCombinedExternalHealingMultiplier();
+        if (effectiveAmount <= 0f) return;
+
+        float previousHealth = currentHealth;
+        currentHealth = Mathf.Min(maxHealth, currentHealth + effectiveAmount);
+        float healedAmount = currentHealth - previousHealth;
+        if (healedAmount <= 0f) return;
+        
         onHealthChanged?.Invoke(currentHealth, maxHealth);
         if (CompareTag("Player"))
         {
-            CombatEventManager.RaiseHeal(amount);
+            UIManager.Instance.damageNumberUI.ShowHealPopup(healedAmount, transform.position + Vector3.up);
+            CombatEventManager.RaiseHeal(healedAmount);
+        }
+        else
+        {
+            Enemy enemy = GetComponent<Enemy>();
+            if (enemy != null && enemy.healthBar != null)
+                UIManager.Instance.damageNumberUI.ShowHealPopup(healedAmount, enemy.healthBar.position);
         }
         // Debug.Log($"{gameObject.name} healed {amount}. Current health: {currentHealth}");
+    }
+
+    public void SetExternalHealingMultiplier(int sourceId, float multiplier)
+    {
+        if (sourceId == 0) return;
+        _externalHealingMultipliers[sourceId] = Mathf.Max(0f, multiplier);
+    }
+
+    public void ClearExternalHealingMultiplier(int sourceId)
+    {
+        if (sourceId == 0) return;
+        _externalHealingMultipliers.Remove(sourceId);
+    }
+
+    private float GetCombinedExternalHealingMultiplier()
+    {
+        float combined = 1f;
+        foreach (var kv in _externalHealingMultipliers)
+        {
+            combined *= Mathf.Max(0f, kv.Value);
+        }
+        return combined;
     }
 
     public void SetInvulnerable(bool value)

@@ -22,8 +22,8 @@ public class SkillTriplePulseRing : BossSkill
             t.ConfigureCircle(currentRadius, 40);
             Destroy(t.gameObject, pulseDelayBetween + 0.1f); // Destroy slightly after delay to ensure it disappears
 
+            boss.Animator.SetTrigger(animationTrigger);
             yield return new WaitForSeconds(pulseDelayBetween);
-
             if (pulseEffectPrefab != null)
             {
                 GameObject effect = Instantiate(pulseEffectPrefab, pulseCenter, Quaternion.identity);

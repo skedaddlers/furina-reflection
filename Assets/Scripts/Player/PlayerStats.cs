@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 [DisallowMultipleComponent]
 public class PlayerStats : MonoBehaviour
@@ -53,6 +54,7 @@ public class PlayerStats : MonoBehaviour
     public int CurrentMana => _currentMana;
 
     private float _manaRegenBuffer = 0f;
+    private readonly Dictionary<int, float> _externalManaRegenMultipliers = new Dictionary<int, float>();
 
     public event Action<int, int> onManaChanged; // (current, max)
     public event Action<float, float> onStaminaChanged; // (current, max)
@@ -101,9 +103,10 @@ public class PlayerStats : MonoBehaviour
     {
         HandleStaminaRegen();
         // Regen pasif
-        if (_currentMana < maxMana)
+        float effectiveManaRegen = GetEffectiveManaRegenPerSecond();
+        if (_currentMana < maxMana && effectiveManaRegen > 0f)
         {
-            _manaRegenBuffer += manaRegenPerSecond * Time.deltaTime;
+            _manaRegenBuffer += effectiveManaRegen * Time.deltaTime;
             int regenAmount = Mathf.FloorToInt(_manaRegenBuffer);
             if (regenAmount > 0)
             {
@@ -188,6 +191,33 @@ public class PlayerStats : MonoBehaviour
         if (amount <= 0) return;
         _currentMana = Mathf.Min(maxMana, _currentMana + amount);
         onManaChanged?.Invoke(_currentMana, maxMana);
+    }
+
+    public void SetExternalManaRegenMultiplier(int sourceId, float multiplier)
+    {
+        if (sourceId == 0) return;
+        _externalManaRegenMultipliers[sourceId] = Mathf.Max(0f, multiplier);
+    }
+
+    public void ClearExternalManaRegenMultiplier(int sourceId)
+    {
+        if (sourceId == 0) return;
+        _externalManaRegenMultipliers.Remove(sourceId);
+    }
+
+    public float GetEffectiveManaRegenPerSecond()
+    {
+        return Mathf.Max(0f, manaRegenPerSecond * GetCombinedExternalManaRegenMultiplier());
+    }
+
+    private float GetCombinedExternalManaRegenMultiplier()
+    {
+        float combined = 1f;
+        foreach (var kv in _externalManaRegenMultipliers)
+        {
+            combined *= Mathf.Max(0f, kv.Value);
+        }
+        return combined;
     }
 
     public void AddXP(int amount)

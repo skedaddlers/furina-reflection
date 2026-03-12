@@ -34,14 +34,14 @@ MonoBehaviour:
   - {fileID: 8705725717222443200, guid: 97fd4f131dd65d845b42df81910399ef, type: 3}
   eliteEnemies:
   - {fileID: 4228300383457371494, guid: 7ed8639719b5a754395321b01e5ee567, type: 3}
-  - {fileID: 4228300383457371494, guid: 57f03885d42c4c445ac864518aa31b53, type: 3}
   - {fileID: 4228300383457371494, guid: da51b011059c3034e8da71e2c05d8ea0, type: 3}
   - {fileID: 2301728714059832074, guid: 15899c84aa6f5f44d97d0bc2c944cf2b, type: 3}
   - {fileID: 4228300383457371494, guid: 095290b4c328f1e4d896bbb01f409732, type: 3}
+  - {fileID: 4228300383457371494, guid: 57f03885d42c4c445ac864518aa31b53, type: 3}
   bossEnemies:
   - {fileID: 4228300383457371494, guid: b15517f9f5d7af541a11b98f5c0eb4cf, type: 3}
   bossSequences:
-  - {fileID: 11400000, guid: 7dd9e9e4464f2944792a08e590b9b720, type: 2}
+  - {fileID: 11400000, guid: 4b2dcab5b99bcde468ba40c23ec7a82c, type: 2}
   - {fileID: 11400000, guid: dab16178160d9b34095e3f26da9a6a90, type: 2}
   - {fileID: 11400000, guid: 582e3a5f94299694e85f1c93b0dc6204, type: 2}
   - {fileID: 11400000, guid: 9dfc9d0f22ce6374eac3163147b950d0, type: 2}

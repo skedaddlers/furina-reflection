@@ -20,6 +20,8 @@ public class SkillManager : MonoBehaviour
     
     [Header("Skill Execution")]
     private Dictionary<int, Coroutine> activeSkillCoroutines = new Dictionary<int, Coroutine>();
+    private readonly Dictionary<int, float> _externalCooldownDurationMultipliers = new Dictionary<int, float>();
+    private float _currentCooldownDurationMultiplier = 1f;
     
     // Events
     public delegate void SkillEvent(SkillBase skill);
@@ -32,6 +34,7 @@ public class SkillManager : MonoBehaviour
     {
         playerStats = GetComponent<PlayerStats>();
         playerCombat = GetComponent<PlayerCombat>();
+        _currentCooldownDurationMultiplier = GetCombinedCooldownDurationMultiplier();
         // Initialize skill slots
         // for (int i = 0; i < activeSkillSlots.Length; i++)
         // {
@@ -81,6 +84,7 @@ public class SkillManager : MonoBehaviour
         {
             skill = skill,
             currentCooldown = 0f,
+            cooldownDuration = 0f,
             isOnCooldown = false,
             level = 1
         };
@@ -184,7 +188,8 @@ public class SkillManager : MonoBehaviour
         
         // Start cooldown
         slot.isOnCooldown = true;
-        slot.currentCooldown = skill.cooldownTime;
+        slot.cooldownDuration = skill.cooldownTime * _currentCooldownDurationMultiplier;
+        slot.currentCooldown = slot.cooldownDuration;
         
         // Trigger animation if exists
         if (!string.IsNullOrEmpty(skill.animationTrigger))
@@ -356,6 +361,7 @@ public class SkillManager : MonoBehaviour
                 if (slot.currentCooldown <= 0)
                 {
                     slot.currentCooldown = 0;
+                    slot.cooldownDuration = 0f;
                     slot.isOnCooldown = false;
                     UIManager.Instance.skillsUI.UpdateSkillsUI(activeSkillSlots);
                 }
@@ -426,11 +432,15 @@ public class SkillManager : MonoBehaviour
 
         if (slot.isOnCooldown)
         {
-            float maxCooldown = Mathf.Max(0f, upgradedSkill.cooldownTime);
-            slot.currentCooldown = Mathf.Min(slot.currentCooldown, maxCooldown);
+            float oldDuration = Mathf.Max(0.01f, slot.cooldownDuration);
+            float remainingRatio = slot.currentCooldown / oldDuration;
+            float maxCooldown = Mathf.Max(0f, upgradedSkill.cooldownTime * _currentCooldownDurationMultiplier);
+            slot.cooldownDuration = maxCooldown;
+            slot.currentCooldown = Mathf.Clamp(maxCooldown * remainingRatio, 0f, maxCooldown);
             if (maxCooldown <= 0f || slot.currentCooldown <= 0f)
             {
                 slot.currentCooldown = 0f;
+                slot.cooldownDuration = 0f;
                 slot.isOnCooldown = false;
             }
         }
@@ -454,8 +464,56 @@ public class SkillManager : MonoBehaviour
         SkillSlot slot = activeSkillSlots[slotIndex];
         if (slot == null || slot.skill == null || !slot.isOnCooldown)
             return 0;
-        
-        return slot.currentCooldown / slot.skill.cooldownTime;
+
+        float duration = slot.cooldownDuration > 0f ? slot.cooldownDuration : slot.skill.cooldownTime;
+        if (duration <= 0f) return 0f;
+        return slot.currentCooldown / duration;
+    }
+
+    public void SetExternalCooldownDurationMultiplier(int sourceId, float multiplier)
+    {
+        if (sourceId == 0) return;
+        _externalCooldownDurationMultipliers[sourceId] = Mathf.Max(0.01f, multiplier);
+        RefreshCooldownDurationMultiplier();
+    }
+
+    public void ClearExternalCooldownDurationMultiplier(int sourceId)
+    {
+        if (sourceId == 0) return;
+        if (_externalCooldownDurationMultipliers.Remove(sourceId))
+            RefreshCooldownDurationMultiplier();
+    }
+
+    private float GetCombinedCooldownDurationMultiplier()
+    {
+        float combined = 1f;
+        foreach (var kv in _externalCooldownDurationMultipliers)
+        {
+            combined *= Mathf.Max(0.01f, kv.Value);
+        }
+        return combined;
+    }
+
+    private void RefreshCooldownDurationMultiplier()
+    {
+        float newMultiplier = GetCombinedCooldownDurationMultiplier();
+        float oldMultiplier = Mathf.Max(0.01f, _currentCooldownDurationMultiplier);
+        if (Mathf.Approximately(newMultiplier, oldMultiplier))
+            return;
+
+        float ratio = newMultiplier / oldMultiplier;
+        for (int i = 0; i < activeSkillSlots.Length; i++)
+        {
+            SkillSlot slot = activeSkillSlots[i];
+            if (slot == null || slot.skill == null || !slot.isOnCooldown)
+                continue;
+
+            slot.currentCooldown *= ratio;
+            slot.cooldownDuration = Mathf.Max(slot.cooldownDuration * ratio, slot.currentCooldown);
+        }
+
+        _currentCooldownDurationMultiplier = newMultiplier;
+        UIManager.Instance?.skillsUI?.UpdateSkillsUI(activeSkillSlots);
     }
     
     #endregion
@@ -466,6 +524,7 @@ public class SkillSlot
 {
     public SkillBase skill;
     public float currentCooldown;
+    public float cooldownDuration;
     public bool isOnCooldown;
     public int level = 1;
 }

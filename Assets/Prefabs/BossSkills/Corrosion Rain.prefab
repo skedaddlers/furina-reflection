@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6538940711847418517
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2344414599038231058}
+  - component: {fileID: -3632550435667812701}
+  m_Layer: 6
+  m_Name: Corrosion Rain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2344414599038231058
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6538940711847418517}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-3632550435667812701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6538940711847418517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca708b5267ec59c43b6aa63622f5975c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkillCorrosionRain
+  skillName: New Skill
+  animationTrigger: CastSkill
+  windUpAnimationTrigger: WindUp
+  isEnabled: 1
+  causesStagger: 0
+  staggerDuration: 1
+  causesKnockback: 0
+  knockbackDistance: 1
+  telegraphTime: 1
+  telegraphRadius: 6
+  telegraphSegments: 48
+  zoneRadius: 6
+  zoneDuration: 7
+  spawnAtPlayerSnapshot: 1
+  followPlayer: 0
+  followSpeed: 1.5
+  zoneOffset: {x: 0, y: 0.05, z: 0}
+  zoneEffectPrefab: {fileID: 1750317307060666, guid: 9e760e98cdf85a24790af0c971e3df00, type: 3}
+  healingMultiplier: 0.5
+  debuffVfxPrefab: {fileID: 6126188424833946103, guid: dc73d9708c725ee49b3ee0238343111f, type: 3}
+  damagePerSecond: 0
+  damageTickInterval: 0.4

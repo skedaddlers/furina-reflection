@@ -821,7 +821,7 @@ MonoBehaviour:
   roomPrefabs:
   - {fileID: 7386528077388556701, guid: c63202244d71ffc44b2bd6e50758ec7b, type: 3}
   - {fileID: 5911626624432018676, guid: 198e7c563884e65409dd05975d0ec15d, type: 3}
-  - {fileID: 7386528077388556701, guid: c9c850a52e38ea54fa339a4a971004cf, type: 3}
+  - {fileID: 7386528077388556701, guid: 2c08537a03ec6e5459a452c3fc81e747, type: 3}
   - {fileID: 7386528077388556701, guid: 0ec429b392803634484cd46c81f23130, type: 3}
   - {fileID: 7386528077388556701, guid: 9d1d454ac5307c14291c214499b6ff27, type: 3}
   - {fileID: 5911626624432018676, guid: 051737a6f4b735841a1942426be267b4, type: 3}
@@ -857,8 +857,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonConfig:
-    minRooms: 4
-    maxRooms: 4
+    minRooms: 2
+    maxRooms: 2
     normalRoomRatio: 0.5
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
@@ -12606,7 +12606,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 637709093}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1521234, y: 8.0324974e-10, z: -1.2363198e-10, w: 0.98836154}
+  m_LocalRotation: {x: 0.15212339, y: 0.000000014727737, z: -0.0000000022668156, w: 0.98836154}
   m_LocalPosition: {x: 0, y: 2.4016116, z: -3.5287528}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -41641,15 +41641,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6815004092041882195, guid: 4b3269cd1f4406d48a0249e11838b9d7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.1521234
+      value: 0.15212339
       objectReference: {fileID: 0}
     - target: {fileID: 6815004092041882195, guid: 4b3269cd1f4406d48a0249e11838b9d7, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 8.0324974e-10
+      value: 0.000000014727736
       objectReference: {fileID: 0}
     - target: {fileID: 6815004092041882195, guid: 4b3269cd1f4406d48a0249e11838b9d7, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -1.2363198e-10
+      value: -0.0000000022668154
       objectReference: {fileID: 0}
     - target: {fileID: 6815004092041882195, guid: 4b3269cd1f4406d48a0249e11838b9d7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

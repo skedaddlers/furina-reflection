@@ -117,3 +117,9 @@ MonoBehaviour:
   telegraphDuration: 1
   startAlpha: 0.05
   maxAlpha: 0.5
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 896
+  rayHeight: 5
+  rayDistance: 20
+  groundSubdivisions: 10

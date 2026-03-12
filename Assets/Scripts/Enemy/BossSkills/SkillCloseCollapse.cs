@@ -14,6 +14,7 @@ public class SkillCloseCollapse : BossSkill
         Telegraph t = Instantiate(boss.telegraphPrefab, boss.transform.position, Quaternion.identity);
         t.ConfigureCircle(closeCollapseRadius, closeCollapseSegments);
         Destroy(t.gameObject, closeCollapseTelegraphTime + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
+        boss.Animator.SetTrigger(animationTrigger);
         yield return new WaitForSeconds(closeCollapseTelegraphTime);
 
         if (closeCollapseEffectPrefab != null)

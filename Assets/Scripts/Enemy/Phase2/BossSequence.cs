@@ -37,6 +37,10 @@ public class MovementAction
     [Header("Dash Settings")]
     public float distanceToStop = 0.1f; // Minimum distance to target to consider dash complete
 
+    [Header("Reposition Settings")]
+    public bool randomizeReposition = true; // If true, will choose a random position from the list
+    public int repostionIndex;
+
 }
 
 public enum ActionType

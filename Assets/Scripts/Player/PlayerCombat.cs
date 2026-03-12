@@ -217,7 +217,17 @@ public class PlayerCombat : MonoBehaviour
         GameObject go = Instantiate(projPrefab, muzzle.position, Quaternion.LookRotation(dir));
         var proj = go.GetComponent<Projectile>();
         if (proj == null) proj = go.AddComponent<Projectile>();
-        proj.Init(dir, speed, lifeTime, damage, this.transform);
+        proj.Init(
+            dir, 
+            speed, 
+            lifeTime, 
+            damage, 
+            this.transform,
+            causesStagger,
+            staggerDuration,
+            causesKnockback,
+            knockbackDistance
+        );
         PlayerActionTracker.Instance.RegisterRanged();
 
         // Debug.Log($"Fired projectile {go.name} with dir {dir}");

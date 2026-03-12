@@ -115,7 +115,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
+  m_Radius: 0.21
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &3667981546764158118
 Rigidbody:
@@ -157,10 +157,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mode: 0
-  isAOE: 1
+  isAOE: 0
   speed: 20
   lifeTime: 4.04
   damage: 5
+  causesStagger: 0
+  staggerDuration: 0.5
+  causesKnockback: 0
+  knockbackDistance: 1
   hitMask:
     serializedVersion: 2
     m_Bits: 960
@@ -169,6 +173,7 @@ MonoBehaviour:
   fromSkill: 0
   hitEffect: {fileID: 6063287097601494674, guid: af44cbf49172b8d42b452221c9638892, type: 3}
   laserRenderer: {fileID: 0}
+  laserPrefab: {fileID: 0}
   maxDistance: 100
   laserDuration: 0.1
   target: {fileID: 0}
@@ -185,8 +190,6 @@ GameObject:
   - component: {fileID: 7228666105551743878}
   - component: {fileID: 7445360195404301816}
   - component: {fileID: 7555379716719464980}
-  - component: {fileID: 14030254896171594}
-  - component: {fileID: 379657674837338588}
   m_Layer: 10
   m_Name: Arrow
   m_TagString: Untagged
@@ -266,57 +269,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &14030254896171594
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6009248453473173981}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &379657674837338588
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6009248453473173981}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02cd90f1dff273e4f817c262c7425a77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mode: 0
-  isAOE: 1
-  speed: 20
-  lifeTime: 4.04
-  damage: 5
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 960
-  owner: {fileID: 0}
-  ignoreOwner: 1
-  fromSkill: 0
-  hitEffect: {fileID: 6063287097601494674, guid: af44cbf49172b8d42b452221c9638892, type: 3}
-  laserRenderer: {fileID: 0}
-  maxDistance: 100
-  laserDuration: 0.1
-  target: {fileID: 0}
-  gravityMultiplier: 1
-  aoeRadius: 3
 --- !u!1 &8327200485918174715
 GameObject:
   m_ObjectHideFlags: 0

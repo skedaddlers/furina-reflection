@@ -565,7 +565,7 @@ public class PlayerController : MonoBehaviour, IStaggerable
 
         stats?.health?.SetInvulnerable(false);
         playerCombat?.ForceCancelAttack();
-        skillManager?.ForceCancelAllSkills();
+        // skillManager?.ForceCancelAllSkills();
         CancelCombatLock();
         ExitBowAim();
         _animBinder?.SetChannel(false);

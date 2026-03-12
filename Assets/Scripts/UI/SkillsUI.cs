@@ -37,8 +37,13 @@ public class SkillsUI : MonoBehaviour
         {
             if (skillManager.ActiveSkillSlots[i] == slot)
             {
+                float cooldownDuration = slot.cooldownDuration > 0f
+                    ? slot.cooldownDuration
+                    : slot.skill.cooldownTime;
                 cooldownTexts[i].text = Mathf.CeilToInt(slot.currentCooldown).ToString();
-                cooldownOverlays[i].fillAmount = slot.currentCooldown / slot.skill.cooldownTime;
+                cooldownOverlays[i].fillAmount = cooldownDuration > 0f
+                    ? slot.currentCooldown / cooldownDuration
+                    : 0f;
             }
         }
     }
@@ -54,10 +59,15 @@ public class SkillsUI : MonoBehaviour
                 cooldownOverlays[i].enabled = true;
                 skillKeybindings[i].enabled = true;
                 SkillBase skill = activeSkillSlots[i].skill;
+                float cooldownDuration = activeSkillSlots[i].cooldownDuration > 0f
+                    ? activeSkillSlots[i].cooldownDuration
+                    : activeSkillSlots[i].skill.cooldownTime;
                 skillIcons[i].sprite = skill.skillIcon;
                 manaCosts[i].text = skill.manaCost.ToString();
                 cooldownTexts[i].text = activeSkillSlots[i].isOnCooldown ? Mathf.CeilToInt(activeSkillSlots[i].currentCooldown).ToString() : "";
-                cooldownOverlays[i].fillAmount = activeSkillSlots[i].currentCooldown / activeSkillSlots[i].skill.cooldownTime;
+                cooldownOverlays[i].fillAmount = cooldownDuration > 0f
+                    ? activeSkillSlots[i].currentCooldown / cooldownDuration
+                    : 0f;
             }
             else
             {

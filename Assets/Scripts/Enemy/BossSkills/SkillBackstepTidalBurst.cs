@@ -23,10 +23,13 @@ public class SkillBackstepTidalBurst : BossSkill
         Vector3 backstepTarget = boss.transform.position - (boss.transform.forward * backstepDistance);
         
         float time = 0;
+        boss.Animator.SetTrigger(animationTrigger);
         while (time < backstepDuration)
         {
             time += Time.deltaTime;
             boss.transform.position = Vector3.Lerp(burstCenter, backstepTarget, time / backstepDuration);
+            // add vertical motion for a more dynamic backstep
+            boss.transform.position += Vector3.up * Mathf.Sin((time / backstepDuration) * Mathf.PI) * 0.5f; // small hop effect
             yield return null;
         }
 

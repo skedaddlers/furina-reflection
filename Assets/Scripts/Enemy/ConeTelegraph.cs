@@ -36,6 +36,12 @@ public class Telegraph : MonoBehaviour
     [Range(0f, 1f)] public float startAlpha = 0.15f;
     [Range(0f, 1f)] public float maxAlpha = 0.7f;
 
+    [Header("Ground Projection")]
+    public LayerMask groundMask;
+    public float rayHeight = 5f;
+    public float rayDistance = 20f;
+    public int groundSubdivisions = 10;
+
     private Mesh mesh;
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
@@ -203,34 +209,69 @@ public class Telegraph : MonoBehaviour
 
     private void BuildRectangleMesh()
     {
+        int xSegments = groundSubdivisions;
+        int zSegments = groundSubdivisions;
+
+        int vertCount = (xSegments + 1) * (zSegments + 1);
+        Vector3[] vertices = new Vector3[vertCount];
+        int[] triangles = new int[xSegments * zSegments * 6];
+
         float halfWidth = rectangleWidth * 0.5f;
 
-        Vector3[] vertices = new Vector3[4]
+        int v = 0;
+        for (int z = 0; z <= zSegments; z++)
         {
-            new Vector3(-halfWidth, 0f, 0f),
-            new Vector3(halfWidth, 0f, 0f),
-            new Vector3(-halfWidth, 0f, rectangleLength),
-            new Vector3(halfWidth, 0f, rectangleLength)
-        };
+            float zPos = (z / (float)zSegments) * rectangleLength;
 
-        int[] triangles = new int[6]
+            for (int x = 0; x <= xSegments; x++)
+            {
+                float xPos = Mathf.Lerp(-halfWidth, halfWidth, x / (float)xSegments);
+                vertices[v++] = new Vector3(xPos, 0f, zPos);
+            }
+        }
+
+        int t = 0;
+        for (int z = 0; z < zSegments; z++)
         {
-            0, 2, 1,
-            1, 2, 3
-        };
+            for (int x = 0; x < xSegments; x++)
+            {
+                int i = z * (xSegments + 1) + x;
+
+                triangles[t++] = i;
+                triangles[t++] = i + xSegments + 1;
+                triangles[t++] = i + 1;
+
+                triangles[t++] = i + 1;
+                triangles[t++] = i + xSegments + 1;
+                triangles[t++] = i + xSegments + 2;
+            }
+        }
 
         ApplyMesh(vertices, triangles);
     }
 
     private void ApplyMesh(Vector3[] vertices, int[] triangles)
     {
+        // Project vertices to ground
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            Vector3 worldPos = transform.TransformPoint(vertices[i]);
+            Ray ray = new Ray(worldPos + Vector3.up * rayHeight, Vector3.down);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, groundMask))
+            {
+                Vector3 localHit = transform.InverseTransformPoint(hit.point);
+                vertices[i].y = localHit.y + 0.02f; // small offset to avoid z-fighting
+            }
+        }
+
         mesh.vertices = vertices;
         mesh.triangles = triangles;
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
+
         meshFilter.sharedMesh = mesh;
     }
-
     public void SetAlpha(float alpha)
     {
         if (meshRenderer == null)

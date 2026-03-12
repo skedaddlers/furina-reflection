@@ -29,7 +29,7 @@ public class DamageNumberUI : MonoBehaviour
     public Color critColor = new Color(1f, 0.85f, 0.2f, 1f);
 
     // Method to show damage popup
-    public void ShowDamagePopup(float damageAmount, Vector3 position, bool isCrit = false)
+    public void ShowDamagePopup(float damageAmount, Vector3 position, bool isCrit = false, bool isHeal = false)
     {
         if (damageNumberPrefab == null)
         {
@@ -67,6 +67,11 @@ public class DamageNumberUI : MonoBehaviour
                     textMesh.color = critColor;
                 }
             }
+
+            if (isHeal)
+            {
+                textMesh.color = Color.green;
+            }
         }
 
         float minS = Mathf.Min(scaleRange.x, scaleRange.y);
@@ -88,5 +93,10 @@ public class DamageNumberUI : MonoBehaviour
         float minLife = Mathf.Min(lifetimeRange.x, lifetimeRange.y);
         float maxLife = Mathf.Max(lifetimeRange.x, lifetimeRange.y);
         Destroy(damagePopup, Random.Range(minLife, maxLife));
+    }
+
+    public void ShowHealPopup(float healAmount, Vector3 position)
+    {
+        ShowDamagePopup(healAmount, position, false, true);
     }
 }

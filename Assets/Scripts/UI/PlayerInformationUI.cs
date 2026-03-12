@@ -176,7 +176,7 @@ public class PlayerInformationUI : MonoBehaviour
         SetText(attackText, $"{Mathf.RoundToInt(playerStats.baseAttack)}");
         SetText(defenseText, $"{Mathf.RoundToInt(playerStats.baseDefense)}");
         SetText(maxManaText, $"{playerStats.CurrentMana} / {playerStats.maxMana}");
-        SetText(manaRegenText, $"{playerStats.manaRegenPerSecond:F1}/sec");
+        SetText(manaRegenText, $"{playerStats.GetEffectiveManaRegenPerSecond():F1}/sec");
         SetText(moveSpeedText, $"{playerStats.moveSpeed:F1}");
         SetText(critRateText, $"{(playerStats.critRate * 100f):F1}%");
         SetText(critMultiplierText, $"{(playerStats.critMultiplier * 100f):F1}%");
@@ -209,9 +209,12 @@ public class PlayerInformationUI : MonoBehaviour
                 SetImage(skillIcons, i, skill.skillIcon);
                 SetText(skillNames, i, skill.skillName);
                 SetText(skillDescriptions, i, skill.description);
+                float cooldownDuration = skillSlot != null && skillSlot.cooldownDuration > 0f
+                    ? skillSlot.cooldownDuration
+                    : skill.cooldownTime;
                 string cooldownText = skillSlot != null && skillSlot.isOnCooldown
-                    ? $"{skillSlot.currentCooldown:F1}s / {skill.cooldownTime:F1}s"
-                    : $"{skill.cooldownTime:F1}s";
+                    ? $"{skillSlot.currentCooldown:F1}s / {cooldownDuration:F1}s"
+                    : $"{cooldownDuration:F1}s";
                 SetText(skillCooldowns, i, cooldownText);
                 SetText(skillManaCosts, i, $"{skill.manaCost}");
             }

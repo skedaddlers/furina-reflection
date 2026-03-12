@@ -160,6 +160,10 @@ MonoBehaviour:
   speed: 20
   lifeTime: 4.04
   damage: 5
+  causesStagger: 0
+  staggerDuration: 0.5
+  causesKnockback: 0
+  knockbackDistance: 1
   hitMask:
     serializedVersion: 2
     m_Bits: 960
@@ -167,7 +171,8 @@ MonoBehaviour:
   ignoreOwner: 1
   fromSkill: 0
   hitEffect: {fileID: 6063287097601494674, guid: af44cbf49172b8d42b452221c9638892, type: 3}
-  laserRenderer: {fileID: 4165400485065553197}
+  laserRenderer: {fileID: 0}
+  laserPrefab: {fileID: 28993225555646119, guid: 99dc0333f62fd1143a439c2231fdafd3, type: 3}
   maxDistance: 100
   laserDuration: 0.2
   target: {fileID: 0}
@@ -181,7 +186,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3897606349267117842}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -393,7 +398,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -431,7 +436,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6009248453473173981}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 02cd90f1dff273e4f817c262c7425a77, type: 3}
   m_Name: 
@@ -441,6 +446,10 @@ MonoBehaviour:
   speed: 20
   lifeTime: 4.04
   damage: 5
+  causesStagger: 0
+  staggerDuration: 0.5
+  causesKnockback: 0
+  knockbackDistance: 1
   hitMask:
     serializedVersion: 2
     m_Bits: 960
@@ -449,6 +458,7 @@ MonoBehaviour:
   fromSkill: 0
   hitEffect: {fileID: 6063287097601494674, guid: af44cbf49172b8d42b452221c9638892, type: 3}
   laserRenderer: {fileID: 0}
+  laserPrefab: {fileID: 0}
   maxDistance: 100
   laserDuration: 0.1
   target: {fileID: 0}

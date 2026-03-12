@@ -34,6 +34,7 @@ public class FocalorsPhase2AI : EnemyAI
     private Coroutine currentActionRoutine;
     private bool isCasting = false;
     private bool canAct = true;
+    private bool isDyingOrDead = false;
     private int strafeDirection = 1;
 
     private BossSkillManager skillManager;
@@ -67,6 +68,7 @@ public class FocalorsPhase2AI : EnemyAI
 
     protected override void Update()
     {
+        if (isDyingOrDead) return;
         if (IsStaggered) return;
 
         // 1. Check if we need to do the Phase 2 intro (jump & clone)
@@ -198,6 +200,7 @@ public class FocalorsPhase2AI : EnemyAI
 
     public void SetCanAct(bool value)
     {
+        if (isDyingOrDead && value) return;
         canAct = value;
         if (!value)
         {
@@ -215,13 +218,14 @@ public class FocalorsPhase2AI : EnemyAI
 
     public void NotifyCloneDeath()
     {
+        if (isDyingOrDead) return;
         StartCoroutine(JumpDownRoutine());
     }
 
     public void DeathAndTransform()
     {
-        ResetActionRoutine();
-        // Play death animation, disable boss, etc.
+        isDyingOrDead = true;
+        ForceCancelAllActions();
         SetCanAct(false);
         animator.SetTrigger("Die");
     }
@@ -317,7 +321,7 @@ public class FocalorsPhase2AI : EnemyAI
         yield return new WaitForSeconds(castWindupTime);
 
         // Execute the specific skill's logic
-        yield return StartCoroutine(chosenSkill.ExecuteRoutine());
+        yield return chosenSkill.ExecuteRoutine();
 
         // Wait a moment after finishing
         yield return new WaitForSeconds(waitAfterCastTime);
@@ -357,9 +361,8 @@ public class FocalorsPhase2AI : EnemyAI
                 yield break;
 
             case MovementType.Reposition:
-                agent.SetDestination(arenaPoints[Random.Range(0, arenaPoints.Count)].position);
-                animator.SetFloat("WalkSpeed", 1f);
-                Debug.DrawLine(transform.position, arenaPoints[Random.Range(0, arenaPoints.Count)].position, Color.yellow, m.duration);
+                yield return Reposition(m);
+                animator.SetFloat("WalkSpeed", 0f);
                 yield break;
         }
 
@@ -373,12 +376,27 @@ public class FocalorsPhase2AI : EnemyAI
 
     private IEnumerator DashToPlayer(MovementAction movement)
     {
-        if (agent == null || !agent.enabled) yield break;
+        if (agent == null || !agent.enabled || player == null) yield break;
         LookAtPlayer();
         agent.speed = movement.speed > 0f ? movement.speed : movementSpeed;
-        agent.SetDestination(player.position);
+        float stopDistance = Mathf.Max(agent.stoppingDistance, Mathf.Max(0.1f, movement.distanceToStop));
+        float elapsed = 0f;
         animator.SetFloat("WalkSpeed", 2f);
-        yield return new WaitForSeconds(movement.duration);
+
+        while (elapsed < movement.duration)
+        {
+            if (player == null || !agent.enabled) yield break;
+
+            agent.SetDestination(player.position);
+            if (Vector3.Distance(transform.position, player.position) <= stopDistance)
+                break;
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        if (agent.enabled)
+            agent.ResetPath();
     }
 
     private IEnumerator StrafeAroundPlayer(MovementAction movement)
@@ -426,6 +444,53 @@ public class FocalorsPhase2AI : EnemyAI
         yield return new WaitForSeconds(movement.duration);
     }
 
+    private IEnumerator Reposition(MovementAction movement)
+    {
+        if (agent == null || !agent.enabled || arenaPoints.Count == 0) yield break;
+
+        Transform targetPoint;
+
+        if (movement.randomizeReposition)
+        {
+            targetPoint = arenaPoints[Random.Range(0, arenaPoints.Count)];
+        }
+        else
+        {
+            if (movement.repostionIndex < 0 || movement.repostionIndex >= arenaPoints.Count)
+            {
+                Debug.LogWarning("Invalid reposition index on movement action, defaulting to random");
+                targetPoint = arenaPoints[Random.Range(0, arenaPoints.Count)];
+            }
+            else
+            {
+                targetPoint = arenaPoints[movement.repostionIndex];
+            }
+        }
+
+        agent.speed = movement.speed > 0f ? movement.speed : movementSpeed;
+        float stopDistance = Mathf.Max(agent.stoppingDistance, Mathf.Max(0.05f, movement.distanceToStop));
+        agent.SetDestination(targetPoint.position);
+        animator.SetFloat("WalkSpeed", 2f);
+
+        while (!HasReachedDestination(stopDistance))
+        {
+            if (!agent.enabled) yield break;
+            yield return null;
+        }
+
+        if (agent.enabled)
+            agent.ResetPath();
+    }
+
+    private bool HasReachedDestination(float stopDistance)
+    {
+        if (agent == null || !agent.enabled) return true;
+        if (agent.pathPending) return false;
+        if (agent.remainingDistance > stopDistance) return false;
+        if (agent.hasPath && agent.velocity.sqrMagnitude > 0.0001f) return false;
+        return true;
+    }
+
     void ResetActionRoutine()
     {
         if (currentActionRoutine != null)
@@ -435,11 +500,42 @@ public class FocalorsPhase2AI : EnemyAI
         }
     }
 
+    void ForceCancelAllActions()
+    {
+        StopAllCoroutines();
+        currentActionRoutine = null;
+        isCasting = false;
+        isWaitingForClone = false;
+
+        if (agent != null && agent.enabled)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+            agent.updateRotation = true;
+        }
+
+        Projectile[] projectiles = FindObjectsOfType<Projectile>();
+        foreach (var projectile in projectiles)
+        {
+            if (projectile != null && projectile.owner == transform)
+            {
+                Destroy(projectile.gameObject);
+            }
+        }
+
+        if (animator != null)
+        {
+            animator.ResetTrigger("Cast");
+            animator.SetFloat("WalkSpeed", 0f);
+            animator.SetBool("Retreat", false);
+        }
+    }
+
     #endregion
 
-    public void DealSpecialDamage()
+    public void DealSpecialDamage(bool causesStagger = true, float staggerDuration = 1f, bool causesKnockback = true, float knockbackDistance = 1.2f)
     {
-        if (IsStaggered) return;
+        if (isDyingOrDead || !canAct || IsStaggered) return;
         var health = player.GetComponent<Health>();
         if (health == null) return;
 
@@ -467,10 +563,10 @@ public class FocalorsPhase2AI : EnemyAI
             finalDamage,
             didCrit,
             DamageSource.Skill,
-            applyStagger: true,
-            staggerDuration: -1f,
-            causesKnockback: true,
-            knockbackDistance: 1.2f,
+            applyStagger: causesStagger,
+            staggerDuration: staggerDuration,
+            causesKnockback: causesKnockback,
+            knockbackDistance: knockbackDistance,
             hitInstigator: transform
         );
     }

@@ -19,6 +19,7 @@ public class SkillTidalSpearFan : BossSkill
         // Calculate starting angle so the fan is perfectly centered in front of the boss
         float startAngle = -spearSpreadAngle * (spearCount - 1) / 2f;
 
+        boss.Animator.SetTrigger(animationTrigger);
         for (int i = 0; i < spearCount; i++)
         {
             float currentAngle = startAngle + (i * spearSpreadAngle);

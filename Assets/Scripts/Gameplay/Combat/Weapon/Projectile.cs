@@ -31,6 +31,7 @@ public class Projectile : MonoBehaviour
     [Header("Visuals")]
     public ParticleSystem hitEffect;
     public LineRenderer laserRenderer;
+    public GameObject laserPrefab; // optional prefab untuk visual laser (bisa pakai LineRenderer atau particle)
 
     [Header("Laser Settings")]
     public float maxDistance = 100f;
@@ -82,11 +83,7 @@ public class Projectile : MonoBehaviour
         float damage, 
         Transform owner = null, 
         LayerMask? customHitMask = null, 
-        bool isFromSkill = false,
-        bool causesStagger = false,
-        float staggerDuration = 0.5f,
-        bool causesKnockback = false,
-        float knockbackDistance = 1f
+        bool isFromSkill = false
     )
     {
         _dir = dir.normalized;
@@ -114,6 +111,40 @@ public class Projectile : MonoBehaviour
         if (customHitMask.HasValue)
         {
             hitMask = customHitMask.Value;
+        }
+    }
+
+    public void Init(
+        Vector3 dir, 
+        float speed, 
+        float lifeTime, 
+        float damage, 
+        Transform owner = null, 
+        bool causesStagger = false,
+        float staggerDuration = 0.5f,
+        bool causesKnockback = false,
+        float knockbackDistance = 1f
+    )
+    {
+        _dir = dir.normalized;
+        this.speed = speed;
+        this.lifeTime = lifeTime;
+        this.damage = damage;
+        this.owner = owner;
+        this.causesStagger = causesStagger;
+        this.staggerDuration = staggerDuration;
+        this.causesKnockback = causesKnockback;
+        this.knockbackDistance = knockbackDistance;
+        _timer = 0f;
+
+        if(mode == ProjectileMode.Trajectory)
+        {
+            _velocity = _dir * speed;
+        }
+
+        if(mode == ProjectileMode.HitScan)
+        {
+            FireHitScan();
         }
     }
 
@@ -333,6 +364,11 @@ public class Projectile : MonoBehaviour
                     }
                 }
             }
+        }
+        if (laserPrefab != null)
+        {
+            GameObject laser = Instantiate(laserPrefab, transform.position, Quaternion.LookRotation(_dir));
+            Destroy(laser, laserDuration);
         }
 
         // optional: line renderer buat visual beam
