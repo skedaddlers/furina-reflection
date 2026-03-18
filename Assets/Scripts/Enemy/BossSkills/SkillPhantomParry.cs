@@ -69,7 +69,7 @@ public class SkillPhantomParry : BossSkill
         }
 
         if (IsTargetInsideCone(counterRange, counterAngle))
-            boss.DealSpecialDamage();
+            boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
     }
 
     private bool DidPlayerMeleeDuringStance(float stanceStartTime)

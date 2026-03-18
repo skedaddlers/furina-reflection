@@ -24,28 +24,8 @@ MonoBehaviour:
       distanceToStop: 0.5
       randomizeReposition: 0
       repostionIndex: 4
-    skill: {fileID: -3632550435667812701, guid: d919731e4a9ab5d4cbb8cf80f205d677, type: 3}
-  - type: 1
-    movement:
-      movementType: 3
-      duration: 5
-      speed: 5
-      distance: 3
-      distanceToStop: 0.5
-      randomizeReposition: 0
-      repostionIndex: 4
-    skill: {fileID: -4495507315837599845, guid: 7101a9f4d8fd7a5428ab90e729d4bc69, type: 3}
-  - type: 1
-    movement:
-      movementType: 3
-      duration: 5
-      speed: 5
-      distance: 3
-      distanceToStop: 0.5
-      randomizeReposition: 0
-      repostionIndex: 4
     skill: {fileID: -1990391074256547780, guid: 4b2984e80e4369741864dcedac285a0a, type: 3}
   baseWeight: 1
   cooldown: 2
-  lastUsedTime: 119.68632
-  usageCount: 164
+  lastUsedTime: 218.21883
+  usageCount: 196

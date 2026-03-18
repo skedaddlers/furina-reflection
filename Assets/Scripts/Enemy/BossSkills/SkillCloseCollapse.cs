@@ -25,7 +25,7 @@ public class SkillCloseCollapse : BossSkill
 
         if (Vector3.Distance(boss.TargetPlayer.position, boss.transform.position) <= closeCollapseRadius)
         {
-            boss.DealSpecialDamage();
+            boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
         }
     }
 }

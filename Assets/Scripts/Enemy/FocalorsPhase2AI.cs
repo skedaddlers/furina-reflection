@@ -533,7 +533,7 @@ public class FocalorsPhase2AI : EnemyAI
 
     #endregion
 
-    public void DealSpecialDamage(bool causesStagger = true, float staggerDuration = 1f, bool causesKnockback = true, float knockbackDistance = 1.2f)
+    public void DealSpecialDamage(float baseDamage,bool causesStagger = true, float staggerDuration = 1f, bool causesKnockback = true, float knockbackDistance = 1.2f)
     {
         if (isDyingOrDead || !canAct || IsStaggered) return;
         var health = player.GetComponent<Health>();
@@ -550,7 +550,7 @@ public class FocalorsPhase2AI : EnemyAI
 
         bool didCrit;
         float finalDamage = Helpers.CalculateFinalDamage(
-            damage,
+            baseDamage,
             defense,
             critChance,
             critMultiplier,

@@ -45,7 +45,7 @@ public class SkillBackstepTidalBurst : BossSkill
 
         if (Vector3.Distance(boss.TargetPlayer.position, burstCenter) <= backstepRadius)
         {
-            boss.DealSpecialDamage();
+            boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
         }
     }
 }

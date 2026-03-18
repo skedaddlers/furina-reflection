@@ -58,7 +58,7 @@ public class SkillMultiPressureWash : BossSkill
                     Destroy(fx, telegraphTime + 0.1f);
                 }
                 if (IsTargetInsideRectangle(telegraphs[j].transform.position, telegraphs[j].transform.rotation))
-                    boss.DealSpecialDamage();
+                    boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
                 
                 blastRotation *= Quaternion.Euler(0f, angleBetweenBlasts, 0f);
             }

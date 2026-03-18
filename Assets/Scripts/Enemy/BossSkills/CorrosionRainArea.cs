@@ -7,7 +7,7 @@ public class CorrosionRainArea : MonoBehaviour
     private Health playerHealth;
     private float radius;
     private float duration;
-    private float damagePerSecond;
+    private float maxHealthDamagePerSecondPercent;
     private float damageTickInterval;
     private float healingMultiplier;
     private bool followPlayer;
@@ -24,7 +24,7 @@ public class CorrosionRainArea : MonoBehaviour
         Transform targetPlayer,
         float zoneRadius,
         float zoneDuration,
-        float dotDamagePerSecond,
+        float dotMaxHealthDamagePerSecondPercent,
         float dotTickInterval,
         float healMultiplier,
         bool shouldFollowPlayer,
@@ -40,7 +40,7 @@ public class CorrosionRainArea : MonoBehaviour
 
         radius = Mathf.Max(0.1f, zoneRadius);
         duration = Mathf.Max(0f, zoneDuration);
-        damagePerSecond = Mathf.Max(0f, dotDamagePerSecond);
+        maxHealthDamagePerSecondPercent = Mathf.Clamp01(dotMaxHealthDamagePerSecondPercent);
         damageTickInterval = Mathf.Max(0f, dotTickInterval);
         healingMultiplier = Mathf.Clamp01(healMultiplier);
         followPlayer = shouldFollowPlayer;
@@ -103,25 +103,26 @@ public class CorrosionRainArea : MonoBehaviour
 
     private void ApplyDamageTick(float deltaTime)
     {
-        if (playerHealth == null || damagePerSecond <= 0f) return;
+        if (playerHealth == null || maxHealthDamagePerSecondPercent <= 0f) return;
 
         if (damageTickInterval <= 0f)
         {
-            float frameDamage = damagePerSecond * deltaTime;
+            float frameDamage = playerHealth.maxHealth * maxHealthDamagePerSecondPercent * deltaTime;
             if (frameDamage > 0f)
             {
                 playerHealth.TakeDamage(
                     frameDamage,
                     isCrit: false,
                     source: DamageSource.Skill,
-                    applyStagger: false
+                    applyStagger: false,
+                    bypassShield: true
                 );
             }
             return;
         }
 
         damageTickTimer += deltaTime;
-        float tickDamage = damagePerSecond * damageTickInterval;
+        float tickDamage = playerHealth.maxHealth * maxHealthDamagePerSecondPercent * damageTickInterval;
         while (damageTickTimer >= damageTickInterval)
         {
             damageTickTimer -= damageTickInterval;
@@ -131,7 +132,8 @@ public class CorrosionRainArea : MonoBehaviour
                 tickDamage,
                 isCrit: false,
                 source: DamageSource.Skill,
-                applyStagger: false
+                applyStagger: false,
+                bypassShield: true
             );
         }
     }

@@ -20,6 +20,7 @@ public class SkillEchoStrike : BossSkill
     [SerializeField] private GameObject firstStrikeEffectPrefab;
     [SerializeField] private GameObject ghostStrikeEffectPrefab;
     [SerializeField] private float strikeEffectLifetime = 2f;
+    [SerializeField] private Vector3 strikeEffectRotationOffset = Vector3.zero;
 
     [Header("Hit Rules")]
     [SerializeField] private bool damageOnFirstStrike = true;
@@ -50,7 +51,7 @@ public class SkillEchoStrike : BossSkill
 
         TriggerStrikeEffect(firstStrikeEffectPrefab, origin, strikeRotation);
         if (damageOnFirstStrike && IsTargetInsideCone(origin, strikeRotation))
-            boss.DealSpecialDamage();
+            boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
 
         if (ghostDelay > 0f)
             yield return new WaitForSeconds(ghostDelay);
@@ -79,7 +80,7 @@ public class SkillEchoStrike : BossSkill
 
         TriggerStrikeEffect(ghostStrikeEffectPrefab, origin, strikeRotation);
         if (damageOnGhostStrike && IsTargetInsideCone(origin, strikeRotation))
-            boss.DealSpecialDamage();
+            boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
     }
 
     private Telegraph SpawnConeTelegraph(Vector3 origin, Quaternion rotation, float duration)
@@ -95,8 +96,8 @@ public class SkillEchoStrike : BossSkill
     private void TriggerStrikeEffect(GameObject effectPrefab, Vector3 origin, Quaternion rotation)
     {
         if (effectPrefab == null) return;
-
-        GameObject effect = Instantiate(effectPrefab, origin, rotation);
+        Quaternion finalRotation = rotation * Quaternion.Euler(strikeEffectRotationOffset);
+        GameObject effect = Instantiate(effectPrefab, origin, finalRotation);
         Destroy(effect, strikeEffectLifetime);
     }
 

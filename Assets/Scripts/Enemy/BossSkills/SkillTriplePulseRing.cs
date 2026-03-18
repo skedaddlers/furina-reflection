@@ -34,7 +34,7 @@ public class SkillTriplePulseRing : BossSkill
 
             if (Vector3.Distance(boss.TargetPlayer.position, pulseCenter) <= currentRadius)
             {
-                boss.DealSpecialDamage();
+                boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
             }
 
             Destroy(t.gameObject);

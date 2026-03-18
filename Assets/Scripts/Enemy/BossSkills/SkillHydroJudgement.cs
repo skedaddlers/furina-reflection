@@ -48,7 +48,7 @@ public class SkillHydroJudgement : BossSkill
         }
 
         if (IsPlayerInsideImpact(landingPoint))
-            boss.DealSpecialDamage();
+            boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
     }
 
     private Vector3 ResolveLandingPoint()

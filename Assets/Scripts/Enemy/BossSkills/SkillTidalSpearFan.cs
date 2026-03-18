@@ -49,7 +49,7 @@ public class SkillTidalSpearFan : BossSkill
 
                 if (angle <= spearAngle * 0.5f)
                 {
-                    boss.DealSpecialDamage();
+                    boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
                     // Break so the player only takes damage once, even if caught between overlapping cones
                     break; 
                 }

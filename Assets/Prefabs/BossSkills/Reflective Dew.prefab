@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2344414599038231058}
-  - component: {fileID: -1990391074256547780}
+  - component: {fileID: -159545327677951320}
   m_Layer: 6
-  m_Name: Mana Fracture
+  m_Name: Reflective Dew
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-1990391074256547780
+--- !u!114 &-159545327677951320
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,34 +41,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 6538940711847418517}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9c876f08557caf48a358e4a7c55e3d9, type: 3}
+  m_Script: {fileID: 11500000, guid: 1a2fc7832c5e1c54cbc6f5f628bc1da4, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SkillManaFracture
+  m_EditorClassIdentifier: Assembly-CSharp::SkillReflectiveDew
   skillName: New Skill
-  animationTrigger: CastSkill
+  animationTrigger: Dance
   windUpAnimationTrigger: WindUp
   isEnabled: 1
-  baseDamage: 3
+  baseDamage: 8
   causesStagger: 0
   staggerDuration: 1
   causesKnockback: 0
   knockbackDistance: 1
-  notificationText: Boss is using a skill!
-  notificationDuration: 2
-  minBubbleCount: 5
-  maxBubbleCount: 5
-  minSpawnRadius: 1.5
-  maxSpawnRadius: 5
-  minBubbleSpacing: 2
-  bubbleOffset: {x: 0, y: 0.9, z: 0}
-  placementAttemptsPerBubble: 12
-  bubbleRadius: 1.25
-  bubbleSegments: 24
-  initialTelegraphTime: 1.55
-  delayBetweenExplosions: 0
-  bubbleEffectPrefab: {fileID: 7647375919561907788, guid: 6f6786f3e14b6f6488b27cbe9d1b700c, type: 3}
-  explosionEffectPrefab: {fileID: 0}
-  bubbleEffectLifetime: 3
-  explosionEffectLifetime: 0.3
-  dealDamageOnHit: 1
-  manaDrainOnHit: 5
+  notificationText: Focalors used Dance of The Dew! Your healing will also heal Focalors!
+  notificationDuration: 3
+  defenseIncreaseMultiplier: 3
+  reflectiveDuration: 8
+  mirroredHealMultiplier: 1.2
+  activeEffectPrefab: {fileID: 9017484664307500583, guid: 4eb0dace1f70966418f3c92ba8771a90, type: 3}
+  activeEffectLifetime: 8
+  mirrorPulseEffectPrefab: {fileID: 0}
+  mirrorPulseEffectLifetime: 1.2

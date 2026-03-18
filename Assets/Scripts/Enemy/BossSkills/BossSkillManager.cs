@@ -11,12 +11,17 @@ public abstract class BossSkill : MonoBehaviour
     public string animationTrigger = "CastSkill";
     public string windUpAnimationTrigger = "WindUp";
     public bool isEnabled = true;
+    public float baseDamage = 8f;
 
     public bool causesStagger = false;
     public float staggerDuration = 1f;
     public bool causesKnockback = false;
     public float knockbackDistance = 1f;
-    
+
+    [TextArea]
+    public string notificationText = "Boss is using a skill!";
+    public float notificationDuration = 2f;
+
     protected FocalorsPhase2AI boss;
 
     public virtual void Initialize(FocalorsPhase2AI bossInstance)

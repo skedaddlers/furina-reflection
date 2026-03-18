@@ -47,7 +47,8 @@ public class Health : MonoBehaviour
         float staggerDuration = -1f,
         bool causesKnockback = false,
         float knockbackDistance = 0f,
-        Transform hitInstigator = null
+        Transform hitInstigator = null,
+        bool bypassShield = false
     )
     {
         if (currentHealth <= 0) return;
@@ -64,8 +65,8 @@ public class Health : MonoBehaviour
 
         float finalDamage = amount;
 
-        // Let shield absorb damage first
-        if (shieldAmount > 0)
+        // Let shield absorb damage first unless this hit explicitly bypasses shields.
+        if (!bypassShield && shieldAmount > 0)
         {
             float damageAbsorbed = Mathf.Min(shieldAmount, finalDamage);
             shieldAmount -= damageAbsorbed;
@@ -179,7 +180,13 @@ public class Health : MonoBehaviour
         {
             Enemy enemy = GetComponent<Enemy>();
             if (enemy != null && enemy.healthBar != null)
+            {
                 UIManager.Instance.damageNumberUI.ShowHealPopup(healedAmount, enemy.healthBar.position);
+            }
+            else
+            {
+                UIManager.Instance.damageNumberUI.ShowHealPopup(healedAmount, transform.position + Vector3.up);
+            }
         }
         // Debug.Log($"{gameObject.name} healed {amount}. Current health: {currentHealth}");
     }

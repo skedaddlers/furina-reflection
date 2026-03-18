@@ -65,7 +65,7 @@ public class SkillHydroDash : BossSkill
 
         if (local.z >= 0f && local.z <= dashLength && Mathf.Abs(local.x) <= halfWidth)
         {
-            boss.DealSpecialDamage();
+            boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
         }
     }
 }

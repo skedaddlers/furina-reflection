@@ -98,7 +98,7 @@ public class SkillManaFracture : BossSkill
             if (IsTargetInsideExplosion(explosionPos))
             {
                 if (dealDamageOnHit)
-                    boss.DealSpecialDamage();
+                    boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
 
                 DrainTargetMana();
             }

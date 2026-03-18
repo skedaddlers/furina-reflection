@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkillEchoStrike
   skillName: New Skill
-  animationTrigger: CastSkill
+  animationTrigger: FrontSpell
   windUpAnimationTrigger: WindUp
   isEnabled: 1
   causesStagger: 0
@@ -59,9 +59,10 @@ MonoBehaviour:
   ghostDelay: 1
   ghostTelegraphTime: 0.35
   ghostAnimationTrigger: EchoStrikeGhost
-  firstStrikeEffectPrefab: {fileID: 0}
-  ghostStrikeEffectPrefab: {fileID: 0}
+  firstStrikeEffectPrefab: {fileID: 3156866507962234106, guid: 44bb64ca62c9b4344a1625914707200c, type: 3}
+  ghostStrikeEffectPrefab: {fileID: 3156866507962234106, guid: 2f6f6fe03d43f484ea58b1982ade578a, type: 3}
   strikeEffectLifetime: 2
+  strikeEffectRotationOffset: {x: 0, y: -90, z: 0}
   damageOnFirstStrike: 1
   damageOnGhostStrike: 1
   lockDirectionAtCast: 1

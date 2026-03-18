@@ -790,7 +790,7 @@ MonoBehaviour:
   focalorsPhase1SpawnPoint: {fileID: 9008137195563574786}
   focalorsPhase2SpawnPoint: {fileID: 9008137195563574786}
   focalorsPhase1Prefab: {fileID: 4228300383457371494, guid: b15517f9f5d7af541a11b98f5c0eb4cf, type: 3}
-  focalorsPhase2Prefab: {fileID: 8608688983982256369, guid: 4e95f9916881db0478f227a744df1891, type: 3}
+  focalorsPhase2Prefab: {fileID: 8608688983982256369, guid: 2642284d4c5ffd446bf6f64d6f6fd476, type: 3}
   transformationEffectPrefab: {fileID: 5911893088733641442, guid: 4b2d7dc03aaf7a44c8b7ea164a0bcbab, type: 3}
   withDialogue: 0
   skipPhase1: 1

@@ -61,7 +61,7 @@ MonoBehaviour:
   followPlayer: 0
   followSpeed: 1.5
   zoneOffset: {x: 0, y: 0.05, z: 0}
-  zoneEffectPrefab: {fileID: 1750317307060666, guid: 9e760e98cdf85a24790af0c971e3df00, type: 3}
+  zoneEffectPrefab: {fileID: 1750317307060666, guid: b2209a2109ac826468b972b1b992c141, type: 3}
   healingMultiplier: 0.5
   debuffVfxPrefab: {fileID: 6126188424833946103, guid: dc73d9708c725ee49b3ee0238343111f, type: 3}
   damagePerSecond: 0

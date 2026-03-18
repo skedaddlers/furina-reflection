@@ -22,7 +22,7 @@ public class SkillCorrosionRain : BossSkill
     [SerializeField] private GameObject debuffVfxPrefab;
 
     [Header("Damage Over Time")]
-    [SerializeField] private float damagePerSecond = 6f;
+    [SerializeField] [Range(0f, 1f)] private float maxHealthDamagePerSecondPercent = 0.03f;
     [SerializeField] private float damageTickInterval = 0.4f;
 
     public override IEnumerator ExecuteRoutine()
@@ -73,7 +73,7 @@ public class SkillCorrosionRain : BossSkill
             boss.TargetPlayer,
             zoneRadius,
             zoneDuration,
-            damagePerSecond,
+            maxHealthDamagePerSecondPercent,
             damageTickInterval,
             healingMultiplier,
             followPlayer,
