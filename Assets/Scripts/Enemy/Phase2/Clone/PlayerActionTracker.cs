@@ -9,6 +9,7 @@ public class PlayerActionTracker : MonoBehaviour
     public float LastRangedTime { get; private set; } = -999f;
     public float LastSkillTime { get; private set; } = -999f;
     public float LastDodgeTime { get; private set; } = -999f;
+    public float LastHealTime { get; private set; } = -999f;
 
     void Awake()
     {
@@ -37,5 +38,11 @@ public class PlayerActionTracker : MonoBehaviour
     {
         lastPlayerAction = CloneActionType.Dodge;
         LastDodgeTime = Time.time;
+    }
+
+    public void RegisterHeal()
+    {
+        lastPlayerAction = CloneActionType.Heal;
+        LastHealTime = Time.time;
     }
 }

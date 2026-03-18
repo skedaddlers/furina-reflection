@@ -17,5 +17,6 @@ public enum CloneActionType
     MeleeAttack,
     RangedAttack,
     SkillCast,
-    Dodge
+    Dodge,
+    Heal
 }

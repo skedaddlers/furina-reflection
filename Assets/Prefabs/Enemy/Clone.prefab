@@ -439,11 +439,11 @@ RectTransform:
   m_Children:
   - {fileID: 7478099079737948110}
   - {fileID: 5896460033429278155}
-  m_Father: {fileID: 8949749401524693579}
+  m_Father: {fileID: 9118492221767753917}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.274, y: 1.67}
+  m_AnchoredPosition: {x: 0.229, y: 3.451}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6569608795386164392
@@ -637,6 +637,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 4214086972175337433}
   - {fileID: 2385437421297300620}
   - {fileID: 5977274842555533466}
   m_Father: {fileID: 8949749401524693579}
@@ -1401,7 +1402,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 4214086972175337433}
   - {fileID: 9118492221767753917}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1544,7 +1544,7 @@ MonoBehaviour:
   worldOffset: {x: 0.274, y: 2.8, z: 0}
   hideWhenFull: 1
   decayingSpeed: 20
-  useParentPosition: 0
+  useParentPosition: 1
 --- !u!114 &5849954555393522486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1558,7 +1558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossCloneAI
   isRanged: 0
-  attackRange: 1.5
+  attackRange: 2
   attackCooldown: 1.5
   movementSpeed: 3
   damage: 10
@@ -1573,6 +1573,31 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8c4b61673c4c0bd4fbc298bcdcee6e40, type: 2}
   mirrorChance: 0.25
   cooldownTime: 0.8
+  telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
+  verdictArcDamage: 12
+  verdictArcRange: 8
+  verdictArcAngle: 70
+  verdictArcSegments: 30
+  verdictArcTelegraphTime: 1.2
+  verdictArcEffectPrefab: {fileID: 3156866507962234106, guid: 44bb64ca62c9b4344a1625914707200c, type: 3}
+  verdictArcEffectRotationOffset: {x: 0, y: -90, z: 0}
+  rippleDamage: 10
+  rippleCount: 3
+  rippleSpawnRadius: 3
+  rippleCircleRadius: 3
+  rippleSegments: 30
+  rippleTelegraphTime: 1
+  rippleEffectPrefab: {fileID: 8974203713140315807, guid: 3c339117b2de5fe459f62b63cda3cbc9, type: 3}
+  lineDamage: 15
+  lineWidth: 2
+  lineLength: 10
+  lineTelegraphTime: 1
+  lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
+  lineEffectOffset: {x: 0, y: 2, z: 0}
+  healAmount: 18
+  healAnimationTrigger: Cast
+  healEffectPrefab: {fileID: 9017484664307500583, guid: 4eb0dace1f70966418f3c92ba8771a90, type: 3}
+  healEffectLifetime: 2
 --- !u!1 &8712777044120169847
 GameObject:
   m_ObjectHideFlags: 0

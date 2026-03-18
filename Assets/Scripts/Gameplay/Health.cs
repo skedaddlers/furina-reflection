@@ -175,6 +175,8 @@ public class Health : MonoBehaviour
         {
             UIManager.Instance.damageNumberUI.ShowHealPopup(healedAmount, transform.position + Vector3.up);
             CombatEventManager.RaiseHeal(healedAmount);
+            if (PlayerActionTracker.Instance != null)
+                PlayerActionTracker.Instance.RegisterHeal();
         }
         else
         {
