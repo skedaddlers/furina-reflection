@@ -38,6 +38,19 @@ public abstract class WeaponBase : ScriptableObject
     [Header("Optional Animation")]
     public WeaponAnimationSet animSet; // optional, untuk override animasi player
 
+    [Header("Optional Voice Effects")]
+    public AudioClip[] voiceLines; // optional, untuk suara saat menyerang
+    public float voiceLineChance = 0.3f; // peluang untuk memutar suara saat menyerang
+
     public abstract void PerformAttack(PlayerCombat ctx);
+
+    public void PlayVoiceLineOnAttack()
+    {
+        if (Random.value < voiceLineChance && voiceLines != null && voiceLines.Length > 0)
+        {
+            AudioClip clip = voiceLines[Random.Range(0, voiceLines.Length)];
+            AudioManager.Instance.PlayVoiceLine(clip);
+        }
+    }
 }
 

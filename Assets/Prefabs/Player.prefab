@@ -1481,6 +1481,14 @@ MonoBehaviour:
   maxHealth: 100
   shieldAmount: 0
   maxShield: 100
+  enableStaggerOnHit: 1
+  defaultMeleeStaggerDuration: 0.2
+  defaultRangedStaggerDuration: 0.14
+  defaultSkillStaggerDuration: 0.18
+  hitVoiceLines:
+  - {fileID: 8300000, guid: 040be1257ac63ec44b39a0cef104c20b, type: 3}
+  - {fileID: 8300000, guid: f38a94c2b467ffd4a9e5e62631632bfa, type: 3}
+  hitVoiceLineChance: 0.9
 --- !u!114 &6536990159064562789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1560,6 +1568,7 @@ MonoBehaviour:
   mainCam: {fileID: 0}
   _animBinder: {fileID: 0}
   isDodging: 0
+  staggerTrigger: Hit
 --- !u!114 &8302093940283912800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1647,18 +1656,22 @@ MonoBehaviour:
   activeSkillSlots:
   - skill: {fileID: 0}
     currentCooldown: 0
+    cooldownDuration: 0
     isOnCooldown: 0
     level: 0
   - skill: {fileID: 0}
     currentCooldown: 0
+    cooldownDuration: 0
     isOnCooldown: 0
     level: 0
   - skill: {fileID: 0}
     currentCooldown: 0
+    cooldownDuration: 0
     isOnCooldown: 0
     level: 0
   - skill: {fileID: 0}
     currentCooldown: 0
+    cooldownDuration: 0
     isOnCooldown: 0
     level: 0
 --- !u!114 &6460875879795543277

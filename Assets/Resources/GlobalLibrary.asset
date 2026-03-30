@@ -42,10 +42,6 @@ MonoBehaviour:
   - {fileID: 4228300383457371494, guid: b15517f9f5d7af541a11b98f5c0eb4cf, type: 3}
   bossSequences:
   - {fileID: 11400000, guid: 4b2dcab5b99bcde468ba40c23ec7a82c, type: 2}
-  - {fileID: 11400000, guid: dab16178160d9b34095e3f26da9a6a90, type: 2}
-  - {fileID: 11400000, guid: 582e3a5f94299694e85f1c93b0dc6204, type: 2}
-  - {fileID: 11400000, guid: 9dfc9d0f22ce6374eac3163147b950d0, type: 2}
-  - {fileID: 11400000, guid: 1022995ef0e53ef4c92cf84f6dbcdbb7, type: 2}
   rarityColors:
   - {r: 0.553637, g: 0.5849056, b: 0.5849056, a: 1}
   - {r: 0.133796, g: 0.4580329, b: 0.7735849, a: 1}

@@ -48,12 +48,15 @@ MonoBehaviour:
   animationTrigger: Jump
   windUpAnimationTrigger: WindUp
   isEnabled: 0
+  baseDamage: 8
   causesStagger: 0
   staggerDuration: 1
   causesKnockback: 0
   knockbackDistance: 1
+  notificationText: Boss is using a skill!
+  notificationDuration: 2
   backstepDistance: 6
   backstepDuration: 0.3
   backstepRadius: 5
   backstepTelegraphTime: 1.2
-  backstepEffectPrefab: {fileID: 0}
+  backstepEffectPrefab: {fileID: 584207449403360073, guid: 8b2d2c2480e79684ca191c0b655b3163, type: 3}

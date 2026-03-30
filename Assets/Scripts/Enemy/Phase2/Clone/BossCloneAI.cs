@@ -43,7 +43,13 @@ public class BossCloneAI : EnemyAI
     [SerializeField] private GameObject healEffectPrefab;
     [SerializeField] private float healEffectLifetime = 2f;
 
+    [Header("Player-Like Skills")]
+    [SerializeField] private WaterAspirations waterAspirationsSkill;
+    [SerializeField] private AuraOfTheFormerArchon auraOfTheFormerArchonSkill;
+    [SerializeField] private SalonSolitaire salonSolitaireSkill;
+
     private Dictionary<CloneProfileTag, float> profileDistribution;
+    private readonly List<SkillBase> cloneSkillPool = new List<SkillBase>();
     private int strafeDirection = 1;
     private Coroutine cloneLoopRoutine;
     private bool isInSequence = false;
@@ -53,6 +59,7 @@ public class BossCloneAI : EnemyAI
         base.Start();
 
         LoadProfileDistribution();
+        InitializeCloneSkillPool();
 
         cloneLoopRoutine = StartCoroutine(CloneLoop());
     }
@@ -329,7 +336,10 @@ public class BossCloneAI : EnemyAI
 
     private void TriggerRandomSkill()
     {
-        // the same as phase 1 skills
+        if (TryCastPlayerLikeSkill())
+            return;
+
+        // Legacy fallback (kept intentionally)
         int choice = Random.Range(0, 3);
 
         switch (choice)
@@ -344,6 +354,68 @@ public class BossCloneAI : EnemyAI
                     StartCoroutine(JudicialLine());
                     break;
             }
+    }
+
+    private void InitializeCloneSkillPool()
+    {
+        CleanupCloneSkillPool(endActiveSkills: false);
+        AddCloneSkillInstance(waterAspirationsSkill);
+        AddCloneSkillInstance(auraOfTheFormerArchonSkill);
+        AddCloneSkillInstance(salonSolitaireSkill);
+    }
+
+    private void AddCloneSkillInstance(SkillBase sourceSkill)
+    {
+        if (sourceSkill == null)
+            return;
+
+        SkillBase runtimeSkill = Instantiate(sourceSkill);
+        runtimeSkill.name = sourceSkill.name + "_CloneRuntime";
+        cloneSkillPool.Add(runtimeSkill);
+    }
+
+    private bool TryCastPlayerLikeSkill()
+    {
+        if (cloneSkillPool.Count == 0)
+            return false;
+
+        List<int> candidateIndices = new List<int>(cloneSkillPool.Count);
+        for (int i = 0; i < cloneSkillPool.Count; i++)
+            candidateIndices.Add(i);
+
+        while (candidateIndices.Count > 0)
+        {
+            int pick = Random.Range(0, candidateIndices.Count);
+            int poolIndex = candidateIndices[pick];
+            candidateIndices.RemoveAt(pick);
+
+            SkillBase selectedSkill = cloneSkillPool[poolIndex];
+            if (selectedSkill == null || !selectedSkill.CanUseSkill(gameObject))
+                continue;
+
+            selectedSkill.OnSkillActivate(gameObject);
+            return true;
+        }
+
+        return false;
+    }
+
+    private void CleanupCloneSkillPool(bool endActiveSkills = true)
+    {
+        foreach (SkillBase skill in cloneSkillPool)
+        {
+            if (skill == null)
+                continue;
+
+            if (endActiveSkills)
+            {
+                skill.OnSkillEnd(gameObject);
+            }
+
+            Destroy(skill);
+        }
+
+        cloneSkillPool.Clear();
     }
 
     IEnumerator VerdictArc()
@@ -483,5 +555,10 @@ public class BossCloneAI : EnemyAI
             return;
 
         cloneLoopRoutine = StartCoroutine(CloneLoop());
+    }
+
+    void OnDestroy()
+    {
+        CleanupCloneSkillPool();
     }
 }

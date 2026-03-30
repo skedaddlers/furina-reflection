@@ -12,6 +12,9 @@ public class SkillTidalSpearFan : BossSkill
     [SerializeField] private float spearTelegraphTime = 1.2f;
     [SerializeField] private GameObject spearEffectPrefab;
 
+    [SerializeField] private Vector3 effectPositionOffset;
+    [SerializeField] private Vector3 effectRotationOffset;
+
     public override IEnumerator ExecuteRoutine()
     {
         List<Telegraph> spears = new List<Telegraph>();
@@ -33,10 +36,15 @@ public class SkillTidalSpearFan : BossSkill
 
         yield return new WaitForSeconds(spearTelegraphTime);
 
-        if (spearEffectPrefab != null)
+        for (int i = 0; i < spearCount; i++)
         {
-            GameObject effect = Instantiate(spearEffectPrefab, boss.transform.position, boss.transform.rotation);
-            Destroy(effect, 2f);
+            float currentAngle = startAngle + (i * spearSpreadAngle);
+            Quaternion rotation = boss.transform.rotation * Quaternion.Euler(0, currentAngle, 0);
+            if (spearEffectPrefab != null)
+            {
+                GameObject effect = Instantiate(spearEffectPrefab, boss.transform.position + effectPositionOffset, rotation * Quaternion.Euler(effectRotationOffset));
+                Destroy(effect, 2f);
+            }
         }
 
         // Calculate hits
@@ -46,7 +54,6 @@ public class SkillTidalSpearFan : BossSkill
             {
                 Vector3 dirToPlayer = (boss.TargetPlayer.position - boss.transform.position).normalized;
                 float angle = Vector3.Angle(t.transform.forward, dirToPlayer);
-
                 if (angle <= spearAngle * 0.5f)
                 {
                     boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);

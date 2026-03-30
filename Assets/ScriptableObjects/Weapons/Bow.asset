@@ -25,13 +25,28 @@ MonoBehaviour:
   worldDropPrefab: {fileID: 7915148881423355267, guid: 72d566d218ef0e548b349690364911c4, type: 3}
   price: 78
   attackSound: {fileID: 8300000, guid: 559738f23d0a59e449003c600b2b90f6, type: 3}
+  attackEffectPrefab: {fileID: 0}
+  attackEffectOffset: {x: 0, y: 0, z: 0}
+  attackEffectRotation: {x: 0, y: 0, z: 0}
+  effectDuration: 1
   baseDamage: 20
   range: 2
   angle: 60
   cooldown: 0.4
   manaCost: 0
+  causesStagger: 0
+  staggerDuration: 0.5
+  causesKnockback: 0
+  knockbackDistance: 1
   projectilePrefab: {fileID: 3897606349267117842, guid: 3d93df6fa18c9a840bb2faa7ebc11faa, type: 3}
   projectileSpeed: 20
   projectileLifeTime: 4
   animSet: {fileID: 11400000, guid: 9c66520de583f7b469b09579f3cd7d7c, type: 2}
+  voiceLines:
+  - {fileID: 8300000, guid: 815d71ae5e2e3124aabe15d7a011f676, type: 3}
+  - {fileID: 8300000, guid: 15011d8ccd59672479d43091471b540f, type: 3}
+  - {fileID: 8300000, guid: d723fec2e800e5c43851838cea1e9184, type: 3}
+  - {fileID: 8300000, guid: 3deb783e235c6634e80b37c695fcd23b, type: 3}
+  - {fileID: 8300000, guid: 815d71ae5e2e3124aabe15d7a011f676, type: 3}
+  voiceLineChance: 0.4
   useCameraAim: 1

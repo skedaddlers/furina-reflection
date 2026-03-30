@@ -254,21 +254,29 @@ public class FocalorsPhase2AI : EnemyAI
     BossSequence ChooseSequence()
     {
         float totalWeight = 0;
+        Dictionary<string, float> profileWeights = GetProfileDistributionByName();
+        bool hasProfileDistribution = profileWeights.Count > 0;
 
         List<float> adjustedWeights = new();
 
         foreach(var seq in sequences)
         {
+            float profileWeight = GetSequenceProfileWeight(seq.profileName, profileWeights, hasProfileDistribution);
             float recencyPenalty = Mathf.Clamp01(
                 (Time.time - seq.lastUsedTime) / 5f
             );
 
             float usagePenalty = 1f / (1f + seq.usageCount * 0.5f);
 
-            float adjusted = seq.baseWeight * recencyPenalty * usagePenalty;
+            float adjusted = seq.baseWeight * profileWeight * recencyPenalty * usagePenalty;
 
             adjustedWeights.Add(adjusted);
             totalWeight += adjusted;
+        }
+
+        if (totalWeight <= 0f)
+        {
+            return sequences[Random.Range(0, sequences.Count)];
         }
 
         float r = Random.value * totalWeight;
@@ -284,6 +292,47 @@ public class FocalorsPhase2AI : EnemyAI
         }
 
         return sequences[sequences.Count-1];
+    }
+
+    private Dictionary<string, float> GetProfileDistributionByName()
+    {
+        Dictionary<string, float> weights = new();
+
+        if (DDAMAPEKit.Instance == null)
+            return weights;
+
+        var playerModel = DDAMAPEKit.Instance.GetPlayerModel();
+        if (playerModel == null)
+            return weights;
+
+        var distribution = playerModel.GetProfileDistribution();
+        foreach (var kv in distribution)
+        {
+            if (kv.Key == null || string.IsNullOrWhiteSpace(kv.Key.name))
+                continue;
+
+            string key = kv.Key.name.Trim().ToLowerInvariant();
+            weights[key] = Mathf.Max(0f, kv.Value);
+        }
+
+        return weights;
+    }
+
+    private float GetSequenceProfileWeight(string sequenceProfileName, Dictionary<string, float> profileWeights, bool hasProfileDistribution)
+    {
+        if (!hasProfileDistribution)
+            return 1f;
+
+        // Empty profile name means the sequence is generic and should always stay available.
+        if (string.IsNullOrWhiteSpace(sequenceProfileName))
+            return 1f;
+
+        string key = sequenceProfileName.Trim().ToLowerInvariant();
+        if (profileWeights.TryGetValue(key, out float weight))
+            return Mathf.Max(0f, weight);
+
+        // If a sequence has a profile tag that is not currently present in the model, keep a small chance.
+        return 0.05f;
     }
 
     IEnumerator ExecuteSequence(BossSequence seq)
@@ -585,11 +634,10 @@ public class FocalorsPhase2AI : EnemyAI
 
     List<BossSequence> SelectForProfile(List<BossSequence> allSequences)
     {
-        PlayerProfile profile = DDAMAPEKit.Instance.GetPlayerModel().GetDominantProfile();
         List<BossSequence> selected = new();
         foreach(var seq in allSequences)
         {
-            if (string.IsNullOrEmpty(seq.profileName) || seq.profileName == profile.name)
+            if (seq != null)
             {
                 selected.Add(seq);
             }

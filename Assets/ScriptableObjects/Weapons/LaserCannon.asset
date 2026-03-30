@@ -36,8 +36,18 @@ MonoBehaviour:
   angle: 60
   cooldown: 1.2
   manaCost: 2
+  causesStagger: 0
+  staggerDuration: 0.5
+  causesKnockback: 0
+  knockbackDistance: 1
   projectilePrefab: {fileID: 3897606349267117842, guid: 77a881fd70dcbce44944bc3412da13e0, type: 3}
   projectileSpeed: 20
   projectileLifeTime: 4
   animSet: {fileID: 11400000, guid: c2cd3ff2a8bd75d4589ea59799cbc7cf, type: 2}
+  voiceLines:
+  - {fileID: 8300000, guid: 815d71ae5e2e3124aabe15d7a011f676, type: 3}
+  - {fileID: 8300000, guid: 70eebeafe20bd954c9839f56b513948a, type: 3}
+  - {fileID: 8300000, guid: 15011d8ccd59672479d43091471b540f, type: 3}
+  - {fileID: 8300000, guid: 3deb783e235c6634e80b37c695fcd23b, type: 3}
+  voiceLineChance: 0.3
   useCameraAim: 0

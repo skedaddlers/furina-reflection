@@ -48,13 +48,18 @@ MonoBehaviour:
   animationTrigger: FrontSpell
   windUpAnimationTrigger: WindUp
   isEnabled: 0
+  baseDamage: 8
   causesStagger: 0
   staggerDuration: 1
   causesKnockback: 0
   knockbackDistance: 1
+  notificationText: Boss is using a skill!
+  notificationDuration: 2
   spearCount: 3
-  spearRange: 10
+  spearRange: 8
   spearAngle: 20
   spearSpreadAngle: 35
   spearTelegraphTime: 1.2
-  spearEffectPrefab: {fileID: 0}
+  spearEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
+  effectPositionOffset: {x: 0, y: 1, z: 0}
+  effectRotationOffset: {x: 0, y: 0, z: 0}

@@ -34098,14 +34098,6 @@ PrefabInstance:
       propertyPath: cameraTransform
       value: 
       objectReference: {fileID: 637709096}
-    - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-      propertyPath: moveSpeed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
-      propertyPath: maxStamina
-      value: 150
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

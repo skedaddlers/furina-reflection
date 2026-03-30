@@ -352,7 +352,10 @@ public class PlayerController : MonoBehaviour, IStaggerable
             if (Input.GetMouseButtonDown(0) && !isDodging && !playerCombat.IsAttacking)
             {
                 if (playerCombat.TryUseWeapon())
+                {
                     PerformAttack();
+                    playerCombat.loadout.current.PlayVoiceLineOnAttack();
+                }
             }
         }
         else
@@ -479,6 +482,7 @@ public class PlayerController : MonoBehaviour, IStaggerable
 
     void ReleaseBowShot()
     {
+        playerCombat.loadout.current.PlayVoiceLineOnAttack();
         ExitBowAim();
 
         // baru beneran pake weapon (cek mana, cooldown, dll)

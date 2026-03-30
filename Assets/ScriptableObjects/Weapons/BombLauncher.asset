@@ -44,4 +44,10 @@ MonoBehaviour:
   projectileSpeed: 12
   projectileLifeTime: 4
   animSet: {fileID: 11400000, guid: a4c656ff598b0f34ba9e8c9508e3bb09, type: 2}
+  voiceLines:
+  - {fileID: 8300000, guid: 815d71ae5e2e3124aabe15d7a011f676, type: 3}
+  - {fileID: 8300000, guid: 815d71ae5e2e3124aabe15d7a011f676, type: 3}
+  - {fileID: 8300000, guid: 15011d8ccd59672479d43091471b540f, type: 3}
+  - {fileID: 8300000, guid: 6b3ca9abb8097e44a8129869fbf61f8a, type: 3}
+  voiceLineChance: 0.3
   useCameraAim: 0

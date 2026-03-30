@@ -26,6 +26,10 @@ public class Health : MonoBehaviour
     [SerializeField] private float defaultRangedStaggerDuration = 0.14f;
     [SerializeField] private float defaultSkillStaggerDuration = 0.18f;
 
+    [Header("Voice Effects")]
+    public AudioClip[] hitVoiceLines; // optional, untuk suara saat kena hit
+    public float hitVoiceLineChance = 0.5f; // peluang untuk memutar suara saat kena hit
+
     // on death event
     public Action onDeath;
     public Action<float, float> onHealthChanged; // (current, max)
@@ -249,6 +253,14 @@ public class Health : MonoBehaviour
             hitInstigator != null
         );
         staggerable.ApplyStagger(info);
+        if (GetComponent<Player>() != null)
+        {
+            if(UnityEngine.Random.value < hitVoiceLineChance && hitVoiceLines != null && hitVoiceLines.Length > 0)
+            {
+                AudioClip clip = hitVoiceLines[UnityEngine.Random.Range(0, hitVoiceLines.Length)];
+                AudioManager.Instance.PlayVoiceLine(clip);
+            }
+        }
     }
 
     private float ResolveStaggerDuration(DamageSource source, float overrideDuration)
