@@ -4,6 +4,7 @@ public enum GameState
 {
     MainMenu,
     Playing,
+    MapView,
     Paused,
     GameOver,
     InMenu
@@ -118,6 +119,9 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 1;
                 // Hide all menus
                 break;
+            case GameState.MapView:
+                Time.timeScale = 0;
+                break;
             case GameState.Paused:
                 Time.timeScale = 0;
                 // Show pause menu UI
@@ -151,5 +155,5 @@ public class GameManager : MonoBehaviour
         ChangeState(GameState.GameOver);
     }
 
-    public bool IsPaused => CurrentState == GameState.Paused || CurrentState == GameState.MainMenu || CurrentState == GameState.GameOver || CurrentState == GameState.InMenu;
+    public bool IsPaused => CurrentState == GameState.MapView || CurrentState == GameState.Paused || CurrentState == GameState.MainMenu || CurrentState == GameState.GameOver || CurrentState == GameState.InMenu;
 }

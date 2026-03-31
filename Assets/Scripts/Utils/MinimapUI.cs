@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using DG.Tweening;
 
 public class MinimapUI : MonoBehaviour
 {
@@ -9,7 +10,12 @@ public class MinimapUI : MonoBehaviour
     public Vector2 minimapPosition = new Vector2(-120, -120); // Offset from top-right corner
     
     [Header("Room Icons")]
-    public GameObject roomIconPrefab;
+    public GameObject startRoomIconPrefab;
+    public GameObject normalRoomIconPrefab;
+    public GameObject shopRoomIconPrefab;
+    public GameObject bossRoomIconPrefab;
+    public GameObject eventRoomIconPrefab;
+    public GameObject eliteRoomIconPrefab;
     public float iconSize = 20f;
     public float iconSpacing = 40f;
     
@@ -45,7 +51,15 @@ public class MinimapUI : MonoBehaviour
     public Transform orientationSource;          // kalau mau override manual
     public float coneTurnSmoothing = 15f;        // haluskan rotasi
 
-    
+    [Header("Open Minimap")]
+    public GameObject minimapHolder;                     // parent yang di-zoom (biasanya minimapContainer)
+    public GameObject roomInfoPanel;                    // panel info ruangan (opsional)
+    public Vector3 zoomScale = Vector3.one;          // seberapa besar zoom saat minimap dibuka
+    public Vector3 positionOnOpen = new Vector3(0, 0, -500f); // posisi kamera saat minimap dibuka (relatif terhadap player)
+    public float zoomSmoothing = 5f;                 // seberapa cepat zoom berubah
+    public float positionSmoothing = 5f;             // seberapa cepat posisi berubah
+    private bool isMinimapOpen = false;
+    private Vector3 originalMinimapPosition;
     
     private Dictionary<int, MinimapRoomIcon> roomIcons = new Dictionary<int, MinimapRoomIcon>();
     private Dictionary<string, GameObject> connectionLines = new Dictionary<string, GameObject>();
@@ -71,7 +85,7 @@ public class MinimapUI : MonoBehaviour
                 orientationSource = GameManager.Instance?.roomManager?.player;
         }
 
-
+        originalMinimapPosition = minimapHolder.transform.localPosition;
         // // Wait a frame for room generation to complete
         // Invoke(nameof(InitializeMinimap), 0.1f);
     }
@@ -100,7 +114,49 @@ public class MinimapUI : MonoBehaviour
                 playerCone.localEulerAngles = new Vector3(0, 0, smooth);
             }
         }
+
+        // player press M to toggle minimap (optional)
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            ToggleMinimap();
+        }
     }
+
+    public void ToggleMinimap()
+    {
+        if (isMinimapOpen)
+        {
+            // Close minimap
+            DOTweenHelper.Scale(minimapHolder.transform, Vector3.zero, 0.2f, Ease.InBack).OnComplete(() =>
+            {
+                minimapHolder.transform.localPosition = originalMinimapPosition;
+                minimapHolder.transform.localScale = Vector3.one;
+                minimapHolder.gameObject.SetActive(true);
+                if (roomInfoPanel != null)
+                    roomInfoPanel.SetActive(false);
+            });
+            GameManager.Instance.SetCursorState(false);
+            GameManager.Instance.ChangeState(GameState.Playing);
+        }
+        else
+        {
+            OpenMinimap();
+        }
+        isMinimapOpen = !isMinimapOpen;
+    }
+
+    private void OpenMinimap()
+    {  
+        GameManager.Instance.SetCursorState(true);
+        GameManager.Instance.ChangeState(GameState.MapView);
+        minimapHolder.transform.localPosition = positionOnOpen;
+        DOTweenHelper.Scale(minimapHolder.transform, zoomScale, 0.2f, Ease.OutBack);
+        if (roomInfoPanel != null)
+        {
+            roomInfoPanel.SetActive(true);
+        }
+    }
+
 
     
     void SetupMinimapUI()
@@ -253,11 +309,22 @@ public class MinimapUI : MonoBehaviour
     
     void CreateRoomIcon(int roomId, Vector2 position)
     {
+        var roomData = roomManager.Layout.roomDataMap[roomId];
+        GameObject prefab = roomData.roomType switch
+        {
+            RoomType.Start => startRoomIconPrefab,
+            RoomType.Normal => normalRoomIconPrefab,
+            RoomType.Shop => shopRoomIconPrefab,
+            RoomType.Boss => bossRoomIconPrefab,
+            RoomType.Event => eventRoomIconPrefab,
+            RoomType.Elite => eliteRoomIconPrefab,
+            _ => normalRoomIconPrefab
+        };
         GameObject iconObj;
-        if (roomIconPrefab != null)
+        if (prefab != null)
         {
             Debug.Log("Using custom room icon prefab.");
-            iconObj = Instantiate(roomIconPrefab, roomIconContainer);
+            iconObj = Instantiate(prefab, roomIconContainer);
         }
         else
         {
@@ -276,7 +343,6 @@ public class MinimapUI : MonoBehaviour
         roomIcon.iconImage = iconObj.GetComponent<Image>();
         
         // Set initial color based on room type
-        var roomData = roomManager.Layout.roomDataMap[roomId];
         Color baseColor = GetRoomColor(roomData.roomType);
         roomIcon.baseColor = baseColor;
         roomIcon.iconImage.color = Color.Lerp(baseColor, unvisitedRoomColor, 0.7f);

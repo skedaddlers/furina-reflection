@@ -370,6 +370,8 @@ void SelectAndMarkBossAsFarthestDeadEnd(int startId)
         
         // Place shops with spacing
         PlaceRoomsWithSpacing(assignableRooms, RoomType.Shop, shopCount, dungeonConfig.minDistanceBetweenShops);
+
+        assignableRooms.RemoveAll(id => Layout.roomDataMap[id].roomType == RoomType.Shop);
         
         // Place elites with spacing and distance requirement
         var eliteEligible = assignableRooms
@@ -378,11 +380,7 @@ void SelectAndMarkBossAsFarthestDeadEnd(int startId)
         PlaceRoomsWithSpacing(eliteEligible, RoomType.Elite, eliteCount, dungeonConfig.minDistanceBetweenElites);
         
         // Remove assigned elites from assignable list
-        foreach (var id in eliteEligible)
-        {
-            if (Layout.roomDataMap[id].roomType == RoomType.Elite)
-                assignableRooms.Remove(id);
-        }
+        assignableRooms.RemoveAll(id => Layout.roomDataMap[id].roomType == RoomType.Elite);
         
         // Place events randomly
         for (int i = 0; i < eventCount && assignableRooms.Count > 0; i++)

@@ -48,5 +48,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: d723fec2e800e5c43851838cea1e9184, type: 3}
   - {fileID: 8300000, guid: 3deb783e235c6634e80b37c695fcd23b, type: 3}
   - {fileID: 8300000, guid: 815d71ae5e2e3124aabe15d7a011f676, type: 3}
-  voiceLineChance: 0.4
+  voiceLineChance: 0.6
   useCameraAim: 1
