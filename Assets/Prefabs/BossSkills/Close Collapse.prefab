@@ -55,6 +55,9 @@ MonoBehaviour:
   knockbackDistance: 1
   notificationText: Boss is using a skill!
   notificationDuration: 2
+  castSound: {fileID: 8300000, guid: 7215620d17b9eab4dbecd112543157ae, type: 3}
+  castSoundVolume: 1
+  soundDuration: 3
   closeCollapseRadius: 4
   closeCollapseSegments: 30
   closeCollapseTelegraphTime: 1

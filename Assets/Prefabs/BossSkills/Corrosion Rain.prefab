@@ -48,10 +48,16 @@ MonoBehaviour:
   animationTrigger: CastSkill
   windUpAnimationTrigger: WindUp
   isEnabled: 1
+  baseDamage: 8
   causesStagger: 0
   staggerDuration: 1
   causesKnockback: 0
   knockbackDistance: 1
+  notificationText: Boss is using a skill!
+  notificationDuration: 2
+  castSound: {fileID: 8300000, guid: 8b981b8eefa1d91429600f716bf6687d, type: 3}
+  castSoundVolume: 1
+  soundDuration: 7
   telegraphTime: 1
   telegraphRadius: 6
   telegraphSegments: 48
@@ -64,5 +70,5 @@ MonoBehaviour:
   zoneEffectPrefab: {fileID: 1750317307060666, guid: b2209a2109ac826468b972b1b992c141, type: 3}
   healingMultiplier: 0.5
   debuffVfxPrefab: {fileID: 6126188424833946103, guid: dc73d9708c725ee49b3ee0238343111f, type: 3}
-  damagePerSecond: 0
+  maxHealthDamagePerSecondPercent: 0.03
   damageTickInterval: 0.4

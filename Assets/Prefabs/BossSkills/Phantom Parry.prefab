@@ -48,6 +48,16 @@ MonoBehaviour:
   animationTrigger: CastSkill
   windUpAnimationTrigger: WindUp
   isEnabled: 1
+  baseDamage: 8
+  causesStagger: 0
+  staggerDuration: 1
+  causesKnockback: 0
+  knockbackDistance: 1
+  notificationText: Boss is using a skill!
+  notificationDuration: 2
+  castSound: {fileID: 8300000, guid: 071ee6e147aa0bc418fd69342a80b768, type: 3}
+  castSoundVolume: 1
+  soundDuration: 3
   stanceDuration: 2
   immuneDuringStance: 1
   stanceBool: ParryStance

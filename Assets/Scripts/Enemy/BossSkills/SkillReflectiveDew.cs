@@ -64,7 +64,8 @@ public class SkillReflectiveDew : BossSkill
 
         float mirroredHeal = healedAmount * Mathf.Max(0f, mirroredHealMultiplier);
         if (mirroredHeal <= 0f) return;
-
+        
+        PlayCastSound();
         bossHealth.Heal(mirroredHeal);
 
         if (mirrorPulseEffectPrefab != null && boss != null)

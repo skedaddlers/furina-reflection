@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class AudioManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class AudioManager : MonoBehaviour
     public float sfxVolume = 1.0f;
     public float voiceLineVolume = 1.0f;
     public AudioSource sfxSource;
+    public AudioSource secondarySFXSource; // for overlapping SFX
     public AudioSource voiceLineSource;
     public AudioClip gameplayMusic;
     public float pitchVariationMin = 0.9f;
@@ -56,6 +58,38 @@ public class AudioManager : MonoBehaviour
         sfxSource.pitch = 1f; // reset pitch to default
         sfxSource.volume = sfxVolume;
         sfxSource.PlayOneShot(clip);
+    }
+
+    public void PlaySFXNoOverlap(AudioClip clip, bool randomizePitch = false)
+    {
+        if (randomizePitch)
+            secondarySFXSource.pitch = Random.Range(pitchVariationMin, pitchVariationMax);
+        else
+            secondarySFXSource.pitch = 1f; // reset pitch to default
+
+        secondarySFXSource.volume = sfxVolume;
+        if (!secondarySFXSource.isPlaying)
+            secondarySFXSource.PlayOneShot(clip);
+    }
+
+    public void PlaySFXWithVolume(AudioClip clip, float volume, float duration = -1f)
+    {
+        sfxSource.pitch = 1f; // reset pitch to default
+        if (duration > 0f)
+        {
+            StartCoroutine(PlaySFXWithDuration(clip, volume, duration));
+        }
+        else
+        {
+            sfxSource.PlayOneShot(clip, volume);
+        }
+    }
+
+    private IEnumerator PlaySFXWithDuration(AudioClip clip, float volume, float duration)
+    {
+        sfxSource.PlayOneShot(clip, volume);
+        yield return new WaitForSeconds(duration);
+        sfxSource.Stop();
     }
 
     public void PlayWithVaryingPitch(AudioClip clip)

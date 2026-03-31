@@ -42,6 +42,7 @@ public class SkillHydroDash : BossSkill
 
         float time = 0;
         boss.Animator.SetTrigger(animationTrigger);
+        PlayCastSound();
         while (time < dashDuration)
         {
             time += Time.deltaTime;

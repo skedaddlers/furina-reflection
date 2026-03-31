@@ -80,5 +80,7 @@ public class SkillCorrosionRain : BossSkill
             followSpeed,
             debuffVfxPrefab
         );
+
+        PlayCastSound();
     }
 }

@@ -48,7 +48,8 @@ public class SkillEchoStrike : BossSkill
 
         if (firstTelegraph != null)
             Destroy(firstTelegraph.gameObject);
-
+            
+        PlayCastSound();
         TriggerStrikeEffect(firstStrikeEffectPrefab, origin, strikeRotation);
         if (damageOnFirstStrike && IsTargetInsideCone(origin, strikeRotation))
             boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);
@@ -78,6 +79,7 @@ public class SkillEchoStrike : BossSkill
         if (ghostTelegraph != null)
             Destroy(ghostTelegraph.gameObject);
 
+        PlayCastSound();
         TriggerStrikeEffect(ghostStrikeEffectPrefab, origin, strikeRotation);
         if (damageOnGhostStrike && IsTargetInsideCone(origin, strikeRotation))
             boss.DealSpecialDamage(baseDamage, causesStagger, staggerDuration, causesKnockback, knockbackDistance);

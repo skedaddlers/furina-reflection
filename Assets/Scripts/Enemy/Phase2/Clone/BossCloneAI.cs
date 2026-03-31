@@ -9,6 +9,7 @@ public class BossCloneAI : EnemyAI
     public float mirrorChance = 0.25f;
     public float cooldownTime = 0.8f;
     public Telegraph telegraphPrefab;
+    public float castSoundVolume = 1f;
 
     [Header("Verdict Arc")]
     [SerializeField] private float verdictArcDamage = 12f;
@@ -18,6 +19,7 @@ public class BossCloneAI : EnemyAI
     [SerializeField] private float verdictArcTelegraphTime = 1.2f;
     [SerializeField] private GameObject verdictArcEffectPrefab;
     [SerializeField] private Vector3 verdictArcEffectRotationOffset;
+    [SerializeField] private AudioClip verdictArcSound;
 
     [Header("Ripple Court")]
     [SerializeField] private float rippleDamage = 10f;
@@ -27,6 +29,7 @@ public class BossCloneAI : EnemyAI
     [SerializeField] private int rippleSegments = 30;
     [SerializeField] private float rippleTelegraphTime = 1f;
     [SerializeField] private GameObject rippleEffectPrefab;
+    [SerializeField] private AudioClip rippleCourtSound;
 
     [Header("Judicial Line")]
     [SerializeField] private float lineDamage = 15f;
@@ -35,6 +38,7 @@ public class BossCloneAI : EnemyAI
     [SerializeField] private float lineTelegraphTime = 1f;
     [SerializeField] private GameObject lineEffectPrefab;
     [SerializeField] private Vector3 lineEffectOffset;
+    [SerializeField] private AudioClip judicialLineSound;
 
     [Header("Self Heal")]
     [SerializeField] private float healAmount = 18f;
@@ -42,11 +46,22 @@ public class BossCloneAI : EnemyAI
     [SerializeField] private string healAnimationTrigger = "Cast";
     [SerializeField] private GameObject healEffectPrefab;
     [SerializeField] private float healEffectLifetime = 2f;
+    [SerializeField] private AudioClip healSound;
 
     [Header("Player-Like Skills")]
     [SerializeField] private WaterAspirations waterAspirationsSkill;
     [SerializeField] private AuraOfTheFormerArchon auraOfTheFormerArchonSkill;
     [SerializeField] private SalonSolitaire salonSolitaireSkill;
+
+    [Header("Dodge Settings")]
+    [SerializeField] private float dodgeDistance = 3f;
+
+    [Header("Other SFX")]
+    [SerializeField] private AudioClip dashSound;
+    [SerializeField] private AudioClip dodgeSound;
+    [SerializeField] private AudioClip meleeAttackSound;
+    [SerializeField] private AudioClip rangedAttackSound;
+
 
     private Dictionary<CloneProfileTag, float> profileDistribution;
     private readonly List<SkillBase> cloneSkillPool = new List<SkillBase>();
@@ -176,17 +191,18 @@ public class BossCloneAI : EnemyAI
                 yield break;
 
             case CloneActionType.Retreat:
-
                 Vector3 retreat = (transform.position - player.position).normalized;
                 agent.SetDestination(transform.position + retreat * 4f);
 
                 break;
 
             case CloneActionType.MeleeAttack:
+                PlaySkillCastSound(meleeAttackSound);
                 animator.SetTrigger("Attack");
                 break;
 
             case CloneActionType.RangedAttack:
+                PlaySkillCastSound(rangedAttackSound);
                 animator.SetTrigger("RangedAttack");
                 break;
 
@@ -197,6 +213,8 @@ public class BossCloneAI : EnemyAI
 
             case CloneActionType.Dodge:
                 animator.SetTrigger("Dodge");
+                StartCoroutine(DodgeWindow(action.duration, action.speed));
+                PlaySkillCastSound(dodgeSound);
                 break;
 
             case CloneActionType.Heal:
@@ -214,6 +232,7 @@ public class BossCloneAI : EnemyAI
 
         yield return new WaitForSeconds(healCastTime);
 
+        PlaySkillCastSound(healSound);
         Health health = GetComponent<Health>();
         if (health != null && healAmount > 0f)
             health.Heal(healAmount);
@@ -238,7 +257,7 @@ public class BossCloneAI : EnemyAI
         float stopDistance = Mathf.Max(agent.stoppingDistance, Mathf.Max(0.1f, agent.radius));
         float elapsed = 0f;
         animator.SetTrigger("Dash");
-
+        PlaySkillCastSound(dashSound);
         while (elapsed < duration)
         {
             if (player == null || !agent.enabled) yield break;
@@ -427,7 +446,7 @@ public class BossCloneAI : EnemyAI
         yield return new WaitForSeconds(verdictArcTelegraphTime);
         GameObject effect = Instantiate(verdictArcEffectPrefab, transform.position, transform.rotation * Quaternion.Euler(verdictArcEffectRotationOffset));
         Destroy(effect, 2f);
-
+        PlaySkillCastSound(verdictArcSound);
         if (Vector3.Distance(player.position, transform.position) <= verdictArcRange)
         {
             Vector3 dirToPlayer = (player.position - transform.position).normalized;
@@ -456,7 +475,7 @@ public class BossCloneAI : EnemyAI
         }
 
         yield return new WaitForSeconds(rippleTelegraphTime);
-
+        PlaySkillCastSound(rippleCourtSound);
         if (rippleEffectPrefab != null)
         {
             foreach(var t in circles)
@@ -491,6 +510,7 @@ public class BossCloneAI : EnemyAI
 
         Destroy(t.gameObject, lineTelegraphTime + 0.1f); // Destroy slightly after telegraph time to ensure it disappears
         yield return new WaitForSeconds(lineTelegraphTime);
+        PlaySkillCastSound(judicialLineSound);
         GameObject effect = Instantiate(lineEffectPrefab, lineOrigin + lineEffectOffset, lineRotation);
         Destroy(effect, 2f);
 
@@ -504,6 +524,27 @@ public class BossCloneAI : EnemyAI
         {
             DealSpecialDamage(lineDamage);
         }
+    }
+
+    IEnumerator DodgeWindow(float duration, float speed)
+    {
+        float elapsed = 0f;
+        // pick random direction  from 90 - 270 degrees relative to player
+        float angle = Random.Range(90f, 270f);
+        Vector3 dir = Quaternion.Euler(0, angle, 0) * (player.position - transform.position).normalized;
+        Vector3 dodgeTarget = transform.position + dir * dodgeDistance;
+        float originalSpeed = agent.speed;
+        agent.speed = speed > 0f ? speed : movementSpeed;
+        while (elapsed < duration)
+        {
+            if (player == null) yield break;
+            agent.SetDestination(dodgeTarget);
+            GetComponent<Health>().SetInvulnerable(true);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        GetComponent<Health>().SetInvulnerable(false);
+        agent.speed = originalSpeed;
     }
 
     private void DealSpecialDamage(float damage)
@@ -541,6 +582,12 @@ public class BossCloneAI : EnemyAI
             knockbackDistance: 1.1f,
             hitInstigator: transform
         );
+    }
+
+    private void PlaySkillCastSound(AudioClip clip)
+    {
+        if (clip != null)
+            AudioManager.Instance.PlaySFXWithVolume(clip, castSoundVolume);
     }
 
 

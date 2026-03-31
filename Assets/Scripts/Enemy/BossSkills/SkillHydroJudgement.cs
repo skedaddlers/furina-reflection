@@ -13,6 +13,7 @@ public class SkillHydroJudgement : BossSkill
     [SerializeField] private float jumpDuration = 0.55f;
     [SerializeField] private float jumpHeight = 2.5f;
     [SerializeField] private float navMeshSampleRadius = 2.5f;
+    [SerializeField] private AudioClip jumpSound;
 
     [Header("Impact")]
     [SerializeField] private float impactRadius = 2.6f;
@@ -35,12 +36,13 @@ public class SkillHydroJudgement : BossSkill
 
         boss.Animator.SetTrigger(animationTrigger);
         yield return new WaitForSeconds(telegraphTime);
-
+        AudioManager.Instance.PlaySFXWithVolume(jumpSound, castSoundVolume);
         if (telegraph != null)
             Destroy(telegraph.gameObject);
 
         yield return JumpToPoint(landingPoint);
 
+        PlayCastSound();
         if (impactEffectPrefab != null)
         {
             GameObject impactFx = Instantiate(impactEffectPrefab, landingPoint, Quaternion.identity);

@@ -960,6 +960,13 @@ MonoBehaviour:
   maxHealth: 100
   shieldAmount: 0
   maxShield: 100
+  hitSFX: {fileID: 8300000, guid: 84dcdec185133064a86a72bffa454f2d, type: 3}
+  enableStaggerOnHit: 1
+  defaultMeleeStaggerDuration: 0.2
+  defaultRangedStaggerDuration: 0.14
+  defaultSkillStaggerDuration: 0.18
+  hitVoiceLines: []
+  hitVoiceLineChance: 0.5
 --- !u!136 &7170321652431724467
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1025,6 +1032,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 1
+  SuppressDefaultDeathHandling: 0
   enemyRenderer: {fileID: 7179545089949620145}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 8237243016429360707}
@@ -1051,6 +1059,8 @@ MonoBehaviour:
   turnSpeed: 8
   projectilePrefab: {fileID: 0}
   isPerformingSpecialAttack: 0
+  canBeStaggered: 1
+  staggerTrigger: Hit
   specialAttackCooldown: 8
   teleportDistanceFromPlayer: 1.5
   bleedDamagePerTick: 3
@@ -1079,6 +1089,7 @@ MonoBehaviour:
   worldOffset: {x: 0, y: 2, z: 0}
   hideWhenFull: 1
   decayingSpeed: 20
+  useParentPosition: 0
 --- !u!114 &7197603961062520731
 MonoBehaviour:
   m_ObjectHideFlags: 0

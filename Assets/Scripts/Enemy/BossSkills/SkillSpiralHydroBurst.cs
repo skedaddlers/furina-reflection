@@ -73,6 +73,7 @@ public class SkillSpiralHydroBurst : BossSkill
 
     private void FireWindow(float centerAngleOffset)
     {
+        PlayCastSound();
         int count = Mathf.Max(1, projectilesPerWindow);
         float startAngle = -spreadAngle * 0.5f;
         float step = count > 1 ? spreadAngle / (count - 1) : 0f;
@@ -82,7 +83,6 @@ public class SkillSpiralHydroBurst : BossSkill
             float localSpread = startAngle + (step * i);
             float worldAngle = centerAngleOffset + localSpread;
             Vector3 dir = Quaternion.Euler(0f, worldAngle, 0f) * boss.transform.forward;
-
             Transform spawn = projectileSpawnPoint != null ? projectileSpawnPoint : boss.transform;
             GameObject go = Instantiate(projectilePrefab, spawn.position + spawnOffset, Quaternion.LookRotation(dir));
             Projectile p = go.GetComponent<Projectile>();

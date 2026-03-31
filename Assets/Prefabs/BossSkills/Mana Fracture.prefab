@@ -55,6 +55,9 @@ MonoBehaviour:
   knockbackDistance: 1
   notificationText: Boss is using a skill!
   notificationDuration: 2
+  castSound: {fileID: 8300000, guid: b1d1deaa903483f43a00c3018a927ca7, type: 3}
+  castSoundVolume: 1
+  soundDuration: 3
   minBubbleCount: 5
   maxBubbleCount: 5
   minSpawnRadius: 1.5

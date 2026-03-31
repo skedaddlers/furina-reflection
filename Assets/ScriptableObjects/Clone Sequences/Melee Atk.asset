@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CloneSequence
   profileTag: 0
   actions:
-  - type: 7
-    duration: 2
-    speed: 0
+  - type: 3
+    duration: 0.6
+    speed: 7
   baseWeight: 1
   cachedWeight: 0.2

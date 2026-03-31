@@ -55,6 +55,9 @@ MonoBehaviour:
   knockbackDistance: 1
   notificationText: Focalors used Dance of The Dew! Your healing will also heal Focalors!
   notificationDuration: 3
+  castSound: {fileID: 8300000, guid: d572dc72db56e914091e71dd446bf66c, type: 3}
+  castSoundVolume: 1
+  soundDuration: 3
   defenseIncreaseMultiplier: 3
   reflectiveDuration: 8
   mirroredHealMultiplier: 1.2

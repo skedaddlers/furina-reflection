@@ -35,7 +35,8 @@ public class SkillTidalSpearFan : BossSkill
         }
 
         yield return new WaitForSeconds(spearTelegraphTime);
-
+        
+        PlayCastSound();
         for (int i = 0; i < spearCount; i++)
         {
             float currentAngle = startAngle + (i * spearSpreadAngle);

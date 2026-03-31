@@ -48,16 +48,23 @@ MonoBehaviour:
   animationTrigger: Judgement
   windUpAnimationTrigger: WindUp
   isEnabled: 1
+  baseDamage: 8
   causesStagger: 1
   staggerDuration: 1
   causesKnockback: 1
   knockbackDistance: 1
+  notificationText: Boss is using a skill!
+  notificationDuration: 2
+  castSound: {fileID: 8300000, guid: 7215620d17b9eab4dbecd112543157ae, type: 3}
+  castSoundVolume: 1
+  soundDuration: 3
   telegraphRadius: 2.6
   telegraphSegments: 36
   telegraphTime: 1
   jumpDuration: 1.1
   jumpHeight: 2.5
   navMeshSampleRadius: 2.5
+  jumpSound: {fileID: 8300000, guid: a8bb2dd57e883d74fa78b028fc48287a, type: 3}
   impactRadius: 2.6
   impactEffectPrefab: {fileID: 4809171458859421548, guid: c2e8f6e967cfa144da1f3c77aed53a82, type: 3}
   impactEffectLifetime: 1

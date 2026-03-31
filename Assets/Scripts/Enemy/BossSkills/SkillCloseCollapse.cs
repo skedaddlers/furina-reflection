@@ -17,6 +17,7 @@ public class SkillCloseCollapse : BossSkill
         boss.Animator.SetTrigger(animationTrigger);
         yield return new WaitForSeconds(closeCollapseTelegraphTime);
 
+        PlayCastSound();
         if (closeCollapseEffectPrefab != null)
         {
             GameObject effect = Instantiate(closeCollapseEffectPrefab, boss.transform.position, Quaternion.identity);

@@ -22,11 +22,23 @@ public abstract class BossSkill : MonoBehaviour
     public string notificationText = "Boss is using a skill!";
     public float notificationDuration = 2f;
 
+    public AudioClip castSound;
+    public float castSoundVolume = 1f;
+    public float soundDuration = 3f;
+
     protected FocalorsPhase2AI boss;
 
     public virtual void Initialize(FocalorsPhase2AI bossInstance)
     {
         boss = bossInstance;
+    }
+
+    public void PlayCastSound()
+    {
+        if (castSound != null && boss != null)
+        {
+            AudioManager.Instance.PlaySFXWithVolume(castSound, castSoundVolume, soundDuration);
+        }
     }
 
     // Every skill must implement this routine

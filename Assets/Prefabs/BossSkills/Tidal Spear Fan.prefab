@@ -55,6 +55,9 @@ MonoBehaviour:
   knockbackDistance: 1
   notificationText: Boss is using a skill!
   notificationDuration: 2
+  castSound: {fileID: 8300000, guid: bc4001c9d5cbae646850ed93b9b55a3c, type: 3}
+  castSoundVolume: 1
+  soundDuration: 3
   spearCount: 3
   spearRange: 8
   spearAngle: 20

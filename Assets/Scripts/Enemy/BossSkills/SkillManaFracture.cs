@@ -74,10 +74,12 @@ public class SkillManaFracture : BossSkill
                 bubbleEffects.Add(null);
             }
         }
+        PlayCastSound();
 
         boss.Animator.SetTrigger(animationTrigger);
         if (startupDelay > 0f)
             yield return new WaitForSeconds(startupDelay);
+
 
         for (int i = 0; i < explosionPositions.Count; i++)
         {

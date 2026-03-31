@@ -24,6 +24,7 @@ public class SkillTriplePulseRing : BossSkill
 
             boss.Animator.SetTrigger(animationTrigger);
             yield return new WaitForSeconds(pulseDelayBetween);
+            PlayCastSound();
             if (pulseEffectPrefab != null)
             {
                 GameObject effect = Instantiate(pulseEffectPrefab, pulseCenter, Quaternion.identity);

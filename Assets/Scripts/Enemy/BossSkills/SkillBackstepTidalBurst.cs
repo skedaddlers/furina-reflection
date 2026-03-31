@@ -37,6 +37,7 @@ public class SkillBackstepTidalBurst : BossSkill
         float remainingTime = backstepTelegraphTime - backstepDuration;
         if (remainingTime > 0) yield return new WaitForSeconds(remainingTime);
 
+        PlayCastSound();
         if (backstepEffectPrefab != null)
         {
             GameObject effect = Instantiate(backstepEffectPrefab, burstCenter, Quaternion.identity);

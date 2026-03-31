@@ -40,7 +40,7 @@ public class SkillSilenceZone : BossSkill
 
         if (telegraph != null)
             Destroy(telegraph.gameObject);
-
+        PlayCastSound();
         SpawnZone(center);
     }
 

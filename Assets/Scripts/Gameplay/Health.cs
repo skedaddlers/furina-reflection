@@ -15,6 +15,7 @@ public class Health : MonoBehaviour
     public float maxHealth = 100;
     public float shieldAmount = 0;
     public float maxShield = 100;
+    public AudioClip hitSFX;
     private float currentHealth;
     public float CurrentHealth => currentHealth;
     private bool isInvulnerable = false;
@@ -82,6 +83,7 @@ public class Health : MonoBehaviour
         if (finalDamage > 0)
         {
             currentHealth -= finalDamage;
+            AudioManager.Instance.PlaySFXNoOverlap(hitSFX, randomizePitch: true);
             // Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
             Enemy enemy = GetComponent<Enemy>();
             if (enemy != null && enemy.healthBar != null)

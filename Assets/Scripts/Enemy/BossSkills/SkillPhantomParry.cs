@@ -61,7 +61,7 @@ public class SkillPhantomParry : BossSkill
         t.ConfigureCone(counterRange, counterAngle, counterSegments, counterTelegraphTime);
         Destroy(t.gameObject, counterTelegraphTime + 0.1f);
         yield return new WaitForSeconds(counterTelegraphTime);
-
+        PlayCastSound();
         if (counterEffectPrefab != null)
         {
             GameObject fx = Instantiate(counterEffectPrefab, boss.transform.position, boss.transform.rotation);

@@ -48,6 +48,16 @@ MonoBehaviour:
   animationTrigger: A_Dash
   windUpAnimationTrigger: W_Dash
   isEnabled: 1
+  baseDamage: 8
+  causesStagger: 0
+  staggerDuration: 1
+  causesKnockback: 0
+  knockbackDistance: 1
+  notificationText: Boss is using a skill!
+  notificationDuration: 2
+  castSound: {fileID: 8300000, guid: a8bb2dd57e883d74fa78b028fc48287a, type: 3}
+  castSoundVolume: 1
+  soundDuration: 3
   dashWidth: 3
   dashLength: 12
   dashTelegraphTime: 1.2

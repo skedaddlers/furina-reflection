@@ -44,7 +44,7 @@ public class SkillMultiPressureWash : BossSkill
             boss.Animator.SetTrigger(animationTrigger);
 
             yield return new WaitForSeconds(telegraphTime);            
-
+            PlayCastSound();
             Quaternion blastRotation = rotation;
             for (int j = 0; j < blastCount; j++)
             {

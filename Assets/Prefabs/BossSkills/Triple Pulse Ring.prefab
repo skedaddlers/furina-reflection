@@ -48,10 +48,16 @@ MonoBehaviour:
   animationTrigger: TPR
   windUpAnimationTrigger: WindUp
   isEnabled: 0
+  baseDamage: 8
   causesStagger: 1
   staggerDuration: 0.4
   causesKnockback: 1
   knockbackDistance: 1
+  notificationText: Boss is using a skill!
+  notificationDuration: 2
+  castSound: {fileID: 8300000, guid: 80fb45802feeab246bf92f8c56fb9e1d, type: 3}
+  castSoundVolume: 0.7
+  soundDuration: 3
   pulseInitialRadius: 3
   pulseRadiusIncrement: 1
   pulseDelayBetween: 1.2
