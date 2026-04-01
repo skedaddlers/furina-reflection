@@ -58,6 +58,7 @@ public class PlayerStats : MonoBehaviour
 
     public event Action<int, int> onManaChanged; // (current, max)
     public event Action<float, float> onStaminaChanged; // (current, max)
+    public event Action<PlayerUpgradeChoiceType> onUpgradeChoiceSelected;
 
     [SerializeField] private float _currentDamageBuffMultiplier = 1f;
     private float _damageBuffTimer = 0f;
@@ -293,16 +294,19 @@ public class PlayerStats : MonoBehaviour
     {
         float healthIncrease = upgradeManager.GetHealthUpgradeAmount();
         health.SetMaxHealth(health.maxHealth + healthIncrease);
+        NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.Health);
     }
 
     public void UpgradeAttack()
     {
         baseAttack += upgradeManager.GetAttackUpgradeAmount();
+        NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.Attack);
     }
 
     public void UpgradeDefense()
     {
         baseDefense += upgradeManager.GetDefenseUpgradeAmount();
+        NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.Defense);
     }
 
     public void UpgradeMana()
@@ -311,14 +315,15 @@ public class PlayerStats : MonoBehaviour
         _currentMana = maxMana; // Refill mana on upgrade
         onManaChanged?.Invoke(_currentMana, maxMana);
         manaRegenPerSecond += upgradeManager.GetManaRegenUpgradeAmount();
+        NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.Mana);
     }
 
     public void UpgradeMoveSpeed()
     {
         moveSpeed += upgradeManager.GetMoveSpeedUpgradeAmount(); // Increase move speed by the upgrade amount
         maxStamina += upgradeManager.GetStaminaUpgradeAmount(); // Also increase stamina by a scaled amount of the move speed upgrade
+        NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.MoveSpeed);
     }
-    
 
     public void UpgradeCrit()
     {
@@ -326,7 +331,22 @@ public class PlayerStats : MonoBehaviour
         float critMultiplierIncrease = upgradeManager.GetCritMultiplierUpgradeAmount();
         critRate = Mathf.Min(1f, critRate + critRateIncrease); // Increase crit rate by an additional 5%, cap at 100%
         critMultiplier += critMultiplierIncrease; // Increase crit multiplier by the upgrade amount
+        NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.Crit);
     }
 
+    private void NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType choiceType)
+    {
+        onUpgradeChoiceSelected?.Invoke(choiceType);
+    }
 
+}
+
+public enum PlayerUpgradeChoiceType
+{
+    Health,
+    Attack,
+    Defense,
+    Mana,
+    MoveSpeed,
+    Crit
 }

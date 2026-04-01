@@ -103,6 +103,7 @@ namespace DDAMAPEKitFramework
             // Initialize components
             playerModel = new PlayerModel();
             playerModel.InitProfiles(profiles);
+            // ApplyDefaultProfileMetricWeights();
             symptomRepository = new SymptomRepository();
             policyEngine = new PolicyEngine();
             systemStateLog = new SystemStateLog();
@@ -233,6 +234,53 @@ namespace DDAMAPEKitFramework
         public PlayerModel GetPlayerModel() => playerModel;
         public SymptomRepository GetSymptomRepository() => symptomRepository;
         public PolicyEngine GetPolicyEngine() => policyEngine;
+
+        // private void ApplyDefaultProfileMetricWeights()
+        // {
+        //     foreach (var profile in profiles)
+        //     {
+        //         if (profile == null || string.IsNullOrWhiteSpace(profile.name))
+        //             continue;
+
+        //         string profileName = profile.name.Trim().ToLowerInvariant();
+        //         switch (profileName)
+        //         {
+        //             case "melee lover":
+        //                 EnsureProfileMetricWeight(profile, PlayerMetricType.OffensiveUpgradePreference, 0.25f);
+        //                 break;
+        //             case "ranged lover":
+        //                 EnsureProfileMetricWeight(profile, PlayerMetricType.AverageDistance, 0.25f);
+        //                 EnsureProfileMetricWeight(profile, PlayerMetricType.OffensiveUpgradePreference, 0.2f);
+        //                 break;
+        //             case "skill spam":
+        //                 EnsureProfileMetricWeight(profile, PlayerMetricType.ManaUpgradePreference, 0.35f);
+        //                 break;
+        //             case "dodger":
+        //                 EnsureProfileMetricWeight(profile, PlayerMetricType.SpeedUpgradePreference, 0.35f);
+        //                 break;
+        //             case "defensive":
+        //                 EnsureProfileMetricWeight(profile, PlayerMetricType.DefensiveUpgradePreference, 0.4f);
+        //                 break;
+        //         }
+        //     }
+        // }
+
+        // private void EnsureProfileMetricWeight(PlayerProfile profile, PlayerMetricType metric, float weight)
+        // {
+        //     if (profile.weights == null)
+        //     {
+        //         profile.weights = new List<ProfileAttributeWeight>();
+        //     }
+
+        //     if (profile.weights.Any(existingWeight => existingWeight.metric == metric))
+        //         return;
+
+        //     profile.weights.Add(new ProfileAttributeWeight
+        //     {
+        //         metric = metric,
+        //         weight = weight
+        //     });
+        // }
     }
 }
 

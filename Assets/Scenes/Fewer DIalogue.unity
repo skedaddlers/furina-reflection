@@ -1234,6 +1234,7 @@ MonoBehaviour:
   roomGenerator: {fileID: 35828314}
   cursorController: {fileID: 50898957}
   mainSceneName: Fewer Dialogue
+  mainMenuSceneName: MainMenu
   withDialogue: 0
 --- !u!4 &44146001
 Transform:
@@ -22751,43 +22752,57 @@ MonoBehaviour:
     name: Melee Lover
     weights:
     - metric: 0
-      weight: 0.8
+      weight: 0.65
     - metric: 3
+      weight: 0.15
+    - metric: 10
       weight: 0.2
   - id: 1
     name: Ranged Lover
     weights:
     - metric: 1
-      weight: 0.8
+      weight: 0.6
     - metric: 3
+      weight: 0.1
+    - metric: 10
+      weight: 0.1
+    - metric: 6
       weight: 0.2
   - id: 3
     name: Skill Spam
     weights:
     - metric: 2
-      weight: 0.8
-    - metric: 4
+      weight: 0.6
+    - metric: 7
+      weight: 0.2
+    - metric: 11
       weight: 0.2
   - id: 2
     name: Dodger
     weights:
     - metric: 3
-      weight: 0.8
+      weight: 0.6
+    - metric: 6
+      weight: 0.1
     - metric: 4
+      weight: 0.1
+    - metric: 12
       weight: 0.2
   - id: 4
     name: Defensive
     weights:
     - metric: 4
-      weight: 0.5
+      weight: 0.4
     - metric: 5
+      weight: 0.25
+    - metric: 9
       weight: 0.2
     - metric: 0
-      weight: 0.1
+      weight: 0.05
     - metric: 1
-      weight: 0.1
+      weight: 0.05
     - metric: 2
-      weight: 0.1
+      weight: 0.05
   profileUpdateFrequency: 10
   explorationRate: 0.2
   useDefaultSymptoms: 1
@@ -23093,6 +23108,8 @@ MonoBehaviour:
     lastNormalized: 0
     minExpected: 0
     maxExpected: 100
+  distanceSampleInterval: 0.25
+  maxExpectedCombatDistance: 12
 --- !u!1 &1137845891
 GameObject:
   m_ObjectHideFlags: 0

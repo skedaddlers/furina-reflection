@@ -351,7 +351,11 @@ namespace DDAMAPEKitFramework
         HealingUsed,    // healing used in window
         AverageDistance,// average distance to target (0..maxDistance)
         ManaUsed,       // mana consumed in window
-        DamageDealt     // total damage dealt in window (used to compute DPS-like metric)
+        DamageDealt,    // total damage dealt in window (used to compute DPS-like metric)
+        DefensiveUpgradePreference,
+        OffensiveUpgradePreference,
+        ManaUpgradePreference,
+        SpeedUpgradePreference
     }
 
     [System.Serializable]
