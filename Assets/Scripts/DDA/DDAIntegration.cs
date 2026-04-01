@@ -13,10 +13,6 @@ public class DDAIntegration : MonoBehaviour
 
     public CombatMetricCollector combatMetricCollector;
 
-    private DDAConfigurationManager configManager;
-    private ScoreSensor scoreSensor;
-    private AccuracySensor accuracySensor;
-
     void Awake()
     {
         // if (!enableDDA) return;
@@ -40,19 +36,8 @@ public class DDAIntegration : MonoBehaviour
         {
             combatMetricCollector = gameObject.AddComponent<CombatMetricCollector>();
         }
-        // Get sensor references for game events
-        scoreSensor = GetComponent<ScoreSensor>();
-        accuracySensor = GetComponent<AccuracySensor>();
 
-        // Subscribe to game events
-        SubscribeToGameEvents();
-
-        Room.OnRoomCleared += (room) =>
-        {
-            // Trigger DDA loop on room cleared
-            combatMetricCollector?.FinalizeWaveMetrics();
-            DDAMAPEKit.Instance?.TriggerMAPEKLoop();
-        };
+        Room.OnRoomCleared += HandleRoomCleared;
 
         if (debugMode)
         {
@@ -60,42 +45,10 @@ public class DDAIntegration : MonoBehaviour
         }
     }
 
-    private void SubscribeToGameEvents()
+    private void HandleRoomCleared(Room room)
     {
-        // Subscribe to enemy death events to update score
-        Enemy.OnAnyDeath += OnEnemyDeath;
-        
-        // Subscribe to player shooting events for accuracy tracking
-        if (PlayerCombat.Instance != null)
-        {
-            // You'll need to add these events to PlayerCombat
-            // PlayerCombat.Instance.onShoot += OnPlayerShoot;
-            // PlayerCombat.Instance.onHit += OnPlayerHit;
-        }
-    }
-
-    private void OnEnemyDeath(Enemy enemy)
-    {
-        if (scoreSensor != null)
-        {
-            scoreSensor.IncrementKills();
-        }
-    }
-
-    private void OnPlayerShoot()
-    {
-        if (accuracySensor != null)
-        {
-            accuracySensor.RegisterShot();
-        }
-    }
-
-    private void OnPlayerHit()
-    {
-        if (accuracySensor != null)
-        {
-            accuracySensor.RegisterHit();
-        }
+        combatMetricCollector?.FinalizeWaveMetrics();
+        DDAMAPEKit.Instance?.TriggerMAPEKLoop();
     }
 
     private System.Collections.IEnumerator DebugDDAStatus()
@@ -120,7 +73,6 @@ public class DDAIntegration : MonoBehaviour
 
     void OnDestroy()
     {
-        // Cleanup event subscriptions
-        Enemy.OnAnyDeath -= OnEnemyDeath;
+        Room.OnRoomCleared -= HandleRoomCleared;
     }
 }

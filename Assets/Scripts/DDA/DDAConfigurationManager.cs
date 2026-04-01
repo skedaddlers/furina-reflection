@@ -9,7 +9,8 @@ public class DDAConfigurationManager : MonoBehaviour
 {
     [Header("DDA Configuration")]
     [SerializeField] private bool autoInitialize = true;
-    
+    [SerializeField] private bool useCorePerformanceOnly = true;
+
     [Header("Player Attribute Thresholds")]
     [SerializeField] private Vector2 healthThreshold = new Vector2(0.3f, 1.0f);
     [SerializeField] private Vector2 scoreThreshold = new Vector2(50f, 500f);
@@ -31,6 +32,22 @@ public class DDAConfigurationManager : MonoBehaviour
     [SerializeField] private float accuracyWeight = 0.5f;
     [SerializeField] private float survivabilityWeight = 1.2f;
     [SerializeField] private float clearTimeWeight = 1f;
+
+    [Header("Dynamic Clear Time Tuning")]
+    [SerializeField] private float clearTimeFallbackSeconds = 45f;
+    [SerializeField] private float clearTimeBaseRoomOverheadSeconds = 8f;
+    [SerializeField] private float clearTimePerEnemySeconds = 7f;
+    [SerializeField] private float aoeFactor = 0.75f; // How much multiple enemies should increase expected clear time (0.75 = 25% less than linear)
+    [SerializeField] private float clearTimePerWaveSetupSeconds = 3f;
+    [SerializeField] private float clearTimeEliteMultiplier = 1.35f;
+    [SerializeField] private float clearTimeBossExpectedSeconds = 110f;
+    [SerializeField, Range(0f, 1f)] private float clearTimeEnemyHealthInfluence = 0.75f;
+
+    [Header("Survivability Tuning")]
+    [SerializeField] private float survivabilityDamageBudgetMultiplier = 1.5f;
+    [SerializeField, Range(0f, 1f)] private float survivabilityDamageWeight = 0.5f;
+    [SerializeField, Range(0f, 1f)] private float survivabilityLowestHealthWeight = 0.3f;
+    [SerializeField, Range(0f, 1f)] private float survivabilityEndHealthWeight = 0.2f;
 
 
     [Header("Rules (Designer editable)")]
@@ -69,6 +86,30 @@ public class DDAConfigurationManager : MonoBehaviour
     }
 
     private void ConfigurePlayerAttributes()
+    {
+        if (useCorePerformanceOnly)
+        {
+            ConfigureCorePerformanceAttributes();
+            return;
+        }
+
+        ConfigureFullPerformanceAttributes();
+    }
+
+    private void ConfigureCorePerformanceAttributes()
+    {
+        var survivabilityAttr = new PlayerAttribute(3, "Survivability", survivabilityThreshold.x, survivabilityThreshold.y);
+        survivabilityAttr.reference.SetStaticReference(survivabilityReference);
+        survivabilityAttr.weight = survivabilityWeight;
+        ddaFramework.AddPlayerAttribute(survivabilityAttr);
+
+        var clearTimeAttr = new PlayerAttribute(4, "ClearTime", clearTimeThreshold.x, clearTimeThreshold.y);
+        clearTimeAttr.reference.SetStaticReference(clearTimeReference);
+        clearTimeAttr.weight = clearTimeWeight;
+        ddaFramework.AddPlayerAttribute(clearTimeAttr);
+    }
+
+    private void ConfigureFullPerformanceAttributes()
     {
         // Health attribute
         var healthAttr = new PlayerAttribute(0, "Health", healthThreshold.x, healthThreshold.y);
@@ -266,6 +307,42 @@ public class DDAConfigurationManager : MonoBehaviour
     }
 
     private void RegisterSensors()
+    {
+        if (useCorePerformanceOnly)
+        {
+            RegisterCoreSensors();
+            return;
+        }
+
+        RegisterFullSensorSet();
+    }
+
+    private void RegisterCoreSensors()
+    {
+        var survivabilitySensor = gameObject.AddComponent<SurvivabilitySensor>();
+        survivabilitySensor.ConfigureScoring(
+            survivabilityDamageBudgetMultiplier,
+            survivabilityDamageWeight,
+            survivabilityLowestHealthWeight,
+            survivabilityEndHealthWeight
+        );
+        ddaFramework.RegisterSensor(survivabilitySensor);
+
+        var clearTimeSensor = gameObject.AddComponent<ClearTimeSensor>();
+        clearTimeSensor.ConfigureDynamicBudget(
+            clearTimeFallbackSeconds,
+            clearTimeBaseRoomOverheadSeconds,
+            clearTimePerEnemySeconds,
+            aoeFactor,
+            clearTimePerWaveSetupSeconds,
+            clearTimeEliteMultiplier,
+            clearTimeBossExpectedSeconds,
+            clearTimeEnemyHealthInfluence
+        );
+        ddaFramework.RegisterSensor(clearTimeSensor);
+    }
+
+    private void RegisterFullSensorSet()
     {
         // Add health sensor
         var healthSensor = gameObject.AddComponent<HealthSensor>();

@@ -9409,7 +9409,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &489686618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13306,8 +13306,8 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 1
-  m_Antialiasing: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
   m_Dithering: 0
@@ -22820,6 +22820,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   autoInitialize: 1
+  useCorePerformanceOnly: 1
   healthThreshold: {x: 0.3, y: 1}
   scoreThreshold: {x: 50, y: 500}
   accuracyThreshold: {x: 0.2, y: 0.8}
@@ -22836,6 +22837,17 @@ MonoBehaviour:
   accuracyWeight: 0.5
   survivabilityWeight: 1.2
   clearTimeWeight: 1
+  clearTimeFallbackSeconds: 45
+  clearTimeBaseRoomOverheadSeconds: 8
+  clearTimePerEnemySeconds: 7
+  clearTimePerWaveSetupSeconds: 3
+  clearTimeEliteMultiplier: 1.35
+  clearTimeBossExpectedSeconds: 110
+  clearTimeEnemyHealthInfluence: 0.75
+  survivabilityDamageBudgetMultiplier: 1.5
+  survivabilityDamageWeight: 0.5
+  survivabilityLowestHealthWeight: 0.3
+  survivabilityEndHealthWeight: 0.2
   rules:
   - id: ML_VERY_LOW
     symptomDescription: very.low

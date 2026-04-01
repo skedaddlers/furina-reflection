@@ -52,6 +52,7 @@ namespace DDAMAPEKitFramework
                 foreach (var effector in effectors)
                 {
                     effector.Apply(kvp.Key, adjustedValue);
+                    Debug.Log($"[Executor] Applied change: {kvp.Key} -> {adjustedValue} through {effector.GetType().Name}");
                 }
 
                 // Update history

@@ -190,12 +190,13 @@ public class Room : MonoBehaviour
 
         isInCombat = true;
 
-        OnRoomCombatStarted?.Invoke(this);
-
         ApplyDifficultySnapshots();
 
         if (roomType == RoomType.Elite)
             enemyCount = 1;
+
+        // Sensors should read the finalized room budget, not the pre-scaled authoring values.
+        OnRoomCombatStarted?.Invoke(this);
 
         Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
         if (roomType == RoomType.Boss && bossManager != null)
