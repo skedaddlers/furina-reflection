@@ -1297,6 +1297,12 @@ MonoBehaviour:
     m_RotationOrder: 4
   progressionMultiplierMin: 0.8
   progressionMultiplierMax: 1.5
+  scaleEnemyStatsWithProgression: 1
+  progressionEnemyDamageMax: 1.2
+  progressionEnemyHealthMax: 1.4
+  progressionEnemySpeedMax: 1.1
+  progressionEnemyAttackSpeedMax: 1.15
+  progressionEnemyAggroMax: 1.1
   enemyDamageMultiplier: 1
   enemyHealthMultiplier: 1
   enemySpeedMultiplier: 1
@@ -1304,6 +1310,12 @@ MonoBehaviour:
   enemyAggroRangeMultiplier: 1
   enemyMultiplierMin: 0.5
   enemyMultiplierMax: 2.5
+  currentEnemyCount: 0
+  currentDamageMultiplier: 0
+  currentHealthMultiplier: 0
+  currentSpeedMultiplier: 0
+  currentAttackSpeedMultiplier: 0
+  currentAggroMultiplier: 0
 --- !u!1 &49124019
 GameObject:
   m_ObjectHideFlags: 0
@@ -22840,6 +22852,7 @@ MonoBehaviour:
   clearTimeFallbackSeconds: 45
   clearTimeBaseRoomOverheadSeconds: 8
   clearTimePerEnemySeconds: 7
+  aoeFactor: 0.5
   clearTimePerWaveSetupSeconds: 3
   clearTimeEliteMultiplier: 1.35
   clearTimeBossExpectedSeconds: 110

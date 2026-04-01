@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GlobalDifficultyState : MonoBehaviour
 {
@@ -27,6 +28,14 @@ public class GlobalDifficultyState : MonoBehaviour
     public float progressionMultiplierMin = 0.8f;
     public float progressionMultiplierMax = 1.5f;
 
+    [Header("Enemy Stat Progression (without DDA)")]
+    public bool scaleEnemyStatsWithProgression = true;
+    public float progressionEnemyDamageMax = 1.2f;
+    public float progressionEnemyHealthMax = 1.4f;
+    public float progressionEnemySpeedMax = 1.1f;
+    public float progressionEnemyAttackSpeedMax = 1.15f;
+    public float progressionEnemyAggroMax = 1.1f;
+
     [Header("Enemy Stat Multipliers (set by DDA)")]
     public float enemyDamageMultiplier = 1f;
     public float enemyHealthMultiplier = 1f;
@@ -36,8 +45,17 @@ public class GlobalDifficultyState : MonoBehaviour
     public float enemyMultiplierMin = 0.5f;
     public float enemyMultiplierMax = 2.5f;
 
+    [Header("Debug")]
+    [SerializeField] private int currentEnemyCount = 0;
+    [SerializeField] private int currentDamageMultiplier = 0;
+    [SerializeField] private int currentHealthMultiplier = 0;
+    [SerializeField] private int currentSpeedMultiplier = 0;
+    [SerializeField] private int currentAttackSpeedMultiplier = 0;
+    [SerializeField] private int currentAggroMultiplier = 0;
+
     private int _totalRooms = 0;
     private int _clearedRooms = 0;
+    private readonly HashSet<int> _countedClearedRoomIds = new HashSet<int>();
 
     private void Awake()
     {
@@ -79,6 +97,7 @@ public class GlobalDifficultyState : MonoBehaviour
     public void SetTotalRooms(int totalRooms)
     {
         _totalRooms = Mathf.Max(0, totalRooms);
+        ResetProgression();
     }
 
     public int GetEnemyCountForRoom(Room room)
@@ -110,33 +129,52 @@ public class GlobalDifficultyState : MonoBehaviour
         int result = Mathf.RoundToInt(raw);
         result = Mathf.Clamp(result, 1, room.maxEnemies);
 
+        currentEnemyCount = result; // Untuk debug
         return result;
     }
 
     private float GetProgressionMultiplier()
     {
-        if (_totalRooms <= 0) return 1f;
-        float completionRatio = Mathf.Clamp01((float)_clearedRooms / _totalRooms);
-        float curveEval = clearedRoomToMultiplier.Evaluate(completionRatio);
-        float clamped = Mathf.Clamp(curveEval, progressionMultiplierMin, progressionMultiplierMax);
-        return clamped;
+        float progressionT = GetProgressionT();
+        return Mathf.Lerp(progressionMultiplierMin, progressionMultiplierMax, progressionT);
     }
 
     private void HandleRoomCleared(Room room)
     {
-        _clearedRooms = Mathf.Max(_clearedRooms + 1, 0);
+        RegisterRoomCleared(room);
+    }
+
+    public void RegisterRoomCleared(Room room)
+    {
+        if (room == null)
+            return;
+
+        if (!_countedClearedRoomIds.Add(room.roomIndex))
+            return;
+
+        _clearedRooms = _countedClearedRoomIds.Count;
     }
 
     public EnemyDifficultySnapshot GetEnemyDifficultySnapshot()
     {
         float Clamp(float v) => Mathf.Clamp(v, enemyMultiplierMin, enemyMultiplierMax);
+        float adjDamage = Clamp(enemyDamageMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemyDamageMax));
+        float adjHealth = Clamp(enemyHealthMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemyHealthMax));
+        float adjSpeed = Clamp(enemySpeedMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemySpeedMax));
+        float adjAttackSpeed = Clamp(enemyAttackSpeedMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemyAttackSpeedMax));
+        float adjAggro = Clamp(enemyAggroRangeMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemyAggroMax));
+        currentDamageMultiplier = Mathf.RoundToInt(adjDamage * 100);
+        currentHealthMultiplier = Mathf.RoundToInt(adjHealth * 100);
+        currentSpeedMultiplier = Mathf.RoundToInt(adjSpeed * 100);
+        currentAttackSpeedMultiplier = Mathf.RoundToInt(adjAttackSpeed * 100);
+        currentAggroMultiplier = Mathf.RoundToInt(adjAggro * 100);
         return new EnemyDifficultySnapshot
         {
-            damage = Clamp(enemyDamageMultiplier),
-            health = Clamp(enemyHealthMultiplier),
-            speed = Clamp(enemySpeedMultiplier),
-            attackSpeed = Clamp(enemyAttackSpeedMultiplier),
-            aggro = Clamp(enemyAggroRangeMultiplier)
+            damage = adjDamage,
+            health = adjHealth,
+            speed = adjSpeed,
+            attackSpeed = adjAttackSpeed,
+            aggro = adjAggro
         };
     }
 
@@ -151,6 +189,33 @@ public class GlobalDifficultyState : MonoBehaviour
             case "attackSpeed": enemyAttackSpeedMultiplier = v; break;
             case "aggro": enemyAggroRangeMultiplier = v; break;
         }
+    }
+
+    private void ResetProgression()
+    {
+        _countedClearedRoomIds.Clear();
+        _clearedRooms = 0;
+    }
+
+    private float GetCompletionRatio()
+    {
+        if (_totalRooms <= 0)
+            return 0f;
+
+        return Mathf.Clamp01((float)_clearedRooms / _totalRooms);
+    }
+
+    private float GetProgressionT()
+    {
+        return Mathf.Clamp01(clearedRoomToMultiplier.Evaluate(GetCompletionRatio()));
+    }
+
+    private float GetEnemyStatProgressionMultiplier(float maxMultiplier)
+    {
+        if (!scaleEnemyStatsWithProgression)
+            return 1f;
+
+        return Mathf.Lerp(1f, Mathf.Max(1f, maxMultiplier), GetProgressionT());
     }
 }
 

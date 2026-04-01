@@ -46,12 +46,6 @@ public class EnemySystemEffector : Effector
                 diff?.SetEnemyMultiplier("aggro", value);
                 UpdateActiveEnemies();
                 break;
-            case "enemySpawnRate":
-                AdjustSpawnRate(value);
-                break;
-            case "maxEnemies":
-                AdjustMaxEnemies((int)value);
-                break;
             case "enemyDamage":
                 diff?.SetEnemyMultiplier("damage", 1f + value * 0.1f);
                 UpdateActiveEnemies();
@@ -66,38 +60,6 @@ public class EnemySystemEffector : Effector
                 break;
         }
     }
-
-    private void AdjustSpawnRate(float adjustment)
-    {
-        float newRate = baseEnemySpawnRate + adjustment;
-        newRate = Mathf.Max(0.5f, newRate); // Minimum spawn rate
-
-        foreach (var spawner in spawnTriggers)
-        {
-            if (spawner != null)
-            {
-                // Adjust spawn timer or cooldown
-                spawner.SetSpawnCooldown(newRate);
-            }
-        }
-        Debug.Log($"[EnemySystemEffector] Spawn rate adjusted to: {newRate}");
-    }
-
-    private void AdjustMaxEnemies(int adjustment)
-    {
-        int newMax = baseMaxEnemies + adjustment;
-        newMax = Mathf.Max(1, newMax); // At least 1 enemy
-
-        foreach (var spawner in spawnTriggers)
-        {
-            if (spawner != null)
-            {
-                spawner.SetMaxEnemies(newMax);
-            }
-        }
-        Debug.Log($"[EnemySystemEffector] Max enemies adjusted to: {newMax}");
-    }
-
     private void AdjustEnemyDamage(float adjustment)
     {
         float newDamage = baseEnemyDamage + adjustment;

@@ -375,10 +375,6 @@ public class DDAConfigurationManager : MonoBehaviour
         // Add reward system effector
         var rewardEffector = gameObject.AddComponent<RewardSystemEffector>();
         ddaFramework.RegisterEffector(rewardEffector);
-
-        // Add player system effector
-        var playerEffector = gameObject.AddComponent<PlayerSystemEffector>();
-        ddaFramework.RegisterEffector(playerEffector);
     }
 }
 

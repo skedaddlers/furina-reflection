@@ -85,6 +85,10 @@ public class RoomGenerator : MonoBehaviour
     {
         GenerateRoomGraph();
         CalculateWorldPositions();
+        int progressionRoomCount = Layout.roomDataMap.Values.Count(room =>
+            room.roomType != RoomType.Start &&
+            room.roomType != RoomType.Shop);
+        GlobalDifficultyState.Instance?.SetTotalRooms(progressionRoomCount);
         return Layout;
     }
 

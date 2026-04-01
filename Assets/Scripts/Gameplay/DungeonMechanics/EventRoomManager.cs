@@ -144,6 +144,7 @@ public class EventRoomManager : MonoBehaviour
             if (parentRoom != null)
             {
                 parentRoom.isCleared = true;
+                GlobalDifficultyState.Instance?.RegisterRoomCleared(parentRoom);
                 if (parentRoom.eventTrigger) parentRoom.eventTrigger.gameObject.SetActive(false);
                 parentRoom.UnlockAllDoors();
             }
@@ -387,7 +388,8 @@ public class EventRoomManager : MonoBehaviour
         parentRoom.isCleared = false;
 
         // override enemyCount khusus battle ini
-        parentRoom.enemyCount = Mathf.Max(1, option.battleEnemyCount);
+        int enemyCount = GlobalDifficultyState.Instance?.GetEnemyCountForRoom(parentRoom) ?? option.battleEnemyCount;
+        parentRoom.enemyCount = Mathf.Max(enemyCount, option.battleEnemyCount);
 
         // mulai combat di room ini
         parentRoom.BeginCombat();
