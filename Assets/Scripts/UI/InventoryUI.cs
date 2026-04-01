@@ -66,9 +66,12 @@ public class InventoryUI : MonoBehaviour
 
     public void OpenInventoryUI(List<Item> items)
     {
+        if (UIManager.Instance != null && !UIManager.Instance.TryOpenMenu(this))
+        {
+            return;
+        }
+
         inventoryPanel.OpenPanel();
-        GameManager.Instance.ChangeState(GameState.InMenu);
-        GameManager.Instance.SetCursorState(true);
         GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         for (int i = 0; i < itemSlots.Count; i++)
         {
@@ -89,7 +92,9 @@ public class InventoryUI : MonoBehaviour
     public void CloseInventory()
     {
         inventoryPanel.SetActive(false);
-        GameManager.Instance.ChangeState(GameState.Playing);
-        GameManager.Instance.SetCursorState(false);
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.CloseMenu(this);
+        }
     }
 }

@@ -25,8 +25,11 @@ public class EventRoomUI : MonoBehaviour
 
     public void ShowChoices(List<GameEventOption> choices, EventRoomManager manager)
     {
-        GameManager.Instance.ChangeState(GameState.InMenu);
-        GameManager.Instance.SetCursorState(true);
+        if (UIManager.Instance != null && !UIManager.Instance.TryOpenMenu(this))
+        {
+            return;
+        }
+
         GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         currentManager = manager;
         if (eventPanel != null)
@@ -48,8 +51,6 @@ public class EventRoomUI : MonoBehaviour
                 widget.button.onClick.AddListener(() =>
                 {
                     currentManager.OnChoiceSelected(capturedIndex);
-                    GameManager.Instance.ChangeState(GameState.Playing);
-                    GameManager.Instance.SetCursorState(false);
                 });
             }
             else
@@ -64,5 +65,9 @@ public class EventRoomUI : MonoBehaviour
         if (eventPanel != null)
             eventPanel.SetActive(false);
         currentManager = null;
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.CloseMenu(this);
+        }
     }
 }

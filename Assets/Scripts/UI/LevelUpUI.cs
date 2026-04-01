@@ -59,10 +59,13 @@ public class LevelUpUI : MonoBehaviour
 
     void Update()
     {
-        if (levelUpButton.activeSelf && Input.GetKeyDown(KeyCode.L))
+        if (levelUpButton != null && levelUpButton.activeSelf && Input.GetKeyDown(KeyCode.L))
         {
-            GameManager.Instance.cursorController.UnlockCursor();
-            GameManager.Instance.ChangeState(GameState.InMenu);
+            if (UIManager.Instance != null && !UIManager.Instance.TryOpenMenu(this))
+            {
+                return;
+            }
+
             StopLevelUpButtonPulse();
             levelUpButton.SetActive(false);
             levelUpPanel.OpenPanel();
@@ -173,9 +176,11 @@ public class LevelUpUI : MonoBehaviour
         upgradeAmountText.text = "You can upgrade " + upgradeAmount + " more time(s)";
         if (upgradeAmount <= 0)
         {
-            GameManager.Instance.cursorController.LockCursor();
-            GameManager.Instance.ChangeState(GameState.Playing);
             levelUpPanel.SetActive(false);
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.CloseMenu(this);
+            }
             playerStats.levelManager.ResetUpgradeAmount();
         }
     }

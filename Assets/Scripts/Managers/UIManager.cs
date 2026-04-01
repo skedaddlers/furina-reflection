@@ -2,6 +2,13 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+public enum UINavigationLevel
+{
+    Playing,
+    Menu,
+    Settings
+}
+
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
@@ -30,6 +37,10 @@ public class UIManager : MonoBehaviour
     public CanvasGroup victoryCanvas;
     public CanvasGroup defeatCanvas;
     public GameObject winLoseScreen;
+
+    private MonoBehaviour activeMenuOwner;
+    private GameState activeMenuState = GameState.InMenu;
+    private MonoBehaviour activeSettingsOwner;
 
     void Awake()
     {
@@ -141,17 +152,6 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (cursorController != null)
-            {
-                if (Cursor.lockState == CursorLockMode.Locked)
-                    cursorController.UnlockCursor();
-                else
-                    cursorController.LockCursor();
-            }
-        }
-
         if (Input.GetKeyDown(KeyCode.I))
         {
             if (Player.Instance == null) return;
@@ -212,12 +212,164 @@ public class UIManager : MonoBehaviour
         StartCoroutine(ShowNotificationCoroutine(message, duration));
     }
 
+    public bool TryOpenMenu(MonoBehaviour owner, GameState menuState = GameState.InMenu)
+    {
+        if (owner == null)
+        {
+            return false;
+        }
+
+        if (GameManager.Instance != null
+            && (GameManager.Instance.CurrentState == GameState.MainMenu
+            || GameManager.Instance.CurrentState == GameState.GameOver))
+        {
+            return false;
+        }
+
+        if (activeSettingsOwner != null && activeSettingsOwner != owner)
+        {
+            return false;
+        }
+
+        if (activeMenuOwner != null && activeMenuOwner != owner)
+        {
+            return false;
+        }
+
+        activeMenuOwner = owner;
+        activeMenuState = menuState;
+        ApplyNavigationState();
+        return true;
+    }
+
+    public void CloseMenu(MonoBehaviour owner)
+    {
+        if (owner != null && activeMenuOwner == owner)
+        {
+            activeMenuOwner = null;
+            activeMenuState = GameState.InMenu;
+        }
+
+        ApplyNavigationState();
+    }
+
+    public bool TryOpenSettings(MonoBehaviour owner)
+    {
+        if (owner == null)
+        {
+            return false;
+        }
+
+        if (GameManager.Instance != null
+            && (GameManager.Instance.CurrentState == GameState.MainMenu
+            || GameManager.Instance.CurrentState == GameState.GameOver))
+        {
+            return false;
+        }
+
+        if (activeMenuOwner != null && activeMenuOwner != owner)
+        {
+            return false;
+        }
+
+        if (activeSettingsOwner != null && activeSettingsOwner != owner)
+        {
+            return false;
+        }
+
+        activeSettingsOwner = owner;
+        ApplyNavigationState();
+        return true;
+    }
+
+    public void CloseSettings(MonoBehaviour owner)
+    {
+        if (owner != null && activeSettingsOwner == owner)
+        {
+            activeSettingsOwner = null;
+        }
+
+        ApplyNavigationState();
+    }
+
+    public bool HasActiveMenu(MonoBehaviour requester = null)
+    {
+        return activeMenuOwner != null && activeMenuOwner != requester;
+    }
+
+    public bool HasActiveSettings(MonoBehaviour requester = null)
+    {
+        return activeSettingsOwner != null && activeSettingsOwner != requester;
+    }
+
+    public UINavigationLevel GetNavigationLevel()
+    {
+        if (activeSettingsOwner != null)
+        {
+            return UINavigationLevel.Settings;
+        }
+
+        if (activeMenuOwner != null)
+        {
+            return UINavigationLevel.Menu;
+        }
+
+        return UINavigationLevel.Playing;
+    }
+
+    public bool IsAnyUIOpen()
+    {
+        if (activeMenuOwner != null || activeSettingsOwner != null)
+        {
+            return true;
+        }
+
+        if (GameManager.Instance == null)
+        {
+            return false;
+        }
+
+        return GameManager.Instance.CurrentState == GameState.MainMenu
+            || GameManager.Instance.CurrentState == GameState.GameOver;
+    }
+
     private System.Collections.IEnumerator ShowNotificationCoroutine(string message, float duration)
     {
         notificationText.text = message;
         notificationText.gameObject.SetActive(true);
         yield return new WaitForSeconds(duration);
         notificationText.gameObject.SetActive(false);
+    }
+
+    private void ApplyNavigationState()
+    {
+        if (GameManager.Instance == null)
+        {
+            return;
+        }
+
+        if (GameManager.Instance.CurrentState == GameState.MainMenu
+            || GameManager.Instance.CurrentState == GameState.GameOver)
+        {
+            return;
+        }
+
+        if (activeSettingsOwner != null)
+        {
+            GameManager.Instance.SetCursorState(true);
+            GameManager.Instance.ChangeState(GameState.Paused);
+            return;
+        }
+
+        if (activeMenuOwner != null)
+        {
+            GameManager.Instance.SetCursorState(true);
+            GameManager.Instance.ChangeState(activeMenuState);
+            return;
+        }
+
+        GameManager.Instance.SetCursorState(false);
+        GameManager.Instance.ChangeState(GameState.Playing);
     }
 
 }

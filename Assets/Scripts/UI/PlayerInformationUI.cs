@@ -138,9 +138,11 @@ public class PlayerInformationUI : MonoBehaviour
     {
         if (playerInfoPanel != null)
         {
-            GameManager.Instance.cursorController.LockCursor();
-            GameManager.Instance.ChangeState(GameState.Playing);
             playerInfoPanel.SetActive(false);
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.CloseMenu(this);
+            }
         }
     }
 
@@ -148,9 +150,12 @@ public class PlayerInformationUI : MonoBehaviour
     {
         if (playerInfoPanel != null)
         {
+            if (UIManager.Instance != null && !UIManager.Instance.TryOpenMenu(this))
+            {
+                return;
+            }
+
             playerInfoPanel.OpenPanel();
-            GameManager.Instance.cursorController.UnlockCursor();
-            GameManager.Instance.ChangeState(GameState.InMenu);
             UpdatePlayerInfo();
             GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         }

@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public RoomGenerator roomGenerator;
     public CursorController cursorController;
     public string mainSceneName = "MainScene";
+    public string mainMenuSceneName = "MainMenu";
 
     public bool withDialogue = true;
     private bool _isRestarting;
@@ -135,6 +136,11 @@ public class GameManager : MonoBehaviour
                 // Show in-game menu UI
                 break;
         }
+    }
+    
+    public bool IsInGame()
+    {
+        return CurrentState == GameState.Playing;
     }
 
     public void OnBossRoomCleared()

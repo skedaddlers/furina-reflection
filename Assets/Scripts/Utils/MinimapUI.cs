@@ -118,6 +118,8 @@ public class MinimapUI : MonoBehaviour
         // player press M to toggle minimap (optional)
         if (Input.GetKeyDown(KeyCode.M))
         {
+            if (!isMinimapOpen && UIManager.Instance != null && UIManager.Instance.IsAnyUIOpen())
+                return;
             ToggleMinimap();
         }
     }
@@ -135,20 +137,26 @@ public class MinimapUI : MonoBehaviour
                 if (roomInfoPanel != null)
                     roomInfoPanel.SetActive(false);
             });
-            GameManager.Instance.SetCursorState(false);
-            GameManager.Instance.ChangeState(GameState.Playing);
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.CloseMenu(this);
+            }
+            isMinimapOpen = false;
         }
         else
         {
+            if (UIManager.Instance != null && !UIManager.Instance.TryOpenMenu(this, GameState.MapView))
+            {
+                return;
+            }
+
             OpenMinimap();
+            isMinimapOpen = true;
         }
-        isMinimapOpen = !isMinimapOpen;
     }
 
     private void OpenMinimap()
     {  
-        GameManager.Instance.SetCursorState(true);
-        GameManager.Instance.ChangeState(GameState.MapView);
         minimapHolder.transform.localPosition = positionOnOpen;
         DOTweenHelper.Scale(minimapHolder.transform, zoomScale, 0.2f, Ease.OutBack);
         if (roomInfoPanel != null)

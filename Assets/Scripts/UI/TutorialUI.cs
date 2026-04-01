@@ -20,6 +20,7 @@ public class TutorialUI : MonoBehaviour
 
     void OnEnable()
     {
+        currentStepIndex = 0;
         UpdateTutorialUI();
     }
 

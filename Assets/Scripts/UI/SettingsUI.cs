@@ -9,8 +9,8 @@ public class SettingsUI : MonoBehaviour
     public Slider voicelineVolumeSlider;
     public Button restartButton;
     public Button closeSettingsButton;
-
-    private GameState previousState;
+    public Button mainMenuButton;
+    public bool isSettingsOpen = false;
 
     void Start()
     {
@@ -24,16 +24,23 @@ public class SettingsUI : MonoBehaviour
 
         restartButton.onClick.AddListener(() => GameManager.Instance.Restart());
         closeSettingsButton.onClick.AddListener(CloseSettings);
+        mainMenuButton.onClick.AddListener(() => SceneLoader.Instance.LoadScene(GameManager.Instance.mainMenuSceneName));
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            if (settingsPanel == null)
+                return;
             if (settingsPanel.activeSelf)
+            {
                 CloseSettings();
-            else
+            }
+            else if (UIManager.Instance == null || !UIManager.Instance.HasActiveMenu(this))
+            {
                 OpenSettings();
+            }
         }
     }
 
@@ -54,20 +61,23 @@ public class SettingsUI : MonoBehaviour
 
     void OpenSettings()
     {
-        GameManager.Instance.SetCursorState(true);
-        previousState = GameManager.Instance.CurrentState;
-        GameManager.Instance.ChangeState(GameState.Paused);
+        if (UIManager.Instance != null && !UIManager.Instance.TryOpenSettings(this))
+        {
+            return;
+        }
+
+        isSettingsOpen = true;
         settingsPanel.SetActive(true);
         GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
     }
 
     void CloseSettings()
     {
-        if(previousState == GameState.Playing)
-        {
-            GameManager.Instance.SetCursorState(false);
-        }
+        isSettingsOpen = false;
         settingsPanel.SetActive(false);
-        GameManager.Instance.ChangeState(previousState);
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.CloseSettings(this);
+        }
     }
 }

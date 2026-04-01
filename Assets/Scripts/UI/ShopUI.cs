@@ -49,19 +49,26 @@ public class ShopUI : MonoBehaviour
 
     public void OpenShopUI(List<WeaponBase> weapons, List<SkillBase> skills)
     {
-        OpenPanel();
+        if (!OpenPanel())
+        {
+            return;
+        }
+
         SetupWeapons(weapons);
         SetupSkills(skills);
     }
 
-    private void OpenPanel()
+    private bool OpenPanel()
     {
-        shopPanel.OpenPanel();
+        if (UIManager.Instance != null && !UIManager.Instance.TryOpenMenu(this))
+        {
+            return false;
+        }
 
-        GameManager.Instance.ChangeState(GameState.InMenu);
-        GameManager.Instance.SetCursorState(true);
+        shopPanel.OpenPanel();
         GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         detailPanel.SetActive(false);
+        return true;
     }
 
     #endregion
@@ -242,8 +249,10 @@ public class ShopUI : MonoBehaviour
     public void CloseShop()
     {
         shopPanel.SetActive(false);
-        GameManager.Instance.SetCursorState(false);
-        GameManager.Instance.ChangeState(GameState.Playing);
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.CloseMenu(this);
+        }
     }
 
     #endregion
