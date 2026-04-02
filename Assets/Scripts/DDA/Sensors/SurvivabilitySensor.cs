@@ -19,6 +19,7 @@ public class SurvivabilitySensor : Sensor
     private float lowestHealthRatioThisRoom = 1f;
     private float endHealthRatioThisRoom = 1f;
     private bool isTrackingRoom = false;
+    private Room currentRoom;
 
     void Start()
     {
@@ -31,18 +32,18 @@ public class SurvivabilitySensor : Sensor
     void OnEnable()
     {
         Room.OnRoomCombatStarted += HandleRoomCombatStarted;
-        Room.OnRoomCleared += HandleRoomCleared;
     }
 
     void OnDisable()
     {
         Room.OnRoomCombatStarted -= HandleRoomCombatStarted;
-        Room.OnRoomCleared -= HandleRoomCleared;
         UnhookHealthEvents();
     }
 
     public override SensorReading Read()
     {
+        HandleRoomCleared(currentRoom);
+        Debug.Log($"[SurvivabilitySensor] Read called. Last Survivability: {lastSurvivability:F2}");
         return new SensorReading(attributeId, lastSurvivability);
     }
 
@@ -64,6 +65,7 @@ public class SurvivabilitySensor : Sensor
         EnsurePlayerHealth();
         if (playerHealth == null) return;
 
+        currentRoom = room;
         isTrackingRoom = true;
         damageThisRoom = 0f;
         lastHealthValue = playerHealth.GetCurrentHealth();

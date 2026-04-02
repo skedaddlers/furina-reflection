@@ -231,6 +231,7 @@ namespace DDAMAPEKitFramework
             }
         }
 
+        public Symptom GetCurrentSymptom() => analyzer.CurrentSymptom;
         public PlayerModel GetPlayerModel() => playerModel;
         public SymptomRepository GetSymptomRepository() => symptomRepository;
         public PolicyEngine GetPolicyEngine() => policyEngine;

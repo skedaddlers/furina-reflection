@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 using DDAMAPEKitFramework;
 
 /// <summary>
@@ -8,113 +9,91 @@ public class EnemySystemEffector : Effector
 {
     private SpawnTrigger[] spawnTriggers;
     private EnemyAI[] activeEnemies;
-    
-    // Base values for enemy system
-    private float baseEnemySpawnRate = 3f;
-    private int baseMaxEnemies = 5;
-    private float baseEnemyDamage = 10f;
-    private float baseEnemySpeed = 3f;
+
+    private float minMultiplier = 0.5f;
+    private float maxMultiplier = 2.5f;
+    private float smoothingFactor = 0.5f;
+    private float trendBoostFactor = 0.1f;
+
+    private Dictionary<string, float> currentMultipliers;
+
+    private string lastSymptom;
+    private int sameSymptomCount;
+    private float timeSinceLastSymptom;
 
     void Start()
     {
         // Find all spawn triggers in the scene
         spawnTriggers = FindObjectsOfType<SpawnTrigger>();
+        currentMultipliers = new Dictionary<string, float>();
     }
 
     public override void Apply(string variable, float value)
     {
         var diff = GlobalDifficultyState.Instance;
+        float newValue = GetNewMultiplier(variable, value);
         switch (variable)
         {
             case "enemyDamageMultiplier":
-                diff?.SetEnemyMultiplier("damage", value);
+                diff?.SetEnemyMultiplier("damage", newValue);
                 UpdateActiveEnemies();
                 break;
             case "enemyHealthMultiplier":
-                diff?.SetEnemyMultiplier("health", value);
+                diff?.SetEnemyMultiplier("health", newValue);
                 UpdateActiveEnemies();
                 break;
             case "enemySpeedMultiplier":
-                diff?.SetEnemyMultiplier("speed", value);
+                diff?.SetEnemyMultiplier("speed", newValue);
                 UpdateActiveEnemies();
                 break;
             case "enemyAttackSpeedMultiplier":
-                diff?.SetEnemyMultiplier("attackSpeed", value);
+                diff?.SetEnemyMultiplier("attackSpeed", newValue);
                 UpdateActiveEnemies();
                 break;
             case "enemyAggroMultiplier":
-                diff?.SetEnemyMultiplier("aggro", value);
-                UpdateActiveEnemies();
-                break;
-            case "enemyDamage":
-                diff?.SetEnemyMultiplier("damage", 1f + value * 0.1f);
-                UpdateActiveEnemies();
-                break;
-            case "enemySpeed":
-                diff?.SetEnemyMultiplier("speed", 1f + value * 0.1f);
-                UpdateActiveEnemies();
-                break;
-            case "enemyHealth":
-                diff?.SetEnemyMultiplier("health", 1f + value * 0.1f);
+                diff?.SetEnemyMultiplier("aggro", newValue);
                 UpdateActiveEnemies();
                 break;
         }
     }
-    private void AdjustEnemyDamage(float adjustment)
+
+    private float GetNewMultiplier(string variable, float value)
     {
-        float newDamage = baseEnemyDamage + adjustment;
-        newDamage = Mathf.Max(1f, newDamage);
-
-        // Update all active enemies
-        activeEnemies = FindObjectsOfType<EnemyAI>();
-        foreach (var enemy in activeEnemies)
+        if (!currentMultipliers.ContainsKey(variable))
         {
-            if (enemy != null)
-            {
-                enemy.damage = (int)newDamage;
-            }
+            currentMultipliers[variable] = 1f; // Start with no change
         }
-        Debug.Log($"[EnemySystemEffector] Enemy damage adjusted to: {newDamage}");
-    }
 
-    private void AdjustEnemySpeed(float adjustment)
-    {
-        float newSpeed = baseEnemySpeed + adjustment;
-        newSpeed = Mathf.Max(0.5f, newSpeed);
-
-        activeEnemies = FindObjectsOfType<EnemyAI>();
-        foreach (var enemy in activeEnemies)
+        // since Apply function will be called multiple times per MAPE loop, we should check
+        if (Time.time - timeSinceLastSymptom > 1f) //
         {
-            if (enemy != null)
+            lastSymptom = DDAMAPEKit.Instance.GetCurrentSymptom()?.description ?? "None";
+            if (lastSymptom == variable)
             {
-                var agent = enemy.GetComponent<UnityEngine.AI.NavMeshAgent>();
-                if (agent != null)
-                {
-                    agent.speed = newSpeed;
-                }
+                sameSymptomCount++;
             }
-        }
-        Debug.Log($"[EnemySystemEffector] Enemy speed adjusted to: {newSpeed}");
-    }
-
-    private void AdjustEnemyHealth(float adjustment)
-    {
-        float healthMultiplier = 1f + (adjustment * 0.1f);
-        healthMultiplier = Mathf.Max(0.5f, healthMultiplier);
-
-        activeEnemies = FindObjectsOfType<EnemyAI>();
-        foreach (var enemy in activeEnemies)
-        {
-            if (enemy != null)
+            else
             {
-                var health = enemy.GetComponent<Health>();
-                if (health != null)
-                {
-                    health.maxHealth *= healthMultiplier;
-                }
+                sameSymptomCount = 0;
             }
+            timeSinceLastSymptom = Time.time;
         }
-        Debug.Log($"[EnemySystemEffector] Enemy health multiplier: {healthMultiplier}");
+
+
+        float current = currentMultipliers[variable];
+        float newMultiplier = current * value;
+        float boost = 1f + sameSymptomCount * trendBoostFactor;
+
+        newMultiplier = newMultiplier * boost;
+        newMultiplier = Mathf.Clamp(newMultiplier, minMultiplier, maxMultiplier);
+
+        float smoothed = Mathf.Lerp(current, newMultiplier, smoothingFactor);
+
+        currentMultipliers[variable] = smoothed;
+        Debug.Log($"[EnemySystemEffector] Variable: {variable}, Current: {current:F2}, New: {newMultiplier:F2}, Smoothed: {smoothed:F2}, SameSymptomCount: {sameSymptomCount}");
+        Debug.Log($"[EnemySystemEffector] Calculation: {current:F2} * {value:F2} * {boost:F2} = {newMultiplier:F2} (Clamped: {newMultiplier:F2}) -> Smoothed: {smoothed:F2}");
+        Debug.Log($"[EnemySystemEffector] LastSymptom: {lastSymptom}, TimeSinceLastSymptom: {Time.time - timeSinceLastSymptom:F2}s");
+        return smoothed;
     }
 
     private void UpdateActiveEnemies()

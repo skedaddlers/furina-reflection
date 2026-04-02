@@ -46,7 +46,7 @@ namespace DDAMAPEKitFramework
             // Apply adjustments based on history
             foreach (var kvp in aggregatedChanges)
             {
-                float adjustedValue = AdjustValueBasedOnHistory(kvp.Key, kvp.Value);
+                float adjustedValue = kvp.Value;
                 
                 // Apply changes through effectors
                 foreach (var effector in effectors)
@@ -60,30 +60,30 @@ namespace DDAMAPEKitFramework
             }
         }
 
-        private float AdjustValueBasedOnHistory(string variable, float value)
-        {
-            if (!variableHistory.ContainsKey(variable))
-            {
-                variableHistory[variable] = new Queue<float>();
-            }
+        // private float AdjustValueBasedOnHistory(string variable, float value)
+        // {
+        //     if (!variableHistory.ContainsKey(variable))
+        //     {
+        //         variableHistory[variable] = new Queue<float>();
+        //     }
 
-            var history = variableHistory[variable];
-            if (history.Count > 0)
-            {
-                // Apply smoothing based on history
-                float avgHistory = 0f;
-                foreach (var h in history)
-                {
-                    avgHistory += h;
-                }
-                avgHistory /= history.Count;
+        //     var history = variableHistory[variable];
+        //     if (history.Count > 0)
+        //     {
+        //         // Apply smoothing based on history
+        //         float avgHistory = 0f;
+        //         foreach (var h in history)
+        //         {
+        //             avgHistory += h;
+        //         }
+        //         avgHistory /= history.Count;
 
-                // Blend new value with history average
-                return Mathf.Lerp(avgHistory, value, 0.7f);
-            }
+        //         // Blend new value with history average
+        //         return Mathf.Lerp(avgHistory, value, 0.7f);
+        //     }
 
-            return value;
-        }
+        //     return value;
+        // }
 
         private void UpdateHistory(string variable, float value)
         {

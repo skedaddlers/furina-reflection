@@ -19,6 +19,9 @@ namespace DDAMAPEKitFramework
         private int movingAverageSample = 5;
         private Queue<float> performanceHistory = new Queue<float>();
 
+        private Symptom currentSymptom;
+        public Symptom CurrentSymptom => currentSymptom;
+
         public Analyzer(PlayerModel playerModel, SymptomRepository repository, SystemStateLog log)
         {
             this.playerModel = playerModel;
@@ -59,6 +62,7 @@ namespace DDAMAPEKitFramework
 
             if (identifiedSymptom != null)
             {
+                currentSymptom = identifiedSymptom;
                 Debug.Log($"[Analyzer] Symptom identified: {identifiedSymptom.description} (Performance: {performance:F2})");
                 
                 // Create adaptation request

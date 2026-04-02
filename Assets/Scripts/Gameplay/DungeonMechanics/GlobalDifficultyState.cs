@@ -47,11 +47,11 @@ public class GlobalDifficultyState : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField] private int currentEnemyCount = 0;
-    [SerializeField] private int currentDamageMultiplier = 0;
-    [SerializeField] private int currentHealthMultiplier = 0;
-    [SerializeField] private int currentSpeedMultiplier = 0;
-    [SerializeField] private int currentAttackSpeedMultiplier = 0;
-    [SerializeField] private int currentAggroMultiplier = 0;
+    [SerializeField] private float currentDamageMultiplier = 0;
+    [SerializeField] private float currentHealthMultiplier = 0;
+    [SerializeField] private float currentSpeedMultiplier = 0;
+    [SerializeField] private float currentAttackSpeedMultiplier = 0;
+    [SerializeField] private float currentAggroMultiplier = 0;
 
     private int _totalRooms = 0;
     private int _clearedRooms = 0;
@@ -163,11 +163,12 @@ public class GlobalDifficultyState : MonoBehaviour
         float adjSpeed = Clamp(enemySpeedMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemySpeedMax));
         float adjAttackSpeed = Clamp(enemyAttackSpeedMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemyAttackSpeedMax));
         float adjAggro = Clamp(enemyAggroRangeMultiplier * GetEnemyStatProgressionMultiplier(progressionEnemyAggroMax));
-        currentDamageMultiplier = Mathf.RoundToInt(adjDamage * 100);
-        currentHealthMultiplier = Mathf.RoundToInt(adjHealth * 100);
-        currentSpeedMultiplier = Mathf.RoundToInt(adjSpeed * 100);
-        currentAttackSpeedMultiplier = Mathf.RoundToInt(adjAttackSpeed * 100);
-        currentAggroMultiplier = Mathf.RoundToInt(adjAggro * 100);
+        // show only 
+        currentDamageMultiplier = adjDamage;
+        currentHealthMultiplier = adjHealth;
+        currentSpeedMultiplier = adjSpeed;
+        currentAttackSpeedMultiplier = adjAttackSpeed;
+        currentAggroMultiplier = adjAggro;
         return new EnemyDifficultySnapshot
         {
             damage = adjDamage,

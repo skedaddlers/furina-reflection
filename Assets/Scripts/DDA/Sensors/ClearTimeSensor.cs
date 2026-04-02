@@ -20,6 +20,7 @@ public class ClearTimeSensor : Sensor
     private float combatStartTime = -1f;
     private float lastClearTimeRatio = 1f;
     private float expectedClearTimeForActiveRoom = -1f;
+    private Room currentRoom;
 
     void Start()
     {
@@ -30,13 +31,11 @@ public class ClearTimeSensor : Sensor
     void OnEnable()
     {
         Room.OnRoomCombatStarted += HandleRoomCombatStarted;
-        Room.OnRoomCleared += HandleRoomCleared;
     }
 
     void OnDisable()
     {
         Room.OnRoomCombatStarted -= HandleRoomCombatStarted;
-        Room.OnRoomCleared -= HandleRoomCleared;
     }
 
     public void SetExpectedClearTime(float seconds)
@@ -67,6 +66,8 @@ public class ClearTimeSensor : Sensor
 
     public override SensorReading Read()
     {
+        HandleRoomCleared(currentRoom);
+        Debug.Log($"[ClearTimeSensor] Read called. Last Clear Time Ratio: {lastClearTimeRatio:F2}, Expected Clear Time for Active Room: {expectedClearTimeForActiveRoom:F1}s");
         return new SensorReading(attributeId, lastClearTimeRatio);
     }
 
@@ -74,6 +75,7 @@ public class ClearTimeSensor : Sensor
     {
         combatStartTime = Time.time;
         expectedClearTimeForActiveRoom = CalculateExpectedClearTime(room);
+        currentRoom = room;
     }
 
     private void HandleRoomCleared(Room room)

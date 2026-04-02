@@ -63,16 +63,16 @@ public class RoomManager : MonoBehaviour
             Vector3 toCenter = (nextRoom.transform.position - door.position).normalized;
 
             spawnWorldPos = door.position + toCenter * 1.5f;
-            Debug.Log($"Spawning at door {fromDoorIndex} WORLD position {spawnWorldPos}");
+            // Debug.Log($"Spawning at door {fromDoorIndex} WORLD position {spawnWorldPos}");
         }
 
-        Debug.Log($"Before move: Player World Pos {player.position}");
+        // Debug.Log($"Before move: Player World Pos {player.position}");
         var cc = player.gameObject.GetComponent<CharacterController>();
         if (cc != null) cc.enabled = false;
         player.position = spawnWorldPos;
         player.rotation = Quaternion.identity;
 
-        Debug.Log($"After move: Player World Pos {player.position}");
+        // Debug.Log($"After move: Player World Pos {player.position}");
 
         nextRoom.OnPlayerEnter(fromDoorIndex);
 
