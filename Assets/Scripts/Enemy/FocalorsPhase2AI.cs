@@ -36,6 +36,7 @@ public class FocalorsPhase2AI : EnemyAI
     private bool canAct = true;
     private bool isDyingOrDead = false;
     private int strafeDirection = 1;
+    private int configuredEnemyLevel = -1;
 
     private BossSkillManager skillManager;
 
@@ -143,6 +144,7 @@ public class FocalorsPhase2AI : EnemyAI
         // 2. Summon Clone
         Vector3 spawnPos = cloneSpawnPoint != null ? cloneSpawnPoint.position : startPos;
         GameObject clone = Instantiate(clonePrefab, spawnPos, transform.rotation);
+        ApplyConfiguredEnemyLevel(clone);
         cloneHealth = clone.GetComponent<Health>();
         
         if (cloneHealth != null)
@@ -214,6 +216,12 @@ public class FocalorsPhase2AI : EnemyAI
     {
         var health = GetComponent<Health>();
         if (health != null) health.SetImmune(value);
+    }
+
+    public void SetEnemyLevel(int level)
+    {
+        configuredEnemyLevel = Mathf.Max(1, level);
+        ApplyConfiguredEnemyLevel(gameObject);
     }
 
     public void NotifyCloneDeath()
@@ -577,6 +585,18 @@ public class FocalorsPhase2AI : EnemyAI
             animator.ResetTrigger("Cast");
             animator.SetFloat("WalkSpeed", 0f);
             animator.SetBool("Retreat", false);
+        }
+    }
+
+    private void ApplyConfiguredEnemyLevel(GameObject target)
+    {
+        if (target == null || configuredEnemyLevel < 1)
+            return;
+
+        var stats = target.GetComponent<EnemyStats>();
+        if (stats != null)
+        {
+            stats.level = configuredEnemyLevel;
         }
     }
 

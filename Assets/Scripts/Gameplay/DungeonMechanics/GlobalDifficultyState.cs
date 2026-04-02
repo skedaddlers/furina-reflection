@@ -36,6 +36,18 @@ public class GlobalDifficultyState : MonoBehaviour
     public float progressionEnemyAttackSpeedMax = 1.15f;
     public float progressionEnemyAggroMax = 1.1f;
 
+    [Header("Enemy Level Progression")]
+    [Tooltip("Base enemy level used for the start room depth.")]
+    public int baseEnemyLevel = 1;
+    [Tooltip("How many enemy levels to add per room depth from the start room.")]
+    public int levelsPerRoomDepth = 1;
+    [Tooltip("Extra levels granted to elite room enemies on top of depth scaling.")]
+    public int eliteRoomLevelBonus = 1;
+    [Tooltip("Extra levels granted to boss room enemies on top of depth scaling.")]
+    public int bossRoomLevelBonus = 2;
+    [Tooltip("Safety cap for room-scaled enemy levels.")]
+    public int maxEnemyLevel = 99;
+
     [Header("Enemy Stat Multipliers (set by DDA)")]
     public float enemyDamageMultiplier = 1f;
     public float enemyHealthMultiplier = 1f;
@@ -131,6 +143,26 @@ public class GlobalDifficultyState : MonoBehaviour
 
         currentEnemyCount = result; // Untuk debug
         return result;
+    }
+
+    public int GetEnemyLevelForRoom(Room room)
+    {
+        if (room == null)
+            return Mathf.Max(1, baseEnemyLevel);
+
+        int level = baseEnemyLevel + Mathf.Max(0, room.distanceFromStart) * Mathf.Max(0, levelsPerRoomDepth);
+
+        switch (room.roomType)
+        {
+            case RoomType.Elite:
+                level += Mathf.Max(0, eliteRoomLevelBonus);
+                break;
+            case RoomType.Boss:
+                level += Mathf.Max(0, bossRoomLevelBonus);
+                break;
+        }
+
+        return Mathf.Clamp(level, 1, Mathf.Max(1, maxEnemyLevel));
     }
 
     private float GetProgressionMultiplier()

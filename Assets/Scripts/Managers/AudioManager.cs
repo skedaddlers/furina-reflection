@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour
     public AudioSource sfxSource;
     public AudioSource secondarySFXSource; // for overlapping SFX
     public AudioSource voiceLineSource;
+    public AudioSource dialogueSource;
     public AudioClip gameplayMusic;
     public float pitchVariationMin = 0.9f;
     public float pitchVariationMax = 1.1f;
@@ -106,8 +107,16 @@ public class AudioManager : MonoBehaviour
 
     public void PlayVoiceLine(AudioClip clip)
     {
+        // dont play if dialogue source is currently playing to avoid overlap with dialogue lines
+        if (dialogueSource.isPlaying) return;
         voiceLineSource.volume = voiceLineVolume;
         voiceLineSource.PlayOneShot(clip);
+    }
+
+    public void PlayDialogueLine(AudioClip clip)
+    {
+        dialogueSource.volume = voiceLineVolume;
+        dialogueSource.PlayOneShot(clip);
     }
 
     public void SetMusicVolume(float volume)
@@ -120,12 +129,13 @@ public class AudioManager : MonoBehaviour
     {
         sfxVolume = volume;
         sfxSource.volume = sfxVolume;
-        voiceLineSource.volume = sfxVolume;
+        secondarySFXSource.volume = sfxVolume;
     }
 
     public void SetVoiceLineVolume(float volume)
     {
         voiceLineVolume = volume;
         voiceLineSource.volume = voiceLineVolume;
+        dialogueSource.volume = voiceLineVolume;
     }
 }

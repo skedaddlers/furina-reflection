@@ -40,6 +40,7 @@ public class BossManager : MonoBehaviour
     private FocalorsPhase2AI focalorsPhase2Instance;
     private Health phase1Health;
     private Health phase2Health;
+    private Room parentRoom;
 
     private GameObject currentBoss;
     private bool isTransitioning = false;
@@ -49,6 +50,7 @@ public class BossManager : MonoBehaviour
     void Start()
     {
         withDialogue =GameManager.Instance.withDialogue;
+        parentRoom = GetComponent<Room>();
     }
     public void SpawnFocalorsPhase1()
     {
@@ -64,6 +66,7 @@ public class BossManager : MonoBehaviour
 
         currentBoss = Instantiate(focalorsPhase1Prefab, focalorsPhase1SpawnPoint.position, Quaternion.identity);
         currentBoss.transform.SetParent(transform);
+        ApplyBossRoomLevel(currentBoss);
 
         focalorsPhase1Instance = currentBoss.GetComponent<FocalorsPhase1AI>();
         phase1Health = currentBoss.GetComponent<Health>();
@@ -213,6 +216,7 @@ public class BossManager : MonoBehaviour
 
         currentBoss = Instantiate(focalorsPhase2Prefab, pos, Quaternion.identity);
         currentBoss.transform.SetParent(transform);
+        ApplyBossRoomLevel(currentBoss);
         Enemy f2 = currentBoss.GetComponent<Enemy>();
         f2.SuppressDefaultDeathHandling = true;
         focalorsPhase2Instance = currentBoss.GetComponent<FocalorsPhase2AI>();
@@ -336,6 +340,31 @@ public class BossManager : MonoBehaviour
 
         UIManager.Instance.bossHPBarUI.InitForBossFight(
             bossComponent.GetComponent<BossHealthBar>());
+    }
+
+    private void ApplyBossRoomLevel(GameObject bossObject)
+    {
+        if (bossObject == null)
+            return;
+
+        if (parentRoom == null)
+            parentRoom = GetComponent<Room>();
+
+        int scaledLevel = parentRoom != null
+            ? parentRoom.GetScaledEnemyLevel()
+            : 1;
+
+        var enemyStats = bossObject.GetComponent<EnemyStats>();
+        if (enemyStats != null)
+        {
+            enemyStats.level = scaledLevel;
+        }
+
+        var phase2Boss = bossObject.GetComponent<FocalorsPhase2AI>();
+        if (phase2Boss != null)
+        {
+            phase2Boss.SetEnemyLevel(scaledLevel);
+        }
     }
 
     public void OnBossDefeated()

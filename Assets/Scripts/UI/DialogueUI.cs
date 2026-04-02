@@ -60,7 +60,7 @@ public class DialogueUI : MonoBehaviour
             if (dialogue.voiceLine != null)
             {
                 AudioManager.Instance.StopVoiceLine(); // Stop any currently playing voice line before starting a new one
-                AudioManager.Instance.PlayVoiceLine(dialogue.voiceLine);
+                AudioManager.Instance.PlayDialogueLine(dialogue.voiceLine);
             }
             yield return new WaitForSeconds(dialogue.GetDialogueDuration() + dialogueBufferTime); // wait for dialogue duration + a small buffer
         }

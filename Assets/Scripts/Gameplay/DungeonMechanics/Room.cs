@@ -385,12 +385,41 @@ public class Room : MonoBehaviour
     private void SpawnEnemy(GameObject prefab, Vector3 spawnPos)
     {
         GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
+        ApplyRoomDepthLevel(enemy);
         spawnedEnemies.Add(enemy);
 
         var health = enemy.GetComponent<Health>();
         if (health != null)
         {
             health.onDeath += () => HandleEnemyDeath(enemy);
+        }
+    }
+
+    public int GetScaledEnemyLevel()
+    {
+        var diff = GlobalDifficultyState.Instance;
+        if (diff != null)
+            return diff.GetEnemyLevelForRoom(this);
+
+        return Mathf.Max(1, distanceFromStart + 1);
+    }
+
+    private void ApplyRoomDepthLevel(GameObject enemy)
+    {
+        if (enemy == null)
+            return;
+
+        int scaledLevel = GetScaledEnemyLevel();
+        var enemyStats = enemy.GetComponent<EnemyStats>();
+        if (enemyStats != null)
+        {
+            enemyStats.level = scaledLevel;
+        }
+
+        var phase2Boss = enemy.GetComponent<FocalorsPhase2AI>();
+        if (phase2Boss != null)
+        {
+            phase2Boss.SetEnemyLevel(scaledLevel);
         }
     }
 

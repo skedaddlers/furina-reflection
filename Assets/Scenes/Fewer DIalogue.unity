@@ -1303,6 +1303,11 @@ MonoBehaviour:
   progressionEnemySpeedMax: 1.1
   progressionEnemyAttackSpeedMax: 1.15
   progressionEnemyAggroMax: 1.1
+  baseEnemyLevel: 1
+  levelsPerRoomDepth: 1
+  eliteRoomLevelBonus: 1
+  bossRoomLevelBonus: 2
+  maxEnemyLevel: 99
   enemyDamageMultiplier: 1
   enemyHealthMultiplier: 1
   enemySpeedMultiplier: 1
@@ -18086,6 +18091,135 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 888226476}
   m_CullTransparentMesh: 1
+--- !u!1 &889325847
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 889325848}
+  - component: {fileID: 889325849}
+  m_Layer: 0
+  m_Name: VO (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &889325848
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889325847}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1334415036}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &889325849
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889325847}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &890884518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3031805149693312471, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
@@ -26692,6 +26826,7 @@ Transform:
   - {fileID: 60119889}
   - {fileID: 478139590}
   - {fileID: 1354189170}
+  - {fileID: 889325848}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1336766931
@@ -29649,6 +29784,7 @@ MonoBehaviour:
   sfxSource: {fileID: 60119888}
   secondarySFXSource: {fileID: 478139591}
   voiceLineSource: {fileID: 1354189171}
+  dialogueSource: {fileID: 889325849}
   gameplayMusic: {fileID: 8300000, guid: 82b2569a5527ec6478b39cfe8002ccba, type: 3}
   pitchVariationMin: 0.9
   pitchVariationMax: 1.1
@@ -30745,8 +30881,16 @@ PrefabInstance:
       value: MinimapUI (1)
       objectReference: {fileID: 0}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: iconSize
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: zoomScale
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
+      propertyPath: coneRadius
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 6527395167363103339, guid: 8bfeea99107122849a53310a9e949fce, type: 3}
       propertyPath: coneColor.a

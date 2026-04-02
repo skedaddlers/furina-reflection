@@ -28,7 +28,7 @@ public class TearsOfTheSinner : SkillBase
         // Play cast sound
         if (castSound != null)
         {
-            AudioSource.PlayClipAtPoint(castSound, caster.transform.position);
+            AudioManager.Instance.PlayVoiceLine(castSound);
         }
 
         // Spawn effect prefab
