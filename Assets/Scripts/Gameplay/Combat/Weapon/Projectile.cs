@@ -342,7 +342,7 @@ public class Projectile : MonoBehaviour
                 if (hit.collider.transform == owner || hit.collider.transform.IsChildOf(owner))
                     continue;
             }
-            Debug.Log("HitScan hit: " + hit.collider.name);
+            // Debug.Log("HitScan hit: " + hit.collider.name);
             DealDamage(hit.collider);
         }
 

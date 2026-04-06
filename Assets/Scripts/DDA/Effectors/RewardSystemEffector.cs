@@ -8,50 +8,56 @@ public class RewardSystemEffector : Effector
 {
     // Base values for reward system
     private float baseItemDropRate = 0.2f;
-    private int baseHealthPackValue = 25;
-    private int baseScoreMultiplier = 1;
+    private float minRewardMultiplier = 0.3f;
+    private float maxRewardMultiplier = 3f;
+
+    private float smoothingFactor = 0.5f; // For gradual changes
+    private float trendBoostFactor = 0.1f; // To amplify consistent trends
+
+    private float currentItemDropRate;
+
+    private string lastSymptom;
+    private int sameSymptomCount;
+    private float timeSinceLastSymptom;
 
     public override void Apply(string variable, float value)
     {
+        var diff = GlobalDifficultyState.Instance;
+        float newValue = GetNewMultiplier(variable, value);
         switch (variable)
         {
             case "itemDropRate":
-                AdjustItemDropRate(value);
-                break;
-            case "healthPackValue":
-                AdjustHealthPackValue((int)value);
-                break;
-            case "scoreMultiplier":
-                AdjustScoreMultiplier(value);
+                diff?.SetItemDropRate(newValue);
                 break;
         }
     }
 
-    private void AdjustItemDropRate(float adjustment)
+    private float GetNewMultiplier(string variable, float value)
     {
-        float newRate = baseItemDropRate + (adjustment * 0.01f);
-        newRate = Mathf.Clamp(newRate, 0.05f, 0.8f);
-        
-        // Apply to item spawning system
-        // This would need to be integrated with your item spawning logic
-        Debug.Log($"[RewardSystemEffector] Item drop rate adjusted to: {newRate}");
-    }
+        if (Time.time - timeSinceLastSymptom > 1f)
+        {
+            string currentSymptom = DDAMAPEKit.Instance.GetCurrentSymptom()?.description ?? "None";
+            if (lastSymptom == currentSymptom)
+            {
+                sameSymptomCount++;
+            }
+            else
+            {
+                sameSymptomCount = 0;
+            }
+            lastSymptom = currentSymptom;
+            timeSinceLastSymptom = Time.time;
+        }
 
-    private void AdjustHealthPackValue(int adjustment)
-    {
-        int newValue = baseHealthPackValue + adjustment;
-        newValue = Mathf.Max(10, newValue);
-        
-        // Apply to health pack items
-        Debug.Log($"[RewardSystemEffector] Health pack value adjusted to: {newValue}");
-    }
+        float newMultiplier =  currentItemDropRate * value;
+        float boost = 1f + (sameSymptomCount * trendBoostFactor);
 
-    private void AdjustScoreMultiplier(float adjustment)
-    {
-        float newMultiplier = baseScoreMultiplier + (adjustment * 0.1f);
-        newMultiplier = Mathf.Max(0.5f, newMultiplier);
-        
-        // Apply to scoring system
-        Debug.Log($"[RewardSystemEffector] Score multiplier adjusted to: {newMultiplier}");
+        newMultiplier = newMultiplier * boost;
+        newMultiplier = Mathf.Clamp(newMultiplier, minRewardMultiplier, maxRewardMultiplier);
+
+        float smoothed = Mathf.Lerp(currentItemDropRate, newMultiplier, smoothingFactor);
+
+        currentItemDropRate = smoothed;
+        return currentItemDropRate;
     }
 }

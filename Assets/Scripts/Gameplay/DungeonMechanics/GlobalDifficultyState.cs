@@ -57,7 +57,10 @@ public class GlobalDifficultyState : MonoBehaviour
     public float enemyMultiplierMin = 0.5f;
     public float enemyMultiplierMax = 2.5f;
 
-    [Header("Debug")]
+    [Header("Reward System Multipliers (set by DDA)")]
+    public float itemDropRateMultiplier = 1f; // >1 = higher drop rates
+    public float rewardMultiplierMin = 0.3f;
+    public float rewardMultiplierMax = 3f;
     [SerializeField] private int currentEnemyCount = 0;
     [SerializeField] private float currentDamageMultiplier = 0;
     [SerializeField] private float currentHealthMultiplier = 0;
@@ -119,25 +122,17 @@ public class GlobalDifficultyState : MonoBehaviour
         // 1. faktor jarak dari start (distanceFromStart boleh 0,1,2,...)
         float distanceFactor = 1f + enemyCountProgressionPerDistance * room.distanceFromStart;
 
-        // 2. faktor tipe ruangan
-        float typeFactor = room.roomType switch
-        {
-            RoomType.Elite => eliteRoomMultiplier,
-            RoomType.Boss  => bossRoomMultiplier,
-            _              => normalRoomMultiplier
-        };
-
-        // 3. faktor global dari DDA
+        // 2. faktor global dari DDA
         float dda = Mathf.Clamp(globalDifficultyMultiplier, 
                                 minDifficultyMultiplier, 
                                 maxDifficultyMultiplier);
 
-        // 4. faktor progression berdasarkan jumlah room yang sudah diselesaikan
+        // 3. faktor progression berdasarkan jumlah room yang sudah diselesaikan
         float progression = GetProgressionMultiplier();
 
-        // 5. hitung
-        float raw = baseEnemyCount * distanceFactor * typeFactor * dda * progression;
-        Debug.Log($"[GlobalDifficultyState] Calculated enemy count for Room {room.roomIndex} (Distance: {room.distanceFromStart}, Type: {room.roomType}, Cleared: {_clearedRooms}/{_totalRooms}) => Raw: {raw}");
+        // 4. hitung
+        float raw = baseEnemyCount * distanceFactor * dda * progression;
+        Debug.Log($"[GlobalDifficultyState] Calculated enemy count for Room {room.roomIndex} (Distance: {room.distanceFromStart}, Progression: {progression:P1}, Cleared: {_clearedRooms}/{_totalRooms}) => Raw: {raw}");
         int result = Mathf.RoundToInt(raw);
         result = Mathf.Clamp(result, 1, room.maxEnemies);
 
@@ -222,6 +217,11 @@ public class GlobalDifficultyState : MonoBehaviour
             case "attackSpeed": enemyAttackSpeedMultiplier = v; break;
             case "aggro": enemyAggroRangeMultiplier = v; break;
         }
+    }
+
+    public void SetItemDropRate(float value)
+    {
+        itemDropRateMultiplier = Mathf.Clamp(value, rewardMultiplierMin, rewardMultiplierMax);
     }
 
     private void ResetProgression()

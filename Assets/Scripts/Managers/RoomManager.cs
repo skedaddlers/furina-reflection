@@ -43,7 +43,11 @@ public class RoomManager : MonoBehaviour
         if (!roomInstances.ContainsKey(nextRoomID)) return;
         if (IsRoomVisited(nextRoomID) == false)
         {
-            int totalItem = Random.Range(roomInstances[nextRoomID].minItemSpawn, roomInstances[nextRoomID].maxItemSpawn + 1);
+            var diff = GlobalDifficultyState.Instance;
+            float itemDropRate = diff != null ? diff.itemDropRateMultiplier : 1f;
+            float minItem = roomInstances[nextRoomID].minItemSpawn * itemDropRate; 
+            float maxItem = roomInstances[nextRoomID].maxItemSpawn * itemDropRate;
+            int totalItem = Random.Range((int)minItem, (int)maxItem + 1);
             roomInstances[nextRoomID].SpawnItemsInRoom(totalItem);
             MarkRoomVisited(nextRoomID);
         }

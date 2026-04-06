@@ -67,8 +67,8 @@ public class EnemySystemEffector : Effector
         // since Apply function will be called multiple times per MAPE loop, we should check
         if (Time.time - timeSinceLastSymptom > 1f) //
         {
-            lastSymptom = DDAMAPEKit.Instance.GetCurrentSymptom()?.description ?? "None";
-            if (lastSymptom == variable)
+            string currentSymptom = DDAMAPEKit.Instance.GetCurrentSymptom()?.description ?? "None";
+            if (lastSymptom == currentSymptom)
             {
                 sameSymptomCount++;
             }
@@ -76,6 +76,7 @@ public class EnemySystemEffector : Effector
             {
                 sameSymptomCount = 0;
             }
+            lastSymptom = currentSymptom;
             timeSinceLastSymptom = Time.time;
         }
 

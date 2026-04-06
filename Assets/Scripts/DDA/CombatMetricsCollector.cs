@@ -259,7 +259,7 @@ public class CombatMetricCollector : MonoBehaviour
             $"[CombatMetricCollector] Wave finalized. " +
             $"Melee: {meleeRatio:P1}, Ranged: {rangedRatio:P1}, Skill: {skillRatio:P1}, " +
             $"Dodge Rate: {dodgeRate:P1}, Avg Distance: {averageDistance:F2} ({averageDistanceNormalized:F2}), " +
-            $"Damage Taken: {damageTaken}, Healing Used: {healingUsed}, Mana Used: {manaUsed}"
+            $"Damage Taken: {damageTaken}, Healing Used: {healingUsed}, Mana Used: {manaUsed} "
         );
     }
 
@@ -350,6 +350,12 @@ public class CombatMetricCollector : MonoBehaviour
         playerModel.SetProfilingMetric(PlayerMetricType.OffensiveUpgradePreference, offensivePreference);
         playerModel.SetProfilingMetric(PlayerMetricType.ManaUpgradePreference, manaPreference);
         playerModel.SetProfilingMetric(PlayerMetricType.SpeedUpgradePreference, speedPreference);
+
+        Debug.Log(
+            $"[CombatMetricCollector] Upgrade preferences updated. " +
+            $"Defensive: {defensivePreference:P1}, Offensive: {offensivePreference:P1}, " +
+            $"Mana: {manaPreference:P1}, Speed: {speedPreference:P1}"
+        );
     }
 }
 

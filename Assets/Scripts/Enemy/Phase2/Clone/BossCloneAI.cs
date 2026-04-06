@@ -212,7 +212,7 @@ public class BossCloneAI : EnemyAI
                 break;
 
             case CloneActionType.Dodge:
-                animator.SetTrigger("Dodge");
+                animator.SetTrigger("Dash");
                 StartCoroutine(DodgeWindow(action.duration, action.speed));
                 PlaySkillCastSound(dodgeSound);
                 break;
@@ -543,6 +543,7 @@ public class BossCloneAI : EnemyAI
             elapsed += Time.deltaTime;
             yield return null;
         }
+        animator.SetTrigger("StopDash");
         GetComponent<Health>().SetInvulnerable(false);
         agent.speed = originalSpeed;
     }
