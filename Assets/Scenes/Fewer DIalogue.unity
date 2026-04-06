@@ -857,15 +857,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonConfig:
-    minRooms: 14
-    maxRooms: 16
+    minRooms: 3
+    maxRooms: 3
     normalRoomRatio: 0.5
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
     eliteRoomRatio: 0.15
-    guaranteedShops: 3
-    guaranteedElites: 3
-    guaranteedEvents: 2
+    guaranteedShops: 0
+    guaranteedElites: 0
+    guaranteedEvents: 0
     guaranteeEarlyShop: 0
     minDistanceBetweenShops: 3
     minDistanceBetweenElites: 4
@@ -22859,7 +22859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36301bdabcf7b8241889698779c65c16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableDDA: 0
+  enableDDA: 1
   debugMode: 0
   combatMetricCollector: {fileID: 1130029152}
 --- !u!4 &1130029149

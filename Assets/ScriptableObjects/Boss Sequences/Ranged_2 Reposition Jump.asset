@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32d13b00587fcd74c8338c0f50d10426, type: 3}
+  m_Name: Ranged_2 Reposition Jump
+  m_EditorClassIdentifier: Assembly-CSharp::BossSequence
+  intent: 2
+  profileName: Ranged Lover
+  actions:
+  - type: 1
+    movement:
+      movementType: 1
+      duration: 5
+      speed: 2
+      distance: 4
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 1692748830642279481, guid: a62335817d6e5f64796a217e22e24e01, type: 3}
+  - type: 0
+    movement:
+      movementType: 2
+      duration: 1.5
+      speed: 4
+      distance: 2
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 3477844690129249376, guid: 90036ace21deeab40bd955a92ce5ec0f, type: 3}
+  - type: 1
+    movement:
+      movementType: 2
+      duration: 1.5
+      speed: 4
+      distance: 2
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 8002971525184020752, guid: fffdfb1c65b438545bbbe4f813b1524d, type: 3}
+  baseWeight: 1
+  cooldown: 2
+  lastUsedTime: 137.2517
+  usageCount: 37

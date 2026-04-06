@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using DDAMAPEKitFramework;
 
 public class BossCloneAI : EnemyAI
 {
@@ -91,12 +92,17 @@ public class BossCloneAI : EnemyAI
     {
         profileDistribution = new Dictionary<CloneProfileTag, float>();
 
-        var dist = DDAMAPEKitFramework.DDAMAPEKit.Instance
-            .GetPlayerModel()
-            .GetProfileDistribution();
+        var playerModel = DDARuntimeHelper.TryGetActivePlayerModel();
+        if (playerModel == null)
+            return;
+
+        var dist = playerModel.GetProfileDistribution();
 
         foreach(var kv in dist)
         {
+            if (kv.Key == null || string.IsNullOrWhiteSpace(kv.Key.name))
+                continue;
+
             CloneProfileTag tag = ConvertProfile(kv.Key.name);
             profileDistribution[tag] = kv.Value;
         }
@@ -127,15 +133,23 @@ public class BossCloneAI : EnemyAI
             else
             {
                 CloneSequence seq = ChooseSequence();
-                yield return ExecuteSequence(seq);
+                if (seq != null)
+                    yield return ExecuteSequence(seq);
             }
 
-            yield return new WaitForSeconds(cooldownTime);
+            yield return new WaitForSeconds(ScaleAbilityCooldown(cooldownTime));
         }
     }
 
     CloneSequence ChooseSequence()
     {
+        if (sequences == null || sequences.Count == 0)
+            return null;
+
+        LoadProfileDistribution();
+        if (profileDistribution == null || profileDistribution.Count == 0)
+            return sequences[Random.Range(0, sequences.Count)];
+
         float totalWeight = 0;
 
         foreach(var seq in sequences)
@@ -149,6 +163,9 @@ public class BossCloneAI : EnemyAI
 
             totalWeight += seq.cachedWeight;
         }
+
+        if (totalWeight <= 0f)
+            return sequences[Random.Range(0, sequences.Count)];
 
         float r = Random.value * totalWeight;
 
@@ -167,6 +184,9 @@ public class BossCloneAI : EnemyAI
 
     IEnumerator ExecuteSequence(CloneSequence seq)
     {
+        if (seq == null)
+            yield break;
+
         isInSequence = true;
 
         foreach(var action in seq.actions)
@@ -191,6 +211,7 @@ public class BossCloneAI : EnemyAI
                 yield break;
 
             case CloneActionType.Retreat:
+                agent.speed = ScaleActionSpeed(action.speed);
                 Vector3 retreat = (transform.position - player.position).normalized;
                 agent.SetDestination(transform.position + retreat * 4f);
 
@@ -253,7 +274,7 @@ public class BossCloneAI : EnemyAI
         if (agent == null || !agent.enabled || player == null) yield break;
         LookAtPlayer();
         float originalSpeed = agent.speed;
-        agent.speed = speed > 0f ? speed : movementSpeed;
+        agent.speed = ScaleActionSpeed(speed);
         float stopDistance = Mathf.Max(agent.stoppingDistance, Mathf.Max(0.1f, agent.radius));
         float elapsed = 0f;
         animator.SetTrigger("Dash");
@@ -305,7 +326,7 @@ public class BossCloneAI : EnemyAI
         int direction = strafeDirection;
         strafeDirection *= -1;
 
-        agent.speed = speed > 0f ? speed : movementSpeed;
+        agent.speed = ScaleActionSpeed(speed);
 
         while (elapsed < duration)
         {
@@ -534,7 +555,7 @@ public class BossCloneAI : EnemyAI
         Vector3 dir = Quaternion.Euler(0, angle, 0) * (player.position - transform.position).normalized;
         Vector3 dodgeTarget = transform.position + dir * dodgeDistance;
         float originalSpeed = agent.speed;
-        agent.speed = speed > 0f ? speed : movementSpeed;
+        agent.speed = ScaleActionSpeed(speed);
         while (elapsed < duration)
         {
             if (player == null) yield break;
@@ -564,7 +585,7 @@ public class BossCloneAI : EnemyAI
 
         bool didCrit;
         float finalDamage = Helpers.CalculateFinalDamage(
-            damage,
+            ScaleSkillDamage(damage),
             defense,
             critChance,
             critMultiplier,

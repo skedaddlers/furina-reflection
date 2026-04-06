@@ -57,7 +57,7 @@ public class DDAConfigurationManager : MonoBehaviour
 
     void Start()
     {
-        if (autoInitialize)
+        if (autoInitialize && DDAIntegration.IsDDAEnabled)
         {
             InitializeDDA();
         }
@@ -65,6 +65,9 @@ public class DDAConfigurationManager : MonoBehaviour
 
     public void InitializeDDA()
     {
+        if (!DDAIntegration.IsDDAEnabled)
+            return;
+
         ddaFramework = DDAMAPEKit.Instance;
 
         // Configure player attributes

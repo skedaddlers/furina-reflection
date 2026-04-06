@@ -61,6 +61,17 @@ namespace DDAMAPEKitFramework
             }
         }
 
+        public static DDAMAPEKit TryGetExistingInstance()
+        {
+            if (instance != null)
+                return instance;
+
+            instance = FindObjectOfType<DDAMAPEKit>();
+            return instance;
+        }
+
+        public bool IsInitialized => isInitialized;
+
         void Awake()
         {
             if (instance != null && instance != this)

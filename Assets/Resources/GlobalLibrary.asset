@@ -41,7 +41,31 @@ MonoBehaviour:
   bossEnemies:
   - {fileID: 4228300383457371494, guid: b15517f9f5d7af541a11b98f5c0eb4cf, type: 3}
   bossSequences:
-  - {fileID: 11400000, guid: 4b2dcab5b99bcde468ba40c23ec7a82c, type: 2}
+  - {fileID: 11400000, guid: 5ebf2a09b2149824f88da1e4c23cf223, type: 2}
+  - {fileID: 11400000, guid: 7149537cd5bccda4081712f092c271b9, type: 2}
+  - {fileID: 11400000, guid: a570bc9f3a18bd14ba17af8ea47245d2, type: 2}
+  - {fileID: 11400000, guid: 771f41afbbcb2da4bb6253184349db72, type: 2}
+  - {fileID: 11400000, guid: 143452037e1470f4db659f5bb8e45345, type: 2}
+  - {fileID: 11400000, guid: a650ffd66085d6e478e70c62bfa04f85, type: 2}
+  - {fileID: 11400000, guid: 8610ffb01d25c4c48a3db9e4678a6c47, type: 2}
+  - {fileID: 11400000, guid: a1217fc26e31968449d6e065126b06e1, type: 2}
+  - {fileID: 11400000, guid: 0239963e8ffa1124ca66ce29dbdcfd15, type: 2}
+  - {fileID: 11400000, guid: c7a466a8d855e114ba093388b917da8b, type: 2}
+  - {fileID: 11400000, guid: 7dd9e9e4464f2944792a08e590b9b720, type: 2}
+  - {fileID: 11400000, guid: 336415a0bd3b5e5429d7ea573955eb9c, type: 2}
+  - {fileID: 11400000, guid: 503392f3e122d9d4a986b04a4e80d278, type: 2}
+  - {fileID: 11400000, guid: 8b5638bc42877554f8960b316c962529, type: 2}
+  - {fileID: 11400000, guid: 6f38507987914eb488ac266d49068366, type: 2}
+  - {fileID: 11400000, guid: 473be661bac05cf4a8c98ab0bd89566e, type: 2}
+  - {fileID: 11400000, guid: 1bee57e63f2a09e4888c345f40267262, type: 2}
+  - {fileID: 11400000, guid: 818f549d13cbaef4db8f7cc93bfd801e, type: 2}
+  - {fileID: 11400000, guid: 9362bc1aec5fa4d4597ee856219b6b9f, type: 2}
+  - {fileID: 11400000, guid: 407b27bfeb7e3844f8e4ca830864836d, type: 2}
+  - {fileID: 11400000, guid: 32f7379240656cf47a5d733305344a66, type: 2}
+  - {fileID: 11400000, guid: 8fdd86f467c94f3489176ec08a871709, type: 2}
+  - {fileID: 11400000, guid: f3d446f36942f9e45a8fab9411074ed8, type: 2}
+  - {fileID: 11400000, guid: 0866479c408d3104fb1d3d9f1d4a084d, type: 2}
+  - {fileID: 11400000, guid: 7afbc16a6bfb50d48b0d6eadf7b4832a, type: 2}
   rarityColors:
   - {r: 0.553637, g: 0.5849056, b: 0.5849056, a: 1}
   - {r: 0.133796, g: 0.4580329, b: 0.7735849, a: 1}

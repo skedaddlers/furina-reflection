@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32d13b00587fcd74c8338c0f50d10426, type: 3}
+  m_Name: Defensive_4 Retreat
+  m_EditorClassIdentifier: Assembly-CSharp::BossSequence
+  intent: 2
+  profileName: Defensive
+  actions:
+  - type: 0
+    movement:
+      movementType: 2
+      duration: 3
+      speed: 5
+      distance: 3
+      distanceToStop: 0.5
+      randomizeReposition: 1
+      repostionIndex: 4
+    skill: {fileID: 2190594015370982321, guid: 870f9494028d0574aa0b616480ce7a0f, type: 3}
+  - type: 1
+    movement:
+      movementType: 0
+      duration: 5
+      speed: 2
+      distance: 4
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 1692748830642279481, guid: a62335817d6e5f64796a217e22e24e01, type: 3}
+  - type: 1
+    movement:
+      movementType: 0
+      duration: 0
+      speed: 0
+      distance: 0
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 861804038911536602, guid: e11fd1fa9cc16d544868de102ae46b30, type: 3}
+  - type: 1
+    movement:
+      movementType: 0
+      duration: 0
+      speed: 0
+      distance: 0
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 3477844690129249376, guid: 90036ace21deeab40bd955a92ce5ec0f, type: 3}
+  baseWeight: 1
+  cooldown: 2
+  lastUsedTime: 137.2517
+  usageCount: 37

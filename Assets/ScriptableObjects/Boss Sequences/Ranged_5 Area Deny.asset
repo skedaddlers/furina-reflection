@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32d13b00587fcd74c8338c0f50d10426, type: 3}
+  m_Name: Ranged_5 Area Deny
+  m_EditorClassIdentifier: Assembly-CSharp::BossSequence
+  intent: 2
+  profileName: Ranged Lover
+  actions:
+  - type: 0
+    movement:
+      movementType: 1
+      duration: 3
+      speed: 5
+      distance: 3
+      distanceToStop: 0.5
+      randomizeReposition: 0
+      repostionIndex: 4
+    skill: {fileID: 8002971525184020752, guid: fffdfb1c65b438545bbbe4f813b1524d, type: 3}
+  - type: 1
+    movement:
+      movementType: 1
+      duration: 5
+      speed: 2
+      distance: 4
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: -1990391074256547780, guid: 4b2984e80e4369741864dcedac285a0a, type: 3}
+  - type: 1
+    movement:
+      movementType: 1
+      duration: 5
+      speed: 2
+      distance: 4
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 8002971525184020752, guid: fffdfb1c65b438545bbbe4f813b1524d, type: 3}
+  - type: 1
+    movement:
+      movementType: 1
+      duration: 5
+      speed: 2
+      distance: 4
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 674470493881067346, guid: 3b29a3967d15ecb4cba9f9a1958e3111, type: 3}
+  baseWeight: 1
+  cooldown: 2
+  lastUsedTime: 137.2517
+  usageCount: 37

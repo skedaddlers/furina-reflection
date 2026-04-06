@@ -383,6 +383,46 @@ public class EnemyAI : MonoBehaviour, IStaggerable
         }
     }
 
+    protected EnemyDifficultySnapshot GetEnemyDifficultySnapshot()
+    {
+        var diff = GlobalDifficultyState.Instance;
+        if (diff == null)
+        {
+            return new EnemyDifficultySnapshot
+            {
+                damage = 1f,
+                health = 1f,
+                speed = 1f,
+                attackSpeed = 1f,
+                aggro = 1f
+            };
+        }
+
+        return diff.GetEnemyDifficultySnapshot();
+    }
+
+    protected float ScaleSkillDamage(float baseDamage)
+    {
+        return Mathf.Max(0f, baseDamage * GetEnemyDifficultySnapshot().damage);
+    }
+
+    protected float ScaleAbilityCooldown(float baseCooldown)
+    {
+        if (baseCooldown <= 0f)
+            return 0f;
+
+        float attackSpeedMultiplier = Mathf.Max(0.01f, GetEnemyDifficultySnapshot().attackSpeed);
+        return Mathf.Max(0.05f, baseCooldown / attackSpeedMultiplier);
+    }
+
+    protected float ScaleActionSpeed(float authoredSpeed)
+    {
+        if (authoredSpeed <= 0f)
+            return movementSpeed;
+
+        return Mathf.Max(0.1f, authoredSpeed * GetEnemyDifficultySnapshot().speed);
+    }
+
     private void ApplyEffectiveSpeed()
     {
         if (agent == null) return;

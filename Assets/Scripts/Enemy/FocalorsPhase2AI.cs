@@ -49,7 +49,15 @@ public class FocalorsPhase2AI : EnemyAI
         List<BossSequence> librarySequences = Library.Instance.bossSequences;
         if (librarySequences != null && librarySequences.Count > 0)
         {
-            sequences = SelectForProfile(librarySequences);
+            sequences = new List<BossSequence>();
+
+            foreach (var seq in librarySequences)
+            {
+                BossSequence clone = Instantiate(seq); // 🔥 penting
+                clone.usageCount = 0;
+                clone.lastUsedTime = -999f;
+                sequences.Add(clone);
+            }
         }
         if (arenaPoints == null || arenaPoints.Count == 0)
         {
@@ -94,7 +102,8 @@ public class FocalorsPhase2AI : EnemyAI
         if (CanUseSkill())
         {
             BossSequence chosenSequence = ChooseSequence();
-            currentActionRoutine = StartCoroutine(ExecuteSequence(chosenSequence));
+            if (chosenSequence != null)
+                currentActionRoutine = StartCoroutine(ExecuteSequence(chosenSequence));
             return;
         }
 
@@ -256,14 +265,20 @@ public class FocalorsPhase2AI : EnemyAI
 
     bool CanUseSkill()
     {
-        return Time.time - lastSequenceTime >= sequenceCooldown && currentActionRoutine == null;
+        return Time.time - lastSequenceTime >= ScaleAbilityCooldown(sequenceCooldown) && currentActionRoutine == null;
     }
 
     BossSequence ChooseSequence()
     {
+        if (sequences == null || sequences.Count == 0)
+            return null;
+
         float totalWeight = 0;
         Dictionary<string, float> profileWeights = GetProfileDistributionByName();
         bool hasProfileDistribution = profileWeights.Count > 0;
+
+        if (!hasProfileDistribution)
+            return sequences[Random.Range(0, sequences.Count)];
 
         List<float> adjustedWeights = new();
 
@@ -273,6 +288,10 @@ public class FocalorsPhase2AI : EnemyAI
             float recencyPenalty = Mathf.Clamp01(
                 (Time.time - seq.lastUsedTime) / 5f
             );
+            if (seq.usageCount == 0)
+            {
+                recencyPenalty = 1f;
+            }
 
             float usagePenalty = 1f / (1f + seq.usageCount * 0.5f);
 
@@ -280,6 +299,7 @@ public class FocalorsPhase2AI : EnemyAI
 
             adjustedWeights.Add(adjusted);
             totalWeight += adjusted;
+            // Debug.Log($"Sequence {seq.name}: base={seq.baseWeight}, profile={profileWeight}, recency={recencyPenalty}, usage={usagePenalty}, adjusted={adjusted}");
         }
 
         if (totalWeight <= 0f)
@@ -306,10 +326,7 @@ public class FocalorsPhase2AI : EnemyAI
     {
         Dictionary<string, float> weights = new();
 
-        if (DDAMAPEKit.Instance == null)
-            return weights;
-
-        var playerModel = DDAMAPEKit.Instance.GetPlayerModel();
+        var playerModel = DDARuntimeHelper.TryGetActivePlayerModel();
         if (playerModel == null)
             return weights;
 
@@ -345,6 +362,9 @@ public class FocalorsPhase2AI : EnemyAI
 
     IEnumerator ExecuteSequence(BossSequence seq)
     {
+        if (seq == null)
+            yield break;
+
         foreach(var action in seq.actions)
         {
             if(action.type == ActionType.Movement)
@@ -435,7 +455,7 @@ public class FocalorsPhase2AI : EnemyAI
     {
         if (agent == null || !agent.enabled || player == null) yield break;
         LookAtPlayer();
-        agent.speed = movement.speed > 0f ? movement.speed : movementSpeed;
+        agent.speed = ScaleActionSpeed(movement.speed);
         float stopDistance = Mathf.Max(agent.stoppingDistance, Mathf.Max(0.1f, movement.distanceToStop));
         float elapsed = 0f;
         animator.SetFloat("WalkSpeed", 2f);
@@ -460,7 +480,7 @@ public class FocalorsPhase2AI : EnemyAI
     {
         float orbitRadius = Mathf.Max(1f, movement.distance);
         float sideStepDistance = Mathf.Max(0.5f, orbitRadius * 0.6f);
-        float speed = movement.speed > 0f ? movement.speed : movementSpeed;
+        float speed = ScaleActionSpeed(movement.speed);
         float elapsed = 0f;
 
         int direction = strafeDirection;
@@ -495,6 +515,7 @@ public class FocalorsPhase2AI : EnemyAI
     private IEnumerator RetreatFromPlayer(MovementAction movement)
     {
         if (agent == null || !agent.enabled) yield break;
+        agent.speed = ScaleActionSpeed(movement.speed);
         Vector3 retreat = (transform.position - player.position).normalized;
         agent.SetDestination(transform.position + retreat * movement.distance);
         animator.SetFloat("WalkSpeed", 1f);
@@ -524,7 +545,7 @@ public class FocalorsPhase2AI : EnemyAI
             }
         }
 
-        agent.speed = movement.speed > 0f ? movement.speed : movementSpeed;
+        agent.speed = ScaleActionSpeed(movement.speed);
         float stopDistance = Mathf.Max(agent.stoppingDistance, Mathf.Max(0.05f, movement.distanceToStop));
         agent.SetDestination(targetPoint.position);
         animator.SetFloat("WalkSpeed", 2f);
@@ -619,7 +640,7 @@ public class FocalorsPhase2AI : EnemyAI
 
         bool didCrit;
         float finalDamage = Helpers.CalculateFinalDamage(
-            baseDamage,
+            ScaleSkillDamage(baseDamage),
             defense,
             critChance,
             critMultiplier,

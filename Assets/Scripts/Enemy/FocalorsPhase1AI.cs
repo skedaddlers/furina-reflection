@@ -99,7 +99,7 @@ public class FocalorsPhase1AI : EnemyAI
 
     bool CanUseSkill()
     {
-        return Time.time - lastSkillTime >= skillCooldown;
+        return Time.time - lastSkillTime >= ScaleAbilityCooldown(skillCooldown);
     }
 
     IEnumerator PerformRandomSkill()

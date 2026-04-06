@@ -7,14 +7,32 @@ using DDAMAPEKitFramework;
 /// </summary>
 public class DDAIntegration : MonoBehaviour
 {
+    public static DDAIntegration Instance { get; private set; }
+
     [Header("DDA Settings")]
     [SerializeField] private bool enableDDA = true;
     [SerializeField] private bool debugMode = true;
 
     public CombatMetricCollector combatMetricCollector;
 
+    public static bool IsDDAEnabled
+    {
+        get
+        {
+            if (Instance == null)
+                Instance = FindObjectOfType<DDAIntegration>();
+
+            return Instance == null || Instance.enableDDA;
+        }
+    }
+
     void Awake()
     {
+        if (Instance != null && Instance != this)
+            return;
+
+        Instance = this;
+
         // if (!enableDDA) return;
 
         // // Setup DDA framework
@@ -73,6 +91,9 @@ public class DDAIntegration : MonoBehaviour
 
     void OnDestroy()
     {
+        if (Instance == this)
+            Instance = null;
+
         Room.OnRoomCleared -= HandleRoomCleared;
     }
 }
