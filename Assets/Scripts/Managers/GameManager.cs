@@ -22,8 +22,14 @@ public class GameManager : MonoBehaviour
 
     public bool withDialogue = true;
     private bool _isRestarting;
+    private float _runStartTime;
+    private float _finalRunDuration;
+    private int _currentRunScore;
+    private bool _isRunActive;
 
     public GameState CurrentState { get; private set; }
+    public int CurrentRunScore => _currentRunScore;
+    public float CurrentRunDuration => _isRunActive ? Mathf.Max(0f, Time.time - _runStartTime) : _finalRunDuration;
 
     void Awake()
     {
@@ -75,7 +81,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         UIManager.DestroyInstanceForRestart();
         PlayerStats.DestroyInstanceForRestart();
-        AudioManager.DestroyInstanceForRestart();
+        // AudioManager.DestroyInstanceForRestart();
         GlobalDifficultyState.DestroyInstanceForRestart();
         DDAMAPEKitFramework.DDAMAPEKit.DestroyInstanceForRestart();
         HitlagManager.DestroyInstanceForRestart();
@@ -86,10 +92,11 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        BeginRun();
         ChangeState(GameState.Playing);
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayMusic(AudioManager.Instance.gameplayMusic);
+            AudioManager.Instance.PlayGameplayMusic();
         }
     }
     
@@ -143,23 +150,64 @@ public class GameManager : MonoBehaviour
         return CurrentState == GameState.Playing;
     }
 
+    public void AddScore(int amount)
+    {
+        if (amount <= 0) return;
+        _currentRunScore += amount;
+    }
+
     public void OnBossRoomCleared()
     {
+        FinalizeRun();
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowVictoryScreen();
         }
+        AudioManager.Instance.PlayVictoryMusic();
         ChangeState(GameState.GameOver);
     }
 
     public void OnPlayerDeath()
     {
+        FinalizeRun();
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowDefeatScreen();
         }
+        AudioManager.Instance.PlayDefeatMusic();
         ChangeState(GameState.GameOver);
     }
 
     public bool IsPaused => CurrentState == GameState.MapView || CurrentState == GameState.Paused || CurrentState == GameState.MainMenu || CurrentState == GameState.GameOver || CurrentState == GameState.InMenu;
+
+    public string GetFormattedRunDuration()
+    {
+        float totalSeconds = Mathf.Max(0f, CurrentRunDuration);
+        int hours = Mathf.FloorToInt(totalSeconds / 3600f);
+        int minutes = Mathf.FloorToInt((totalSeconds % 3600f) / 60f);
+        int seconds = Mathf.FloorToInt(totalSeconds % 60f);
+
+        if (hours > 0)
+        {
+            return $"{hours:00}:{minutes:00}:{seconds:00}";
+        }
+
+        return $"{minutes:00}:{seconds:00}";
+    }
+
+    private void BeginRun()
+    {
+        _currentRunScore = 0;
+        _finalRunDuration = 0f;
+        _runStartTime = Time.time;
+        _isRunActive = true;
+    }
+
+    private void FinalizeRun()
+    {
+        if (!_isRunActive) return;
+
+        _finalRunDuration = Mathf.Max(0f, Time.time - _runStartTime);
+        _isRunActive = false;
+    }
 }

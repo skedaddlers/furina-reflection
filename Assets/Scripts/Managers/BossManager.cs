@@ -80,6 +80,8 @@ public class BossManager : MonoBehaviour
             return;
         }
 
+        AudioManager.Instance.PlayBossMusic();
+
         StartPhase1Dialogue();
     }
 
@@ -237,8 +239,11 @@ public class BossManager : MonoBehaviour
         if (!withDialogue)
         {
             InitializeBossUI(focalorsPhase2Instance);
+            AudioManager.Instance.PlayBossMusicPhase2();
             return;
         }
+
+        AudioManager.Instance.PlayBossMusicPhase2();
 
         StartPhase2Dialogue();
     }

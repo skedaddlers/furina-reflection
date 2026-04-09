@@ -37,6 +37,11 @@ public class UIManager : MonoBehaviour
     public CanvasGroup victoryCanvas;
     public CanvasGroup defeatCanvas;
     public GameObject winLoseScreen;
+    public Button mainMenuButton;
+    public TextMeshProUGUI victoryScoreText;
+    public TextMeshProUGUI victoryTimeText;
+    public TextMeshProUGUI defeatScoreText;
+    public TextMeshProUGUI defeatTimeText;
 
     private MonoBehaviour activeMenuOwner;
     private GameState activeMenuState = GameState.InMenu;
@@ -122,6 +127,7 @@ public class UIManager : MonoBehaviour
         {
             dialogueUI = GetComponent<DialogueUI>();
         }
+        mainMenuButton.onClick.AddListener(() => SceneLoader.Instance.LoadScene(GameManager.Instance.mainMenuSceneName));
         InitUI();
         cursorController.LockCursor();
     }
@@ -140,14 +146,18 @@ public class UIManager : MonoBehaviour
         statsUI.UpdateXPUI(playerStats.currentXP, playerStats.xpToNextLevel);
         shopUI.CloseShop();
         inventoryUI.CloseInventory();
-        restartButton.onClick.RemoveAllListeners();
-        restartButton.onClick.AddListener(() =>
+        HideEndScreens();
+        if (restartButton != null)
         {
-            if (GameManager.Instance != null)
+            restartButton.onClick.RemoveAllListeners();
+            restartButton.onClick.AddListener(() =>
             {
-                GameManager.Instance.Restart();
-            }
-        });
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.Restart();
+                }
+            });
+        }
     }
 
     void Update()
@@ -180,22 +190,36 @@ public class UIManager : MonoBehaviour
 
     public void ShowVictoryScreen()
     {
-        cursorController.UnlockCursor();
-        winLoseScreen.SetActive(true);
-        victoryCanvas.gameObject.SetActive(true);
-        victoryCanvas.alpha = 1;
-        victoryCanvas.blocksRaycasts = true;
-        victoryCanvas.interactable = true;
+        if (cursorController != null)
+        {
+            cursorController.UnlockCursor();
+        }
+
+        UpdateEndScreenSummary(victoryScoreText, victoryTimeText);
+        if (winLoseScreen != null)
+        {
+            winLoseScreen.SetActive(true);
+        }
+
+        SetCanvasGroupVisible(defeatCanvas, false);
+        SetCanvasGroupVisible(victoryCanvas, true);
     }
 
     public void ShowDefeatScreen()
     {
-        cursorController.UnlockCursor();
-        winLoseScreen.SetActive(true);
-        defeatCanvas.gameObject.SetActive(true);
-        defeatCanvas.alpha = 1;
-        defeatCanvas.blocksRaycasts = true;
-        defeatCanvas.interactable = true;
+        if (cursorController != null)
+        {
+            cursorController.UnlockCursor();
+        }
+
+        UpdateEndScreenSummary(defeatScoreText, defeatTimeText);
+        if (winLoseScreen != null)
+        {
+            winLoseScreen.SetActive(true);
+        }
+
+        SetCanvasGroupVisible(victoryCanvas, false);
+        SetCanvasGroupVisible(defeatCanvas, true);
     }
 
 
@@ -370,6 +394,48 @@ public class UIManager : MonoBehaviour
 
         GameManager.Instance.SetCursorState(false);
         GameManager.Instance.ChangeState(GameState.Playing);
+    }
+
+    private void UpdateEndScreenSummary(TextMeshProUGUI scoreText, TextMeshProUGUI timeText)
+    {
+        if (GameManager.Instance == null)
+        {
+            return;
+        }
+
+        if (scoreText != null)
+        {
+            scoreText.text = $"Score: {GameManager.Instance.CurrentRunScore}";
+        }
+
+        if (timeText != null)
+        {
+            timeText.text = $"Time: {GameManager.Instance.GetFormattedRunDuration()}";
+        }
+    }
+
+    private void HideEndScreens()
+    {
+        if (winLoseScreen != null)
+        {
+            winLoseScreen.SetActive(false);
+        }
+
+        SetCanvasGroupVisible(victoryCanvas, false);
+        SetCanvasGroupVisible(defeatCanvas, false);
+    }
+
+    private void SetCanvasGroupVisible(CanvasGroup canvasGroup, bool visible)
+    {
+        if (canvasGroup == null)
+        {
+            return;
+        }
+
+        canvasGroup.gameObject.SetActive(visible);
+        canvasGroup.alpha = visible ? 1f : 0f;
+        canvasGroup.blocksRaycasts = visible;
+        canvasGroup.interactable = visible;
     }
 
 }

@@ -49,9 +49,9 @@ MonoBehaviour:
   windUpAnimationTrigger: W
   isEnabled: 0
   baseDamage: 8
-  causesStagger: 0
+  causesStagger: 1
   staggerDuration: 1
-  causesKnockback: 0
+  causesKnockback: 1
   knockbackDistance: 1
   notificationText: Boss is using a skill!
   notificationDuration: 2

@@ -1564,7 +1564,7 @@ MonoBehaviour:
   attackRange: 2
   attackCooldown: 1.5
   movementSpeed: 3
-  damage: 10
+  damage: 4
   detectionRange: 10
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
@@ -1572,8 +1572,26 @@ MonoBehaviour:
   canBeStaggered: 0
   staggerTrigger: Hit
   sequences:
+  - {fileID: 11400000, guid: 4ea48a0c696c4b7498e00aa0902c12a3, type: 2}
+  - {fileID: 11400000, guid: 8f25d82f3423f0a41bae5a16348f78c1, type: 2}
+  - {fileID: 11400000, guid: 2efa636c1b455fc4eb01fb58444f5464, type: 2}
+  - {fileID: 11400000, guid: 6ad76d394080a254db3f292c41d2909c, type: 2}
+  - {fileID: 11400000, guid: d57cff0fe10fb914796a691bbd0b21af, type: 2}
+  - {fileID: 11400000, guid: e06923ce924990044bc73b758cdef0d7, type: 2}
+  - {fileID: 11400000, guid: e5680c6e42001184fa94b2889cb45abe, type: 2}
+  - {fileID: 11400000, guid: e030d3618c2efc04b98eb7fac98bfb71, type: 2}
   - {fileID: 11400000, guid: e9ace31415844664a8125bf9f6c6a953, type: 2}
+  - {fileID: 11400000, guid: 207fdae6c8f00b742b4c900ae73a277b, type: 2}
+  - {fileID: 11400000, guid: 3663cf0b53dfcb9438f9d126f12791ff, type: 2}
+  - {fileID: 11400000, guid: 6211c351ca8384f4d90a59e44186826b, type: 2}
   - {fileID: 11400000, guid: 8c4b61673c4c0bd4fbc298bcdcee6e40, type: 2}
+  - {fileID: 11400000, guid: afafabfa64ef3d649aa377daf6d8564d, type: 2}
+  - {fileID: 11400000, guid: 75609fd81e67b5248be6fae1639faa8d, type: 2}
+  - {fileID: 11400000, guid: 0f965c1793e81104486764db585174c1, type: 2}
+  - {fileID: 11400000, guid: a3313f4a171306f46993f13eea589160, type: 2}
+  - {fileID: 11400000, guid: 99ffe2a2a1c2fcc4d8e5079fec2769f4, type: 2}
+  - {fileID: 11400000, guid: 56f4e906ebc62c84499872c8e4af62b1, type: 2}
+  - {fileID: 11400000, guid: ccf92922ab79a5f42895853dd0789543, type: 2}
   mirrorChance: 0.25
   cooldownTime: 0.8
   telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
@@ -1612,9 +1630,9 @@ MonoBehaviour:
   salonSolitaireSkill: {fileID: 0}
   dodgeDistance: 3
   dashSound: {fileID: 0}
-  dodgeSound: {fileID: 0}
-  meleeAttackSound: {fileID: 0}
-  rangedAttackSound: {fileID: 0}
+  dodgeSound: {fileID: 8300000, guid: 071ee6e147aa0bc418fd69342a80b768, type: 3}
+  meleeAttackSound: {fileID: 8300000, guid: 8f5e2c66fc957a14186377b1e70da749, type: 3}
+  rangedAttackSound: {fileID: 8300000, guid: 6ed81c6d591f3194a8477d464eda5a3c, type: 3}
 --- !u!1 &8712777044120169847
 GameObject:
   m_ObjectHideFlags: 0

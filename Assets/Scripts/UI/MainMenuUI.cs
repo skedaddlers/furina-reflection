@@ -9,6 +9,10 @@ public class MainMenuUI : MonoBehaviour
     void Start()
     {
         startButton.onClick.AddListener(LoadGame);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayMainMenuMusic();
+        }
     }
     
     void LoadGame()

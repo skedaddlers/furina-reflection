@@ -14,7 +14,12 @@ public class AudioManager : MonoBehaviour
     public AudioSource voiceLineSource;
     public AudioSource dialogueSource;
     public List<AudioSource> additionalSFXSources; // for more overlapping SFX if needed
+    public AudioClip mainMenuMusic;
     public AudioClip gameplayMusic;
+    public AudioClip bossMusic;
+    public AudioClip bossMusicPhase2;
+    public AudioClip victoryMusic;
+    public AudioClip defeatMusic;
     public float pitchVariationMin = 0.9f;
     public float pitchVariationMax = 1.1f;
 
@@ -60,9 +65,44 @@ public class AudioManager : MonoBehaviour
         Object.Destroy(go);
     }
 
-    public void PlayMusic(AudioClip clip)
+    public void PlayGameplayMusic()
     {
-        musicSource.clip = clip;
+        musicSource.clip = gameplayMusic;
+        musicSource.volume = musicVolume;
+        musicSource.Play();
+    }
+
+    public void PlayMainMenuMusic()
+    {
+        musicSource.clip = mainMenuMusic;
+        musicSource.volume = musicVolume;
+        musicSource.Play();
+    }
+
+    public void PlayBossMusic()
+    {
+        musicSource.clip = bossMusic;
+        musicSource.volume = musicVolume;
+        musicSource.Play();
+    }
+
+    public void PlayBossMusicPhase2()
+    {
+        musicSource.clip = bossMusicPhase2;
+        musicSource.volume = musicVolume;
+        musicSource.Play();
+    }
+
+    public void PlayVictoryMusic()
+    {
+        musicSource.clip = victoryMusic;
+        musicSource.volume = musicVolume;
+        musicSource.Play();
+    }
+
+    public void PlayDefeatMusic()
+    {
+        musicSource.clip = defeatMusic;
         musicSource.volume = musicVolume;
         musicSource.Play();
     }

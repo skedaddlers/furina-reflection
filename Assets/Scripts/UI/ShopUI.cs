@@ -10,6 +10,7 @@ public class ShopUI : MonoBehaviour
     public GameObject detailPanel;
     public Button closeButton;
     public Button buyButton;
+    public TextMeshProUGUI currentGoldText;
     public float rarityColorAlpha = 0.5f;
 
     [Header("Weapon UI")]
@@ -43,6 +44,7 @@ public class ShopUI : MonoBehaviour
         closeButton.onClick.AddListener(CloseShop);
         shopPanel.SetActive(false);
         detailPanel.SetActive(false);
+        UpdateGoldDisplay();
     }
 
     #region Shop Open
@@ -56,6 +58,7 @@ public class ShopUI : MonoBehaviour
 
         SetupWeapons(weapons);
         SetupSkills(skills);
+        UpdateGoldDisplay();
     }
 
     private bool OpenPanel()
@@ -69,6 +72,11 @@ public class ShopUI : MonoBehaviour
         GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         detailPanel.SetActive(false);
         return true;
+    }
+
+    private void UpdateGoldDisplay()
+    {
+        currentGoldText.text = PlayerStats.Instance.Gold.ToString();
     }
 
     #endregion
@@ -133,7 +141,7 @@ public class ShopUI : MonoBehaviour
 
         PlayerStats.Instance.SpendGold(weapon.price);
         Player.Instance.GetComponent<PlayerLoadout>().AddToLoadout(weapon);
-
+        UpdateGoldDisplay();
         SetItemState(weaponImages[index], weaponButtons[index], true);
         detailPanel.SetActive(false);
     }
@@ -201,7 +209,7 @@ public class ShopUI : MonoBehaviour
 
         PlayerStats.Instance.SpendGold(skill.price);
         Player.Instance.GetComponent<SkillManager>().AddSkill(skill);
-
+        UpdateGoldDisplay();
         SetItemState(skillImages[index], skillButtons[index], true);
         detailPanel.SetActive(false);
     }

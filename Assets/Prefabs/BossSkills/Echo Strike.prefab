@@ -49,7 +49,7 @@ MonoBehaviour:
   windUpAnimationTrigger: WindUp
   isEnabled: 1
   baseDamage: 8
-  causesStagger: 0
+  causesStagger: 1
   staggerDuration: 1
   causesKnockback: 0
   knockbackDistance: 1

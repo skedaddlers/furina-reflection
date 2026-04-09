@@ -18,6 +18,7 @@ public class Enemy : MonoBehaviour
     public Transform healthBar;
     public int xpReward = 15;
     public int goldReward = 10;
+    public int scoreValue = 100;
     public static event Action<Enemy> OnAnyDeath;
 
     void Awake()
@@ -39,6 +40,11 @@ public class Enemy : MonoBehaviour
         {
             PlayerStats.Instance.AddXP(xpReward);
             PlayerStats.Instance.AddGold(goldReward);
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(scoreValue);
         }
         OnAnyDeath?.Invoke(this);
         Destroy(gameObject);
