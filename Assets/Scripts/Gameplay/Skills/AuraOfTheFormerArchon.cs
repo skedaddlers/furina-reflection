@@ -48,6 +48,11 @@ public class AuraOfTheFormerArchon : SkillBase
             Object.Destroy(effect, duration);
         }
 
+        if (ongoingSound != null)
+        {
+            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+        }
+
         // Start the aura coroutine on the caster
         MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
         if (casterMono != null)
@@ -146,7 +151,7 @@ public class AuraOfTheFormerArchon : SkillBase
                     damageMultiplier,
                     out didCrit
                 );
-                health.TakeDamage(finalDamage, didCrit, DamageSource.Skill);
+                health.TakeDamage(finalDamage, didCrit, DamageSource.Skill, applyStagger: false);
                 Debug.Log($"{hit.name} took {finalDamage} damage from {skillName}");
 
                 // Play impact sound

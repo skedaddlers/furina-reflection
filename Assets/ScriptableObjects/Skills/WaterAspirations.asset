@@ -38,6 +38,7 @@ MonoBehaviour:
   effectPrefab: {fileID: 1289543790355709915, guid: b99922c2f59b1a542bdd06ae8bee47ae, type: 3}
   castSound: {fileID: 8300000, guid: fc687439bd838bc4581874c625878e4f, type: 3}
   impactSound: {fileID: 0}
+  ongoingSound: {fileID: 8300000, guid: d4a16a05220356b45801dddf703386bd, type: 3}
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 1

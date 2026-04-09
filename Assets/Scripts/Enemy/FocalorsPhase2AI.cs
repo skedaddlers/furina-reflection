@@ -411,43 +411,60 @@ public class FocalorsPhase2AI : EnemyAI
     {
         if (agent == null || !agent.enabled) yield break;
         float angularSpeedBackup = agent.angularSpeed;
+        bool updateRotationBackup = agent.updateRotation;
         // Skill execution calls StopChasing(), so movement actions must explicitly resume the agent.
         agent.isStopped = false;
+        bool shouldWarpAfterMovement = false;
 
-        switch(m.movementType)
+        try
         {
-            case MovementType.DashToPlayer:
-                yield return DashToPlayer(m);
-                animator.SetFloat("WalkSpeed", 0f);
-                yield break;
+            switch(m.movementType)
+            {
+                case MovementType.DashToPlayer:
+                    yield return DashToPlayer(m);
+                    break;
 
-            case MovementType.StrafePlayer:
-                yield return StrafeAroundPlayer(m);
-                animator.SetFloat("WalkSpeed", 0f);
-                yield break;
+                case MovementType.StrafePlayer:
+                    yield return StrafeAroundPlayer(m);
+                    break;
 
-            case MovementType.Retreat:
-                LookAtPlayer();
-                agent.updateRotation = false; // Prevent NavMeshAgent from rotating the boss, we'll handle it manually
-                agent.angularSpeed = 0f; // Stop automatic rotation
-                yield return RetreatFromPlayer(m);
-                animator.SetFloat("WalkSpeed", 0f);
-                agent.updateRotation = true; // Re-enable automatic rotation after retreating
-                agent.angularSpeed = angularSpeedBackup;
-                agent.Warp(transform.position); // Ensure NavMeshAgent's internal position is synced after manual movement
-                yield break;
+                case MovementType.Retreat:
+                    LookAtPlayer();
+                    agent.updateRotation = false; // Prevent NavMeshAgent from rotating the boss, we'll handle it manually
+                    agent.angularSpeed = 0f; // Stop automatic rotation
+                    shouldWarpAfterMovement = true;
+                    yield return RetreatFromPlayer(m);
+                    break;
 
-            case MovementType.Reposition:
-                yield return Reposition(m);
-                animator.SetFloat("WalkSpeed", 0f);
-                yield break;
+                case MovementType.Reposition:
+                    yield return Reposition(m);
+                    break;
+
+                default:
+                    yield return new WaitForSeconds(m.duration);
+                    break;
+            }
         }
+        finally
+        {
+            animator.SetFloat("WalkSpeed", 0f);
+            animator.SetBool("Retreat", false);
+            RestoreDefaultAgentSpeed();
 
-        yield return new WaitForSeconds(m.duration);
-        animator.SetFloat("WalkSpeed", 0f);
-        animator.SetBool("Retreat", false);
-        agent.angularSpeed = angularSpeedBackup;
-        agent.updateRotation = true;
+            if (agent != null)
+            {
+                agent.angularSpeed = angularSpeedBackup;
+                agent.updateRotation = updateRotationBackup;
+
+                if (agent.enabled)
+                {
+                    agent.ResetPath();
+
+                    if (shouldWarpAfterMovement)
+                        agent.Warp(transform.position);
+                }
+            }
+        }
     }
     
 

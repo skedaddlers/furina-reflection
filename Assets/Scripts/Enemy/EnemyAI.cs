@@ -423,6 +423,11 @@ public class EnemyAI : MonoBehaviour, IStaggerable
         return Mathf.Max(0.1f, authoredSpeed * GetEnemyDifficultySnapshot().speed);
     }
 
+    protected void RestoreDefaultAgentSpeed()
+    {
+        ApplyEffectiveSpeed();
+    }
+
     private void ApplyEffectiveSpeed()
     {
         if (agent == null) return;

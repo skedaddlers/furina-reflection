@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62f8b24e7891d214e9509ff126d4739e, type: 3}
-  m_Name: AuraOfTheFormerArchon
+  m_Name: BOSS_AuraOfTheFormerArchon
   m_EditorClassIdentifier: 
   skillName: Aura of The Former Archon
   upgradeName: 
@@ -32,11 +32,11 @@ MonoBehaviour:
   levelRequired: 1
   purchasePrice: 100
   duration: 6
-  damageAmount: 10
+  damageAmount: 2
   healAmount: 0
   shieldAmount: 0
   effectPrefab: {fileID: 4932088507883938021, guid: 0e5709a7ddb77924090c112cf73bb98a, type: 3}
-  castSound: {fileID: 8300000, guid: b4cf158c480e79c44992819a997c90a3, type: 3}
+  castSound: {fileID: 0}
   impactSound: {fileID: 0}
   ongoingSound: {fileID: 8300000, guid: c0cbb3e18309d204baa0624df750e130, type: 3}
   statModifiers: []

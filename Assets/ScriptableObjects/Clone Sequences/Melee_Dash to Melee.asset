@@ -10,15 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c32a060d106d2c488c5ae8eafc43883, type: 3}
-  m_Name: Dash to Melee
+  m_Name: Melee_Dash to Melee
   m_EditorClassIdentifier: Assembly-CSharp::CloneSequence
   profileTag: 0
   actions:
-  - type: 6
-    duration: 0.6
-    speed: 7
   - type: 0
     duration: 4
-    speed: 0
+    speed: 7
+  - type: 1
+    duration: 4
+    speed: 5
+  - type: 2
+    duration: 3
+    speed: 4
+  - type: 6
+    duration: 1
+    speed: 6
   baseWeight: 1
-  cachedWeight: 0.2
+  cachedWeight: 0

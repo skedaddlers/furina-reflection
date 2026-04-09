@@ -211,11 +211,8 @@ public class BossCloneAI : EnemyAI
                 yield break;
 
             case CloneActionType.Retreat:
-                agent.speed = ScaleActionSpeed(action.speed);
-                Vector3 retreat = (transform.position - player.position).normalized;
-                agent.SetDestination(transform.position + retreat * 4f);
-
-                break;
+                yield return RetreatFromPlayer(action.duration, action.speed);
+                yield break;
 
             case CloneActionType.MeleeAttack:
                 PlaySkillCastSound(meleeAttackSound);
@@ -273,29 +270,34 @@ public class BossCloneAI : EnemyAI
     {
         if (agent == null || !agent.enabled || player == null) yield break;
         LookAtPlayer();
-        float originalSpeed = agent.speed;
         agent.speed = ScaleActionSpeed(speed);
         float stopDistance = Mathf.Max(agent.stoppingDistance, Mathf.Max(0.1f, agent.radius));
         float elapsed = 0f;
         animator.SetTrigger("Dash");
         PlaySkillCastSound(dashSound);
-        while (elapsed < duration)
+
+        try
         {
-            if (player == null || !agent.enabled) yield break;
+            while (elapsed < duration)
+            {
+                if (player == null || !agent.enabled) yield break;
 
-            agent.SetDestination(player.position);
-            if (Vector3.Distance(transform.position, player.position) <= stopDistance)
-                break;
+                agent.SetDestination(player.position);
+                if (Vector3.Distance(transform.position, player.position) <= stopDistance)
+                    break;
 
-            elapsed += Time.deltaTime;
-            yield return null;
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
         }
+        finally
+        {
+            animator.SetTrigger("StopDash");
+            RestoreDefaultAgentSpeed();
 
-        animator.SetTrigger("StopDash");
-        agent.speed = originalSpeed;
-
-        if (agent.enabled)
-            agent.ResetPath();
+            if (agent != null && agent.enabled)
+                agent.ResetPath();
+        }
     }
 
     public override void RangedAttack()
@@ -319,33 +321,68 @@ public class BossCloneAI : EnemyAI
 
     IEnumerator StrafeAroundPlayer(float duration, float speed, float radius)
     {
+        if (agent == null || !agent.enabled || player == null) yield break;
         float orbitRadius = Mathf.Max(1f, radius);
         float sideStepDistance = Mathf.Max(0.5f, orbitRadius * 0.6f);
         float elapsed = 0f;
-
+        animator.SetFloat("WalkSpeed", 1f);
         int direction = strafeDirection;
         strafeDirection *= -1;
-
         agent.speed = ScaleActionSpeed(speed);
 
-        while (elapsed < duration)
+        try
         {
-            if (player == null || !agent.enabled) yield break;
-
-            Vector3 radial = transform.position - player.position;
-            radial.y = 0f;
-            if (radial.sqrMagnitude <= 0.0001f)
+            while (elapsed < duration)
             {
-                radial = transform.right;
+                if (player == null || !agent.enabled) yield break;
+
+                Vector3 radial = transform.position - player.position;
+                radial.y = 0f;
+                if (radial.sqrMagnitude <= 0.0001f)
+                {
+                    radial = transform.right;
+                }
+
+                radial = radial.normalized;
+                Vector3 tangent = Vector3.Cross(Vector3.up, radial).normalized * direction;
+                Vector3 target = player.position + radial * orbitRadius + tangent * sideStepDistance;
+
+                agent.SetDestination(target);
+                elapsed += Time.deltaTime;
+                yield return null;
             }
+        }
+        finally
+        {
+            RestoreDefaultAgentSpeed();
 
-            radial = radial.normalized;
-            Vector3 tangent = Vector3.Cross(Vector3.up, radial).normalized * direction;
-            Vector3 target = player.position + radial * orbitRadius + tangent * sideStepDistance;
+            if (agent != null && agent.enabled)
+                agent.ResetPath();
 
-            agent.SetDestination(target);
-            elapsed += Time.deltaTime;
-            yield return null;
+            animator.SetFloat("WalkSpeed", 0f);
+        }
+    }
+
+    private IEnumerator RetreatFromPlayer(float duration, float speed)
+    {
+        if (agent == null || !agent.enabled || player == null) yield break;
+        animator.SetFloat("WalkSpeed", 1f);
+        agent.speed = ScaleActionSpeed(speed);
+        Vector3 retreat = (transform.position - player.position).normalized;
+        agent.SetDestination(transform.position + retreat * 4f);
+
+        try
+        {
+            yield return new WaitForSeconds(duration);
+        }
+        finally
+        {
+            RestoreDefaultAgentSpeed();
+
+            if (agent != null && agent.enabled)
+                agent.ResetPath();
+
+            animator.SetFloat("WalkSpeed", 0f);
         }
     }
 
@@ -376,11 +413,7 @@ public class BossCloneAI : EnemyAI
 
     private void TriggerRandomSkill()
     {
-        if (TryCastPlayerLikeSkill())
-            return;
-
-        // Legacy fallback (kept intentionally)
-        int choice = Random.Range(0, 3);
+        int choice = Random.Range(0, 4);
 
         switch (choice)
             {
@@ -392,6 +425,9 @@ public class BossCloneAI : EnemyAI
                     break;
                 case 2:
                     StartCoroutine(JudicialLine());
+                    break;
+                case 3:
+                    TryCastPlayerLikeSkill();
                     break;
             }
     }
@@ -549,24 +585,41 @@ public class BossCloneAI : EnemyAI
 
     IEnumerator DodgeWindow(float duration, float speed)
     {
+        if (agent == null || !agent.enabled || player == null) yield break;
+
         float elapsed = 0f;
         // pick random direction  from 90 - 270 degrees relative to player
         float angle = Random.Range(90f, 270f);
         Vector3 dir = Quaternion.Euler(0, angle, 0) * (player.position - transform.position).normalized;
         Vector3 dodgeTarget = transform.position + dir * dodgeDistance;
-        float originalSpeed = agent.speed;
+        Health health = GetComponent<Health>();
         agent.speed = ScaleActionSpeed(speed);
-        while (elapsed < duration)
+
+        if (health != null)
+            health.SetInvulnerable(true);
+
+        try
         {
-            if (player == null) yield break;
-            agent.SetDestination(dodgeTarget);
-            GetComponent<Health>().SetInvulnerable(true);
-            elapsed += Time.deltaTime;
-            yield return null;
+            while (elapsed < duration)
+            {
+                if (player == null || !agent.enabled) yield break;
+                agent.SetDestination(dodgeTarget);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
         }
-        animator.SetTrigger("StopDash");
-        GetComponent<Health>().SetInvulnerable(false);
-        agent.speed = originalSpeed;
+        finally
+        {
+            animator.SetTrigger("StopDash");
+
+            if (health != null)
+                health.SetInvulnerable(false);
+
+            RestoreDefaultAgentSpeed();
+
+            if (agent != null && agent.enabled)
+                agent.ResetPath();
+        }
     }
 
     private void DealSpecialDamage(float damage)

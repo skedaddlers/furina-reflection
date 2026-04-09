@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class AudioManager : MonoBehaviour
 {
@@ -10,9 +11,9 @@ public class AudioManager : MonoBehaviour
     public float sfxVolume = 1.0f;
     public float voiceLineVolume = 1.0f;
     public AudioSource sfxSource;
-    public AudioSource secondarySFXSource; // for overlapping SFX
     public AudioSource voiceLineSource;
     public AudioSource dialogueSource;
+    public List<AudioSource> additionalSFXSources; // for more overlapping SFX if needed
     public AudioClip gameplayMusic;
     public float pitchVariationMin = 0.9f;
     public float pitchVariationMax = 1.1f;
@@ -28,6 +29,18 @@ public class AudioManager : MonoBehaviour
         {
             Destroy(gameObject);
             return;
+        }
+    }
+
+
+    void Start()
+    {
+        if (additionalSFXSources == null) additionalSFXSources = new List<AudioSource>();
+        for (int i = 0; i < 3; i++) // create a few additional SFX sources for overlapping sounds
+        {
+            AudioSource newSource = gameObject.AddComponent<AudioSource>();
+            newSource.playOnAwake = false;
+            additionalSFXSources.Add(newSource);
         }
     }
 
@@ -61,16 +74,32 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
-    public void PlaySFXNoOverlap(AudioClip clip, bool randomizePitch = false)
+    public void PlaySFXNoOverlap(AudioClip clip, bool randomizePitch = false, float duration = -1f)
     {
-        if (randomizePitch)
-            secondarySFXSource.pitch = Random.Range(pitchVariationMin, pitchVariationMax);
-        else
-            secondarySFXSource.pitch = 1f; // reset pitch to default
-
-        secondarySFXSource.volume = sfxVolume;
-        if (!secondarySFXSource.isPlaying)
-            secondarySFXSource.PlayOneShot(clip);
+        foreach (var source in additionalSFXSources)
+        {
+            if (!source.isPlaying)
+            {
+                if (randomizePitch)
+                {
+                    source.pitch = Random.Range(pitchVariationMin, pitchVariationMax);
+                }
+                else
+                {
+                    source.pitch = 1f; // reset pitch to default
+                }
+                source.volume = sfxVolume;
+                if (duration > 0f)
+                {
+                    StartCoroutine(PlaySFXWithDuration(clip, sfxVolume, duration, source));
+                }
+                else
+                {
+                    source.PlayOneShot(clip);
+                }
+                return;
+            }
+        }
     }
 
     public void PlaySFXWithVolume(AudioClip clip, float volume, float duration = -1f)
@@ -78,7 +107,7 @@ public class AudioManager : MonoBehaviour
         sfxSource.pitch = 1f; // reset pitch to default
         if (duration > 0f)
         {
-            StartCoroutine(PlaySFXWithDuration(clip, volume, duration));
+            StartCoroutine(PlaySFXWithDuration(clip, volume, duration, sfxSource));
         }
         else
         {
@@ -86,11 +115,11 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    private IEnumerator PlaySFXWithDuration(AudioClip clip, float volume, float duration)
+    private IEnumerator PlaySFXWithDuration(AudioClip clip, float volume, float duration, AudioSource source)
     {
-        sfxSource.PlayOneShot(clip, volume);
+        source.PlayOneShot(clip, volume);
         yield return new WaitForSeconds(duration);
-        sfxSource.Stop();
+        source.Stop();
     }
 
     public void PlayWithVaryingPitch(AudioClip clip)
@@ -129,7 +158,10 @@ public class AudioManager : MonoBehaviour
     {
         sfxVolume = volume;
         sfxSource.volume = sfxVolume;
-        secondarySFXSource.volume = sfxVolume;
+        foreach (var source in additionalSFXSources)
+        {
+            source.volume = sfxVolume;
+        }
     }
 
     public void SetVoiceLineVolume(float volume)

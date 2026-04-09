@@ -56,6 +56,11 @@ public class LetThePeopleRejoice : SkillBase
             Object.Destroy(effect, duration);
         }
 
+        if (ongoingSound != null)
+        {
+            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+        }
+
         // Store original attack and apply bonus
         originalBaseAttack = activePlayerStats.baseAttack;
         activePlayerStats.baseAttack += attackBonus;

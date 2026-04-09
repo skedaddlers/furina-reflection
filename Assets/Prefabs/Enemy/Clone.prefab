@@ -1607,8 +1607,8 @@ MonoBehaviour:
   healEffectPrefab: {fileID: 9017484664307500583, guid: 4eb0dace1f70966418f3c92ba8771a90, type: 3}
   healEffectLifetime: 2
   healSound: {fileID: 0}
-  waterAspirationsSkill: {fileID: 0}
-  auraOfTheFormerArchonSkill: {fileID: 0}
+  waterAspirationsSkill: {fileID: 11400000, guid: dd8e372731fbf204194e0ea1daaa9d05, type: 2}
+  auraOfTheFormerArchonSkill: {fileID: 11400000, guid: e3e172d2b20bb834384b8e8750595af0, type: 2}
   salonSolitaireSkill: {fileID: 0}
   dodgeDistance: 3
   dashSound: {fileID: 0}

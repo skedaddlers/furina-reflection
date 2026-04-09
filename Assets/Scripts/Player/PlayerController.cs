@@ -36,6 +36,9 @@ public class PlayerController : MonoBehaviour, IStaggerable
     public float bowFovLerpSpeed = 15f;
     public GameObject cameraTarget;
 
+    [Header("SFX")]
+    public AudioClip dodgeSound;
+
     private bool isBowAiming = false;
     [SerializeField] private CinemachineCamera mainCam;
 
@@ -418,6 +421,7 @@ public class PlayerController : MonoBehaviour, IStaggerable
             StopCoroutine(dodgeRoutine);
 
         dodgeRoutine = StartCoroutine(Dodge());
+        AudioManager.Instance.PlayWithVaryingPitch(dodgeSound);
     }
 
     IEnumerator Dodge()

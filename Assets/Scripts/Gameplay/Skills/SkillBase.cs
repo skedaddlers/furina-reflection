@@ -36,6 +36,7 @@ public class SkillBase : ScriptableObject
     public GameObject effectPrefab;
     public AudioClip castSound;
     public AudioClip impactSound;
+    public AudioClip ongoingSound;
     
     [Header("Skill Modifiers")]
     public List<StatModifier> statModifiers = new List<StatModifier>();

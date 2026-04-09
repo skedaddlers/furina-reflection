@@ -10,13 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb488dd5a88524645acee265c222ad2c, type: 3}
-  m_Name: UP_WaterAspirations 1
+  m_Name: BOSS_WaterAspirations
   m_EditorClassIdentifier: 
-  skillName: Water's Aspiration+
+  skillName: Water's Aspiration
   upgradeName: 
-  description: Creates a damage-absorbing shield. Gain extra defense when shield
-    is broken.
-  skillIcon: {fileID: 21300000, guid: 3ea1c33b3a84d4a4dacfe28e9e3b258a, type: 3}
+  description: Creates a damage-absorbing shield
+  skillIcon: {fileID: 21300000, guid: 5d9394dc8bceb7e43b1e7530d7e40d37, type: 3}
   rarity: 1
   price: 85
   skillID: 5
@@ -37,13 +36,13 @@ MonoBehaviour:
   healAmount: 0
   shieldAmount: 75
   effectPrefab: {fileID: 1289543790355709915, guid: b99922c2f59b1a542bdd06ae8bee47ae, type: 3}
-  castSound: {fileID: 8300000, guid: fc687439bd838bc4581874c625878e4f, type: 3}
+  castSound: {fileID: 0}
   impactSound: {fileID: 0}
   ongoingSound: {fileID: 8300000, guid: d4a16a05220356b45801dddf703386bd, type: 3}
   statModifiers: []
   animationTrigger: 
-  isUpgradeable: 0
-  isUpgraded: 1
-  upgradeDescription: 
-  nextLevelSkill: {fileID: 0}
+  isUpgradeable: 1
+  isUpgraded: 0
+  upgradeDescription: Now gives extra defense when shield is broken!
+  nextLevelSkill: {fileID: 11400000, guid: ce2b1c8d28fb7464d965c211a38af925, type: 2}
   defBonus: 15

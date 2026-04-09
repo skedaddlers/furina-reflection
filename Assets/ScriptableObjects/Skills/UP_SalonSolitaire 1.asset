@@ -37,7 +37,8 @@ MonoBehaviour:
   shieldAmount: 0
   effectPrefab: {fileID: 0}
   castSound: {fileID: 8300000, guid: 0cd599f0bc8171e4f81bd2c78c4cd8df, type: 3}
-  impactSound: {fileID: 0}
+  impactSound: {fileID: 8300000, guid: 6ed81c6d591f3194a8477d464eda5a3c, type: 3}
+  ongoingSound: {fileID: 0}
   statModifiers: []
   animationTrigger: 
   isUpgradeable: 0

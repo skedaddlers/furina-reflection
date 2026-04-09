@@ -10,6 +10,7 @@ public class WaterAspirations : SkillBase
     private GameObject activeCaster;
     private GameObject currentEffectInstance;
     private PlayerStats activePlayerStats;
+    private EnemyStats activeEnemyStats;
     private float currentShieldAmount;
     private float elapsed;
     private bool isActive = false;
@@ -38,6 +39,7 @@ public class WaterAspirations : SkillBase
 
         activeCaster = caster;
         activePlayerStats = caster.GetComponent<PlayerStats>();
+        EnemyStats activeEnemyStats = caster.GetComponent<EnemyStats>();
 
         Health targetHealth = activePlayerStats != null ? activePlayerStats.health : caster.GetComponent<Health>();
 
@@ -63,6 +65,11 @@ public class WaterAspirations : SkillBase
             Destroy(effect, duration);
         }
 
+        if (ongoingSound != null)
+        {
+            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+        }
+
         // Apply shield
         currentShieldAmount = shieldAmount;
 
@@ -83,24 +90,39 @@ public class WaterAspirations : SkillBase
     private IEnumerator ShieldDuration(GameObject caster)
     {
         elapsed = 0f;
+
+        var health = activePlayerStats != null ? activePlayerStats.health : caster.GetComponent<Health>();
+
         while (elapsed < duration && isActive)
         {
-            if (isUpgraded && !defBonusApplied && activePlayerStats.health.shieldAmount <= 0 && elapsed < duration)
+            if (health != null)
             {
-                ApplyDefBonus();
-                Destroy(currentEffectInstance);
-                currentEffectInstance = null; // prevent multiple applications
+                bool shieldBroken = health.shieldAmount <= 0;
+
+                if (shieldBroken)
+                {
+                    if (isUpgraded && !defBonusApplied)
+                    {
+                        ApplyDefBonus();
+
+                        if (currentEffectInstance != null)
+                        {
+                            Destroy(currentEffectInstance);
+                            currentEffectInstance = null;
+                        }
+                    }
+                    else if (!isUpgraded)
+                    {
+                        Debug.Log($"{skillName}: Shield broke early, ending skill.");
+                        break;
+                    }
+                }
             }
-            else if (!isUpgraded && activePlayerStats.health.shieldAmount <= 0)
-            {
-                // Shield broken, end skill early
-                Debug.Log($"{skillName}: Shield broke early, ending skill.");
-                break;
-            }
+
             yield return new WaitForSeconds(0.1f);
             elapsed += 0.1f;
         }
-        
+
         OnSkillEnd(caster);
     }
 

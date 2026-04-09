@@ -145,6 +145,7 @@ public class PlayerCombat : MonoBehaviour
             if (ang <= angle * 0.5f)
             {
                 GameObject particle = Instantiate(hitEffect.gameObject, h.ClosestPoint(origin), Quaternion.identity);
+                Destroy(particle, 1f);
                 var health = h.GetComponent<Health>();
                 if (health != null)
                 {

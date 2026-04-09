@@ -38,6 +38,11 @@ public class TearsOfTheSinner : SkillBase
             Object.Destroy(effect, duration);
         }
 
+        if (ongoingSound != null)
+        {
+            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+        }
+
         // Start the rain damage coroutine
         MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
         if (casterMono != null)
