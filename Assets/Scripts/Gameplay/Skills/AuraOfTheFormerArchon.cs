@@ -157,7 +157,7 @@ public class AuraOfTheFormerArchon : SkillBase
                 // Play impact sound
                 if (impactSound != null)
                 {
-                    AudioSource.PlayClipAtPoint(impactSound, hit.transform.position);
+                    AudioManager.Instance.PlayClipAtPoint(impactSound, hit.transform.position);
                 }
             }
 

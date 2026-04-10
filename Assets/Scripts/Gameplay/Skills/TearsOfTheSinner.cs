@@ -116,7 +116,7 @@ public class TearsOfTheSinner : SkillBase
                 // Play impact sound
                 if (impactSound != null)
                 {
-                    AudioSource.PlayClipAtPoint(impactSound, enemy.transform.position);
+                    AudioManager.Instance.PlayClipAtPoint(impactSound, enemy.transform.position);
                 }
             }
         }

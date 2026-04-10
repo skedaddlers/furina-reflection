@@ -1251,6 +1251,7 @@ MonoBehaviour:
   healthBar: {fileID: 2958826883189367735}
   xpReward: 50
   goldReward: 15
+  scoreValue: 100
 --- !u!114 &2774125957437581761
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1274,6 +1275,8 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 0}
+  attackSFX: {fileID: 8300000, guid: 071ee6e147aa0bc418fd69342a80b768, type: 3}
   specialAttackCooldown: 5
   telegraphPrefab: {fileID: 9056453673954427339, guid: 1e309eb610c108846b9f962d8903ff20, type: 3}
   telegraphDuration: 1
@@ -1281,6 +1284,7 @@ MonoBehaviour:
   telegraphSegments: 24
   telegraphYOffset: 0.01
   trajectoryPredictionStep: 0.05
+  throwSFX: {fileID: 8300000, guid: 2cd3e58cac64b5a4b9b2897669169fc3, type: 3}
 --- !u!114 &1132621318322507302
 MonoBehaviour:
   m_ObjectHideFlags: 0

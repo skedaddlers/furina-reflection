@@ -35,6 +35,9 @@ public class EnemyAI : MonoBehaviour, IStaggerable
     protected bool isStaggered = false;
     private Coroutine staggerRoutine;
     public bool IsStaggered => isStaggered;
+    [Header("Audio")]
+    public AudioClip walkingSFX;
+    public AudioClip attackSFX;
 
     
     protected virtual void Awake()
@@ -180,6 +183,10 @@ public class EnemyAI : MonoBehaviour, IStaggerable
                 animator.SetTrigger("Attack");
             }
             lastAttackTime = Time.time;
+            if (attackSFX != null && Random.value < 0.6f) // 60% chance to play attack SFX to avoid spamming
+            {
+                AudioManager.Instance.PlayClipAtPoint(attackSFX, transform.position);
+            }
         }
     }
 
@@ -433,5 +440,14 @@ public class EnemyAI : MonoBehaviour, IStaggerable
         if (agent == null) return;
         float effectiveSpeed = Mathf.Max(0f, movementSpeed * currentSpeedModifier);
         agent.speed = effectiveSpeed;
+    }
+
+    // through animation event
+    public void PlayWalkingSFX()
+    {
+        if (walkingSFX != null)
+        {
+            AudioManager.Instance.PlayClipAtPoint(walkingSFX, transform.position);
+        }
     }
 }

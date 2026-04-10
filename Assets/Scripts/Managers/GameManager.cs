@@ -85,8 +85,8 @@ public class GameManager : MonoBehaviour
         GlobalDifficultyState.DestroyInstanceForRestart();
         DDAMAPEKitFramework.DDAMAPEKit.DestroyInstanceForRestart();
         HitlagManager.DestroyInstanceForRestart();
+        AudioManager.Instance?.PlayGameplayMusic();
         DestroyInstanceForRestart();
-
         UnityEngine.SceneManagement.SceneManager.LoadScene(targetSceneName);
     }
 

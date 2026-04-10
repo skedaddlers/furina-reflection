@@ -1263,6 +1263,7 @@ MonoBehaviour:
   healthBar: {fileID: 1223118301296987611}
   xpReward: 40
   goldReward: 10
+  scoreValue: 100
 --- !u!114 &9184170250974352647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1286,6 +1287,8 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 8300000, guid: 46f79a2ba63c00b499f5c41539d92a38, type: 3}
+  attackSFX: {fileID: 0}
 --- !u!114 &6779822399096051496
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -30,6 +30,10 @@ public class DoorTrigger : MonoBehaviour
             bool success = parentRoom.OnDoorInteract(directionIndex);
             if (success)
             {
+                if (GameManager.Instance.roomManager.doorOpenSound != null)
+                {
+                    AudioManager.Instance?.PlaySFXNoOverlap(GameManager.Instance.roomManager.doorOpenSound);
+                }
                 isPlayerNearby = false;
                 UIManager.Instance.ShowInterractionUI(false, "");
             }

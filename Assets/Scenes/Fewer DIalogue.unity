@@ -966,6 +966,7 @@ MonoBehaviour:
   - {fileID: 5911626624432018676, guid: 8a66bcdff3dbbcd428228ba6408a5da2, type: 3}
   - {fileID: 5911626624432018676, guid: 198e7c563884e65409dd05975d0ec15d, type: 3}
   player: {fileID: 1706152671}
+  doorOpenSound: {fileID: 8300000, guid: 94f0a0e636e570b49a5370c25bc1dfb9, type: 3}
 --- !u!4 &35828313
 Transform:
   m_ObjectHideFlags: 0
@@ -994,19 +995,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonConfig:
-    minRooms: 14
-    maxRooms: 16
+    minRooms: 2
+    maxRooms: 2
     normalRoomRatio: 0.5
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
     eliteRoomRatio: 0.15
-    guaranteedShops: 2
-    guaranteedElites: 2
-    guaranteedEvents: 2
+    guaranteedShops: 0
+    guaranteedElites: 13
+    guaranteedEvents: 0
     guaranteeEarlyShop: 0
     minDistanceBetweenShops: 3
     minDistanceBetweenElites: 4
-    eliteMinDistanceFromStart: 3
+    eliteMinDistanceFromStart: 0
     maxConnectionsPerRoom: 4
     loopChance: 1
     seed: -1

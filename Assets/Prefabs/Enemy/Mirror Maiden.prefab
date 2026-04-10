@@ -1243,6 +1243,7 @@ MonoBehaviour:
   healthBar: {fileID: 7828804035071281119}
   xpReward: 50
   goldReward: 15
+  scoreValue: 100
 --- !u!114 &-831069330320770944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1266,9 +1267,12 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 0}
+  attackSFX: {fileID: 0}
   specialAttackCooldown: 10
   imprisonDuration: 2
   imprisonEffect: {fileID: 1601506141239540749, guid: 48c5715f9603c3842a353516a8baefbb, type: 3}
+  imprisonSFX: {fileID: 8300000, guid: b1d1deaa903483f43a00c3018a927ca7, type: 3}
 --- !u!114 &8825368182185908842
 MonoBehaviour:
   m_ObjectHideFlags: 0

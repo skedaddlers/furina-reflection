@@ -12,6 +12,7 @@ public class EliteMirrorMaiden : EnemyAI
     public float imprisonDuration = 2.0f;
     public ParticleSystem imprisonEffect;
     private PlayerController imprisonedPlayerController;
+    public AudioClip imprisonSFX;
 
     protected override void Awake()
     {
@@ -79,6 +80,12 @@ public class EliteMirrorMaiden : EnemyAI
             GameObject effectInstance = Instantiate(imprisonEffect.gameObject, player.position, Quaternion.identity);
             effectInstance.transform.parent = player.transform;
             Destroy(effectInstance, imprisonDuration);
+        }
+
+        // Play imprison SFX
+        if (imprisonSFX != null)
+        {
+            AudioManager.Instance.PlayClipAtPoint(imprisonSFX, player.position);
         }
 
         // Disable player movement

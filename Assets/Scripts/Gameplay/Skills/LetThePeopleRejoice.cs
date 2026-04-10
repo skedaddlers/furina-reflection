@@ -123,7 +123,7 @@ public class LetThePeopleRejoice : SkillBase
         // Play impact sound for feedback
         if (impactSound != null && activeCaster != null)
         {
-            AudioSource.PlayClipAtPoint(impactSound, activeCaster.transform.position);
+            AudioManager.Instance.PlayClipAtPoint(impactSound, activeCaster.transform.position);
         }
     }
 

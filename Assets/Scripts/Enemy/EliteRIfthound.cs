@@ -15,6 +15,8 @@ public class EliteRifthound : EnemyAI
     public int bleedDamagePerTick = 3;
     public float bleedTickInterval = 1f;
     public int bleedTicks = 5;
+    public GameObject bleedVFXPrefab;
+    public AudioClip bleedApplySFX;
 
     [Header("Teleport Telegraph")]
     public GameObject telegraphPrefab;
@@ -63,6 +65,7 @@ public class EliteRifthound : EnemyAI
 
         // Telegraph destination before warp
         Vector3 teleportTarget;
+        bool didTeleport = false;
         if (TryGetTeleportDestination(out teleportTarget))
         {
             ShowTeleportTelegraph(teleportTarget);
@@ -73,15 +76,52 @@ public class EliteRifthound : EnemyAI
         
             agent.Warp(teleportTarget);
             FacePlayer();
+            didTeleport = true;
         }
 
         // Hit awal (melee biasa)
+        Health playerHealth = player != null ? player.GetComponent<Health>() : null;
+        bool landedTeleportStrike = didTeleport &&
+                                   playerHealth != null &&
+                                   !playerHealth.IsInvulnerable &&
+                                   Vector3.Distance(player.position, transform.position) <= attackRange + 0.5f;
         DealDamage();
-
-        // Apply bleed (damage over time)
-        // to be implemented: apply bleed effect to player
+        if (landedTeleportStrike && playerHealth.CurrentHealth > 0f)
+        {
+            ApplyBleedToPlayer(playerHealth);
+        }
 
         isPerformingSpecialAttack = false;
+    }
+
+    private void ApplyBleedToPlayer(Health targetHealth)
+    {
+        if (targetHealth == null || bleedDamagePerTick <= 0 || bleedTicks <= 0)
+            return;
+
+        int sourceId = GetInstanceID();
+        RifthoundBleedEffect bleedEffect = null;
+        RifthoundBleedEffect[] existingEffects = targetHealth.GetComponents<RifthoundBleedEffect>();
+        for (int i = 0; i < existingEffects.Length; i++)
+        {
+            if (existingEffects[i].SourceId == sourceId)
+            {
+                bleedEffect = existingEffects[i];
+                break;
+            }
+        }
+
+        if (bleedEffect == null)
+        {
+            bleedEffect = targetHealth.gameObject.AddComponent<RifthoundBleedEffect>();
+        }
+
+        if (bleedApplySFX != null)
+        {
+            AudioManager.Instance.PlayClipAtPoint(bleedApplySFX, targetHealth.transform.position);
+        }
+
+        bleedEffect.Apply(sourceId, bleedDamagePerTick, bleedTickInterval, bleedTicks, transform, bleedVFXPrefab);
     }
 
     private bool TryGetTeleportDestination(out Vector3 destination)

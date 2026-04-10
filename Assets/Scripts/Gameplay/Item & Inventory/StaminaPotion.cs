@@ -22,7 +22,7 @@ public class StaminaPotion : Item
             // Play use sound
             if (useSound != null)
             {
-                AudioSource.PlayClipAtPoint(useSound, user.transform.position);
+                AudioManager.Instance.PlayClipAtPoint(useSound, user.transform.position);
             }
             return true;
         }

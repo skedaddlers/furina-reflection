@@ -16,6 +16,9 @@ public class EliteRuinGuard : EnemyAI
     public float telegraphYOffset = 0.05f;
     public float trajectoryPredictionStep = 0.05f;
 
+    [Header("Audio")]
+    public AudioClip throwSFX;
+
     private Vector3 lockedDirection;
     private Vector3 lockedSpawnPosition;
     private Vector3 lockedImpactPoint;
@@ -68,6 +71,12 @@ public class EliteRuinGuard : EnemyAI
         toPlayer.y = 0f;
         if (toPlayer.sqrMagnitude <= 0.0001f)
             toPlayer = transform.forward;
+
+        // Play throw SFX
+        if (throwSFX != null)
+        {
+            AudioManager.Instance.PlayClipAtPoint(throwSFX, transform.position);
+        }
 
         lockedDirection = toPlayer.normalized;
         lockedSpawnPosition = transform.position + lockedDirection * ThrowSpawnForwardOffset + Vector3.up * ThrowSpawnHeightOffset;

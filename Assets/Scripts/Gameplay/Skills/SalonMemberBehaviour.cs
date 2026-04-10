@@ -96,7 +96,7 @@ public class SalonMemberBehaviour : MonoBehaviour
         // Play impact sound
         if (skillData.impactSound != null)
         {
-            AudioSource.PlayClipAtPoint(skillData.impactSound, transform.position);
+            AudioManager.Instance.PlayClipAtPoint(skillData.impactSound, transform.position);
         }
     }
 

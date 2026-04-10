@@ -1175,6 +1175,7 @@ MonoBehaviour:
   healthBar: {fileID: 609787420079300612}
   xpReward: 50
   goldReward: 15
+  scoreValue: 100
 --- !u!114 &8479522146413409476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1198,10 +1199,13 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 0}
+  attackSFX: {fileID: 8300000, guid: 8aa962bcfbdc11444863a20a4c8687f6, type: 3}
   specialAttackCooldown: 10
   shieldEffect: {fileID: 8044789423087911113, guid: 5156d6689efbccb4991059f3a5755566, type: 3}
   shieldDuration: 3
   shieldAmount: 50
+  shieldGainSFX: {fileID: 8300000, guid: b1d1deaa903483f43a00c3018a927ca7, type: 3}
 --- !u!114 &6296160769128475036
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -159,13 +159,20 @@ MonoBehaviour:
   speed: 10
   lifeTime: 4.04
   damage: 15
+  causesStagger: 0
+  staggerDuration: 0.5
+  causesKnockback: 0
+  knockbackDistance: 1
   hitMask:
     serializedVersion: 2
     m_Bits: 904
   owner: {fileID: 0}
   ignoreOwner: 1
+  fromSkill: 0
   hitEffect: {fileID: 484368387861551534, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
   laserRenderer: {fileID: 0}
+  laserPrefab: {fileID: 0}
+  hitSFX: {fileID: 8300000, guid: 7215620d17b9eab4dbecd112543157ae, type: 3}
   maxDistance: 100
   laserDuration: 0.1
   target: {fileID: 0}

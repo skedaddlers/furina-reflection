@@ -13,6 +13,7 @@ public class EliteLawachurl : EnemyAI
     public float heavyAttackDamageMultiplier = 2f;
     public float chargeOvershootDistance = 1.5f;
     public float maxChargeDistance = 10f;
+    public AudioClip crashSFX;
 
     [Header("Cone Telegraph")]
     public GameObject telegraphPrefab;
@@ -115,6 +116,10 @@ public class EliteLawachurl : EnemyAI
 
         agent.isStopped = true;
         agent.ResetPath();
+        if (crashSFX != null)
+        {
+            AudioManager.Instance.PlayClipAtPoint(crashSFX, transform.position);
+        }
 
         if (Vector3.Distance(player.position, transform.position) <= attackRange + 1.0f)
         {

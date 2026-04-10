@@ -28,10 +28,11 @@ public class Projectile : MonoBehaviour
     public bool ignoreOwner = true; // biar nggak nabrak diri sendiri
     public bool fromSkill = false; // buat bedain damage source di Health
 
-    [Header("Visuals")]
+    [Header("Visuals and Sound")]
     public ParticleSystem hitEffect;
     public LineRenderer laserRenderer;
     public GameObject laserPrefab; // optional prefab untuk visual laser (bisa pakai LineRenderer atau particle)
+    public AudioClip hitSFX;
 
     [Header("Laser Settings")]
     public float maxDistance = 100f;
@@ -220,6 +221,12 @@ public class Projectile : MonoBehaviour
                 Destroy(ps.gameObject, 2f);
             }
             
+        }
+
+        // Play hit SFX
+        if (hitSFX != null)
+        {
+            AudioManager.Instance.PlayClipAtPoint(hitSFX, transform.position);
         }
 
         // Hancurkan saat kena apapun yang valid

@@ -9,6 +9,8 @@ public class RoomManager : MonoBehaviour
     public GameObject[] normalRoomPrefabs;
     public Transform player;
 
+    public AudioClip doorOpenSound;
+
     // runtime
     private Dictionary<int, Room> roomInstances = new();
     private int currentRoomID = 1;

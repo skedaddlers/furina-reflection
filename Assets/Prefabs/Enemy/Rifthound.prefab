@@ -1038,6 +1038,7 @@ MonoBehaviour:
   healthBar: {fileID: 8237243016429360707}
   xpReward: 15
   goldReward: 10
+  scoreValue: 100
 --- !u!114 &7963045105340031469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1061,11 +1062,15 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 0}
+  attackSFX: {fileID: 0}
   specialAttackCooldown: 8
   teleportDistanceFromPlayer: 1.5
-  bleedDamagePerTick: 3
-  bleedTickInterval: 0.1
+  bleedDamagePerTick: 1
+  bleedTickInterval: 1
   bleedTicks: 5
+  bleedVFXPrefab: {fileID: 6126188424833946103, guid: dc73d9708c725ee49b3ee0238343111f, type: 3}
+  bleedApplySFX: {fileID: 8300000, guid: 349bfead4ec0cb94d89099e3d200c065, type: 3}
   telegraphPrefab: {fileID: 9056453673954427339, guid: 1e309eb610c108846b9f962d8903ff20, type: 3}
   telegraphDuration: 1.1
   telegraphRadius: 1.25

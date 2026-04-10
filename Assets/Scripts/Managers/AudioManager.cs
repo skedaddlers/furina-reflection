@@ -86,22 +86,27 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBossMusic()
     {
-        CrossfadeMusic(bossMusic, duration: 0.5f);
+        CrossfadeMusic(bossMusic, duration: 3f);
     }
 
     public void PlayBossMusicPhase2()
     {
-        CrossfadeMusic(bossMusicPhase2, duration: 2f);
+        CrossfadeMusic(bossMusicPhase2, duration: 3f);
     }
 
     public void PlayVictoryMusic()
     {
-        CrossfadeMusic(victoryMusic, duration: 0.5f);
+        activeMusicSource.clip = victoryMusic;
+        activeMusicSource.volume = musicVolume;
+        activeMusicSource.Play();
     }
 
     public void PlayDefeatMusic()
     {
-        CrossfadeMusic(defeatMusic, duration: 0.5f);
+        Debug.Log("Playing defeat music");
+        activeMusicSource.clip = defeatMusic;
+        activeMusicSource.volume = musicVolume;
+        activeMusicSource.Play();
     }
 
     public void PlaySFX(AudioClip clip)
@@ -157,6 +162,11 @@ public class AudioManager : MonoBehaviour
         source.PlayOneShot(clip, volume);
         yield return new WaitForSeconds(duration);
         source.Stop();
+    }
+
+    public void PlayClipAtPoint(AudioClip clip, Vector3 position)
+    {
+        AudioSource.PlayClipAtPoint(clip, position, sfxVolume);
     }
 
     public void PlayWithVaryingPitch(AudioClip clip)

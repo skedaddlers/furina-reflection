@@ -13,10 +13,34 @@ public class EliteAbyssMage : EnemyAI
     public float shieldDuration = 3.0f;
     public float shieldAmount = 50f;
     private bool isShieldActive = false;
+    public AudioClip shieldGainSFX;
+
+    private Health h;
+    private Coroutine shieldCoroutine;
+    private GameObject activeShieldEffect;
+
+    private System.Action onShieldDestroyedHandler;
 
     protected override void Awake()
     {
         base.Awake();
+
+        onShieldDestroyedHandler = () =>
+        {
+            isShieldActive = false;
+
+            if (activeShieldEffect != null)
+                Destroy(activeShieldEffect);
+
+            activeShieldEffect = null;
+
+            if (shieldCoroutine != null)
+                StopCoroutine(shieldCoroutine);
+        };
+
+        h = GetComponent<Health>();
+        if (h != null)
+            h.onShieldDestroyed += onShieldDestroyedHandler;
         // Additional initialization for Elite Lawachurl if needed
     }
     public override void SpecialAttack()
@@ -46,14 +70,32 @@ public class EliteAbyssMage : EnemyAI
         {
             ParticleSystem effect = Instantiate(shieldEffect, transform.position, Quaternion.identity);
             effect.transform.parent = this.transform;
-            Destroy(effect.gameObject, shieldDuration + 0.5f);
             effect.Play();
+            activeShieldEffect = effect.gameObject;
             isShieldActive = true;
-            StartCoroutine(ShieldDuration());
-            GetComponent<Health>()?.AddShield(shieldAmount);
+            shieldCoroutine = StartCoroutine(ShieldDuration());
+            Health h = GetComponent<Health>();
+            h?.AddShield(shieldAmount);
+            if (shieldGainSFX != null)            
+            {
+                AudioManager.Instance.PlayClipAtPoint(shieldGainSFX, transform.position);
+            }
+            h.onShieldDestroyed += () =>
+            {
+                isShieldActive = false;
+                if (activeShieldEffect != null)
+                    Destroy(activeShieldEffect);
+                activeShieldEffect = null;
+                if (shieldCoroutine != null)
+                {
+                    StopCoroutine(shieldCoroutine);
+                }
+            };
         }
         isPerformingSpecialAttack = false;
     }
+
+
 
     private IEnumerator ShieldDuration()
     {
@@ -68,6 +110,8 @@ public class EliteAbyssMage : EnemyAI
         // if (currentHealth < 0)
         //     currentHealth = 0;
         GetComponent<Health>()?.RemoveShield();
+        if (activeShieldEffect != null)
+            Destroy(activeShieldEffect);
         isShieldActive = false;
     }
 
@@ -85,6 +129,14 @@ public class EliteAbyssMage : EnemyAI
         {
             GetComponent<Health>()?.RemoveShield();
             isShieldActive = false;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (h != null)
+        {
+            h.onShieldDestroyed -= onShieldDestroyedHandler;
         }
     }
 }

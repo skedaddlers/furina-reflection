@@ -19,6 +19,7 @@ public class Health : MonoBehaviour
     private float currentHealth;
     public float CurrentHealth => currentHealth;
     private bool isInvulnerable = false;
+    public bool IsInvulnerable => isInvulnerable;
     private readonly System.Collections.Generic.Dictionary<int, float> _externalHealingMultipliers =
         new System.Collections.Generic.Dictionary<int, float>();
     [Header("Stagger Defaults")]
@@ -34,6 +35,7 @@ public class Health : MonoBehaviour
     // on death event
     public Action onDeath;
     public Action<float, float> onHealthChanged; // (current, max)
+    public Action onShieldDestroyed; // dipanggil saat shield habis karena serangan
 
     // Shield system - returns remaining damage after absorption
     public Func<float, float> onTakeDamage;
@@ -75,6 +77,11 @@ public class Health : MonoBehaviour
         {
             float damageAbsorbed = Mathf.Min(shieldAmount, finalDamage);
             shieldAmount -= damageAbsorbed;
+            if (shieldAmount <= 0)
+            {
+                shieldAmount = 0;
+                onShieldDestroyed?.Invoke();
+            }
             finalDamage -= damageAbsorbed;
             Debug.Log($"{gameObject.name} shield absorbed {damageAbsorbed} damage. Remaining shield: {shieldAmount}");
         }

@@ -80,6 +80,7 @@ public class BossManager : MonoBehaviour
         {
             InitializeBossUI(focalorsPhase1Instance);
             EnablePhase1Boss();
+            AudioManager.Instance?.PlayBossMusic();
             return;
         }
 

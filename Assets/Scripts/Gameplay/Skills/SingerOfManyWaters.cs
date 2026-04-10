@@ -144,7 +144,7 @@ public class SingerOfManyWaters : SkillBase
             // Play impact sound for heal feedback
             if (impactSound != null && activeSinger != null)
             {
-                AudioSource.PlayClipAtPoint(impactSound, activeSinger.transform.position);
+                AudioManager.Instance.PlayClipAtPoint(impactSound, activeSinger.transform.position);
             }
 
             yield return new WaitForSeconds(healInterval);

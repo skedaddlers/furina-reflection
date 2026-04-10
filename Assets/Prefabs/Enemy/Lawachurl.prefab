@@ -3206,12 +3206,15 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 0}
+  attackSFX: {fileID: 0}
   specialAttackCooldown: 9
   chargeDuration: 2
   chargeSpeedMultiplier: 4
   heavyAttackDamageMultiplier: 2
   chargeOvershootDistance: 1.5
   maxChargeDistance: 10
+  crashSFX: {fileID: 8300000, guid: b125f4426dbb25146ab003b2e859d091, type: 3}
   telegraphPrefab: {fileID: 9056453673954427339, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
   telegraphDuration: 2
   telegraphShape: 2
@@ -3237,6 +3240,7 @@ MonoBehaviour:
   healthBar: {fileID: 2360180028150991818}
   xpReward: 50
   goldReward: 15
+  scoreValue: 100
 --- !u!114 &4903317098627957196
 MonoBehaviour:
   m_ObjectHideFlags: 0
