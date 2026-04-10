@@ -35,12 +35,12 @@ public class SingerOfManyWaters : SkillBase
         // Play cast sound
         if (castSound != null)
         {
-            AudioManager.Instance.PlayVoiceLine(castSound);
+            AudioManager.Instance?.PlayVoiceLine(castSound);
         }
 
         if (ongoingSound != null)
         {
-            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+            AudioManager.Instance?.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
         }
         activePlayerStats = caster.GetComponent<PlayerStats>();
         if(activePlayerStats != null && isUpgraded)

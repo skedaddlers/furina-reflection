@@ -413,9 +413,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 80
+  maxHealth: 800
   shieldAmount: 0
-  maxShield: 100
+  maxShield: 800
   hitSFX: {fileID: 8300000, guid: 84dcdec185133064a86a72bffa454f2d, type: 3}
   enableStaggerOnHit: 1
   defaultMeleeStaggerDuration: 0.2
@@ -487,6 +487,7 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   xpReward: 50
   goldReward: 15
+  scoreValue: 100
 --- !u!114 &1759342616226106966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,7 +501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 0
+  defense: 4
   critRate: 0
   critMultiplier: 1.5
 --- !u!114 &-1436175480533962860
@@ -537,6 +538,7 @@ MonoBehaviour:
   verdictArcTelegraphTime: 1.2
   verdictArcEffectPrefab: {fileID: 3156866507962234106, guid: 44bb64ca62c9b4344a1625914707200c, type: 3}
   verdictArcEffectRotationOffset: {x: 0, y: -90, z: 0}
+  verdictArcSound: {fileID: 8300000, guid: 7215620d17b9eab4dbecd112543157ae, type: 3}
   useRippleCourt: 1
   rippleCount: 3
   rippleSpawnRadius: 10
@@ -544,12 +546,14 @@ MonoBehaviour:
   rippleSegments: 30
   rippleTelegraphTime: 1
   rippleEffectPrefab: {fileID: 8974203713140315807, guid: 3c339117b2de5fe459f62b63cda3cbc9, type: 3}
+  rippleCourtSound: {fileID: 8300000, guid: 80fb45802feeab246bf92f8c56fb9e1d, type: 3}
   useJudicialLine: 1
   lineWidth: 2
   lineLength: 8
   lineTelegraphTime: 1
   lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
   lineEffectOffset: {x: 0, y: 1, z: 0}
+  judicialLineSound: {fileID: 8300000, guid: e4b5273c1242ec940a632761b8c8c1ce, type: 3}
 --- !u!114 &-3616912778467009686
 MonoBehaviour:
   m_ObjectHideFlags: 0

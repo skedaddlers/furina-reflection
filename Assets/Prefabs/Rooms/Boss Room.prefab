@@ -827,23 +827,14 @@ MonoBehaviour:
   showPhase1BossHPBarAtIndex: 8
   phase1EndDialogues:
   - speakerName: Focalors
-    dialogueText: "Ugh... you still don\u2019t understand"
-    voiceLine: {fileID: 8300000, guid: 838a4264b62e66548a9eb8d1e2b2cd45, type: 3}
-  - speakerName: Furina
-    dialogueText: Understand what? Clearly, I defeated you that easily
-    voiceLine: {fileID: 8300000, guid: 76958ecb7678b3243b8a2550a486a937, type: 3}
-  - speakerName: Focalors
     dialogueText: "This dungeon isn\u2019t your prison."
     voiceLine: {fileID: 8300000, guid: 4a17d87c09146d24c92255550895e628, type: 3}
-  - speakerName: Focalors
-    dialogueText: It is your mirror.
-    voiceLine: {fileID: 8300000, guid: c2ffa3c8b6ecab4429a512d98249594d, type: 3}
   - speakerName: Furina
     dialogueText: Wait... what do you mean by that?
     voiceLine: {fileID: 8300000, guid: ce1c17e3749ea9846bec1b4084995c59, type: 3}
   - speakerName: Focalors
-    dialogueText: And you... cannot escape your reflection.
-    voiceLine: {fileID: 8300000, guid: e1abc1bea5ed5c34bb8340ac7ccf7e05, type: 3}
+    dialogueText: It is your mirror.
+    voiceLine: {fileID: 8300000, guid: c2ffa3c8b6ecab4429a512d98249594d, type: 3}
   transformationEffectDelay: 2.8
   phase2StartDialogues:
   - speakerName: Furina
@@ -962,6 +953,7 @@ MonoBehaviour:
   - speakerName: Focalors
     dialogueText: And Furina... No more rehearsals.
     voiceLine: {fileID: 8300000, guid: 58a31253d549075418c4c61e075b9c81, type: 3}
+  phase2spawnSound: {fileID: 8300000, guid: 9aa2fabbad89abf4593b155b6bd708fa, type: 3}
 --- !u!1 &7686554196724947285
 GameObject:
   m_ObjectHideFlags: 0

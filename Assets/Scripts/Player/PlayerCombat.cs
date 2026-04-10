@@ -95,7 +95,7 @@ public class PlayerCombat : MonoBehaviour
         }
         if (loadout.current.attackSound != null)
         {
-            AudioManager.Instance.PlayWithVaryingPitch(loadout.current.attackSound);
+            AudioManager.Instance?.PlayWithVaryingPitch(loadout.current.attackSound);
         }
     }
     public void EndAttack()

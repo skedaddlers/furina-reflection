@@ -30,6 +30,10 @@ public class FocalorsPhase2AI : EnemyAI
     [SerializeField] private float castWindupTime = 0.5f;
     [SerializeField] private float waitAfterCastTime = 0.5f;
 
+    [Header("SFX & VFX")]
+    public AudioClip cloneSpawnSound;
+    public GameObject cloneSpawnEffectPrefab;
+
     private float lastSequenceTime;
     private Coroutine currentActionRoutine;
     private bool isCasting = false;
@@ -153,6 +157,15 @@ public class FocalorsPhase2AI : EnemyAI
         // 2. Summon Clone
         Vector3 spawnPos = cloneSpawnPoint != null ? cloneSpawnPoint.position : startPos;
         GameObject clone = Instantiate(clonePrefab, spawnPos, transform.rotation);
+        if (cloneSpawnSound != null)
+        {
+            AudioManager.Instance?.PlaySFXNoOverlap(cloneSpawnSound);
+        }
+        if (cloneSpawnEffectPrefab != null)
+        {
+            GameObject effect = Instantiate(cloneSpawnEffectPrefab, spawnPos, transform.rotation);
+            Destroy(effect, 2f);
+        }
         ApplyConfiguredEnemyLevel(clone);
         cloneHealth = clone.GetComponent<Health>();
         

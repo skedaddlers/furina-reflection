@@ -83,7 +83,7 @@ public class Health : MonoBehaviour
         if (finalDamage > 0)
         {
             currentHealth -= finalDamage;
-            AudioManager.Instance.PlaySFXNoOverlap(hitSFX, randomizePitch: true);
+            AudioManager.Instance?.PlaySFXNoOverlap(hitSFX, randomizePitch: true);
             // Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
             Enemy enemy = GetComponent<Enemy>();
             if (enemy != null && enemy.healthBar != null)
@@ -260,7 +260,7 @@ public class Health : MonoBehaviour
             if(UnityEngine.Random.value < hitVoiceLineChance && hitVoiceLines != null && hitVoiceLines.Length > 0)
             {
                 AudioClip clip = hitVoiceLines[UnityEngine.Random.Range(0, hitVoiceLines.Length)];
-                AudioManager.Instance.PlayVoiceLine(clip);
+                AudioManager.Instance?.PlayVoiceLine(clip);
             }
         }
     }

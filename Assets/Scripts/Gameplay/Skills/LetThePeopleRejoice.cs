@@ -46,7 +46,7 @@ public class LetThePeopleRejoice : SkillBase
         // Play cast sound
         if (castSound != null)
         {
-            AudioManager.Instance.PlayVoiceLine(castSound);
+            AudioManager.Instance?.PlayVoiceLine(castSound);
         }
 
         // Spawn effect prefab
@@ -58,7 +58,7 @@ public class LetThePeopleRejoice : SkillBase
 
         if (ongoingSound != null)
         {
-            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+            AudioManager.Instance?.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
         }
 
         // Store original attack and apply bonus

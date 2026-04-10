@@ -38,7 +38,7 @@ public class AuraOfTheFormerArchon : SkillBase
         // Play cast sound if available
         if (castSound != null)
         {
-            AudioManager.Instance.PlayVoiceLine(castSound);
+            AudioManager.Instance?.PlayVoiceLine(castSound);
         }
 
         // Spawn effect prefab if available
@@ -50,7 +50,7 @@ public class AuraOfTheFormerArchon : SkillBase
 
         if (ongoingSound != null)
         {
-            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+            AudioManager.Instance?.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
         }
 
         // Start the aura coroutine on the caster

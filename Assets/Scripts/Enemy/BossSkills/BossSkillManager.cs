@@ -37,7 +37,7 @@ public abstract class BossSkill : MonoBehaviour
     {
         if (castSound != null && boss != null)
         {
-            AudioManager.Instance.PlaySFXWithVolume(castSound, castSoundVolume, soundDuration);
+            AudioManager.Instance?.PlaySFXWithVolume(castSound, castSoundVolume, soundDuration);
         }
     }
 

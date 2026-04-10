@@ -1,15 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SettingsUI : MonoBehaviour
+public class MainMenuSettings : MonoBehaviour
 {
     public GameObject settingsPanel;
     public Slider musicVolumeSlider;
     public Slider sfxVolumeSlider;
     public Slider voicelineVolumeSlider;
-    public Button restartButton;
     public Button closeSettingsButton;
-    public Button mainMenuButton;
     public bool isSettingsOpen = false;
 
     void Start()
@@ -25,9 +23,7 @@ public class SettingsUI : MonoBehaviour
         sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
         voicelineVolumeSlider.onValueChanged.AddListener(OnVoiceLineVolumeChanged);
 
-        restartButton.onClick.AddListener(() => GameManager.Instance.Restart());
         closeSettingsButton.onClick.AddListener(CloseSettings);
-        mainMenuButton.onClick.AddListener(() => SceneLoader.Instance.LoadScene(GameManager.Instance.mainMenuSceneName));
     }
 
     void Update()
@@ -39,10 +35,6 @@ public class SettingsUI : MonoBehaviour
             if (settingsPanel.activeSelf)
             {
                 CloseSettings();
-            }
-            else if (UIManager.Instance == null || !UIManager.Instance.HasActiveMenu(this))
-            {
-                OpenSettings();
             }
         }
     }
@@ -62,25 +54,9 @@ public class SettingsUI : MonoBehaviour
         AudioManager.Instance?.SetVoiceLineVolume(value);
     }
 
-    void OpenSettings()
-    {
-        if (UIManager.Instance != null && !UIManager.Instance.TryOpenSettings(this))
-        {
-            return;
-        }
-
-        isSettingsOpen = true;
-        settingsPanel.SetActive(true);
-        GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
-    }
-
     void CloseSettings()
     {
         isSettingsOpen = false;
         settingsPanel.SetActive(false);
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.CloseSettings(this);
-        }
     }
 }

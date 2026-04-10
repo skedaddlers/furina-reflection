@@ -24,6 +24,7 @@ public class FocalorsPhase1AI : EnemyAI
     [SerializeField] private float verdictArcTelegraphTime = 1.2f;
     [SerializeField] private GameObject verdictArcEffectPrefab;
     [SerializeField] private Vector3 verdictArcEffectRotationOffset;
+    public AudioClip verdictArcSound;
 
     [Header("Ripple Court")]
     public bool useRippleCourt = true;
@@ -33,6 +34,7 @@ public class FocalorsPhase1AI : EnemyAI
     [SerializeField] private int rippleSegments = 30;
     [SerializeField] private float rippleTelegraphTime = 1f;
     [SerializeField] private GameObject rippleEffectPrefab;
+    public AudioClip rippleCourtSound;
 
     [Header("Judicial Line")]
     public bool useJudicialLine = true;
@@ -41,6 +43,7 @@ public class FocalorsPhase1AI : EnemyAI
     [SerializeField] private float lineTelegraphTime = 1f;
     [SerializeField] private GameObject lineEffectPrefab;
     [SerializeField] private Vector3 lineEffectOffset;
+    public AudioClip judicialLineSound;
 
     private bool canAct = true;
     protected override void Update()
@@ -149,7 +152,10 @@ public class FocalorsPhase1AI : EnemyAI
         yield return new WaitForSeconds(verdictArcTelegraphTime);
         GameObject effect = Instantiate(verdictArcEffectPrefab, transform.position, transform.rotation * Quaternion.Euler(verdictArcEffectRotationOffset));
         Destroy(effect, 2f);
-
+        if (verdictArcSound != null)
+        {
+            AudioManager.Instance?.PlaySFXNoOverlap(verdictArcSound);
+        }
 
         if (Vector3.Distance(player.position, transform.position) <= verdictArcRange)
         {
@@ -179,7 +185,10 @@ public class FocalorsPhase1AI : EnemyAI
         }
 
         yield return new WaitForSeconds(rippleTelegraphTime);
-
+        if (rippleCourtSound != null)
+        {
+            AudioManager.Instance?.PlaySFXNoOverlap(rippleCourtSound);
+        }
         foreach (var t in circles)
         {
             GameObject effect = Instantiate(rippleEffectPrefab, t.transform.position, Quaternion.identity);
@@ -206,7 +215,10 @@ public class FocalorsPhase1AI : EnemyAI
         yield return new WaitForSeconds(lineTelegraphTime);
         GameObject effect = Instantiate(lineEffectPrefab, lineOrigin + lineEffectOffset, lineRotation);
         Destroy(effect, 2f);
-
+        if (judicialLineSound != null)
+        {
+            AudioManager.Instance?.PlaySFXNoOverlap(judicialLineSound);
+        }
 
         Vector3 toPlayer = player.position - lineOrigin;
         toPlayer.y = 0f;

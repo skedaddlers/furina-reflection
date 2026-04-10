@@ -28,7 +28,7 @@ public class TearsOfTheSinner : SkillBase
         // Play cast sound
         if (castSound != null)
         {
-            AudioManager.Instance.PlayVoiceLine(castSound);
+            AudioManager.Instance?.PlayVoiceLine(castSound);
         }
 
         // Spawn effect prefab
@@ -40,7 +40,7 @@ public class TearsOfTheSinner : SkillBase
 
         if (ongoingSound != null)
         {
-            AudioManager.Instance.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
+            AudioManager.Instance?.PlaySFXNoOverlap(ongoingSound, randomizePitch: false, duration: duration);
         }
 
         // Start the rain damage coroutine

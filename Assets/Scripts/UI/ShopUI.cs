@@ -39,6 +39,9 @@ public class ShopUI : MonoBehaviour
     public TextMeshProUGUI detailGoodPropertyText;
     public TextMeshProUGUI detailBadPropertyText;
 
+    [Header("SFX")]
+    public AudioClip buySound;
+
     private void Start()
     {
         closeButton.onClick.AddListener(CloseShop);
@@ -144,6 +147,10 @@ public class ShopUI : MonoBehaviour
         UpdateGoldDisplay();
         SetItemState(weaponImages[index], weaponButtons[index], true);
         detailPanel.SetActive(false);
+        if (buySound != null)
+        {
+            AudioManager.Instance?.PlaySFXNoOverlap(buySound);
+        }
     }
 
     #endregion
@@ -212,6 +219,10 @@ public class ShopUI : MonoBehaviour
         UpdateGoldDisplay();
         SetItemState(skillImages[index], skillButtons[index], true);
         detailPanel.SetActive(false);
+        if (buySound != null)
+        {
+            AudioManager.Instance?.PlaySFXNoOverlap(buySound);
+        }
     }
 
     #endregion

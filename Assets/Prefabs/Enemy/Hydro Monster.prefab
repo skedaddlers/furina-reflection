@@ -862,9 +862,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHealth: 80
+  maxHealth: 1500
   shieldAmount: 0
-  maxShield: 100
+  maxShield: 1500
   hitSFX: {fileID: 8300000, guid: 84dcdec185133064a86a72bffa454f2d, type: 3}
   enableStaggerOnHit: 1
   defaultMeleeStaggerDuration: 0.2
@@ -936,6 +936,7 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   xpReward: 15
   goldReward: 10
+  scoreValue: 100
 --- !u!114 &-3851192223676009071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1000,6 +1001,8 @@ MonoBehaviour:
   sequenceCooldown: 4
   castWindupTime: 0.5
   waitAfterCastTime: 0.5
+  cloneSpawnSound: {fileID: 8300000, guid: e4b5273c1242ec940a632761b8c8c1ce, type: 3}
+  cloneSpawnEffectPrefab: {fileID: 4809171458859421548, guid: f017938ec90b46442abb783943ec8205, type: 3}
 --- !u!114 &8771158007694925196
 MonoBehaviour:
   m_ObjectHideFlags: 0

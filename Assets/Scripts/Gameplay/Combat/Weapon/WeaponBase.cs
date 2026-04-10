@@ -49,7 +49,7 @@ public abstract class WeaponBase : ScriptableObject
         if (Random.value < voiceLineChance && voiceLines != null && voiceLines.Length > 0)
         {
             AudioClip clip = voiceLines[Random.Range(0, voiceLines.Length)];
-            AudioManager.Instance.PlayVoiceLine(clip);
+            AudioManager.Instance?.PlayVoiceLine(clip);
         }
     }
 }

@@ -421,7 +421,7 @@ public class PlayerController : MonoBehaviour, IStaggerable
             StopCoroutine(dodgeRoutine);
 
         dodgeRoutine = StartCoroutine(Dodge());
-        AudioManager.Instance.PlayWithVaryingPitch(dodgeSound);
+        AudioManager.Instance?.PlayWithVaryingPitch(dodgeSound);
     }
 
     IEnumerator Dodge()

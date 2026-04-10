@@ -4,6 +4,8 @@ public class Inventory : MonoBehaviour
 {
     public int maxCapacity = 20;
     public float itemUsageCooldown = 3f;
+
+    public AudioClip useSound;
     private float lastItemUsageTime = -Mathf.Infinity;
     [SerializeField]
     private List<Item> items = new List<Item>();
@@ -56,6 +58,10 @@ public class Inventory : MonoBehaviour
                     Destroy(item.gameObject);
                     items.Remove(item);
                     lastItemUsageTime = Time.time;
+                    if (useSound != null)
+                    {
+                        AudioManager.Instance?.PlaySFXNoOverlap(useSound);
+                    }
                 }
             }
             else

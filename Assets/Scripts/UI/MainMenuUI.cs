@@ -11,6 +11,7 @@ public class MainMenuUI : MonoBehaviour
         startButton.onClick.AddListener(LoadGame);
         if (AudioManager.Instance != null)
         {
+            Debug.Log("Playing main menu music.");
             AudioManager.Instance.PlayMainMenuMusic();
         }
     }

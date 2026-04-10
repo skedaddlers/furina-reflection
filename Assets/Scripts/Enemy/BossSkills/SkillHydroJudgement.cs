@@ -36,7 +36,7 @@ public class SkillHydroJudgement : BossSkill
 
         boss.Animator.SetTrigger(animationTrigger);
         yield return new WaitForSeconds(telegraphTime);
-        AudioManager.Instance.PlaySFXWithVolume(jumpSound, castSoundVolume);
+        AudioManager.Instance?.PlaySFXWithVolume(jumpSound, castSoundVolume);
         if (telegraph != null)
             Destroy(telegraph.gameObject);
 

@@ -36,6 +36,9 @@ public class BossManager : MonoBehaviour
 
     public BossPhase CurrentBossPhase { get; private set; } = BossPhase.Phase1;
 
+    [Header("SFX")]
+    public AudioClip phase2spawnSound;
+
     private FocalorsPhase1AI focalorsPhase1Instance;
     private FocalorsPhase2AI focalorsPhase2Instance;
     private Health phase1Health;
@@ -80,7 +83,7 @@ public class BossManager : MonoBehaviour
             return;
         }
 
-        AudioManager.Instance.PlayBossMusic();
+        AudioManager.Instance?.PlayBossMusic();
 
         StartPhase1Dialogue();
     }
@@ -215,7 +218,7 @@ public class BossManager : MonoBehaviour
     {
         if (currentBoss != null)
             return;
-
+        
         currentBoss = Instantiate(focalorsPhase2Prefab, pos, Quaternion.identity);
         currentBoss.transform.SetParent(transform);
         ApplyBossRoomLevel(currentBoss);
@@ -228,6 +231,11 @@ public class BossManager : MonoBehaviour
         focalorsPhase2Instance.onPhase2Death += TransformAfterDefeat;
         phase2Health = currentBoss.GetComponent<Health>();
 
+        if (phase2spawnSound != null)
+        {
+            AudioManager.Instance?.PlaySFXNoOverlap(phase2spawnSound);
+        }
+
         if (phase2Health != null)
         {
             phase2Health.onDeath -= OnBossDefeated;
@@ -239,11 +247,9 @@ public class BossManager : MonoBehaviour
         if (!withDialogue)
         {
             InitializeBossUI(focalorsPhase2Instance);
-            AudioManager.Instance.PlayBossMusicPhase2();
+            AudioManager.Instance?.PlayBossMusicPhase2();
             return;
         }
-
-        AudioManager.Instance.PlayBossMusicPhase2();
 
         StartPhase2Dialogue();
     }
@@ -322,8 +328,11 @@ public class BossManager : MonoBehaviour
                 focalorsPhase1Instance.GetComponent<BossHealthBar>());
 
         else if (CurrentBossPhase == BossPhase.Phase2 && focalorsPhase2Instance != null)
+        {
+            AudioManager.Instance?.PlayBossMusicPhase2();
             UIManager.Instance.bossHPBarUI.InitForBossFight(
                 focalorsPhase2Instance.GetComponent<BossHealthBar>());
+        }
     }
 
     void EnableBoss()
@@ -419,6 +428,7 @@ public class BossManager : MonoBehaviour
 
     private void Win()
     {
+        AudioManager.Instance?.PlayVictoryMusic();
         GameManager.Instance.OnBossRoomCleared();
     }
 

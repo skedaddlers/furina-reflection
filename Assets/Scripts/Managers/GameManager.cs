@@ -163,7 +163,6 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.ShowVictoryScreen();
         }
-        AudioManager.Instance.PlayVictoryMusic();
         ChangeState(GameState.GameOver);
     }
 
@@ -174,7 +173,7 @@ public class GameManager : MonoBehaviour
         {
             UIManager.Instance.ShowDefeatScreen();
         }
-        AudioManager.Instance.PlayDefeatMusic();
+        AudioManager.Instance?.PlayDefeatMusic();
         ChangeState(GameState.GameOver);
     }
 

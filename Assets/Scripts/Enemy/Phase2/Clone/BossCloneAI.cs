@@ -662,7 +662,7 @@ public class BossCloneAI : EnemyAI
     private void PlaySkillCastSound(AudioClip clip)
     {
         if (clip != null)
-            AudioManager.Instance.PlaySFXWithVolume(clip, castSoundVolume);
+            AudioManager.Instance?.PlaySFXWithVolume(clip, castSoundVolume);
     }
 
 

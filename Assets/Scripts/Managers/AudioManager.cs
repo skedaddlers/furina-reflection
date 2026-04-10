@@ -7,6 +7,9 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance;
 
     public AudioSource musicSource;
+    public AudioSource musicSource2; // for crossfading if needed
+    private AudioSource activeMusicSource;
+    private AudioSource inactiveMusicSource;
     public float musicVolume = 0.5f;
     public float sfxVolume = 1.0f;
     public float voiceLineVolume = 1.0f;
@@ -47,6 +50,8 @@ public class AudioManager : MonoBehaviour
             newSource.playOnAwake = false;
             additionalSFXSources.Add(newSource);
         }
+        activeMusicSource = musicSource;
+        inactiveMusicSource = musicSource2;
     }
 
     void OnDestroy()
@@ -67,44 +72,36 @@ public class AudioManager : MonoBehaviour
 
     public void PlayGameplayMusic()
     {
-        musicSource.clip = gameplayMusic;
-        musicSource.volume = musicVolume;
-        musicSource.Play();
+        activeMusicSource.clip = gameplayMusic;
+        activeMusicSource.volume = musicVolume;
+        activeMusicSource.Play();
     }
 
     public void PlayMainMenuMusic()
     {
-        musicSource.clip = mainMenuMusic;
-        musicSource.volume = musicVolume;
-        musicSource.Play();
+        activeMusicSource.clip = mainMenuMusic;
+        activeMusicSource.volume = musicVolume;
+        activeMusicSource.Play();
     }
 
     public void PlayBossMusic()
     {
-        musicSource.clip = bossMusic;
-        musicSource.volume = musicVolume;
-        musicSource.Play();
+        CrossfadeMusic(bossMusic, duration: 0.5f);
     }
 
     public void PlayBossMusicPhase2()
     {
-        musicSource.clip = bossMusicPhase2;
-        musicSource.volume = musicVolume;
-        musicSource.Play();
+        CrossfadeMusic(bossMusicPhase2, duration: 2f);
     }
 
     public void PlayVictoryMusic()
     {
-        musicSource.clip = victoryMusic;
-        musicSource.volume = musicVolume;
-        musicSource.Play();
+        CrossfadeMusic(victoryMusic, duration: 0.5f);
     }
 
     public void PlayDefeatMusic()
     {
-        musicSource.clip = defeatMusic;
-        musicSource.volume = musicVolume;
-        musicSource.Play();
+        CrossfadeMusic(defeatMusic, duration: 0.5f);
     }
 
     public void PlaySFX(AudioClip clip)
@@ -186,6 +183,39 @@ public class AudioManager : MonoBehaviour
     {
         dialogueSource.volume = voiceLineVolume;
         dialogueSource.PlayOneShot(clip);
+    }
+
+    public void CrossfadeMusic(AudioClip newClip, float duration = 2f)
+    {
+        StartCoroutine(Crossfade(newClip, duration));
+    }
+
+    private IEnumerator Crossfade(AudioClip newClip, float duration)
+    {
+        inactiveMusicSource.clip = newClip;
+        inactiveMusicSource.volume = 0;
+        inactiveMusicSource.Play();
+
+        float time = 0;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+
+            float t = time / duration;
+
+            activeMusicSource.volume = Mathf.Lerp(musicVolume, 0, t);
+            inactiveMusicSource.volume = Mathf.Lerp(0, musicVolume, t);
+
+            yield return null;
+        }
+
+        activeMusicSource.Stop();
+
+        // Swap sources
+        var temp = activeMusicSource;
+        activeMusicSource = inactiveMusicSource;
+        inactiveMusicSource = temp;
     }
 
     public void SetMusicVolume(float volume)

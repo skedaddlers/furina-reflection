@@ -41,7 +41,7 @@ public class SalonSolitaire : SkillBase
         // Play cast sound
         if (castSound != null)
         {
-            AudioManager.Instance.PlayVoiceLine(castSound);
+            AudioManager.Instance?.PlayVoiceLine(castSound);
         }
 
         if(caster.CompareTag(playerTag))

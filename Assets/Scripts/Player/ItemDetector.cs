@@ -5,6 +5,7 @@ public class ItemDetector : MonoBehaviour
 {
     public Item nearestItem;
     public WeaponDrop nearestWeaponDrop;
+    public AudioClip pickupSound;
 
     void Update()
     {
@@ -18,6 +19,10 @@ public class ItemDetector : MonoBehaviour
             {
                 nearestWeaponDrop = null;
                 RefreshInteractionUI();
+                if (pickupSound != null)
+                {
+                    AudioManager.Instance?.PlaySFXNoOverlap(pickupSound);
+                }
             }
             return;
         }
@@ -32,6 +37,10 @@ public class ItemDetector : MonoBehaviour
                 {
                     nearestItem.SetVisibleInWorld(false);
                     ClearNearestItem();
+                    if (pickupSound != null)
+                    {
+                        AudioManager.Instance?.PlaySFXNoOverlap(pickupSound);
+                    }
                 }
             }
         }
