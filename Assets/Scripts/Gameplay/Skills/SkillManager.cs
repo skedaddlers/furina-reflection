@@ -197,14 +197,8 @@ public class SkillManager : MonoBehaviour
             GetComponent<Animator>()?.SetTrigger(skill.animationTrigger);
         }
         
-        // Play cast sound
-        if (skill.castSound != null)
-        {
-            AudioSource.PlayClipAtPoint(skill.castSound, transform.position);
-        }
-        
-
-        // Call custom activation
+        // Individual skills own their cast audio inside OnSkillActivate.
+        // Keeping it there avoids double-playing voicelines from the generic path.
         skill.OnSkillActivate(gameObject);
         
         // If skill has duration, start coroutine to end it

@@ -68,6 +68,7 @@ public class EventRoomManager : MonoBehaviour
     private SkillManager playerSkillManager;
     private Inventory playerInventory;
     private readonly Dictionary<int, SkillSlot> upgradeTargetsByChoiceIndex = new Dictionary<int, SkillSlot>();
+    private System.Action activeBattleClearHandler;
 
     private void Awake()
     {
@@ -349,7 +350,7 @@ public class EventRoomManager : MonoBehaviour
         if (targetSlot == null || targetSlot.skill == null)
         {
             Debug.Log("[Event-UpgradeItem] Tidak ada skill milik player yang bisa di-upgrade.");
-            UIManager.Instance.ShowNotification("No upgradeable owned skill.", 2.5f);
+            UIManager.Instance.ShowNotification("Nothing happens...", 2.5f);
             return;
         }
 
@@ -387,25 +388,34 @@ public class EventRoomManager : MonoBehaviour
         // pastikan room di-mark belum clear supaya BeginCombat jalan normal
         parentRoom.isCleared = false;
 
-        // override enemyCount khusus battle ini
-        int enemyCount = GlobalDifficultyState.Instance?.GetEnemyCountForRoom(parentRoom) ?? option.battleEnemyCount;
-        parentRoom.enemyCount = Mathf.Max(enemyCount, option.battleEnemyCount);
+        var diff = GlobalDifficultyState.Instance;
+        int scaledEnemyCount = diff?.GetEnemyCountForRoom(parentRoom, null, int.MaxValue) ?? option.battleEnemyCount;
+        int eventEnemyMinimum = Mathf.Max(1, option.battleEnemyCount);
+        int eventEnemyCap = Mathf.Max(parentRoom.maxEnemies, eventEnemyMinimum, scaledEnemyCount);
+
+        parentRoom.ConfigureCombatEnemyBudget(eventEnemyMinimum, eventEnemyCap);
+
+        if (activeBattleClearHandler != null)
+            parentRoom.OnRoomClearedLocal -= activeBattleClearHandler;
 
         // mulai combat di room ini
+        activeBattleClearHandler = CreateEventBattleClearHandler(option);
+        parentRoom.OnRoomClearedLocal += activeBattleClearHandler;
         parentRoom.BeginCombat();
-        parentRoom.OnRoomClearedLocal += OnEventBattleCleared(option);
     }
 
-    private System.Action OnEventBattleCleared(GameEventOption option) => () =>
+    private System.Action CreateEventBattleClearHandler(GameEventOption option) => () =>
     {
         // skill upgrade / give health / gold / xp sebagai reward battle
         ResolveFlatReward(option);
 
         // Unsubscribe supaya event ini gak ke-trigger lagi kalau somehow room ini dipakai lagi
-        if (parentRoom != null)
+        if (parentRoom != null && activeBattleClearHandler != null)
         {
-            parentRoom.OnRoomClearedLocal -= OnEventBattleCleared(option);
+            parentRoom.OnRoomClearedLocal -= activeBattleClearHandler;
         }
+
+        activeBattleClearHandler = null;
     };
 
 
@@ -439,7 +449,7 @@ public class EventRoomManager : MonoBehaviour
                 }
                 else
                 {
-                    string noTargetText = "No upgradeable owned skill available.";
+                    string noTargetText = "Nothing happens...";
                     uiOption.description = string.IsNullOrEmpty(uiOption.description)
                         ? noTargetText
                         : $"{uiOption.description}\n{noTargetText}";

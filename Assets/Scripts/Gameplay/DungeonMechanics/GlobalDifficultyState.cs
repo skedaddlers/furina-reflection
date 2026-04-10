@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Security;
 
 public class GlobalDifficultyState : MonoBehaviour
 {
@@ -17,11 +18,11 @@ public class GlobalDifficultyState : MonoBehaviour
     public float eliteRoomMultiplier  = 1.5f;
     public float bossRoomMultiplier   = 2.0f;
 
-    [Header("Global DDA Multiplier")]
+    [Header("Enemy Count Multiplier")]
     [Tooltip("Diubah oleh sistem DDA. 1 = default, >1 lebih susah, <1 lebih mudah")]
-    public float globalDifficultyMultiplier = 1.0f;
-    public float minDifficultyMultiplier = 0.5f;
-    public float maxDifficultyMultiplier = 2.0f;
+    public float enemyCountMultiplier = 1f;
+    public float minEnemyCountMultiplier = 0.5f;
+    public float maxEnemyCountMultiplier = 2f;
 
     [Header("Progression Scaling (based on cleared rooms)")]
     public AnimationCurve clearedRoomToMultiplier = AnimationCurve.Linear(0f, 0f, 1f, 1f);
@@ -117,27 +118,56 @@ public class GlobalDifficultyState : MonoBehaviour
 
     public int GetEnemyCountForRoom(Room room)
     {
+        return GetEnemyCountForRoom(room, null, null);
+    }
+
+    public int GetEnemyCountForRoom(Room room, int? minimumCountOverride, int? maxCountOverride)
+    {
         if (room == null) return 0;
 
         // 1. faktor jarak dari start (distanceFromStart boleh 0,1,2,...)
-        float distanceFactor = 1f + enemyCountProgressionPerDistance * room.distanceFromStart;
+        float distanceFactor = 1f + enemyCountProgressionPerDistance * Mathf.Max(0, room.distanceFromStart);
+        float roomTypeFactor = GetEnemyCountRoomTypeMultiplier(room.roomType);
 
         // 2. faktor global dari DDA
-        float dda = Mathf.Clamp(globalDifficultyMultiplier, 
-                                minDifficultyMultiplier, 
-                                maxDifficultyMultiplier);
+        float dda = Mathf.Clamp(enemyCountMultiplier,
+                                minEnemyCountMultiplier,
+                                maxEnemyCountMultiplier);
 
         // 3. faktor progression berdasarkan jumlah room yang sudah diselesaikan
         float progression = GetProgressionMultiplier();
 
         // 4. hitung
-        float raw = baseEnemyCount * distanceFactor * dda * progression;
-        Debug.Log($"[GlobalDifficultyState] Calculated enemy count for Room {room.roomIndex} (Distance: {room.distanceFromStart}, Progression: {progression:P1}, Cleared: {_clearedRooms}/{_totalRooms}) => Raw: {raw}");
+        float raw = baseEnemyCount * roomTypeFactor * distanceFactor * dda * progression;
+        int minimumCount = Mathf.Max(1, minimumCountOverride ?? 1);
+        int maxCount = Mathf.Max(minimumCount, maxCountOverride ?? room.maxEnemies);
+
+        Debug.Log($"[GlobalDifficultyState] Calculated enemy count for Room {room.roomIndex} (Type: {room.roomType}, Distance: {room.distanceFromStart}, Progression: {progression:P1}, Cleared: {_clearedRooms}/{_totalRooms}) => Raw: {raw}");
         int result = Mathf.RoundToInt(raw);
-        result = Mathf.Clamp(result, 1, room.maxEnemies);
+        result = Mathf.Max(result, minimumCount);
+        result = Mathf.Clamp(result, 1, maxCount);
 
         currentEnemyCount = result; // Untuk debug
         return result;
+    }
+
+    public int GetItemDropCountForRoom(Room room)
+    {
+        if (room == null)
+            return 0;
+
+        int minItems = Mathf.Max(0, room.minItemSpawn);
+        int maxItems = Mathf.Max(minItems, room.maxItemSpawn);
+        int baseItemCount = Random.Range(minItems, maxItems + 1);
+
+        float scaledItemCount = baseItemCount * Mathf.Clamp(itemDropRateMultiplier, rewardMultiplierMin, rewardMultiplierMax);
+        int guaranteedItems = Mathf.FloorToInt(scaledItemCount);
+        float bonusChance = scaledItemCount - guaranteedItems;
+
+        if (Random.value < bonusChance)
+            guaranteedItems++;
+
+        return Mathf.Max(0, guaranteedItems);
     }
 
     public int GetEnemyLevelForRoom(Room room)
@@ -219,6 +249,11 @@ public class GlobalDifficultyState : MonoBehaviour
         }
     }
 
+    public void SetEnemyCountMultiplier(float value)
+    {
+        enemyCountMultiplier = Mathf.Clamp(value, minEnemyCountMultiplier, maxEnemyCountMultiplier);
+    }
+
     public void SetItemDropRate(float value)
     {
         itemDropRateMultiplier = Mathf.Clamp(value, rewardMultiplierMin, rewardMultiplierMax);
@@ -249,6 +284,23 @@ public class GlobalDifficultyState : MonoBehaviour
             return 1f;
 
         return Mathf.Lerp(1f, Mathf.Max(1f, maxMultiplier), GetProgressionT());
+    }
+
+    private float GetEnemyCountRoomTypeMultiplier(RoomType roomType)
+    {
+        switch (roomType)
+        {
+            case RoomType.Elite:
+                return eliteRoomMultiplier;
+            case RoomType.Boss:
+                return bossRoomMultiplier;
+            case RoomType.Event:
+            case RoomType.Normal:
+            case RoomType.Start:
+            case RoomType.Shop:
+            default:
+                return normalRoomMultiplier;
+        }
     }
 }
 

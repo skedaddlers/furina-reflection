@@ -6,15 +6,13 @@ using DDAMAPEKitFramework;
 /// </summary>
 public class RewardSystemEffector : Effector
 {
-    // Base values for reward system
-    private float baseItemDropRate = 0.2f;
     private float minRewardMultiplier = 0.3f;
     private float maxRewardMultiplier = 3f;
 
     private float smoothingFactor = 0.5f; // For gradual changes
     private float trendBoostFactor = 0.1f; // To amplify consistent trends
 
-    private float currentItemDropRate;
+    private float currentItemDropRate = 1f;
 
     private string lastSymptom;
     private int sameSymptomCount;
@@ -23,10 +21,10 @@ public class RewardSystemEffector : Effector
     public override void Apply(string variable, float value)
     {
         var diff = GlobalDifficultyState.Instance;
-        float newValue = GetNewMultiplier(variable, value);
         switch (variable)
         {
             case "itemDropRate":
+                float newValue = GetNewMultiplier(variable, value);
                 diff?.SetItemDropRate(newValue);
                 break;
         }

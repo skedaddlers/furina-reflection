@@ -15,7 +15,7 @@ public class EnemySystemEffector : Effector
     private float smoothingFactor = 0.5f;
     private float trendBoostFactor = 0.1f;
 
-    private Dictionary<string, float> currentMultipliers;
+    private Dictionary<string, float> currentMultipliers = new Dictionary<string, float>();
 
     private string lastSymptom;
     private int sameSymptomCount;
@@ -25,34 +25,44 @@ public class EnemySystemEffector : Effector
     {
         // Find all spawn triggers in the scene
         spawnTriggers = FindObjectsOfType<SpawnTrigger>();
-        currentMultipliers = new Dictionary<string, float>();
     }
 
     public override void Apply(string variable, float value)
     {
         var diff = GlobalDifficultyState.Instance;
-        float newValue = GetNewMultiplier(variable, value);
         switch (variable)
         {
             case "enemyDamageMultiplier":
-                diff?.SetEnemyMultiplier("damage", newValue);
+                float enemyDamageValue = GetNewMultiplier(variable, value);
+                diff?.SetEnemyMultiplier("damage", enemyDamageValue);
                 UpdateActiveEnemies();
                 break;
             case "enemyHealthMultiplier":
-                diff?.SetEnemyMultiplier("health", newValue);
+                float enemyHealthValue = GetNewMultiplier(variable, value);
+                diff?.SetEnemyMultiplier("health", enemyHealthValue);
                 UpdateActiveEnemies();
                 break;
             case "enemySpeedMultiplier":
-                diff?.SetEnemyMultiplier("speed", newValue);
+                float enemySpeedValue = GetNewMultiplier(variable, value);
+                diff?.SetEnemyMultiplier("speed", enemySpeedValue);
                 UpdateActiveEnemies();
                 break;
             case "enemyAttackSpeedMultiplier":
-                diff?.SetEnemyMultiplier("attackSpeed", newValue);
+                float enemyAttackSpeedValue = GetNewMultiplier(variable, value);
+                diff?.SetEnemyMultiplier("attackSpeed", enemyAttackSpeedValue);
                 UpdateActiveEnemies();
                 break;
             case "enemyAggroMultiplier":
-                diff?.SetEnemyMultiplier("aggro", newValue);
+                float enemyAggroValue = GetNewMultiplier(variable, value);
+                diff?.SetEnemyMultiplier("aggro", enemyAggroValue);
                 UpdateActiveEnemies();
+                break;
+            case "enemyCountMultiplier":
+                float enemyCountValue = GetNewMultiplier(variable, value);
+                diff?.SetEnemyCountMultiplier(enemyCountValue);
+                break;
+             default:
+                Debug.LogWarning($"[EnemySystemEffector] Unknown variable: {variable}");
                 break;
         }
     }

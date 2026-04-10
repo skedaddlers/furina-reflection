@@ -13,6 +13,6 @@ public class ButtonSFX : MonoBehaviour
 
     void PlaySound()
     {
-        AudioManager.Instance.PlaySFX(clickSFX);
+        AudioManager.Instance?.PlaySFX(clickSFX);
     }
 }

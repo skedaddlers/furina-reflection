@@ -1401,13 +1401,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseEnemyCount: 4
-  enemyCountProgressionPerDistance: 0.08
+  enemyCountProgressionPerDistance: 0.06
   normalRoomMultiplier: 1
   eliteRoomMultiplier: 1.5
   bossRoomMultiplier: 2
-  globalDifficultyMultiplier: 1
-  minDifficultyMultiplier: 0.5
-  maxDifficultyMultiplier: 2
+  enemyCountMultiplier: 1
+  minEnemyCountMultiplier: 0.5
+  maxEnemyCountMultiplier: 2
   clearedRoomToMultiplier:
     serializedVersion: 2
     m_Curve:
@@ -23902,6 +23902,10 @@ MonoBehaviour:
       delta: 0.8
     - variableName: enemyAggroMultiplier
       delta: 0.85
+    - variableName: enemyCountMultiplier
+      delta: 0.9
+    - variableName: itemDropRate
+      delta: 1.3
   - id: ML_LOW
     symptomDescription: low
     profileId: 0
@@ -23912,6 +23916,10 @@ MonoBehaviour:
       delta: 0.9
     - variableName: enemyAggroMultiplier
       delta: 0.95
+    - variableName: enemyCountMultiplier
+      delta: 0.93
+    - variableName: itemDropRate
+      delta: 0.93
   - id: ML_SLIGHTLY_LOW
     symptomDescription: slightly.low
     profileId: 0
@@ -23922,6 +23930,10 @@ MonoBehaviour:
       delta: 0.95
     - variableName: enemyAggroMultiplier
       delta: 1
+    - variableName: enemyCountMultiplier
+      delta: 0.96
+    - variableName: itemDropRate
+      delta: 1.1
   - id: ML_SLIGHTLY_HIGH
     symptomDescription: slightly.high
     profileId: 0
@@ -23932,6 +23944,10 @@ MonoBehaviour:
       delta: 1.05
     - variableName: enemyAggroMultiplier
       delta: 1
+    - variableName: enemyCountMultiplier
+      delta: 1.04
+    - variableName: itemDropRate
+      delta: 0.9
   - id: ML_HIGH
     symptomDescription: high
     profileId: 0
@@ -23942,6 +23958,10 @@ MonoBehaviour:
       delta: 1.15
     - variableName: enemyAggroMultiplier
       delta: 1.1
+    - variableName: enemyCountMultiplier
+      delta: 1.07
+    - variableName: itemDropRate
+      delta: 1.2
   - id: ML_VERY_HIGH
     symptomDescription: very.high
     profileId: 0
@@ -23952,6 +23972,10 @@ MonoBehaviour:
       delta: 1.25
     - variableName: enemyAggroMultiplier
       delta: 1.2
+    - variableName: enemyCountMultiplier
+      delta: 1.1
+    - variableName: itemDropRate
+      delta: 0.7
   - id: RL_VERY_LOW
     symptomDescription: very.low
     profileId: 1
@@ -23962,6 +23986,10 @@ MonoBehaviour:
       delta: 0.75
     - variableName: enemyDamageMultiplier
       delta: 0.85
+    - variableName: enemyCountMultiplier
+      delta: 0.9
+    - variableName: itemDropRate
+      delta: 1.3
   - id: RL_LOW
     symptomDescription: low
     profileId: 1
@@ -23972,6 +24000,10 @@ MonoBehaviour:
       delta: 0.85
     - variableName: enemyDamageMultiplier
       delta: 0.95
+    - variableName: enemyCountMultiplier
+      delta: 0.93
+    - variableName: itemDropRate
+      delta: 1.2
   - id: RL_SLIGHTLY_LOW
     symptomDescription: slightly.low
     profileId: 1
@@ -23982,6 +24014,10 @@ MonoBehaviour:
       delta: 0.95
     - variableName: enemyDamageMultiplier
       delta: 1
+    - variableName: enemyCountMultiplier
+      delta: 0.96
+    - variableName: itemDropRate
+      delta: 1.1
   - id: RL_SLIGHTLY_HIGH
     symptomDescription: slightly.high
     profileId: 1
@@ -23992,6 +24028,10 @@ MonoBehaviour:
       delta: 1.05
     - variableName: enemyDamageMultiplier
       delta: 1.05
+    - variableName: enemyDamageMultiplier
+      delta: 1.04
+    - variableName: itemDropRate
+      delta: 0.9
   - id: RL_HIGH
     symptomDescription: high
     profileId: 1
@@ -24002,6 +24042,10 @@ MonoBehaviour:
       delta: 1.2
     - variableName: enemyDamageMultiplier
       delta: 1.15
+    - variableName: enemyCountMultiplier
+      delta: 1.07
+    - variableName: itemDropRate
+      delta: 0.8
   - id: RL_VERY_HIGH
     symptomDescription: very.high
     profileId: 1
@@ -24012,6 +24056,10 @@ MonoBehaviour:
       delta: 1.3
     - variableName: enemyDamageMultiplier
       delta: 1.2
+    - variableName: enemyCountMultiplier
+      delta: 1.1
+    - variableName: itemDropRate
+      delta: 0.7
   - id: DG_VERY_LOW
     symptomDescription: very.low
     profileId: 2
@@ -24022,6 +24070,10 @@ MonoBehaviour:
       delta: 0.75
     - variableName: enemyAggroMultiplier
       delta: 0.75
+    - variableName: enemyCountMultiplier
+      delta: 0.9
+    - variableName: itemDropRate
+      delta: 1.3
   - id: DG_LOW
     symptomDescription: low
     profileId: 2
@@ -24032,6 +24084,10 @@ MonoBehaviour:
       delta: 0.85
     - variableName: enemyAggroMultiplier
       delta: 0.9
+    - variableName: enemyCountMultiplier
+      delta: 0.93
+    - variableName: itemDropRate
+      delta: 1.2
   - id: DG_SLIGHTLY_LOW
     symptomDescription: slightly.low
     profileId: 2
@@ -24042,6 +24098,10 @@ MonoBehaviour:
       delta: 0.95
     - variableName: enemyAggroMultiplier
       delta: 1
+    - variableName: enemyCountMultiplier
+      delta: 0.96
+    - variableName: itemDropRate
+      delta: 1.1
   - id: DG_SLIGHTLY_HIGH
     symptomDescription: slightly.high
     profileId: 2
@@ -24052,6 +24112,10 @@ MonoBehaviour:
       delta: 1.05
     - variableName: enemyAggroMultiplier
       delta: 1.05
+    - variableName: enemyCountMultiplier
+      delta: 1.04
+    - variableName: itemDropRate
+      delta: 0.9
   - id: DG_HIGH
     symptomDescription: high
     profileId: 2
@@ -24062,6 +24126,10 @@ MonoBehaviour:
       delta: 1.15
     - variableName: enemyAggroMultiplier
       delta: 1.2
+    - variableName: enemyCountMultiplier
+      delta: 1.07
+    - variableName: itemDropRate
+      delta: 0.8
   - id: DG_VERY_HIGH
     symptomDescription: very.high
     profileId: 2
@@ -24072,6 +24140,10 @@ MonoBehaviour:
       delta: 1.25
     - variableName: enemyAggroMultiplier
       delta: 1.3
+    - variableName: enemyCountMultiplier
+      delta: 1.1
+    - variableName: itemDropRate
+      delta: 0.7
   - id: SS_VERY_LOW
     symptomDescription: very.low
     profileId: 3
@@ -24082,6 +24154,10 @@ MonoBehaviour:
       delta: 0.75
     - variableName: enemySpeedMultiplier
       delta: 0.75
+    - variableName: enemyCountMultiplier
+      delta: 0.9
+    - variableName: itemDropRate
+      delta: 1.3
   - id: SS_LOW
     symptomDescription: low
     profileId: 3
@@ -24092,6 +24168,10 @@ MonoBehaviour:
       delta: 0.85
     - variableName: enemySpeedMultiplier
       delta: 0.9
+    - variableName: enemyCountMultiplier
+      delta: 0.93
+    - variableName: itemDropRate
+      delta: 1.2
   - id: SS_SLIGHTLY_LOW
     symptomDescription: slightly.low
     profileId: 3
@@ -24102,6 +24182,10 @@ MonoBehaviour:
       delta: 0.95
     - variableName: enemySpeedMultiplier
       delta: 0.95
+    - variableName: enemyCountMultiplier
+      delta: 0.96
+    - variableName: itemDropRate
+      delta: 1.1
   - id: SS_SLIGHTLY_HIGH
     symptomDescription: slightly.high
     profileId: 3
@@ -24112,6 +24196,10 @@ MonoBehaviour:
       delta: 1.05
     - variableName: enemySpeedMultiplier
       delta: 1
+    - variableName: enemyCountMultiplier
+      delta: 1.04
+    - variableName: itemDropRate
+      delta: 0.9
   - id: SS_HIGH
     symptomDescription: high
     profileId: 3
@@ -24122,6 +24210,10 @@ MonoBehaviour:
       delta: 1.15
     - variableName: enemySpeedMultiplier
       delta: 1.1
+    - variableName: enemyCountMultiplier
+      delta: 1.07
+    - variableName: itemDropRate
+      delta: 0.8
   - id: SS_VERY_HIGH
     symptomDescription: very.high
     profileId: 3
@@ -24132,6 +24224,10 @@ MonoBehaviour:
       delta: 1.25
     - variableName: enemySpeedMultiplier
       delta: 1.2
+    - variableName: enemyCountMultiplier
+      delta: 1.1
+    - variableName: itemDropRate
+      delta: 0.7
   - id: DF_VERY_LOW
     symptomDescription: very.low
     profileId: 4
@@ -24142,6 +24238,10 @@ MonoBehaviour:
       delta: 0.75
     - variableName: enemySpeedMultiplier
       delta: 0.75
+    - variableName: enemyCountMultiplier
+      delta: 0.9
+    - variableName: itemDropRate
+      delta: 1.3
   - id: DF_LOW
     symptomDescription: low
     profileId: 4
@@ -24152,6 +24252,10 @@ MonoBehaviour:
       delta: 0.9
     - variableName: enemySpeedMultiplier
       delta: 0.85
+    - variableName: enemyCountMultiplier
+      delta: 0.93
+    - variableName: itemDropRate
+      delta: 1.2
   - id: DF_SLIGHTLY_LOW
     symptomDescription: slightly.low
     profileId: 4
@@ -24162,6 +24266,10 @@ MonoBehaviour:
       delta: 0.95
     - variableName: enemySpeedMultiplier
       delta: 0.95
+    - variableName: enemyCountMultiplier
+      delta: 0.96
+    - variableName: itemDropRate
+      delta: 1.1
   - id: DF_SLIGHTLY_HIGH
     symptomDescription: slightly.low
     profileId: 4
@@ -24172,6 +24280,10 @@ MonoBehaviour:
       delta: 1.05
     - variableName: enemySpeedMultiplier
       delta: 1.1
+    - variableName: enemyCountMultiplier
+      delta: 1.04
+    - variableName: itemDropRate
+      delta: 0.9
   - id: DF_HIGH
     symptomDescription: high
     profileId: 4
@@ -24182,6 +24294,10 @@ MonoBehaviour:
       delta: 1.15
     - variableName: enemySpeedMultiplier
       delta: 1.2
+    - variableName: enemyCountMultiplier
+      delta: 1.07
+    - variableName: itemDropRate
+      delta: 0.8
   - id: DF_VERY_HIGH
     symptomDescription: very.high
     profileId: 4
@@ -24192,6 +24308,10 @@ MonoBehaviour:
       delta: 1.25
     - variableName: enemySpeedMultiplier
       delta: 1.25
+    - variableName: enemyCountMultiplier
+      delta: 1.1
+    - variableName: itemDropRate
+      delta: 0.7
 --- !u!114 &1130029152
 MonoBehaviour:
   m_ObjectHideFlags: 0

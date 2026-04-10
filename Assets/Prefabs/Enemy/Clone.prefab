@@ -1568,7 +1568,7 @@ MonoBehaviour:
   damage: 4
   detectionRange: 10
   turnSpeed: 8
-  projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
+  projectilePrefab: {fileID: 7933930715022831805, guid: 20197f30d6078f24b8b378da59874610, type: 3}
   isPerformingSpecialAttack: 0
   canBeStaggered: 0
   staggerTrigger: Hit

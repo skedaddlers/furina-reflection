@@ -44,11 +44,9 @@ public class RoomManager : MonoBehaviour
         if (IsRoomVisited(nextRoomID) == false)
         {
             var diff = GlobalDifficultyState.Instance;
-            float itemDropRate = diff != null ? diff.itemDropRateMultiplier : 1f;
-            float minItem = roomInstances[nextRoomID].minItemSpawn * itemDropRate; 
-            float maxItem = roomInstances[nextRoomID].maxItemSpawn * itemDropRate;
-            int totalItem = Random.Range((int)minItem, (int)maxItem + 1);
-            roomInstances[nextRoomID].SpawnItemsInRoom(totalItem);
+            Room room = roomInstances[nextRoomID];
+            int totalItem = diff != null ? diff.GetItemDropCountForRoom(room) : GetBaseItemSpawnCount(room);
+            room.SpawnItemsInRoom(totalItem);
             MarkRoomVisited(nextRoomID);
         }
         currentRoomID = nextRoomID;
@@ -129,5 +127,15 @@ public class RoomManager : MonoBehaviour
             return roomInstances[roomId];
         }
         return null;
+    }
+
+    private int GetBaseItemSpawnCount(Room room)
+    {
+        if (room == null)
+            return 0;
+
+        int minItems = Mathf.Max(0, room.minItemSpawn);
+        int maxItems = Mathf.Max(minItems, room.maxItemSpawn);
+        return Random.Range(minItems, maxItems + 1);
     }
 }

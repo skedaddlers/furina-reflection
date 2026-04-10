@@ -61,6 +61,8 @@ public class Room : MonoBehaviour
 
     private bool isLocked = false;
     private int lastEnterFrom = -1;
+    private int? combatEnemyCountFloorOverride;
+    private int? combatEnemyCountCapOverride;
 
     public Vector3 playerSpawn = Vector3.zero;
 
@@ -211,11 +213,19 @@ public class Room : MonoBehaviour
     private void ApplyDifficultySnapshots()
     {
         var diff = GlobalDifficultyState.Instance;
+        int enemyCap = Mathf.Max(1, combatEnemyCountCapOverride ?? maxEnemies);
 
         if (diff != null)
-            enemyCount = diff.GetEnemyCountForRoom(this);
+        {
+            enemyCount = diff.GetEnemyCountForRoom(this, combatEnemyCountFloorOverride, enemyCap);
+        }
+        else
+        {
+            if (combatEnemyCountFloorOverride.HasValue)
+                enemyCount = Mathf.Max(enemyCount, combatEnemyCountFloorOverride.Value);
 
-        enemyCount = Mathf.Clamp(enemyCount, 1, maxEnemies);
+            enemyCount = Mathf.Clamp(enemyCount, 1, enemyCap);
+        }
     }
 
     private void HandleEnemyDeath(GameObject enemy)
@@ -243,6 +253,7 @@ public class Room : MonoBehaviour
     {
         isCleared = true;
         isInCombat = false;
+        ClearCombatEnemyCountOverride();
 
         UnlockAllDoors();
 
@@ -272,6 +283,19 @@ public class Room : MonoBehaviour
     #endregion
 
     #region Item Spawning
+    public void ConfigureCombatEnemyBudget(int minimumCount, int maxCount)
+    {
+        int floor = Mathf.Max(1, minimumCount);
+        combatEnemyCountFloorOverride = floor;
+        combatEnemyCountCapOverride = Mathf.Max(floor, maxCount);
+    }
+
+    public void ClearCombatEnemyCountOverride()
+    {
+        combatEnemyCountFloorOverride = null;
+        combatEnemyCountCapOverride = null;
+    }
+
     public void SpawnItemsInRoom(int itemCount)
     {
         Debug.Log($"Spawning {itemCount} items in Room {roomIndex}");
