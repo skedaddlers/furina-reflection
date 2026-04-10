@@ -4859,6 +4859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuUI
   startButton: {fileID: 1544082420}
+  quitButton: {fileID: 1209837712}
   mainSceneName: Fewer Dialogue
 --- !u!1 &1544082418
 GameObject:

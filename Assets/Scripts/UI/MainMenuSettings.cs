@@ -12,7 +12,6 @@ public class MainMenuSettings : MonoBehaviour
 
     void Start()
     {
-        settingsPanel.SetActive(false);
         if (AudioManager.Instance != null)
         {
             musicVolumeSlider.value = AudioManager.Instance.musicVolume;

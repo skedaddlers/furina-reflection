@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class MainMenuUI : MonoBehaviour
 {
     public Button startButton;
+    public Button quitButton;
     public string mainSceneName = "MainScene";
 
     void Start()
@@ -14,6 +15,17 @@ public class MainMenuUI : MonoBehaviour
             Debug.Log("Playing main menu music.");
             AudioManager.Instance.PlayMainMenuMusic();
         }
+        quitButton.onClick.AddListener(() =>
+        {
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.QuitGame();
+            }
+            else
+            {
+                Debug.LogWarning("SceneLoader instance not found. Quitting application directly.");
+            }
+        });
     }
     
     void LoadGame()
