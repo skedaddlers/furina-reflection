@@ -9,6 +9,7 @@ namespace DDAMAPEKitFramework
     /// </summary>
     public class Monitor : Observable
     {
+        private bool analyzeNoMatterWhat = false; // If true, will trigger analysis on every observation regardless of thresholds
         private PlayerModel playerModel;
         private SystemStateLog systemStateLog;
 
@@ -43,10 +44,15 @@ namespace DDAMAPEKitFramework
                 }
             }
 
-            if (needsAnalysis)
+            if (needsAnalysis || analyzeNoMatterWhat)
             {
                 NotifyObservers(systemStateLog.GetLatestLog());
             }
+        }
+
+        public void SetAnalyzeNoMatterWhat(bool value)
+        {
+            analyzeNoMatterWhat = value;
         }
     }
 

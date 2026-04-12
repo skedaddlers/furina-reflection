@@ -4,7 +4,7 @@ public static class DDARuntimeHelper
 {
     public static bool IsDDAActive()
     {
-        if (!DDAIntegration.IsDDAEnabled)
+        if (!DDAIntegration.IsTrackingEnabled)
             return false;
 
         DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();

@@ -36,7 +36,7 @@ public class SalonSolitaire : SkillBase
 
         isActive = true;
 
-        Debug.Log($"{skillName} activated by {caster.name}");
+        // Debug.Log($"{skillName} activated by {caster.name}");
 
         // Play cast sound
         if (castSound != null)
@@ -108,7 +108,7 @@ public class SalonSolitaire : SkillBase
 
             activeSalonMembers.Add(member);
 
-            Debug.Log($"Spawned Salon Member {i + 1} at {spawnPosition}");
+            // Debug.Log($"Spawned Salon Member {i + 1} at {spawnPosition}");
         }
     }
 
@@ -172,7 +172,7 @@ public class SalonSolitaire : SkillBase
 
         isActive = false;
 
-        Debug.Log($"{skillName} ended - Salon members dismissed");
+        // Debug.Log($"{skillName} ended - Salon members dismissed");
     }
 
     public override bool CanUseSkill(GameObject caster)

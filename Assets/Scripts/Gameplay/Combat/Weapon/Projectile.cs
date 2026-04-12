@@ -218,7 +218,7 @@ public class Projectile : MonoBehaviour
             }
             else
             {
-                Destroy(ps.gameObject, 2f);
+                Destroy(ps.gameObject, 1f);
             }
             
         }
@@ -226,7 +226,7 @@ public class Projectile : MonoBehaviour
         // Play hit SFX
         if (hitSFX != null)
         {
-            AudioManager.Instance.PlayClipAtPoint(hitSFX, transform.position);
+            AudioManager.Instance?.PlayClipAtPoint(hitSFX, transform.position);
         }
 
         // Hancurkan saat kena apapun yang valid

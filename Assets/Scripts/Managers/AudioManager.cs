@@ -109,7 +109,6 @@ public class AudioManager : MonoBehaviour
 
     public void PlayDefeatMusic()
     {
-        Debug.Log("Playing defeat music");
         activeMusicSource.clip = defeatMusic;
         activeMusicSource.volume = musicVolume;
         activeMusicSource.Play();

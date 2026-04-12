@@ -10,6 +10,8 @@ public enum BossPhase
 
 public class BossManager : MonoBehaviour
 {
+    public static System.Action<Room, bool> OnBossFightActivityChanged;
+
     [Header("Boss Settings")]
     public Transform focalorsPhase1SpawnPoint;
     public Transform focalorsPhase2SpawnPoint;
@@ -131,6 +133,7 @@ public class BossManager : MonoBehaviour
 
         focalorsPhase1Instance.SetCanAct(true);
         focalorsPhase1Instance.SetImmune(false);
+        NotifyBossFightActivity(true);
     }
 
     private void HandlePhase1Defeated()
@@ -143,11 +146,13 @@ public class BossManager : MonoBehaviour
 
         if (!withDialogue)
         {
+            NotifyBossFightActivity(false);
             StartPhase2();
             return;
         }
 
         focalorsPhase1Instance.SetCanAct(false);
+        NotifyBossFightActivity(false);
 
         UIManager.Instance.dialogueUI.StartDialogueSequence(phase1EndDialogues);
 
@@ -248,6 +253,9 @@ public class BossManager : MonoBehaviour
         if (!withDialogue)
         {
             InitializeBossUI(focalorsPhase2Instance);
+            focalorsPhase2Instance.SetCanAct(true);
+            focalorsPhase2Instance.SetImmune(false);
+            NotifyBossFightActivity(true);
             AudioManager.Instance?.PlayBossMusicPhase2();
             return;
         }
@@ -312,7 +320,7 @@ public class BossManager : MonoBehaviour
         if (focalorsPhase2Instance != null)
             focalorsPhase2Instance.NotifyCloneDeath();
 
-        Debug.Log("Notified Focalors Phase 2 of clone death");
+        // Debug.Log("Notified Focalors Phase 2 of clone death");
     }
 
     #endregion
@@ -344,6 +352,7 @@ public class BossManager : MonoBehaviour
         {
             focalorsPhase2Instance.SetCanAct(true);
             focalorsPhase2Instance.SetImmune(false);
+            NotifyBossFightActivity(true);
         }
     }
 
@@ -395,6 +404,7 @@ public class BossManager : MonoBehaviour
 
         if (phase2Health != null)
             phase2Health.onDeath -= OnBossDefeated;
+        NotifyBossFightActivity(false);
         UIManager.Instance?.dialogueUI?.StopDialogueSequence();
 
         // death animation > transfor to phase 1 > dialogue > cleanup
@@ -436,6 +446,8 @@ public class BossManager : MonoBehaviour
 
     private void CleanupAfterBossDefeat()
     {
+        NotifyBossFightActivity(false);
+
         if (focalorsPhase2Instance != null)
         {
             Destroy(focalorsPhase2Instance.gameObject);
@@ -450,6 +462,8 @@ public class BossManager : MonoBehaviour
 
     private void OnDestroy()
     {
+        NotifyBossFightActivity(false);
+
         if (phase1Health != null)
             phase1Health.onDeath -= HandlePhase1Defeated;
 
@@ -471,4 +485,15 @@ public class BossManager : MonoBehaviour
 #endif
 
     #endregion
+
+    private void NotifyBossFightActivity(bool isActive)
+    {
+        if (parentRoom == null)
+            parentRoom = GetComponent<Room>();
+
+        if (parentRoom != null)
+        {
+            OnBossFightActivityChanged?.Invoke(parentRoom, isActive);
+        }
+    }
 }

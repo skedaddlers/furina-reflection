@@ -30,7 +30,7 @@ public class SingerOfManyWaters : SkillBase
 
         isActive = true;
 
-        Debug.Log($"{skillName} activated by {caster.name}");
+        // Debug.Log($"{skillName} activated by {caster.name}");
 
         // Play cast sound
         if (castSound != null)
@@ -91,7 +91,7 @@ public class SingerOfManyWaters : SkillBase
             Object.Destroy(effect, duration);
         }
 
-        Debug.Log($"Singer spawned at {spawnPosition}");
+        // Debug.Log($"Singer spawned at {spawnPosition}");
     }
 
     private GameObject CreateDummySinger(Vector3 position)
@@ -133,18 +133,18 @@ public class SingerOfManyWaters : SkillBase
             if (targetHealth != null)
             {
                 targetHealth.Heal(healAmount);
-                Debug.Log($"{skillName}: Healed {healAmount} HP. Elapsed: {elapsed}/{duration}");
+                // Debug.Log($"{skillName}: Healed {healAmount} HP. Elapsed: {elapsed}/{duration}");
             }
             else
             {
-                Debug.LogWarning($"{skillName}: No Health found on caster, stopping.");
+                // Debug.LogWarning($"{skillName}: No Health found on caster, stopping.");
                 break;
             }
 
             // Play impact sound for heal feedback
             if (impactSound != null && activeSinger != null)
             {
-                AudioManager.Instance.PlayClipAtPoint(impactSound, activeSinger.transform.position);
+                AudioManager.Instance?.PlayClipAtPoint(impactSound, activeSinger.transform.position);
             }
 
             yield return new WaitForSeconds(healInterval);
@@ -174,7 +174,7 @@ public class SingerOfManyWaters : SkillBase
 
         isActive = false;
 
-        Debug.Log($"{skillName} ended - Singer dismissed");
+        // Debug.Log($"{skillName} ended - Singer dismissed");
     }
 
     public override bool CanUseSkill(GameObject caster)

@@ -64,7 +64,7 @@ public class SkillManager : MonoBehaviour
         // Check if already owned
         if (HasSkill(skill))
         {
-            Debug.Log($"Already own skill: {skill.skillName}");
+            // Debug.Log($"Already own skill: {skill.skillName}");
             return false;
         }
         
@@ -73,7 +73,7 @@ public class SkillManager : MonoBehaviour
         AddSkill(skill);
         
         OnSkillPurchased?.Invoke(skill);
-        Debug.Log($"Purchased skill: {skill.skillName}");
+        // Debug.Log($"Purchased skill: {skill.skillName}");
         return true;
     }
     
@@ -149,28 +149,28 @@ public class SkillManager : MonoBehaviour
         SkillSlot slot = activeSkillSlots[slotIndex];
         if (slot == null || slot.skill == null)
         {
-            Debug.Log("No skill equipped in slot " + slotIndex);
+            // Debug.Log("No skill equipped in slot " + slotIndex);
             return false;
         }
         
         // Check cooldown
         if (slot.isOnCooldown)
         {
-            Debug.Log($"{slot.skill.skillName} is on cooldown: {slot.currentCooldown:F1}s remaining");
+            // Debug.Log($"{slot.skill.skillName} is on cooldown: {slot.currentCooldown:F1}s remaining");
             return false;
         }
         
         // Check mana
         if (playerStats.CurrentMana < slot.skill.manaCost)
         {
-            Debug.Log($"Not enough mana for {slot.skill.skillName}");
+            // Debug.Log($"Not enough mana for {slot.skill.skillName}");
             return false;
         }
         
         // Check custom conditions
         if (!slot.skill.CanUseSkill(gameObject))
         {
-            Debug.Log($"Cannot use {slot.skill.skillName} right now");
+            // Debug.Log($"Cannot use {slot.skill.skillName} right now");
             return false;
         }
         

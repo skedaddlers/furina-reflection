@@ -21,6 +21,6 @@ public class MinimapSetupHelper : MonoBehaviour
         minimapObj.transform.SetParent(canvas.transform);
         MinimapUI minimapUI = minimapObj.AddComponent<MinimapUI>();
 
-        Debug.Log("Minimap UI setup complete! Configure settings in the Inspector.");
+        // Debug.Log("Minimap UI setup complete! Configure settings in the Inspector.");
     }
 }

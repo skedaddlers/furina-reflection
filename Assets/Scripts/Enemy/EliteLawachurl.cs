@@ -118,7 +118,7 @@ public class EliteLawachurl : EnemyAI
         agent.ResetPath();
         if (crashSFX != null)
         {
-            AudioManager.Instance.PlayClipAtPoint(crashSFX, transform.position);
+            AudioManager.Instance?.PlayClipAtPoint(crashSFX, transform.position);
         }
 
         if (Vector3.Distance(player.position, transform.position) <= attackRange + 1.0f)

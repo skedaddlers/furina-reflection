@@ -104,7 +104,7 @@ public class RoomGenerator : MonoBehaviour
     Random.InitState(dungeonConfig.seed);
 
     int totalRooms = Random.Range(dungeonConfig.minRooms, dungeonConfig.maxRooms + 1);
-    Debug.Log($"[RoomGenerator] totalRooms={totalRooms} seed={dungeonConfig.seed}");
+    // Debug.Log($"[RoomGenerator] totalRooms={totalRooms} seed={dungeonConfig.seed}");
 
     // Start
     var start = new RoomData {
@@ -448,10 +448,10 @@ void SelectAndMarkBossAsFarthestDeadEnd(int startId)
             typeCounts[room.roomType]++;
         
         // Log distribution
-        Debug.Log($"[Room Distribution] Start:{typeCounts[RoomType.Start]} " +
-                  $"Normal:{typeCounts[RoomType.Normal]} Elite:{typeCounts[RoomType.Elite]} " +
-                  $"Event:{typeCounts[RoomType.Event]} Shop:{typeCounts[RoomType.Shop]} " +
-                  $"Boss:{typeCounts[RoomType.Boss]}");
+        // Debug.Log($"[Room Distribution] Start:{typeCounts[RoomType.Start]} " +
+        //           $"Normal:{typeCounts[RoomType.Normal]} Elite:{typeCounts[RoomType.Elite]} " +
+        //           $"Event:{typeCounts[RoomType.Event]} Shop:{typeCounts[RoomType.Shop]} " +
+        //           $"Boss:{typeCounts[RoomType.Boss]}");
         
         // Check for early shop
         bool hasEarlyShop = Layout.roomDataMap.Values.Any(r => 

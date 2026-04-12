@@ -78,7 +78,7 @@ public class EliteAbyssMage : EnemyAI
             h?.AddShield(shieldAmount);
             if (shieldGainSFX != null)            
             {
-                AudioManager.Instance.PlayClipAtPoint(shieldGainSFX, transform.position);
+                AudioManager.Instance?.PlayClipAtPoint(shieldGainSFX, transform.position);
             }
             h.onShieldDestroyed += () =>
             {

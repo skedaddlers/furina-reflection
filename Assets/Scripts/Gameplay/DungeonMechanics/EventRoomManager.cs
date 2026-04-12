@@ -94,7 +94,7 @@ public class EventRoomManager : MonoBehaviour
     {
         if (eventResolved)
         {
-            Debug.Log("[EventRoom] Event sudah diselesaikan.");
+            // Debug.Log("[EventRoom] Event sudah diselesaikan.");
             return;
         }
 
@@ -129,7 +129,7 @@ public class EventRoomManager : MonoBehaviour
         if (currentChoices == null || index < 0 || index >= currentChoices.Count) return;
 
         var chosen = currentChoices[index];
-        Debug.Log($"[EventRoom] Player memilih event: {chosen.displayName}");
+        // Debug.Log($"[EventRoom] Player memilih event: {chosen.displayName}");
 
         // tutup UI dulu
         if (eventUI != null)
@@ -244,16 +244,16 @@ public class EventRoomManager : MonoBehaviour
         int sides = Mathf.Max(2, option.diceSides);
         int roll = Random.Range(1, sides + 1);
 
-        Debug.Log($"[Event-Dice] Player roll: {roll}/{sides}");
+        // Debug.Log($"[Event-Dice] Player roll: {roll}/{sides}");
 
         if (roll > option.successThreshold)
         {
-            Debug.Log("[Event-Dice] SUCCESS! Applying reward.");
+            // Debug.Log("[Event-Dice] SUCCESS! Applying reward.");
             ResolveFlatReward(option);
         }
         else
         {
-            Debug.Log("[Event-Dice] FAIL! Applying curse.");
+            // Debug.Log("[Event-Dice] FAIL! Applying curse.");
             if (playerHealth != null && option.curseDamage > 0)
             {
                 UIManager.Instance.ShowNotification($"You rolled a {roll} and failed! You take {option.curseDamage} damage.", 3f);
@@ -349,7 +349,7 @@ public class EventRoomManager : MonoBehaviour
 
         if (targetSlot == null || targetSlot.skill == null)
         {
-            Debug.Log("[Event-UpgradeItem] Tidak ada skill milik player yang bisa di-upgrade.");
+            // Debug.Log("[Event-UpgradeItem] Tidak ada skill milik player yang bisa di-upgrade.");
             UIManager.Instance.ShowNotification("Nothing happens...", 2.5f);
             return;
         }
@@ -363,11 +363,11 @@ public class EventRoomManager : MonoBehaviour
                 : $"Upgraded: {beforeName} -> {afterName}";
 
             UIManager.Instance.ShowNotification(resultText, 3f);
-            Debug.Log($"[Event-UpgradeItem] {resultText}");
+            // Debug.Log($"[Event-UpgradeItem] {resultText}");
             return;
         }
 
-        Debug.Log("[Event-UpgradeItem] Upgrade gagal dijalankan.");
+        // Debug.Log("[Event-UpgradeItem] Upgrade gagal dijalankan.");
         UIManager.Instance.ShowNotification("Skill upgrade failed.", 2.5f);
 
         // Contoh hook:

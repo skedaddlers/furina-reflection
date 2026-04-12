@@ -49,7 +49,7 @@ public class WaterAspirations : SkillBase
             return;
         }
 
-        Debug.Log($"{skillName} activated by {caster.name}");
+        // Debug.Log($"{skillName} activated by {caster.name}");
 
         // Play cast sound
         if (castSound != null)
@@ -77,7 +77,7 @@ public class WaterAspirations : SkillBase
 
         isActive = true;
 
-        Debug.Log($"{skillName}: Shield applied! Amount: {currentShieldAmount}");
+        // Debug.Log($"{skillName}: Shield applied! Amount: {currentShieldAmount}");
 
         // Start shield duration coroutine
         MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
@@ -113,7 +113,7 @@ public class WaterAspirations : SkillBase
                     }
                     else if (!isUpgraded)
                     {
-                        Debug.Log($"{skillName}: Shield broke early, ending skill.");
+                        // Debug.Log($"{skillName}: Shield broke early, ending skill.");
                         break;
                     }
                 }
@@ -132,7 +132,7 @@ public class WaterAspirations : SkillBase
         {
             activePlayerStats.baseDefense += defBonus;
             defBonusApplied = true;
-            Debug.Log($"{skillName}: Shield broke early! DEF bonus applied: +{defBonus}");
+            // Debug.Log($"{skillName}: Shield broke early! DEF bonus applied: +{defBonus}");
         }
     }
 
@@ -147,7 +147,7 @@ public class WaterAspirations : SkillBase
         {
             activePlayerStats.baseDefense -= defBonus;
             defBonusApplied = false;
-            Debug.Log($"{skillName}: DEF bonus removed.");
+            // Debug.Log($"{skillName}: DEF bonus removed.");
         }
 
         isActive = false;
@@ -169,7 +169,7 @@ public class WaterAspirations : SkillBase
         }
         activePlayerStats = null;
         currentShieldAmount = 0f;
-        Debug.Log($"{skillName} ended");
+        // Debug.Log($"{skillName} ended");
     }
 
     public override bool CanUseSkill(GameObject caster)

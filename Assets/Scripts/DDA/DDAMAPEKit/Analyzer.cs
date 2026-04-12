@@ -63,13 +63,13 @@ namespace DDAMAPEKitFramework
             if (identifiedSymptom != null)
             {
                 currentSymptom = identifiedSymptom;
-                Debug.Log($"[Analyzer] Symptom identified: {identifiedSymptom.description} (Performance: {performance:F2})");
+                Debug.Log($"[Analyzer] Symptom identified: {identifiedSymptom.description} (Performance: {adjustedPerformance:F2})");
                 
                 // Create adaptation request
                 var adaptationRequest = new AdaptationRequest
                 {
                     symptom = identifiedSymptom,
-                    performance = performance,
+                    performance = adjustedPerformance,
                     movingAverage = flexibleSymptoms ? performanceHistory.Average() : 1f,
                     profileId = playerModel.GetCurrentProfileId()
                 };
@@ -97,9 +97,10 @@ namespace DDAMAPEKitFramework
                     float attributePerformance = attribute.value / reference;
                     weightedSum += attributePerformance * attribute.weight;
                     totalWeight += attribute.weight;
+                    Debug.Log($"[Analyzer] Attribute: {attribute.label}, Value: {attribute.value:F2}, Reference: {reference:F2}, Weight: {attribute.weight:F2}, Performance: {(reference > 0 ? attributePerformance : 0f):F2}");
                 }
             }
-
+            Debug.Log($"[Analyzer] Total Weighted Performance: {weightedSum:F2}, Total Weight: {totalWeight:F2}");
             return totalWeight > 0 ? weightedSum / totalWeight : 1f;
         }
 

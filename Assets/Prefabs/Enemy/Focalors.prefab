@@ -517,7 +517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FocalorsPhase1AI
   isRanged: 1
-  attackRange: 1.5
+  attackRange: 6
   attackCooldown: 1.5
   movementSpeed: 1
   damage: 10

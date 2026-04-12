@@ -71,6 +71,8 @@ namespace DDAMAPEKitFramework
         }
 
         public bool IsInitialized => isInitialized;
+        public bool IsAdaptationEnabled => DDAIntegration.IsAdaptationEnabled;
+        public bool AnalyzeNoMatterWhat => DDAIntegration.AnalyzeNoMatterWhat;
 
         void Awake()
         {
@@ -121,21 +123,26 @@ namespace DDAMAPEKitFramework
 
             // Initialize MAPE-K components
             monitor = new Monitor(playerModel, systemStateLog);
+            monitor.SetAnalyzeNoMatterWhat(AnalyzeNoMatterWhat);
             analyzer = new Analyzer(playerModel, symptomRepository, systemStateLog);
             analyzer.SetPerformanceOverTime(isPerformanceOverTime);
             analyzer.SetFlexibleSymptoms(flexibleSymptoms);
             analyzer.SetMovingAverageSample(movingAverageSample);
 
-            planner = new Planner(policyEngine, playerModel);
-            planner.SetFlexibleRules(flexibleRules);
-            planner.SetAdjustmentConstant(adjustmentConstant);
-
-            executor = new Executor();
-
             // Setup Observer pattern connections
             monitor.Subscribe(analyzer);
-            analyzer.Subscribe(planner);
-            planner.Subscribe(executor);
+
+            if (IsAdaptationEnabled)
+            {
+                planner = new Planner(policyEngine, playerModel);
+                planner.SetFlexibleRules(flexibleRules);
+                planner.SetAdjustmentConstant(adjustmentConstant);
+
+                executor = new Executor();
+
+                analyzer.Subscribe(planner);
+                planner.Subscribe(executor);
+            }
 
             // Configure default symptoms and rules
             ConfigureDefaultSymptomsAndRules();
@@ -165,6 +172,7 @@ namespace DDAMAPEKitFramework
         public void TriggerMAPEKLoop()
         {
             if (!isInitialized) return;
+            playerModel.CalculateProfileDistribution();
             RunMAPEKLoop();
             playerModel.UpdatePlayerProfile(explorationRate);
         }
@@ -192,7 +200,10 @@ namespace DDAMAPEKitFramework
             if (effector != null && !effectors.Contains(effector))
             {
                 effectors.Add(effector);
-                executor.RegisterEffector(effector);
+                if (executor != null)
+                {
+                    executor.RegisterEffector(effector);
+                }
                 Debug.Log($"[DDA-MAPEKit] Registered effector: {effector.GetType().Name}");
             }
         }
@@ -242,7 +253,7 @@ namespace DDAMAPEKitFramework
             }
         }
 
-        public Symptom GetCurrentSymptom() => analyzer.CurrentSymptom;
+        public Symptom GetCurrentSymptom() => analyzer?.CurrentSymptom;
         public PlayerModel GetPlayerModel() => playerModel;
         public SymptomRepository GetSymptomRepository() => symptomRepository;
         public PolicyEngine GetPolicyEngine() => policyEngine;

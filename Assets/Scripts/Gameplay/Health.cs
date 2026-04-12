@@ -66,7 +66,7 @@ public class Health : MonoBehaviour
                 CombatEventManager.RaiseSuccessfulDodge();
                 PlayerActionTracker.Instance.RegisterDodge();
             }
-            Debug.Log($"{gameObject.name} is invulnerable. Damage ignored.");
+            // Debug.Log($"{gameObject.name} is invulnerable. Damage ignored.");
             return;
         }
 
@@ -83,7 +83,7 @@ public class Health : MonoBehaviour
                 onShieldDestroyed?.Invoke();
             }
             finalDamage -= damageAbsorbed;
-            Debug.Log($"{gameObject.name} shield absorbed {damageAbsorbed} damage. Remaining shield: {shieldAmount}");
+            // Debug.Log($"{gameObject.name} shield absorbed {damageAbsorbed} damage. Remaining shield: {shieldAmount}");
         }
 
         // Apply remaining damage to health
@@ -93,10 +93,8 @@ public class Health : MonoBehaviour
             AudioManager.Instance?.PlaySFXNoOverlap(hitSFX, randomizePitch: true);
             // Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
             Enemy enemy = GetComponent<Enemy>();
-            if (enemy != null && enemy.healthBar != null)
+            if (enemy != null)
             {
-                UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, enemy.healthBar.position, isCrit);
-                StartCoroutine(HitFlash(enemy));
                 if (source == DamageSource.Melee)
                 {
                     CombatEventManager.RaiseMeleeAttack(finalDamage);
@@ -109,6 +107,16 @@ public class Health : MonoBehaviour
                 {
                     CombatEventManager.RaiseSkillAttack(finalDamage);
                 }
+                
+                if (enemy.healthBar != null)
+                {
+                    UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, enemy.healthBar.position, isCrit);
+                    StartCoroutine(HitFlash(enemy));
+                }
+                else
+                {
+                    UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, transform.position + Vector3.up, isCrit);
+                }
             }
             else
             {
@@ -118,7 +126,7 @@ public class Health : MonoBehaviour
         }
         else
         {
-            Debug.Log($"{gameObject.name} damage fully absorbed by shield!");
+            // Debug.Log($"{gameObject.name} damage fully absorbed by shield!");
         }
 
         if (currentHealth < 0)

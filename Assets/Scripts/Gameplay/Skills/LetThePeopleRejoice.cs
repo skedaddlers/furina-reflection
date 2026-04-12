@@ -102,7 +102,7 @@ public class LetThePeopleRejoice : SkillBase
             );
 
             // Debug: Show current attack value
-            Debug.Log($"{skillName}: Current baseAttack = {activePlayerStats.baseAttack}");
+            // Debug.Log($"{skillName}: Current baseAttack = {activePlayerStats.baseAttack}");
 
             yield return new WaitForSeconds(drainInterval);
             elapsed += drainInterval;
@@ -118,12 +118,12 @@ public class LetThePeopleRejoice : SkillBase
         // Heal player when enemy is killed using healAmount from SkillBase
         HealPlayer(healAmount);
 
-        Debug.Log($"{skillName}: Healed {healAmount} HP from killing {enemy.name}");
+        // Debug.Log($"{skillName}: Healed {healAmount} HP from killing {enemy.name}");
 
         // Play impact sound for feedback
         if (impactSound != null && activeCaster != null)
         {
-            AudioManager.Instance.PlayClipAtPoint(impactSound, activeCaster.transform.position);
+            AudioManager.Instance?.PlayClipAtPoint(impactSound, activeCaster.transform.position);
         }
     }
 
@@ -142,12 +142,12 @@ public class LetThePeopleRejoice : SkillBase
         // Restore original attack
         if (activePlayerStats != null)
         {
-            Debug.Log($"{skillName} ended! Attack: {activePlayerStats.baseAttack} -> {originalBaseAttack}");
+            // Debug.Log($"{skillName} ended! Attack: {activePlayerStats.baseAttack} -> {originalBaseAttack}");
             activePlayerStats.baseAttack = originalBaseAttack;
         }
         if (activePlayerStats != null && isUpgraded)
         {
-            Debug.Log($"{skillName} ended! Movement Speed: {activePlayerStats.moveSpeed} -> {originalMovementSpeed}");
+            // Debug.Log($"{skillName} ended! Movement Speed: {activePlayerStats.moveSpeed} -> {originalMovementSpeed}");
             activePlayerStats.moveSpeed -= originalMovementSpeed * movementSpeedBonusPercent;
         }
 
@@ -158,7 +158,7 @@ public class LetThePeopleRejoice : SkillBase
         activeCaster = null;
         activePlayerStats = null;
 
-        Debug.Log($"{skillName} ended");
+        // Debug.Log($"{skillName} ended");
     }
 
     public override bool CanUseSkill(GameObject caster)

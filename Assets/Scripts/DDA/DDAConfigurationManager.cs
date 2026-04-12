@@ -57,7 +57,7 @@ public class DDAConfigurationManager : MonoBehaviour
 
     void Start()
     {
-        if (autoInitialize && DDAIntegration.IsDDAEnabled)
+        if (autoInitialize && DDAIntegration.IsTrackingEnabled)
         {
             InitializeDDA();
         }
@@ -65,10 +65,11 @@ public class DDAConfigurationManager : MonoBehaviour
 
     public void InitializeDDA()
     {
-        if (!DDAIntegration.IsDDAEnabled)
+        if (!DDAIntegration.IsTrackingEnabled)
             return;
 
         ddaFramework = DDAMAPEKit.Instance;
+        ddaFramework.Initialize();
 
         // Configure player attributes
         ConfigurePlayerAttributes();
@@ -77,13 +78,23 @@ public class DDAConfigurationManager : MonoBehaviour
         ConfigureSymptoms();
 
         // Configure rules for each profile
-        ConfigureRules();
+        if (DDAIntegration.IsAdaptationEnabled)
+        {
+            ConfigureRules();
+        }
 
         // Register sensors
         RegisterSensors();
 
         // Register effectors
-        RegisterEffectors();
+        if (DDAIntegration.IsAdaptationEnabled)
+        {
+            RegisterEffectors();
+        }
+        else
+        {
+            Debug.Log("[DDAConfiguration] Running in tracking-only mode. Planner and executor are disabled.");
+        }
 
         Debug.Log("[DDAConfiguration] DDA System configured successfully");
     }

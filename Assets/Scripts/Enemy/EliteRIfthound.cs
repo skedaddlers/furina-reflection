@@ -118,7 +118,7 @@ public class EliteRifthound : EnemyAI
 
         if (bleedApplySFX != null)
         {
-            AudioManager.Instance.PlayClipAtPoint(bleedApplySFX, targetHealth.transform.position);
+            AudioManager.Instance?.PlayClipAtPoint(bleedApplySFX, targetHealth.transform.position);
         }
 
         bleedEffect.Apply(sourceId, bleedDamagePerTick, bleedTickInterval, bleedTicks, transform, bleedVFXPrefab);

@@ -12,7 +12,6 @@ public class MainMenuUI : MonoBehaviour
         startButton.onClick.AddListener(LoadGame);
         if (AudioManager.Instance != null)
         {
-            Debug.Log("Playing main menu music.");
             AudioManager.Instance.PlayMainMenuMusic();
         }
         quitButton.onClick.AddListener(() =>
@@ -23,7 +22,7 @@ public class MainMenuUI : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("SceneLoader instance not found. Quitting application directly.");
+                // Debug.LogWarning("SceneLoader instance not found. Quitting application directly.");
             }
         });
     }
@@ -36,7 +35,7 @@ public class MainMenuUI : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("GameManager instance not found. Loading main scene directly.");
+            // Debug.LogWarning("GameManager instance not found. Loading main scene directly.");
             SceneLoader.Instance.LoadScene(mainSceneName);
         }
     }

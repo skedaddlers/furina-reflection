@@ -85,7 +85,7 @@ public class EliteMirrorMaiden : EnemyAI
         // Play imprison SFX
         if (imprisonSFX != null)
         {
-            AudioManager.Instance.PlayClipAtPoint(imprisonSFX, player.position);
+            AudioManager.Instance?.PlayClipAtPoint(imprisonSFX, player.position);
         }
 
         // Disable player movement

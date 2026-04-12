@@ -995,8 +995,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonConfig:
-    minRooms: 14
-    maxRooms: 18
+    minRooms: 2
+    maxRooms: 2
     normalRoomRatio: 0.5
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
@@ -1373,7 +1373,7 @@ MonoBehaviour:
   cursorController: {fileID: 50898957}
   mainSceneName: Fewer Dialogue
   mainMenuSceneName: MainMenu
-  withDialogue: 1
+  withDialogue: 0
 --- !u!4 &44146001
 Transform:
   m_ObjectHideFlags: 0
@@ -1401,11 +1401,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4145b744520944fb654fb99b2db674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseEnemyCount: 4
-  enemyCountProgressionPerDistance: 0.06
-  normalRoomMultiplier: 1
-  eliteRoomMultiplier: 1.5
-  bossRoomMultiplier: 2
+  baseEnemyCount: 3
+  enemyCountProgressionPerDistance: 0.1
   enemyCountMultiplier: 1
   minEnemyCountMultiplier: 0.5
   maxEnemyCountMultiplier: 2
@@ -23753,7 +23750,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36301bdabcf7b8241889698779c65c16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enablePerformanceTracking: 1
   enableDDA: 0
+  enableBossFightLoops: 1
+  bossFightLoopIntervalSeconds: 5
+  analyzeNoMatterWhat: 1
   debugMode: 0
   combatMetricCollector: {fileID: 1130029152}
 --- !u!4 &1130029149

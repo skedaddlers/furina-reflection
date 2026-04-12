@@ -257,7 +257,7 @@ public class MinimapUI : MonoBehaviour
     
     public void InitializeMinimap(RoomManager rm)
     {
-        Debug.Log("Initializing Minimap UI...");
+        // Debug.Log("Initializing Minimap UI...");
         if (rm == null) return;
         roomManager = rm;
 
@@ -275,7 +275,7 @@ public class MinimapUI : MonoBehaviour
         {
             int roomId = kvp.Key;
             Vector2Int gridPos = kvp.Value;
-            Debug.Log($"Room {roomId} at Grid {gridPos}");
+            // Debug.Log($"Room {roomId} at Grid {gridPos}");
             
             // Calculate position relative to center
             float x = (gridPos.x - (minimapData.gridMinX + minimapData.gridMaxX) / 2f) * iconSpacing * scale;
@@ -331,7 +331,7 @@ public class MinimapUI : MonoBehaviour
         GameObject iconObj;
         if (prefab != null)
         {
-            Debug.Log("Using custom room icon prefab.");
+            // Debug.Log("Using custom room icon prefab.");
             iconObj = Instantiate(prefab, roomIconContainer);
         }
         else

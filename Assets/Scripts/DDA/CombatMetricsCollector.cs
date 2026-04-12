@@ -171,10 +171,18 @@ public class CombatMetricCollector : MonoBehaviour
     /// Called by your wave manager when combat wave ends
     public void FinalizeWaveMetrics()
     {
+        PublishCurrentCombatMetrics(true);
+    }
+
+    public bool PublishCurrentCombatMetrics(bool resetAccumulatedStats = false)
+    {
         if (playerModel == null)
         {
             playerModel = DDAMAPEKit.Instance.GetPlayerModel();
         }
+
+        if (playerModel == null)
+            return false;
 
         float totalDamage =
             waveStats.meleeDamage +
@@ -199,38 +207,9 @@ public class CombatMetricCollector : MonoBehaviour
             dodgeRate = (float)waveStats.successfulDodges / waveStats.dodgeAttempts;
         }
 
-        float damageTaken = 0f;
-        foreach (PlayerMetric metric in profilingMetrics)
-        {
-            if (metric.type == PlayerMetricType.DamageTaken)
-            {
-                damageTaken = metric.NormalizeRaw();
-                metric.ResetRaw();
-                break;
-            }
-        }
-
-        float healingUsed = 0f;
-        foreach (PlayerMetric metric in profilingMetrics)
-        {
-            if (metric.type == PlayerMetricType.HealingUsed)
-            {
-                healingUsed = metric.NormalizeRaw();
-                metric.ResetRaw();
-                break;
-            }
-        }
-
-        float manaUsed = 0f;
-        foreach (PlayerMetric metric in profilingMetrics)
-        {
-            if (metric.type == PlayerMetricType.ManaUsed)
-            {
-                manaUsed = metric.NormalizeRaw();
-                metric.ResetRaw();
-                break;
-            }
-        }
+        float damageTaken = GetNormalizedMetricValue(PlayerMetricType.DamageTaken, resetAccumulatedStats);
+        float healingUsed = GetNormalizedMetricValue(PlayerMetricType.HealingUsed, resetAccumulatedStats);
+        float manaUsed = GetNormalizedMetricValue(PlayerMetricType.ManaUsed, resetAccumulatedStats);
 
         float averageDistance = 0f;
         if (waveStats.distanceSampleCount > 0)
@@ -241,6 +220,17 @@ public class CombatMetricCollector : MonoBehaviour
         float averageDistanceNormalized = Mathf.Clamp01(
             averageDistance / Mathf.Max(0.01f, maxExpectedCombatDistance)
         );
+
+        bool hasCombatSignal =
+            totalDamage > 0f ||
+            waveStats.dodgeAttempts > 0 ||
+            waveStats.distanceSampleCount > 0 ||
+            damageTaken > 0f ||
+            healingUsed > 0f ||
+            manaUsed > 0f;
+
+        if (!hasCombatSignal && !resetAccumulatedStats)
+            return false;
 
         UpdateUpgradePreferenceMetrics();
 
@@ -253,14 +243,20 @@ public class CombatMetricCollector : MonoBehaviour
         playerModel.SetProfilingMetric(PlayerMetricType.DamageTaken, damageTaken);
         playerModel.SetProfilingMetric(PlayerMetricType.HealingUsed, healingUsed);
         playerModel.SetProfilingMetric(PlayerMetricType.ManaUsed, manaUsed);
-        waveStats.Reset();
+
+        if (resetAccumulatedStats)
+        {
+            waveStats.Reset();
+        }
 
         Debug.Log(
-            $"[CombatMetricCollector] Wave finalized. " +
+            $"[CombatMetricCollector] {(resetAccumulatedStats ? "Wave finalized" : "Live profiling published")}. " +
             $"Melee: {meleeRatio:P1}, Ranged: {rangedRatio:P1}, Skill: {skillRatio:P1}, " +
             $"Dodge Rate: {dodgeRate:P1}, Avg Distance: {averageDistance:F2} ({averageDistanceNormalized:F2}), " +
             $"Damage Taken: {damageTaken}, Healing Used: {healingUsed}, Mana Used: {manaUsed} "
         );
+
+        return true;
     }
 
     private void EnsurePlayerStatsReference()
@@ -356,6 +352,25 @@ public class CombatMetricCollector : MonoBehaviour
             $"Defensive: {defensivePreference:P1}, Offensive: {offensivePreference:P1}, " +
             $"Mana: {manaPreference:P1}, Speed: {speedPreference:P1}"
         );
+    }
+
+    private float GetNormalizedMetricValue(PlayerMetricType metricType, bool resetAccumulatedStats)
+    {
+        foreach (PlayerMetric metric in profilingMetrics)
+        {
+            if (metric.type != metricType)
+                continue;
+
+            float normalizedValue = metric.NormalizeRaw();
+            if (resetAccumulatedStats)
+            {
+                metric.ResetRaw();
+            }
+
+            return normalizedValue;
+        }
+
+        return 0f;
     }
 }
 

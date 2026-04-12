@@ -33,7 +33,7 @@ public class AuraOfTheFormerArchon : SkillBase
 
         isActive = true;
 
-        Debug.Log($"{skillName} activated by {caster.name}");
+        // Debug.Log($"{skillName} activated by {caster.name}");
 
         // Play cast sound if available
         if (castSound != null)
@@ -152,12 +152,12 @@ public class AuraOfTheFormerArchon : SkillBase
                     out didCrit
                 );
                 health.TakeDamage(finalDamage, didCrit, DamageSource.Skill, applyStagger: false);
-                Debug.Log($"{hit.name} took {finalDamage} damage from {skillName}");
+                // Debug.Log($"{hit.name} took {finalDamage} damage from {skillName}");
 
                 // Play impact sound
                 if (impactSound != null)
                 {
-                    AudioManager.Instance.PlayClipAtPoint(impactSound, hit.transform.position);
+                    AudioManager.Instance?.PlayClipAtPoint(impactSound, hit.transform.position);
                 }
             }
 
@@ -206,7 +206,7 @@ public class AuraOfTheFormerArchon : SkillBase
             if (enemy != null)
             {
                 enemy.ApplySpeedModifier(1f);
-                Debug.Log($"{enemy.name} speed restored after leaving aura");
+                // Debug.Log($"{enemy.name} speed restored after leaving aura");
             }
             originalSpeeds.Remove(enemy);
         }
@@ -226,13 +226,13 @@ public class AuraOfTheFormerArchon : SkillBase
             if (kvp.Key != null)
             {
                 kvp.Key.ApplySpeedModifier(1f);
-                Debug.Log($"{kvp.Key.name} speed restored on skill end");
+                // Debug.Log($"{kvp.Key.name} speed restored on skill end");
             }
         }
         originalSpeeds.Clear();
 
         isActive = false;
-        Debug.Log($"{skillName} aura ended");
+        // Debug.Log($"{skillName} aura ended");
     }
 
     public override bool CanUseSkill(GameObject caster)

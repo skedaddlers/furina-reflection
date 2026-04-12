@@ -200,7 +200,7 @@ public class Room : MonoBehaviour
         // Sensors should read the finalized room budget, not the pre-scaled authoring values.
         OnRoomCombatStarted?.Invoke(this);
 
-        Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
+        // Debug.Log($"Room {roomIndex} beginning combat with {enemyCount} enemies.");
         if (roomType == RoomType.Boss && bossManager != null)
         {
             bossManager.SpawnFocalorsPhase1();
@@ -257,7 +257,7 @@ public class Room : MonoBehaviour
 
         UnlockAllDoors();
 
-        Debug.Log($"Room {roomIndex} Cleared!");
+        // Debug.Log($"Room {roomIndex} Cleared!");
         OnRoomCleared?.Invoke(this);
         OnRoomClearedLocal?.Invoke();
 
@@ -268,7 +268,7 @@ public class Room : MonoBehaviour
     private void StartNextWave()
     {
         currentWave++;
-        Debug.Log($"Room {roomIndex} Wave {currentWave} cleared. Next wave in {timeBetweenWaves} seconds.");
+        // Debug.Log($"Room {roomIndex} Wave {currentWave} cleared. Next wave in {timeBetweenWaves} seconds.");
 
         OnWaveCleared?.Invoke(this);
         StartCoroutine(SpawnNextWaveAfterDelay());
@@ -298,7 +298,7 @@ public class Room : MonoBehaviour
 
     public void SpawnItemsInRoom(int itemCount)
     {
-        Debug.Log($"Spawning {itemCount} items in Room {roomIndex}");
+        // Debug.Log($"Spawning {itemCount} items in Room {roomIndex}");
         if (possibleItems.Count == 0 || itemCount <= 0)
             return;
 

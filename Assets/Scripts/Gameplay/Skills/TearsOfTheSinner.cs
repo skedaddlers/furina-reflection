@@ -24,7 +24,7 @@ public class TearsOfTheSinner : SkillBase
 
         isActive = true;
 
-        Debug.Log($"{skillName} activated by {caster.name}");
+        // Debug.Log($"{skillName} activated by {caster.name}");
         // Play cast sound
         if (castSound != null)
         {
@@ -88,7 +88,7 @@ public class TearsOfTheSinner : SkillBase
         // Find ALL enemies in the scene by tag
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(enemyTag);
 
-        Debug.Log($"{skillName}: Damaging {enemies.Length} enemies for {baseDamage} base damage each");
+        // Debug.Log($"{skillName}: Damaging {enemies.Length} enemies for {baseDamage} base damage each");
 
         foreach (GameObject enemy in enemies)
         {
@@ -116,7 +116,7 @@ public class TearsOfTheSinner : SkillBase
                 // Play impact sound
                 if (impactSound != null)
                 {
-                    AudioManager.Instance.PlayClipAtPoint(impactSound, enemy.transform.position);
+                    AudioManager.Instance?.PlayClipAtPoint(impactSound, enemy.transform.position);
                 }
             }
         }
@@ -129,7 +129,7 @@ public class TearsOfTheSinner : SkillBase
         base.OnSkillEnd(caster);
         isActive = false;
 
-        Debug.Log($"{skillName} ended");
+        // Debug.Log($"{skillName} ended");
     }
 
     public override bool CanUseSkill(GameObject caster)

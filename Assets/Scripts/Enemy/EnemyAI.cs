@@ -185,7 +185,7 @@ public class EnemyAI : MonoBehaviour, IStaggerable
             lastAttackTime = Time.time;
             if (attackSFX != null && Random.value < 0.6f) // 60% chance to play attack SFX to avoid spamming
             {
-                AudioManager.Instance.PlayClipAtPoint(attackSFX, transform.position);
+                AudioManager.Instance?.PlayClipAtPoint(attackSFX, transform.position);
             }
         }
     }
@@ -472,7 +472,7 @@ public class EnemyAI : MonoBehaviour, IStaggerable
     {
         if (walkingSFX != null)
         {
-            AudioManager.Instance.PlayClipAtPoint(walkingSFX, transform.position);
+            AudioManager.Instance?.PlayClipAtPoint(walkingSFX, transform.position);
         }
     }
 }

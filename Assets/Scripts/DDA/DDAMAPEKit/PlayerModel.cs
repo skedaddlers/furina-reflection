@@ -141,7 +141,7 @@ namespace DDAMAPEKitFramework
                 {
                     float metricValue = GetProfilingMetric(weight.metric);
                     score += metricValue * weight.weight;
-                    Debug.Log($"[PlayerModel] Profile: {profile.name}, Metric: {weight.metric}, Value: {metricValue:F2}, Weight: {weight.weight:F2}, Partial Score: {metricValue * weight.weight:F2}");
+                    // Debug.Log($"[PlayerModel] Profile: {profile.name}, Metric: {weight.metric}, Value: {metricValue:F2}, Weight: {weight.weight:F2}, Partial Score: {metricValue * weight.weight:F2}");
                 }
 
                 score = Mathf.Max(0, score);
@@ -157,6 +157,7 @@ namespace DDAMAPEKitFramework
             foreach (var kvp in scores)
             {
                 profileDistribution[kvp.Key] = kvp.Value / totalScore;
+                Debug.Log($"[PlayerModel] Profile: {kvp.Key.name}, Raw Score: {kvp.Value:F2}, Distribution: {profileDistribution[kvp.Key]:P2}");
             }
         }
 
@@ -232,8 +233,9 @@ namespace DDAMAPEKitFramework
             {
                 float maxR = 5f;
                 float gR = 10f;
-                reward = Mathf.Floor(maxR * Mathf.Pow(gR, -1f * Mathf.Abs(performance - 1f)));
+                reward = maxR * Mathf.Pow(gR, -1f * Mathf.Abs(performance - 1f));
             }
+            Debug.Log($"[PlayerModel] Calculated Reward: {reward:F2}");
 
             UpdateProfileScoresPerDistribution(reward);
         }

@@ -14,7 +14,7 @@ public class Inventory : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Inventory initialized.");
+        // Debug.Log("Inventory initialized.");
     }
     public bool TryAddItem(Item item)
     {
@@ -69,9 +69,9 @@ public class Inventory : MonoBehaviour
                 UIManager.Instance.ShowNotification("Wait before using another item!");
             }
         }
-        else
-        {
-            Debug.Log($"Item not in inventory: {item.itemName}");
-        }
+        // else
+        // {
+        //     // Debug.Log($"Item not in inventory: {item.itemName}");
+        // }
     }
 }

@@ -75,7 +75,7 @@ public class EliteRuinGuard : EnemyAI
         // Play throw SFX
         if (throwSFX != null)
         {
-            AudioManager.Instance.PlayClipAtPoint(throwSFX, transform.position);
+            AudioManager.Instance?.PlayClipAtPoint(throwSFX, transform.position);
         }
 
         lockedDirection = toPlayer.normalized;

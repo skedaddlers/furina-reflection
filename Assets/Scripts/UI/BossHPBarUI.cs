@@ -54,7 +54,7 @@ public class BossHPBarUI : MonoBehaviour
         decayingHealthSlider.maxValue = max;
         targetValue = current;
         SetActive(true);
-        Debug.Log($"Initializing Boss HP Bar: Max={max}, Current={current}");
+        // Debug.Log($"Initializing Boss HP Bar: Max={max}, Current={current}");
         fillCoroutine = StartCoroutine(FillHealthBar(current, fillSpeed));
     }
 
@@ -74,7 +74,7 @@ public class BossHPBarUI : MonoBehaviour
 
             yield return null;
         }
-        Debug.Log("Finished filling Boss HP Bar");
+        // Debug.Log("Finished filling Boss HP Bar");
         isInitializing = false;
         healthSlider.value = target;
         decayingHealthSlider.value = target;
