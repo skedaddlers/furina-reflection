@@ -413,9 +413,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 750
   shieldAmount: 0
-  maxShield: 800
+  maxShield: 750
   hitSFX: {fileID: 8300000, guid: 84dcdec185133064a86a72bffa454f2d, type: 3}
   enableStaggerOnHit: 1
   defaultMeleeStaggerDuration: 0.2
@@ -521,7 +521,7 @@ MonoBehaviour:
   attackCooldown: 1.5
   movementSpeed: 1
   damage: 10
-  detectionRange: 10
+  detectionRange: 12
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
   isPerformingSpecialAttack: 0

@@ -13,6 +13,7 @@ public class BossCloneAI : EnemyAI
     public float castSoundVolume = 1f;
 
     [Header("Verdict Arc")]
+    public bool enableVerdictArc = true;
     [SerializeField] private float verdictArcDamage = 12f;
     [SerializeField] private float verdictArcRange = 8f;
     [SerializeField] private float verdictArcAngle = 70f;
@@ -23,6 +24,7 @@ public class BossCloneAI : EnemyAI
     [SerializeField] private AudioClip verdictArcSound;
 
     [Header("Ripple Court")]
+    public bool enableRippleCourt = true;
     [SerializeField] private float rippleDamage = 10f;
     [SerializeField] private int rippleCount = 3;
     [SerializeField] private float rippleSpawnRadius = 3f;
@@ -33,6 +35,7 @@ public class BossCloneAI : EnemyAI
     [SerializeField] private AudioClip rippleCourtSound;
 
     [Header("Judicial Line")]
+    public bool enableJudicialLine = true;
     [SerializeField] private float lineDamage = 15f;
     [SerializeField] private float lineWidth = 2f;
     [SerializeField] private float lineLength = 10f;
@@ -56,6 +59,9 @@ public class BossCloneAI : EnemyAI
 
     [Header("Dodge Settings")]
     [SerializeField] private float dodgeDistance = 3f;
+    [SerializeField] private float dodgeReadWindow = 1.1f;
+    [SerializeField] private float dodgeThreatRange = 8f;
+    [SerializeField] [Range(20f, 180f)] private float dodgeThreatAngle = 110f;
 
     [Header("Other SFX")]
     [SerializeField] private AudioClip dashSound;
@@ -82,8 +88,10 @@ public class BossCloneAI : EnemyAI
 
     protected override void Update()
     {
+        base.Update();
         if (IsStaggered) return;
         if (player == null || isInSequence) return;
+        if (agent != null && !agent.isStopped) return;
 
         LookAtPlayer();
     }
@@ -215,25 +223,26 @@ public class BossCloneAI : EnemyAI
                 yield break;
 
             case CloneActionType.MeleeAttack:
+                SnapLookAtPlayer();
                 PlaySkillCastSound(meleeAttackSound);
                 animator.SetTrigger("Attack");
                 break;
 
             case CloneActionType.RangedAttack:
+                SnapLookAtPlayer();
                 PlaySkillCastSound(rangedAttackSound);
                 animator.SetTrigger("RangedAttack");
                 break;
 
             case CloneActionType.SkillCast:
+                SnapLookAtPlayer();
                 animator.SetTrigger("Cast");
                 TriggerRandomSkill();
                 break;
 
             case CloneActionType.Dodge:
-                animator.SetTrigger("Dash");
-                StartCoroutine(DodgeWindow(action.duration, action.speed));
-                PlaySkillCastSound(dodgeSound);
-                break;
+                yield return WaitForPlayerAttackThenDodge(action.duration, action.speed);
+                yield break;
 
             case CloneActionType.Heal:
                 yield return PerformHeal(action.duration);
@@ -305,7 +314,7 @@ public class BossCloneAI : EnemyAI
         if (isStaggered)
             return;
 
-        LookAtPlayer();
+        SnapLookAtPlayer();
 
         if (projectilePrefab != null)
         {
@@ -413,23 +422,28 @@ public class BossCloneAI : EnemyAI
 
     private void TriggerRandomSkill()
     {
-        int choice = Random.Range(0, 4);
+        int choiceCount = 1;
+        if (enableVerdictArc) choiceCount++;
+        if (enableRippleCourt) choiceCount++;
+        if (enableJudicialLine) choiceCount++;
 
-        switch (choice)
-            {
-                case 0:
-                    StartCoroutine(VerdictArc());
-                    break;
-                case 1:
-                    StartCoroutine(RippleCourt());
-                    break;
-                case 2:
-                    StartCoroutine(JudicialLine());
-                    break;
-                case 3:
-                    TryCastPlayerLikeSkill();
-                    break;
-            }
+        int pick = Random.Range(0, choiceCount);
+        if (enableVerdictArc && pick == 0)
+        {
+            StartCoroutine(VerdictArc());
+        }
+        else if (enableRippleCourt && ((enableVerdictArc && pick == 1) || (!enableVerdictArc && pick == 0)))
+        {
+            StartCoroutine(RippleCourt());
+        }
+        else if (enableJudicialLine)
+        {
+            StartCoroutine(JudicialLine());
+        }
+        else
+        {
+            TryCastPlayerLikeSkill();
+        }
     }
 
     private void InitializeCloneSkillPool()
@@ -496,6 +510,7 @@ public class BossCloneAI : EnemyAI
 
     IEnumerator VerdictArc()
     {
+        SnapLookAtPlayer();
         Telegraph t = Instantiate(telegraphPrefab, transform.position, transform.rotation);
         t.ConfigureCone(verdictArcRange, verdictArcAngle, verdictArcSegments);
 
@@ -556,7 +571,7 @@ public class BossCloneAI : EnemyAI
 
     IEnumerator JudicialLine()
     {
-        LookAtPlayer();
+        SnapLookAtPlayer();
 
         Telegraph t = Instantiate(telegraphPrefab, transform.position, transform.rotation);
         t.ConfigureRectangle(lineWidth, lineLength);
@@ -588,9 +603,7 @@ public class BossCloneAI : EnemyAI
         if (agent == null || !agent.enabled || player == null) yield break;
 
         float elapsed = 0f;
-        // pick random direction  from 90 - 270 degrees relative to player
-        float angle = Random.Range(90f, 270f);
-        Vector3 dir = Quaternion.Euler(0, angle, 0) * (player.position - transform.position).normalized;
+        Vector3 dir = GetSmartDodgeDirection();
         Vector3 dodgeTarget = transform.position + dir * dodgeDistance;
         Health health = GetComponent<Health>();
         agent.speed = ScaleActionSpeed(speed);
@@ -620,6 +633,96 @@ public class BossCloneAI : EnemyAI
             if (agent != null && agent.enabled)
                 agent.ResetPath();
         }
+    }
+
+    private IEnumerator WaitForPlayerAttackThenDodge(float dodgeDuration, float dodgeSpeed)
+    {
+        if (agent == null || !agent.enabled || player == null)
+            yield break;
+
+        float observedAttackTime = GetLatestPlayerAttackTime();
+        float elapsed = 0f;
+
+        while (elapsed < dodgeReadWindow)
+        {
+            if (player == null || !agent.enabled)
+                yield break;
+
+            SnapLookAtPlayer();
+
+            float latestAttackTime = GetLatestPlayerAttackTime();
+            if (latestAttackTime > observedAttackTime && IsPlayerAttackThreatening())
+            {
+                animator.SetTrigger("Dash");
+                PlaySkillCastSound(dodgeSound);
+                yield return DodgeWindow(dodgeDuration, dodgeSpeed);
+                yield break;
+            }
+
+            observedAttackTime = Mathf.Max(observedAttackTime, latestAttackTime);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private float GetLatestPlayerAttackTime()
+    {
+        PlayerActionTracker tracker = PlayerActionTracker.Instance;
+        if (tracker == null)
+            return -999f;
+
+        return Mathf.Max(
+            tracker.LastMeleeTime,
+            Mathf.Max(tracker.LastRangedTime, tracker.LastSkillTime)
+        );
+    }
+
+    private bool IsPlayerAttackThreatening()
+    {
+        if (player == null)
+            return false;
+
+        Vector3 toClone = transform.position - player.position;
+        toClone.y = 0f;
+
+        if (toClone.sqrMagnitude <= 0.0001f)
+            return true;
+
+        if (dodgeThreatRange > 0f && toClone.sqrMagnitude > dodgeThreatRange * dodgeThreatRange)
+            return false;
+
+        Vector3 playerForward = player.forward;
+        playerForward.y = 0f;
+
+        if (playerForward.sqrMagnitude <= 0.0001f)
+            return true;
+
+        float angleToClone = Vector3.Angle(playerForward.normalized, toClone.normalized);
+        return angleToClone <= dodgeThreatAngle * 0.5f;
+    }
+
+    private Vector3 GetSmartDodgeDirection()
+    {
+        Vector3 awayFromPlayer = transform.position - player.position;
+        awayFromPlayer.y = 0f;
+
+        if (awayFromPlayer.sqrMagnitude <= 0.0001f)
+        {
+            awayFromPlayer = -player.forward;
+            awayFromPlayer.y = 0f;
+        }
+
+        if (awayFromPlayer.sqrMagnitude <= 0.0001f)
+            awayFromPlayer = transform.right;
+
+        awayFromPlayer.Normalize();
+
+        Vector3 sideStep = Vector3.Cross(Vector3.up, awayFromPlayer).normalized;
+        if (Random.value < 0.5f)
+            sideStep = -sideStep;
+
+        Vector3 dodgeDirection = (sideStep + awayFromPlayer * 0.35f).normalized;
+        return dodgeDirection.sqrMagnitude > 0.0001f ? dodgeDirection : awayFromPlayer;
     }
 
     private void DealSpecialDamage(float damage)

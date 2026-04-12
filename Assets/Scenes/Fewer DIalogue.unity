@@ -995,19 +995,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonConfig:
-    minRooms: 2
-    maxRooms: 2
+    minRooms: 14
+    maxRooms: 18
     normalRoomRatio: 0.5
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
     eliteRoomRatio: 0.15
-    guaranteedShops: 0
-    guaranteedElites: 13
-    guaranteedEvents: 0
+    guaranteedShops: 2
+    guaranteedElites: 2
+    guaranteedEvents: 2
     guaranteeEarlyShop: 0
     minDistanceBetweenShops: 3
-    minDistanceBetweenElites: 4
-    eliteMinDistanceFromStart: 0
+    minDistanceBetweenElites: 3
+    eliteMinDistanceFromStart: 3
     maxConnectionsPerRoom: 4
     loopChance: 1
     seed: -1
@@ -1373,7 +1373,7 @@ MonoBehaviour:
   cursorController: {fileID: 50898957}
   mainSceneName: Fewer Dialogue
   mainMenuSceneName: MainMenu
-  withDialogue: 0
+  withDialogue: 1
 --- !u!4 &44146001
 Transform:
   m_ObjectHideFlags: 0
@@ -23753,7 +23753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36301bdabcf7b8241889698779c65c16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableDDA: 1
+  enableDDA: 0
   debugMode: 0
   combatMetricCollector: {fileID: 1130029152}
 --- !u!4 &1130029149

@@ -400,6 +400,18 @@ public class PlayerController : MonoBehaviour, IStaggerable
         if (t) StartCombatLock(t);
 
         var set = _animBinder?.currentAnimSet;
+        if (PlayerActionTracker.Instance != null)
+        {
+            if (set == null || set.type == WeaponAnimType.Melee || set.type == WeaponAnimType.BombThrow)
+            {
+                PlayerActionTracker.Instance.RegisterMelee();
+            }
+            else
+            {
+                PlayerActionTracker.Instance.RegisterRanged();
+            }
+        }
+
         if (set == null || set.type == WeaponAnimType.Melee || set.type == WeaponAnimType.BombThrow)
             _animBinder?.PlayAttack(); // pakai trigger Attack
         else if (set.type == WeaponAnimType.OneHandGun || set.type == WeaponAnimType.TwoHandGun)
@@ -487,6 +499,7 @@ public class PlayerController : MonoBehaviour, IStaggerable
     void ReleaseBowShot()
     {
         playerCombat.loadout.current.PlayVoiceLineOnAttack();
+        PlayerActionTracker.Instance?.RegisterRanged();
         ExitBowAim();
 
         // baru beneran pake weapon (cek mana, cooldown, dll)

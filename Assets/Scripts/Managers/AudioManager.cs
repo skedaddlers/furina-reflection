@@ -101,6 +101,12 @@ public class AudioManager : MonoBehaviour
         activeMusicSource.Play();
     }
 
+    public void PlayVictoryTransition()
+    {
+        // music is the same
+        PlayDefeatMusic();
+    }
+
     public void PlayDefeatMusic()
     {
         Debug.Log("Playing defeat music");
@@ -160,7 +166,7 @@ public class AudioManager : MonoBehaviour
     private IEnumerator PlaySFXWithDuration(AudioClip clip, float volume, float duration, AudioSource source)
     {
         source.PlayOneShot(clip, volume);
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSecondsRealtime(duration);
         source.Stop();
     }
 
@@ -206,16 +212,28 @@ public class AudioManager : MonoBehaviour
         inactiveMusicSource.volume = 0;
         inactiveMusicSource.Play();
 
-        float time = 0;
-
-        while (time < duration)
+        if (duration <= 0f)
         {
-            time += Time.deltaTime;
+            activeMusicSource.Stop();
+            inactiveMusicSource.volume = musicVolume;
 
-            float t = time / duration;
+            var instantSwap = activeMusicSource;
+            activeMusicSource = inactiveMusicSource;
+            inactiveMusicSource = instantSwap;
+            yield break;
+        }
+
+        float startTime = Time.unscaledTime;
+
+        while (true)
+        {
+            float t = Mathf.Clamp01((Time.unscaledTime - startTime) / duration);
 
             activeMusicSource.volume = Mathf.Lerp(musicVolume, 0, t);
             inactiveMusicSource.volume = Mathf.Lerp(0, musicVolume, t);
+
+            if (t >= 1f)
+                break;
 
             yield return null;
         }

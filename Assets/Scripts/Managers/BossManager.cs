@@ -415,6 +415,7 @@ public class BossManager : MonoBehaviour
         // phase 2 death dialogue 
         if(withDialogue)
         {
+            AudioManager.Instance?.PlayVictoryTransition();
             UIManager.Instance.dialogueUI.StartDialogueSequence(phase2EndDialogues);
             float duration = UIManager.Instance.dialogueUI
                 .GetTotalDialogueSequenceDuration(phase2EndDialogues);

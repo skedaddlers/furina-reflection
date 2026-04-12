@@ -210,6 +210,31 @@ public class EnemyAI : MonoBehaviour, IStaggerable
         }
     }
 
+    protected bool SnapLookAtPlayer()
+    {
+        if (isStaggered || player == null)
+            return false;
+
+        Vector3 direction = player.position - transform.position;
+        direction.y = 0f;
+        return SnapFaceDirection(direction);
+    }
+
+    protected bool SnapFaceDirection(Vector3 direction)
+    {
+        if (direction.sqrMagnitude <= 0.0001f)
+            return false;
+
+        if (rotateCoroutine != null)
+        {
+            StopCoroutine(rotateCoroutine);
+            rotateCoroutine = null;
+        }
+
+        transform.rotation = Quaternion.LookRotation(direction.normalized);
+        return true;
+    }
+
     private IEnumerator RotateTowards(Vector3 direction)
     {
         Quaternion targetRotation = Quaternion.LookRotation(direction);
