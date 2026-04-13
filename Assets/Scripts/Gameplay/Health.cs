@@ -111,12 +111,12 @@ public class Health : MonoBehaviour
                 if (enemy.healthBar != null)
                 {
                     UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, enemy.healthBar.position, isCrit);
-                    StartCoroutine(HitFlash(enemy));
                 }
                 else
                 {
                     UIManager.Instance.damageNumberUI.ShowDamagePopup(finalDamage, transform.position + Vector3.up, isCrit);
                 }
+                StartCoroutine(HitFlash(enemy));
             }
             else
             {
@@ -156,9 +156,17 @@ public class Health : MonoBehaviour
         if (enemy.enemyRenderer == null) yield break;
 
         Color originalColor = enemy.rendererColor;
-        enemy.enemyRenderer.material.color = Color.red;
+        // get all the materials of the enemy and set their color to red for a flash effect
+        foreach (var mat in enemy.enemyRenderer.materials)
+        {
+            mat.color = Color.red;
+        }
         yield return new WaitForSeconds(0.1f);
-        enemy.enemyRenderer.material.color = originalColor;
+        foreach (var mat in enemy.enemyRenderer.materials)
+        {
+            mat.color = originalColor;
+        }
+
         // Debug.Log($"{gameObject.name} hit flash ended.");
     }
 

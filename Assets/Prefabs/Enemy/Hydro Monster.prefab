@@ -931,7 +931,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   enemyType: 2
   SuppressDefaultDeathHandling: 0
-  enemyRenderer: {fileID: 0}
+  enemyRenderer: {fileID: 4684639286036497217}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
   xpReward: 15

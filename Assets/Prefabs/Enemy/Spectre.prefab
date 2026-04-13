@@ -1167,11 +1167,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   SuppressDefaultDeathHandling: 0
-  enemyRenderer: {fileID: 0}
+  enemyRenderer: {fileID: 5024758676376710105}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 1223118301296987611}
   xpReward: 40
   goldReward: 10
+  scoreValue: 100
 --- !u!114 &9184170250974352647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1195,6 +1196,8 @@ MonoBehaviour:
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 0}
+  attackSFX: {fileID: 0}
 --- !u!114 &6779822399096051496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1306,6 +1309,11 @@ PrefabInstance:
       addedObject: {fileID: 8235476900607708288}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f3bfe705d009c94eb5cded1e5d76300, type: 3}
+--- !u!23 &5024758676376710105 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 4f3bfe705d009c94eb5cded1e5d76300, type: 3}
+  m_PrefabInstance: {fileID: 5943083295617873757}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6192638296533831862 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4f3bfe705d009c94eb5cded1e5d76300, type: 3}

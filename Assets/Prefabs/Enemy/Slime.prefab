@@ -1258,7 +1258,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   SuppressDefaultDeathHandling: 0
-  enemyRenderer: {fileID: 0}
+  enemyRenderer: {fileID: 2191421816730212330}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 1223118301296987611}
   xpReward: 40

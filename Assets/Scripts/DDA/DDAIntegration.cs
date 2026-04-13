@@ -142,7 +142,7 @@ public class DDAIntegration : MonoBehaviour
             if (activeBossRoom == null || !activeBossRoom.isInCombat)
                 break;
 
-            if (combatMetricCollector != null && combatMetricCollector.PublishCurrentCombatMetrics())
+            if (combatMetricCollector != null && combatMetricCollector.PublishCurrentCombatMetrics(true))
             {
                 DDAMAPEKit.Instance?.TriggerMAPEKLoop();
             }

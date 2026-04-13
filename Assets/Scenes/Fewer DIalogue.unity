@@ -23753,7 +23753,7 @@ MonoBehaviour:
   enablePerformanceTracking: 1
   enableDDA: 0
   enableBossFightLoops: 1
-  bossFightLoopIntervalSeconds: 5
+  bossFightLoopIntervalSeconds: 8
   analyzeNoMatterWhat: 1
   debugMode: 0
   combatMetricCollector: {fileID: 1130029152}
