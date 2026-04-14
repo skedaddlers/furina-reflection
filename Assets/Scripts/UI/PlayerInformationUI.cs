@@ -177,8 +177,14 @@ public class PlayerInformationUI : MonoBehaviour
     {
         float maxHealth = playerStats.health != null ? playerStats.health.maxHealth : 0f;
         float currentHealth = playerStats.health != null ? playerStats.health.CurrentHealth : 0f;
+        float effectiveAttack = playerStats.GetEffectiveAttackValue();
         SetText(healthText, $"{Mathf.RoundToInt(currentHealth)} / {Mathf.RoundToInt(maxHealth)}");
-        SetText(attackText, $"{Mathf.RoundToInt(playerStats.baseAttack)}");
+        SetText(
+            attackText,
+            Mathf.Approximately(effectiveAttack, playerStats.baseAttack)
+                ? $"{Mathf.RoundToInt(playerStats.baseAttack)}"
+                : $"{Mathf.RoundToInt(effectiveAttack)} ({Mathf.RoundToInt(playerStats.baseAttack)} base)"
+        );
         SetText(defenseText, $"{Mathf.RoundToInt(playerStats.baseDefense)}");
         SetText(maxManaText, $"{playerStats.CurrentMana} / {playerStats.maxMana}");
         SetText(manaRegenText, $"{playerStats.GetEffectiveManaRegenPerSecond():F1}/sec");

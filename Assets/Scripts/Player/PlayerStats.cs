@@ -62,6 +62,7 @@ public class PlayerStats : MonoBehaviour
 
     [SerializeField] private float _currentDamageBuffMultiplier = 1f;
     private float _damageBuffTimer = 0f;
+    private Coroutine _damageBuffCoroutine;
 
     void Awake()
     {
@@ -271,12 +272,30 @@ public class PlayerStats : MonoBehaviour
     {
         return _currentDamageBuffMultiplier;
     }
+
+    public float GetEffectiveAttackValue()
+    {
+        return baseAttack * Mathf.Max(0f, _currentDamageBuffMultiplier);
+    }
+
     public void ApplyTemporaryDamageBuff(float multiplier, float duration)
     {
-        _currentDamageBuffMultiplier = multiplier;
-        _damageBuffTimer = duration;
-        StopAllCoroutines();
-        StartCoroutine(DamageBuffCoroutine());
+        _currentDamageBuffMultiplier = Mathf.Max(0f, multiplier);
+        _damageBuffTimer = Mathf.Max(0f, duration);
+
+        if (_damageBuffCoroutine != null)
+        {
+            StopCoroutine(_damageBuffCoroutine);
+            _damageBuffCoroutine = null;
+        }
+
+        if (_damageBuffTimer <= 0f)
+        {
+            _currentDamageBuffMultiplier = 1f;
+            return;
+        }
+
+        _damageBuffCoroutine = StartCoroutine(DamageBuffCoroutine());
     }
 
     private IEnumerator DamageBuffCoroutine()
@@ -287,6 +306,7 @@ public class PlayerStats : MonoBehaviour
             yield return null;
         }
         _currentDamageBuffMultiplier = 1f;
+        _damageBuffCoroutine = null;
     }
 
     // Upgrade methods called by LevelUpUI
@@ -294,6 +314,7 @@ public class PlayerStats : MonoBehaviour
     {
         float healthIncrease = upgradeManager.GetHealthUpgradeAmount();
         health.SetMaxHealth(health.maxHealth + healthIncrease);
+        health.Heal(healthIncrease); // Heal the player by the amount of health increased
         NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.Health);
     }
 

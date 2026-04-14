@@ -47,5 +47,5 @@ MonoBehaviour:
   upgradeDescription: 
   nextLevelSkill: {fileID: 0}
   attackBonus: 20
-  healthDrainPerSecond: 4
+  healthDrainPerSecond: 2
   movementSpeedBonusPercent: 0.5

@@ -51,6 +51,7 @@ namespace DDAMAPEKitFramework
         public static event Action<float> OnSkillAttack;       // float = mana or damage
         public static event Action OnDodgeAttempt;                 // dodge happened
         public static event Action OnSuccessfulDodge;              // successful dodge happened
+        public static event Action<float> OnSuccessfulDodgeDamageAvoided; // float = damage avoided
         public static event Action<float> OnDamageTaken;    // float = damage taken
         public static event Action<float> OnHeal;           // float = heal amount
         public static event Action<float> OnManaUsed;       // float = mana used
@@ -59,7 +60,11 @@ namespace DDAMAPEKitFramework
         public static void RaiseRangedAttack(float damage) => OnRangedAttack?.Invoke(damage);
         public static void RaiseSkillAttack(float amount) => OnSkillAttack?.Invoke(amount);
         public static void RaiseDodgeAttempt() => OnDodgeAttempt?.Invoke();
-        public static void RaiseSuccessfulDodge() => OnSuccessfulDodge?.Invoke();
+        public static void RaiseSuccessfulDodge(float avoidedDamage = 0f)
+        {
+            OnSuccessfulDodge?.Invoke();
+            OnSuccessfulDodgeDamageAvoided?.Invoke(Mathf.Max(0f, avoidedDamage));
+        }
         public static void RaiseDamageTaken(float damage) => OnDamageTaken?.Invoke(damage);
         public static void RaiseHeal(float heal) => OnHeal?.Invoke(heal);
         public static void RaiseManaUsed(float mana) => OnManaUsed?.Invoke(mana);

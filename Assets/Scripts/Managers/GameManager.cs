@@ -26,6 +26,7 @@ public class GameManager : MonoBehaviour
     private float _finalRunDuration;
     private int _currentRunScore;
     private bool _isRunActive;
+    private RunMetricsLogger _runMetricsLogger;
 
     public GameState CurrentState { get; private set; }
     public int CurrentRunScore => _currentRunScore;
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            EnsureRunMetricsLogger();
         }
         else
         {
@@ -73,6 +75,7 @@ public class GameManager : MonoBehaviour
     {
         if (_isRestarting) return;
         _isRestarting = true;
+        _runMetricsLogger?.FinalizeAndPersist(RunEndReason.Restart);
 
         string targetSceneName = string.IsNullOrEmpty(mainSceneName)
             ? UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
@@ -159,6 +162,7 @@ public class GameManager : MonoBehaviour
     public void OnBossRoomCleared()
     {
         FinalizeRun();
+        _runMetricsLogger?.FinalizeAndPersist(RunEndReason.Victory);
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowVictoryScreen();
@@ -169,6 +173,7 @@ public class GameManager : MonoBehaviour
     public void OnPlayerDeath()
     {
         FinalizeRun();
+        _runMetricsLogger?.FinalizeAndPersist(RunEndReason.Defeat);
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowDefeatScreen();
@@ -200,6 +205,7 @@ public class GameManager : MonoBehaviour
         _finalRunDuration = 0f;
         _runStartTime = Time.time;
         _isRunActive = true;
+        _runMetricsLogger?.BeginRun();
     }
 
     private void FinalizeRun()
@@ -208,5 +214,17 @@ public class GameManager : MonoBehaviour
 
         _finalRunDuration = Mathf.Max(0f, Time.time - _runStartTime);
         _isRunActive = false;
+    }
+
+    private void EnsureRunMetricsLogger()
+    {
+        if (_runMetricsLogger != null)
+            return;
+
+        _runMetricsLogger = GetComponent<RunMetricsLogger>();
+        if (_runMetricsLogger == null)
+        {
+            _runMetricsLogger = gameObject.AddComponent<RunMetricsLogger>();
+        }
     }
 }

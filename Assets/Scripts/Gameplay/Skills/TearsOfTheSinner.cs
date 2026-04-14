@@ -44,11 +44,7 @@ public class TearsOfTheSinner : SkillBase
         }
 
         // Start the rain damage coroutine
-        MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
-        if (casterMono != null)
-        {
-            casterMono.StartCoroutine(RainOfTearsEffect(caster));
-        }
+        TryStartSkillCoroutine(caster, RainOfTearsEffect(caster));
     }
 
     private IEnumerator RainOfTearsEffect(GameObject caster)

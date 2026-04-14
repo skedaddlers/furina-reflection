@@ -428,7 +428,11 @@ public class BossCloneAI : EnemyAI
         if (enableJudicialLine) choiceCount++;
 
         int pick = Random.Range(0, choiceCount);
-        if (enableVerdictArc && pick == 0)
+        if (TryCastPlayerLikeSkill())
+        {
+            return;
+        }
+        else if (enableVerdictArc && pick == 0)
         {
             StartCoroutine(VerdictArc());
         }
@@ -439,10 +443,6 @@ public class BossCloneAI : EnemyAI
         else if (enableJudicialLine)
         {
             StartCoroutine(JudicialLine());
-        }
-        else
-        {
-            TryCastPlayerLikeSkill();
         }
     }
 

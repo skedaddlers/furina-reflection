@@ -47,5 +47,5 @@ MonoBehaviour:
   upgradeDescription: Now gives extra movement speed!
   nextLevelSkill: {fileID: 11400000, guid: a3777466c3fba8a4997fbf4cb9f85d1b, type: 2}
   attackBonus: 20
-  healthDrainPerSecond: 4
+  healthDrainPerSecond: 2
   movementSpeedBonusPercent: 0.5

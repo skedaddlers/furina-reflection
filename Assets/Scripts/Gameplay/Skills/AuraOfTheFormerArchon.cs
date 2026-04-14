@@ -54,11 +54,7 @@ public class AuraOfTheFormerArchon : SkillBase
         }
 
         // Start the aura coroutine on the caster
-        MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
-        if (casterMono != null)
-        {
-            casterMono.StartCoroutine(AuraEffect(caster));
-        }
+        TryStartSkillCoroutine(caster, AuraEffect(caster));
     }
 
     private IEnumerator AuraEffect(GameObject caster)

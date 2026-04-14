@@ -8045,8 +8045,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -490, y: 3.7745}
-  m_SizeDelta: {x: 684.9786, y: 818.1918}
+  m_AnchoredPosition: {x: -492, y: 9}
+  m_SizeDelta: {x: 546.4, y: 718.8903}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &380700717
 MonoBehaviour:
@@ -8070,7 +8070,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: e114e85b66be96e4ea7012519aff5924, type: 3}
   m_Type: 0
-  m_PreserveAspect: 1
+  m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -10832,7 +10832,7 @@ MonoBehaviour:
   bossHPBarCanvas: {fileID: 327953833}
   bossNameText: {fileID: 876268384}
   fillSpeed: 2
-  decayingSpeed: 20
+  decayingSpeed: 40
 --- !u!114 &533169870
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23751,10 +23751,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enablePerformanceTracking: 1
-  enableDDA: 0
+  enableDDA: 1
   enableBossFightLoops: 1
   bossFightLoopIntervalSeconds: 8
-  analyzeNoMatterWhat: 1
+  analyzeNoMatterWhat: 0
   debugMode: 0
   combatMetricCollector: {fileID: 1130029152}
 --- !u!4 &1130029149

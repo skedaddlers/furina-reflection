@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "NewSkill", menuName = "Furina/Skills/Base Skill")]
@@ -64,6 +65,36 @@ public class SkillBase : ScriptableObject
     public virtual bool CanUseSkill(GameObject caster)
     {
         // Override for additional conditions
+        return true;
+    }
+
+    protected MonoBehaviour GetCoroutineHost(GameObject caster)
+    {
+        if (caster == null)
+            return null;
+
+        MonoBehaviour host = caster.GetComponent<SkillManager>();
+        if (host != null)
+            return host;
+
+        host = caster.GetComponent<PlayerController>();
+        if (host != null)
+            return host;
+
+        host = caster.GetComponent<EnemyAI>();
+        if (host != null)
+            return host;
+
+        return caster.GetComponent<MonoBehaviour>();
+    }
+
+    protected bool TryStartSkillCoroutine(GameObject caster, IEnumerator routine)
+    {
+        MonoBehaviour host = GetCoroutineHost(caster);
+        if (host == null || routine == null)
+            return false;
+
+        host.StartCoroutine(routine);
         return true;
     }
 }

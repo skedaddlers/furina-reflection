@@ -1277,7 +1277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRanged: 0
-  attackRange: 1.2
+  attackRange: 1.4
   attackCooldown: 1.5
   movementSpeed: 1.9
   damage: 10

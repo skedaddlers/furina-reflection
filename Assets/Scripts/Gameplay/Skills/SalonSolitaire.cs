@@ -57,11 +57,7 @@ public class SalonSolitaire : SkillBase
         SpawnSalonMembers(caster);
 
         // Start the skill duration coroutine
-        MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
-        if (casterMono != null)
-        {
-            casterMono.StartCoroutine(SalonMembersDuration(caster));
-        }
+        TryStartSkillCoroutine(caster, SalonMembersDuration(caster));
     }
 
     private void SpawnSalonMembers(GameObject caster)

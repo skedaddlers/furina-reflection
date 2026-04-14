@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour, IStaggerable
     private Coroutine dodgeRoutine;
     private Coroutine staggerRoutine;
     public bool IsStaggered => isStaggered;
+    public bool IsDodging => isDodging;
     [Header("Stagger Settings")]
     [SerializeField] private string staggerTrigger = "Hit";
 
@@ -659,7 +660,6 @@ public class PlayerController : MonoBehaviour, IStaggerable
         ExitBowAim();
         _animBinder?.SetChannel(false);
         playerCombat?.ForceCancelAttack();
-        skillManager?.ForceCancelAllSkills();
         stats?.health?.SetInvulnerable(false);
     }
 

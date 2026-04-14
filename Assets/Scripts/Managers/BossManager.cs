@@ -11,6 +11,7 @@ public enum BossPhase
 public class BossManager : MonoBehaviour
 {
     public static System.Action<Room, bool> OnBossFightActivityChanged;
+    public static System.Action<Room, int> OnBossPhaseProgressed;
 
     [Header("Boss Settings")]
     public Transform focalorsPhase1SpawnPoint;
@@ -72,6 +73,7 @@ public class BossManager : MonoBehaviour
         currentBoss = Instantiate(focalorsPhase1Prefab, focalorsPhase1SpawnPoint.position, Quaternion.identity);
         currentBoss.transform.SetParent(transform);
         ApplyBossRoomLevel(currentBoss);
+        NotifyBossPhaseProgressed(1);
 
         focalorsPhase1Instance = currentBoss.GetComponent<FocalorsPhase1AI>();
         phase1Health = currentBoss.GetComponent<Health>();
@@ -228,6 +230,7 @@ public class BossManager : MonoBehaviour
         currentBoss = Instantiate(focalorsPhase2Prefab, pos, Quaternion.identity);
         currentBoss.transform.SetParent(transform);
         ApplyBossRoomLevel(currentBoss);
+        NotifyBossPhaseProgressed(2);
         Enemy f2 = currentBoss.GetComponent<Enemy>();
         f2.SuppressDefaultDeathHandling = true;
         focalorsPhase2Instance = currentBoss.GetComponent<FocalorsPhase2AI>();
@@ -440,6 +443,7 @@ public class BossManager : MonoBehaviour
 
     private void Win()
     {
+        NotifyBossPhaseProgressed(3);
         AudioManager.Instance?.PlayVictoryMusic();
         GameManager.Instance.OnBossRoomCleared();
     }
@@ -494,6 +498,17 @@ public class BossManager : MonoBehaviour
         if (parentRoom != null)
         {
             OnBossFightActivityChanged?.Invoke(parentRoom, isActive);
+        }
+    }
+
+    private void NotifyBossPhaseProgressed(int phaseIndex)
+    {
+        if (parentRoom == null)
+            parentRoom = GetComponent<Room>();
+
+        if (parentRoom != null)
+        {
+            OnBossPhaseProgressed?.Invoke(parentRoom, Mathf.Clamp(phaseIndex, 0, 3));
         }
     }
 }

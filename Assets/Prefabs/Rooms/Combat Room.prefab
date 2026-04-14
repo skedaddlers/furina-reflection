@@ -185,7 +185,7 @@ MonoBehaviour:
   - {fileID: 6880289590999414734}
   - {fileID: 2449373732708187433}
   - {fileID: 4411320387035580006}
-  waveCount: 2
+  waveCount: 1
   timeBetweenWaves: 5
   maxEnemies: 15
   enemyCount: 1
@@ -206,7 +206,7 @@ MonoBehaviour:
   - {fileID: 5133405388208357320, guid: ac72a6c5797397b4cbb49366381f852b, type: 3}
   - {fileID: -2498180304274444174, guid: b38cd95b8e1e66c4a87ebdac32bee762, type: 3}
   minItemSpawn: 0
-  maxItemSpawn: 2
+  maxItemSpawn: 3
   bossManager: {fileID: 0}
   arenaPoints: []
   isCleared: 0

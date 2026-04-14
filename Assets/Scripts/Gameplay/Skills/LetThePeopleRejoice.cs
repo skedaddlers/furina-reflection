@@ -11,8 +11,8 @@ public class LetThePeopleRejoice : SkillBase
 
     private GameObject activeCaster;
     private PlayerStats activePlayerStats;
-    private float originalMovementSpeed;
-    private float originalBaseAttack;
+    private float appliedMovementSpeedBonus;
+    private float appliedAttackBonus;
     private bool isActive = false;
 
     private void OnEnable()
@@ -21,7 +21,8 @@ public class LetThePeopleRejoice : SkillBase
         isActive = false;
         activeCaster = null;
         activePlayerStats = null;
-        originalBaseAttack = 0f;
+        appliedAttackBonus = 0f;
+        appliedMovementSpeedBonus = 0f;
     }
 
     public override void OnSkillActivate(GameObject caster)
@@ -62,15 +63,15 @@ public class LetThePeopleRejoice : SkillBase
         }
 
         // Store original attack and apply bonus
-        originalBaseAttack = activePlayerStats.baseAttack;
-        activePlayerStats.baseAttack += attackBonus;
+        appliedAttackBonus = attackBonus;
+        activePlayerStats.baseAttack += appliedAttackBonus;
         if(isUpgraded)
         {
-            originalMovementSpeed = activePlayerStats.moveSpeed;
-            activePlayerStats.moveSpeed += originalMovementSpeed * movementSpeedBonusPercent;
+            appliedMovementSpeedBonus = activePlayerStats.moveSpeed * movementSpeedBonusPercent;
+            activePlayerStats.moveSpeed += appliedMovementSpeedBonus;
         }
 
-        Debug.Log($"{skillName} activated! Attack: {originalBaseAttack} -> {activePlayerStats.baseAttack} (+{attackBonus})");
+        Debug.Log($"{skillName} activated! Attack bonus: +{appliedAttackBonus}, move speed bonus: +{appliedMovementSpeedBonus:F2}");
 
         // Subscribe to enemy death event
         Enemy.OnAnyDeath += OnEnemyKilled;
@@ -78,11 +79,7 @@ public class LetThePeopleRejoice : SkillBase
         isActive = true;
 
         // Start health drain coroutine
-        MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
-        if (casterMono != null)
-        {
-            casterMono.StartCoroutine(HealthDrainEffect(caster));
-        }
+        TryStartSkillCoroutine(caster, HealthDrainEffect(caster));
     }
 
     private IEnumerator HealthDrainEffect(GameObject caster)
@@ -142,13 +139,11 @@ public class LetThePeopleRejoice : SkillBase
         // Restore original attack
         if (activePlayerStats != null)
         {
-            // Debug.Log($"{skillName} ended! Attack: {activePlayerStats.baseAttack} -> {originalBaseAttack}");
-            activePlayerStats.baseAttack = originalBaseAttack;
+            activePlayerStats.baseAttack -= appliedAttackBonus;
         }
         if (activePlayerStats != null && isUpgraded)
         {
-            // Debug.Log($"{skillName} ended! Movement Speed: {activePlayerStats.moveSpeed} -> {originalMovementSpeed}");
-            activePlayerStats.moveSpeed -= originalMovementSpeed * movementSpeedBonusPercent;
+            activePlayerStats.moveSpeed -= appliedMovementSpeedBonus;
         }
 
         // Unsubscribe from enemy death event
@@ -157,6 +152,8 @@ public class LetThePeopleRejoice : SkillBase
         isActive = false;
         activeCaster = null;
         activePlayerStats = null;
+        appliedAttackBonus = 0f;
+        appliedMovementSpeedBonus = 0f;
 
         // Debug.Log($"{skillName} ended");
     }

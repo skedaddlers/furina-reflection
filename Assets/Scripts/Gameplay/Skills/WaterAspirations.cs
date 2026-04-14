@@ -80,11 +80,7 @@ public class WaterAspirations : SkillBase
         // Debug.Log($"{skillName}: Shield applied! Amount: {currentShieldAmount}");
 
         // Start shield duration coroutine
-        MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
-        if (casterMono != null)
-        {
-            casterMono.StartCoroutine(ShieldDuration(caster));
-        }
+        TryStartSkillCoroutine(caster, ShieldDuration(caster));
     }
 
     private IEnumerator ShieldDuration(GameObject caster)

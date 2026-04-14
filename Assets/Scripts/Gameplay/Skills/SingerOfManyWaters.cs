@@ -52,11 +52,7 @@ public class SingerOfManyWaters : SkillBase
         SpawnSinger(caster);
 
         // Start heal coroutine
-        MonoBehaviour casterMono = caster.GetComponent<MonoBehaviour>();
-        if (casterMono != null)
-        {
-            casterMono.StartCoroutine(SingerHealEffect(caster));
-        }
+        TryStartSkillCoroutine(caster, SingerHealEffect(caster));
     }
 
     private void SpawnSinger(GameObject caster)

@@ -4,6 +4,8 @@ using System.Linq;
 
 public class RoomManager : MonoBehaviour
 {
+    public static System.Action<Room> OnRoomEntered;
+
     [Header("Prefabs & Refs")]
     public GameObject[] roomPrefabs;     // index = (int)RoomType
     public GameObject[] normalRoomPrefabs;
@@ -16,6 +18,8 @@ public class RoomManager : MonoBehaviour
     private int currentRoomID = 1;
 
     public DungeonLayout Layout { get; private set; }
+    public int CurrentRoomID => currentRoomID;
+    public Room CurrentRoom => GetRoomById(currentRoomID);
     private HashSet<int> visitedRooms = new HashSet<int>();
 
     // ====== PUBLIC API ======
@@ -79,6 +83,7 @@ public class RoomManager : MonoBehaviour
         // Debug.Log($"After move: Player World Pos {player.position}");
 
         nextRoom.OnPlayerEnter(fromDoorIndex);
+        OnRoomEntered?.Invoke(nextRoom);
 
         var minimap = FindObjectOfType<MinimapUI>();
         if (minimap != null) minimap.SetCurrentRoom(nextRoomID);
