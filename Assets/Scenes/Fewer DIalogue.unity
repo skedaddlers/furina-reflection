@@ -995,8 +995,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonConfig:
-    minRooms: 2
-    maxRooms: 2
+    minRooms: 14
+    maxRooms: 16
     normalRoomRatio: 0.5
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
@@ -13822,7 +13822,7 @@ MonoBehaviour:
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
   m_RenderPostProcessing: 1
-  m_Antialiasing: 2
+  m_Antialiasing: 0
   m_AntialiasingQuality: 1
   m_StopNaN: 0
   m_Dithering: 0
@@ -23873,14 +23873,14 @@ MonoBehaviour:
   healthReference: 0.7
   scoreReference: 200
   accuracyReference: 0.5
-  survivabilityReference: 0.85
+  survivabilityReference: 0.9
   expectedClearTimeSeconds: 45
   clearTimeReference: 1
   healthWeight: 1
   scoreWeight: 1
   accuracyWeight: 0.5
-  survivabilityWeight: 1.2
-  clearTimeWeight: 1
+  survivabilityWeight: 0.5
+  clearTimeWeight: 0.5
   clearTimeFallbackSeconds: 45
   clearTimeBaseRoomOverheadSeconds: 8
   clearTimePerEnemySeconds: 7
@@ -36740,6 +36740,18 @@ PrefabInstance:
       propertyPath: pickupSound
       value: 
       objectReference: {fileID: 8300000, guid: 61927c91e7cd82d48903e7e1108906ee, type: 3}
+    - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: gold
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: maxStamina
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: manaRegenPerSecond
+      value: 0.9
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

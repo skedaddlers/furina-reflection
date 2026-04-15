@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 1
   description: Ei's grasscutter, with its double hit, it's effective on cutting other
     things too!
-  goodPropertyText: '+8 Damage (x2)
+  goodPropertyText: '+5 Damage (x2)
 
     +4 Range'
   badPropertyText: 1.2s Cooldown
@@ -29,7 +29,7 @@ MonoBehaviour:
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: 0, y: 0, z: 15}
   effectDuration: 1
-  baseDamage: 8
+  baseDamage: 5
   range: 4
   angle: 90
   cooldown: 1.2

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Water's Aspiration
   upgradeName: 
-  description: Creates a damage-absorbing shield
+  description: Creates a damage-absorbing shield that will protect you!
   skillIcon: {fileID: 21300000, guid: 5d9394dc8bceb7e43b1e7530d7e40d37, type: 3}
   rarity: 1
   price: 85

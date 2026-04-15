@@ -1511,9 +1511,9 @@ MonoBehaviour:
   enemyRenderer: {fileID: 4684639286036497217}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
-  xpReward: 15
-  goldReward: 10
-  scoreValue: 100
+  xpReward: 100
+  goldReward: 0
+  scoreValue: 400
 --- !u!114 &-3851192223676009071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1566,7 +1566,7 @@ MonoBehaviour:
   attackCooldown: 1.5
   movementSpeed: 3
   damage: 4
-  detectionRange: 12
+  detectionRange: 15
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: 20197f30d6078f24b8b378da59874610, type: 3}
   isPerformingSpecialAttack: 0
@@ -1625,7 +1625,7 @@ MonoBehaviour:
   lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
   lineEffectOffset: {x: 0, y: 2, z: 0}
   judicialLineSound: {fileID: 0}
-  healAmount: 18
+  healAmount: 50
   healCastTime: 1.5
   healAnimationTrigger: Cast
   healEffectPrefab: {fileID: 9017484664307500583, guid: 4eb0dace1f70966418f3c92ba8771a90, type: 3}

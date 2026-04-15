@@ -485,9 +485,9 @@ MonoBehaviour:
   enemyRenderer: {fileID: 7065071415207174372}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
-  xpReward: 50
-  goldReward: 15
-  scoreValue: 100
+  xpReward: 100
+  goldReward: 0
+  scoreValue: 300
 --- !u!114 &1759342616226106966
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -519,11 +519,11 @@ MonoBehaviour:
   isRanged: 1
   attackRange: 6
   attackCooldown: 1.5
-  movementSpeed: 1
+  movementSpeed: 1.4
   damage: 10
-  detectionRange: 12
+  detectionRange: 15
   turnSpeed: 8
-  projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
+  projectilePrefab: {fileID: 7933930715022831805, guid: 531716139bbe48d48a76e41425c08a79, type: 3}
   isPerformingSpecialAttack: 0
   canBeStaggered: 0
   staggerTrigger: Hit

@@ -20,6 +20,7 @@ public class ClearTimeSensor : Sensor
     private float combatStartTime = -1f;
     private float lastClearTimeRatio = 1f;
     private float expectedClearTimeForActiveRoom = -1f;
+    private float combatEndTime = -1f;
     private Room currentRoom;
 
     void Start()
@@ -31,11 +32,13 @@ public class ClearTimeSensor : Sensor
     void OnEnable()
     {
         Room.OnRoomCombatStarted += HandleRoomCombatStarted;
+        Room.OnRoomCleared += HandleRoomCleared;
     }
 
     void OnDisable()
     {
         Room.OnRoomCombatStarted -= HandleRoomCombatStarted;
+        Room.OnRoomCleared -= HandleRoomCleared;
     }
 
     public void SetExpectedClearTime(float seconds)
@@ -66,7 +69,7 @@ public class ClearTimeSensor : Sensor
 
     public override SensorReading Read()
     {
-        HandleRoomCleared(currentRoom);
+        lastClearTimeRatio = EvaluateCurrentClearTimeRatio();
         Debug.Log($"[ClearTimeSensor] Read called. Last Clear Time Ratio: {lastClearTimeRatio:F2}, Expected Clear Time for Active Room: {expectedClearTimeForActiveRoom:F1}s");
         return new SensorReading(attributeId, lastClearTimeRatio);
     }
@@ -74,30 +77,18 @@ public class ClearTimeSensor : Sensor
     private void HandleRoomCombatStarted(Room room)
     {
         combatStartTime = Time.time;
+        combatEndTime = -1f;
         expectedClearTimeForActiveRoom = CalculateExpectedClearTime(room);
         currentRoom = room;
     }
 
     private void HandleRoomCleared(Room room)
     {
-        if (combatStartTime < 0f)
-        {
-            lastClearTimeRatio = 1f;
+        if (room == null || room != currentRoom || combatStartTime < 0f)
             return;
-        }
 
-        float elapsed = Mathf.Max(0.1f, Time.time - combatStartTime);
-        float expected = expectedClearTimeForActiveRoom > 0f
-            ? expectedClearTimeForActiveRoom
-            : CalculateExpectedClearTime(room);
-
-        lastClearTimeRatio = Mathf.Clamp(expected / elapsed, 0f, 3f);
-        Debug.Log(
-            $"[ClearTimeSensor] Room {room.roomIndex} expected {expected:F1}s, actual {elapsed:F1}s, ratio {lastClearTimeRatio:F2}"
-        );
-
-        combatStartTime = -1f;
-        expectedClearTimeForActiveRoom = -1f;
+        combatEndTime = Time.time;
+        lastClearTimeRatio = EvaluateCurrentClearTimeRatio();
     }
 
     private float CalculateExpectedClearTime(Room room)
@@ -142,5 +133,29 @@ public class ClearTimeSensor : Sensor
         expected *= healthFactor;
 
         return Mathf.Max(5f, expected);
+    }
+
+    private float EvaluateCurrentClearTimeRatio()
+    {
+        if (combatStartTime < 0f || currentRoom == null)
+            return lastClearTimeRatio;
+
+        if (combatEndTime < 0f && !currentRoom.isInCombat)
+        {
+            combatEndTime = Time.time;
+        }
+
+        float evaluationTime = combatEndTime >= 0f ? combatEndTime : Time.time;
+        float elapsed = Mathf.Max(0.1f, evaluationTime - combatStartTime);
+        float expected = expectedClearTimeForActiveRoom > 0f
+            ? expectedClearTimeForActiveRoom
+            : CalculateExpectedClearTime(currentRoom);
+
+        float ratio = Mathf.Clamp(expected / elapsed, 0f, 3f);
+        Debug.Log(
+            $"[ClearTimeSensor] Room {currentRoom.roomIndex} expected {expected:F1}s, actual {elapsed:F1}s, ratio {ratio:F2}"
+        );
+
+        return ratio;
     }
 }

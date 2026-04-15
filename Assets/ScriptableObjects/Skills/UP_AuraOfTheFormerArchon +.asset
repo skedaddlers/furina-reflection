@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: Aura of The Former Archon+
   upgradeName: 
-  description: Damages and slows enemies within radius
+  description: Damages and slows enemies nearby within a certain radius
   skillIcon: {fileID: 21300000, guid: 7e3c8c9dca8ba5e40acd0e9690e6f158, type: 3}
   rarity: 1
   price: 100

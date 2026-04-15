@@ -21,7 +21,7 @@ MonoBehaviour:
   price: 120
   skillID: 1
   goodPropertyText: "+20 Attack \nLifesteal on kill\n8s Duration"
-  badPropertyText: 'Drains 4 HP/Sec
+  badPropertyText: 'Drains 2 HP/Sec
 
     50 Mana cost
 

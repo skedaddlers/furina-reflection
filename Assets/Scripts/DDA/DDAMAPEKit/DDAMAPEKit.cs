@@ -257,6 +257,13 @@ namespace DDAMAPEKitFramework
         public PlayerModel GetPlayerModel() => playerModel;
         public SymptomRepository GetSymptomRepository() => symptomRepository;
         public PolicyEngine GetPolicyEngine() => policyEngine;
+        public List<AnalysisSnapshot> GetAnalysisHistory() => analyzer != null
+            ? analyzer.GetAnalysisHistory()
+            : new List<AnalysisSnapshot>();
+        public void ResetAnalysisHistory()
+        {
+            analyzer?.ResetAnalysisHistory();
+        }
 
         // private void ApplyDefaultProfileMetricWeights()
         // {

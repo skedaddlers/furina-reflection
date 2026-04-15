@@ -19,9 +19,9 @@ MonoBehaviour:
   rarity: 1
   price: 60
   skillID: 2
-  goodPropertyText: 'Summons 3 units
+  goodPropertyText: 'Summons 2 units
 
-    10s Duration'
+    12s Duration'
   badPropertyText: '35 Mana cost
 
     15s Cooldown'
@@ -31,7 +31,7 @@ MonoBehaviour:
   cooldownTime: 15
   levelRequired: 1
   purchasePrice: 100
-  duration: 10
+  duration: 12
   damageAmount: 5
   healAmount: 0
   shieldAmount: 0

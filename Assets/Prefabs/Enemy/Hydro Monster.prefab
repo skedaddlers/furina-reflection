@@ -934,9 +934,9 @@ MonoBehaviour:
   enemyRenderer: {fileID: 4684639286036497217}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
-  xpReward: 15
-  goldReward: 10
-  scoreValue: 100
+  xpReward: 0
+  goldReward: 0
+  scoreValue: 500
 --- !u!114 &-3851192223676009071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -950,7 +950,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 15
+  defense: 10
   critRate: 0
   critMultiplier: 1.5
 --- !u!114 &-2398299191158659386
@@ -965,7 +965,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 403a65a6f66fd6b488b298426acedec5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossHealthBar
-  bossName: 'Focalors: The True Reflection of Self'
+  bossName: 'Focalors: The True Reflection'
 --- !u!114 &7973930422294884215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -983,7 +983,7 @@ MonoBehaviour:
   attackCooldown: 1.5
   movementSpeed: 3
   damage: 10
-  detectionRange: 10
+  detectionRange: 15
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}
   isPerformingSpecialAttack: 0
@@ -1000,7 +1000,7 @@ MonoBehaviour:
   arenaPoints: []
   sequences: []
   telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
-  sequenceCooldown: 4
+  sequenceCooldown: 3
   castWindupTime: 0.5
   waitAfterCastTime: 0.5
   cloneSpawnSound: {fileID: 8300000, guid: e4b5273c1242ec940a632761b8c8c1ce, type: 3}

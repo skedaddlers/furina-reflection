@@ -17,6 +17,8 @@ public enum RunEndReason
 [DisallowMultipleComponent]
 public class RunMetricsLogger : MonoBehaviour
 {
+    private const int SurvivabilityAttributeId = 3;
+
     [Header("Local Logging")]
     [SerializeField] private bool enableLocalRunLogging = true;
     [SerializeField] private bool prettyPrintJson = true;
@@ -104,6 +106,7 @@ public class RunMetricsLogger : MonoBehaviour
             sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
         };
 
+        DDAMAPEKit.TryGetExistingInstance()?.ResetAnalysisHistory();
         InitializeLayoutSnapshot();
         EnsurePlayerHealth();
         UpdateHealthRatiosFromCurrentState();
@@ -262,10 +265,12 @@ public class RunMetricsLogger : MonoBehaviour
         }
 
         GameManager gameManager = GameManager.Instance;
+        currentRun.isDDAenabled = DDAIntegration.IsAdaptationEnabled;
         if (gameManager != null)
         {
             currentRun.score = gameManager.CurrentRunScore;
             currentRun.timePlayedSeconds = Mathf.Max(0f, gameManager.CurrentRunDuration);
+            
         }
 
         currentRun.timePlayedFormatted = FormatDuration(currentRun.timePlayedSeconds);
@@ -283,11 +288,21 @@ public class RunMetricsLogger : MonoBehaviour
             : 0f;
 
         UpdateHealthRatiosFromCurrentState();
-        currentRun.survivability = CalculateRunSurvivability();
+        float fallbackRunSurvivability = CalculateRunSurvivability();
+        currentRun.survivability = fallbackRunSurvivability;
 
         string performanceSource;
-        currentRun.performance = CalculatePerformance(out performanceSource);
+        float analyzedSurvivabilityAverage;
+        bool hasAnalyzedSurvivabilityAverage;
+        currentRun.performance = CalculatePerformance(
+            out performanceSource,
+            out analyzedSurvivabilityAverage,
+            out hasAnalyzedSurvivabilityAverage
+        );
         currentRun.performanceSource = performanceSource;
+        currentRun.survivability = performanceSource == "dda_analysis_average" && hasAnalyzedSurvivabilityAverage
+            ? analyzedSurvivabilityAverage
+            : fallbackRunSurvivability;
     }
 
     private void CompleteActiveCombatEncounter(bool countAsCleared, int expectedRoomId = -1)
@@ -379,8 +394,25 @@ public class RunMetricsLogger : MonoBehaviour
         );
     }
 
-    private float CalculatePerformance(out string source)
+    private float CalculatePerformance(
+        out string source,
+        out float averageSurvivability,
+        out bool hasAverageSurvivability
+    )
     {
+        averageSurvivability = 0f;
+        hasAverageSurvivability = false;
+
+        if (TryCalculateAverageAnalyzedMetrics(
+            out float averagedPerformance,
+            out averageSurvivability,
+            out hasAverageSurvivability
+        ))
+        {
+            source = "dda_analysis_average";
+            return averagedPerformance;
+        }
+
         DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();
         PlayerModel playerModel = dda != null && dda.IsInitialized ? dda.GetPlayerModel() : null;
         if (playerModel != null)
@@ -407,6 +439,61 @@ public class RunMetricsLogger : MonoBehaviour
 
         source = "local_fallback";
         return CalculateFallbackPerformance();
+    }
+
+    private bool TryCalculateAverageAnalyzedMetrics(
+        out float averagePerformance,
+        out float averageSurvivability,
+        out bool hasAverageSurvivability
+    )
+    {
+        averagePerformance = 0f;
+        averageSurvivability = 0f;
+        hasAverageSurvivability = false;
+
+        DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();
+        if (dda == null || !dda.IsInitialized)
+            return false;
+
+        List<AnalysisSnapshot> analysisHistory = dda.GetAnalysisHistory();
+        if (analysisHistory == null || analysisHistory.Count == 0)
+            return false;
+
+        float performanceSum = 0f;
+        int performanceCount = 0;
+        float survivabilitySum = 0f;
+        int survivabilityCount = 0;
+
+        foreach (AnalysisSnapshot analysis in analysisHistory)
+        {
+            performanceSum += analysis.performance;
+            performanceCount++;
+
+            if (analysis.attributes == null)
+                continue;
+
+            foreach (AnalysisAttributeSnapshot attribute in analysis.attributes)
+            {
+                if (attribute.attributeId != SurvivabilityAttributeId)
+                    continue;
+
+                survivabilitySum += attribute.value;
+                survivabilityCount++;
+                break;
+            }
+        }
+
+        if (performanceCount <= 0)
+            return false;
+
+        averagePerformance = performanceSum / performanceCount;
+        if (survivabilityCount > 0)
+        {
+            averageSurvivability = survivabilitySum / survivabilityCount;
+            hasAverageSurvivability = true;
+        }
+
+        return true;
     }
 
     private float CalculateFallbackPerformance()
@@ -551,6 +638,8 @@ public class RunMetricsSnapshot
     public string persistentDataPath;
     public string logFilePath;
     public int dungeonSeed;
+
+    public bool isDDAenabled;
 
     public int score;
     public float timePlayedSeconds;

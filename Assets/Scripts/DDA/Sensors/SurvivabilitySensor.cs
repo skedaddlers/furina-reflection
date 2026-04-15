@@ -19,6 +19,7 @@ public class SurvivabilitySensor : Sensor
     private float lowestHealthRatioThisRoom = 1f;
     private float endHealthRatioThisRoom = 1f;
     private bool isTrackingRoom = false;
+    private bool roomSnapshotFinalized = false;
     private Room currentRoom;
 
     void Start()
@@ -32,17 +33,19 @@ public class SurvivabilitySensor : Sensor
     void OnEnable()
     {
         Room.OnRoomCombatStarted += HandleRoomCombatStarted;
+        Room.OnRoomCleared += HandleRoomCleared;
     }
 
     void OnDisable()
     {
         Room.OnRoomCombatStarted -= HandleRoomCombatStarted;
+        Room.OnRoomCleared -= HandleRoomCleared;
         UnhookHealthEvents();
     }
 
     public override SensorReading Read()
     {
-        HandleRoomCleared(currentRoom);
+        lastSurvivability = EvaluateCurrentSurvivability();
         Debug.Log($"[SurvivabilitySensor] Read called. Last Survivability: {lastSurvivability:F2}");
         return new SensorReading(attributeId, lastSurvivability);
     }
@@ -67,6 +70,7 @@ public class SurvivabilitySensor : Sensor
 
         currentRoom = room;
         isTrackingRoom = true;
+        roomSnapshotFinalized = false;
         damageThisRoom = 0f;
         lastHealthValue = playerHealth.GetCurrentHealth();
         float currentHealthRatio = Mathf.Clamp01(lastHealthValue / Mathf.Max(1f, playerHealth.maxHealth));
@@ -76,33 +80,14 @@ public class SurvivabilitySensor : Sensor
 
     private void HandleRoomCleared(Room room)
     {
+        if (room == null || room != currentRoom)
+            return;
+
         EnsurePlayerHealth();
         if (playerHealth == null) return;
 
-        isTrackingRoom = false;
-        float maxHealth = Mathf.Max(1f, playerHealth.maxHealth);
-        float damageScore = 1f - Mathf.Clamp01(damageThisRoom / (maxHealth * damageBudgetMultiplier));
-        float lowestHealthScore = Mathf.Clamp01(lowestHealthRatioThisRoom);
-        endHealthRatioThisRoom = Mathf.Clamp01(playerHealth.GetCurrentHealth() / maxHealth);
-        float endHealthScore = endHealthRatioThisRoom;
-
-        float totalWeight = Mathf.Max(0.0001f, damageWeight + lowestHealthWeight + endHealthWeight);
-        lastSurvivability = Mathf.Clamp01(
-            (
-                damageScore * damageWeight +
-                lowestHealthScore * lowestHealthWeight +
-                endHealthScore * endHealthWeight
-            ) / totalWeight
-        );
-
-        Debug.Log(
-            $"[SurvivabilitySensor] Room {room.roomIndex} damage {damageThisRoom:F1}, " +
-            $"lowest {lowestHealthScore:F2}, end {endHealthScore:F2}, score {lastSurvivability:F2}"
-        );
-
-        damageThisRoom = 0f;
-        lowestHealthRatioThisRoom = endHealthScore;
-        endHealthRatioThisRoom = endHealthScore;
+        lastSurvivability = EvaluateCurrentSurvivability();
+        lastHealthValue = playerHealth.GetCurrentHealth();
     }
 
     private void OnHealthChanged(float current, float max)
@@ -162,5 +147,44 @@ public class SurvivabilitySensor : Sensor
         {
             playerHealth.onHealthChanged -= OnHealthChanged;
         }
+    }
+
+    private float EvaluateCurrentSurvivability()
+    {
+        EnsurePlayerHealth();
+        if (playerHealth == null || currentRoom == null)
+            return lastSurvivability;
+
+        if (roomSnapshotFinalized)
+            return lastSurvivability;
+
+        float maxHealth = Mathf.Max(1f, playerHealth.maxHealth);
+        float damageScore = 1f - Mathf.Clamp01(damageThisRoom / (maxHealth * damageBudgetMultiplier));
+        float lowestHealthScore = Mathf.Clamp01(lowestHealthRatioThisRoom);
+        endHealthRatioThisRoom = Mathf.Clamp01(playerHealth.GetCurrentHealth() / maxHealth);
+        float endHealthScore = endHealthRatioThisRoom;
+
+        float totalWeight = Mathf.Max(0.0001f, damageWeight + lowestHealthWeight + endHealthWeight);
+        float survivability = Mathf.Clamp01(
+            (
+                damageScore * damageWeight +
+                lowestHealthScore * lowestHealthWeight +
+                endHealthScore * endHealthWeight
+            ) / totalWeight
+        );
+
+        Debug.Log(
+            $"[SurvivabilitySensor] Room {currentRoom.roomIndex} damage {damageThisRoom:F1}, " +
+            $"lowest {lowestHealthScore:F2}, end {endHealthScore:F2}, score {survivability:F2}"
+        );
+
+        if (!currentRoom.isInCombat)
+        {
+            isTrackingRoom = false;
+            roomSnapshotFinalized = true;
+            lastHealthValue = playerHealth.GetCurrentHealth();
+        }
+
+        return survivability;
     }
 }

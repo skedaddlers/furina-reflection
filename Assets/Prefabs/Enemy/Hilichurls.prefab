@@ -1165,7 +1165,8 @@ MonoBehaviour:
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 1223118301296987611}
   xpReward: 40
-  goldReward: 10
+  goldReward: 15
+  scoreValue: 60
 --- !u!114 &9184170250974352647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1180,15 +1181,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isRanged: 0
   attackRange: 1.5
-  attackCooldown: 1.5
-  movementSpeed: 1.9
-  damage: 10
+  attackCooldown: 1.8
+  movementSpeed: 1.7
+  damage: 7
   detectionRange: 10
   turnSpeed: 8
   projectilePrefab: {fileID: 0}
   isPerformingSpecialAttack: 0
   canBeStaggered: 1
   staggerTrigger: Hit
+  walkingSFX: {fileID: 0}
+  attackSFX: {fileID: 0}
 --- !u!114 &6779822399096051496
 MonoBehaviour:
   m_ObjectHideFlags: 0

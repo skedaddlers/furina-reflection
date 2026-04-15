@@ -1160,7 +1160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 150
   shieldAmount: 0
   maxShield: 100
   hitSFX: {fileID: 8300000, guid: 84dcdec185133064a86a72bffa454f2d, type: 3}
@@ -1262,8 +1262,8 @@ MonoBehaviour:
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 1223118301296987611}
   xpReward: 40
-  goldReward: 10
-  scoreValue: 100
+  goldReward: 15
+  scoreValue: 60
 --- !u!114 &9184170250974352647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1278,9 +1278,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isRanged: 0
   attackRange: 1.4
-  attackCooldown: 1.5
+  attackCooldown: 1.6
   movementSpeed: 1.9
-  damage: 10
+  damage: 6
   detectionRange: 10
   turnSpeed: 8
   projectilePrefab: {fileID: 0}
@@ -1321,6 +1321,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 10
+  defense: 6
   critRate: 0
   critMultiplier: 1.5

@@ -18,6 +18,7 @@ namespace DDAMAPEKitFramework
         private bool flexibleSymptoms = false;
         private int movingAverageSample = 5;
         private Queue<float> performanceHistory = new Queue<float>();
+        private List<AnalysisSnapshot> analysisHistory = new List<AnalysisSnapshot>();
 
         private Symptom currentSymptom;
         public Symptom CurrentSymptom => currentSymptom;
@@ -35,6 +36,7 @@ namespace DDAMAPEKitFramework
 
             // Calculate overall performance
             float performance = CalculatePerformance();
+            analysisHistory.Add(CaptureAnalysisSnapshot(performance));
             
             // Update player profile score
             playerModel.CalculateProfileDistribution();
@@ -78,6 +80,18 @@ namespace DDAMAPEKitFramework
             }
         }
 
+        public List<AnalysisSnapshot> GetAnalysisHistory()
+        {
+            return new List<AnalysisSnapshot>(analysisHistory);
+        }
+
+        public void ResetAnalysisHistory()
+        {
+            analysisHistory.Clear();
+            performanceHistory.Clear();
+            currentSymptom = null;
+        }
+
         private float CalculatePerformance()
         {
             var attributes = playerModel.GetAllAttributes();
@@ -104,6 +118,27 @@ namespace DDAMAPEKitFramework
             return totalWeight > 0 ? weightedSum / totalWeight : 1f;
         }
 
+        private AnalysisSnapshot CaptureAnalysisSnapshot(float performance)
+        {
+            var snapshot = new AnalysisSnapshot
+            {
+                timestamp = Time.time,
+                performance = performance
+            };
+
+            foreach (var attribute in playerModel.GetAllAttributes())
+            {
+                snapshot.attributes.Add(new AnalysisAttributeSnapshot
+                {
+                    attributeId = attribute.id,
+                    label = attribute.label,
+                    value = attribute.value
+                });
+            }
+
+            return snapshot;
+        }
+
         public void SetPerformanceOverTime(bool value)
         {
             performanceOverTime = value;
@@ -118,6 +153,20 @@ namespace DDAMAPEKitFramework
         {
             movingAverageSample = sample;
         }
+    }
+
+    public class AnalysisSnapshot
+    {
+        public float timestamp;
+        public float performance;
+        public List<AnalysisAttributeSnapshot> attributes = new List<AnalysisAttributeSnapshot>();
+    }
+
+    public class AnalysisAttributeSnapshot
+    {
+        public int attributeId;
+        public string label;
+        public float value;
     }
 
     /// <summary>

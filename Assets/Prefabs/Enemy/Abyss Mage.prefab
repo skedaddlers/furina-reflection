@@ -1173,9 +1173,9 @@ MonoBehaviour:
   enemyRenderer: {fileID: 5635273062656815641}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 609787420079300612}
-  xpReward: 50
-  goldReward: 15
-  scoreValue: 100
+  xpReward: 100
+  goldReward: 50
+  scoreValue: 250
 --- !u!114 &8479522146413409476
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1203,8 +1203,8 @@ MonoBehaviour:
   attackSFX: {fileID: 8300000, guid: 8aa962bcfbdc11444863a20a4c8687f6, type: 3}
   specialAttackCooldown: 10
   shieldEffect: {fileID: 8044789423087911113, guid: 5156d6689efbccb4991059f3a5755566, type: 3}
-  shieldDuration: 3
-  shieldAmount: 50
+  shieldDuration: 5
+  shieldAmount: 75
   shieldGainSFX: {fileID: 8300000, guid: b1d1deaa903483f43a00c3018a927ca7, type: 3}
 --- !u!114 &6296160769128475036
 MonoBehaviour:

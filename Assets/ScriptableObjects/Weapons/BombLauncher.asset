@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 3
   description: Furina was bored and she made this beast of a weapon, this thing shoots
     bombs that explode on contact!
-  goodPropertyText: '+15 Damage
+  goodPropertyText: '+10 Damage
 
     Area of Effects'
   badPropertyText: '1.6s Cooldown
@@ -25,13 +25,13 @@ MonoBehaviour:
     4 Mana cost'
   icon: {fileID: 21300000, guid: 0b46d568cc6aced44a17b269f05ebb56, type: 3}
   worldDropPrefab: {fileID: 6293921768137552695, guid: e750a1b3cfa6e6d43bbbbaae34df4b11, type: 3}
-  price: 78
+  price: 90
   attackSound: {fileID: 8300000, guid: e982133434e645843970cde6927aa167, type: 3}
   attackEffectPrefab: {fileID: 358637981425055526, guid: a1ee0a5ccd94e6f4992b7193b8d55207, type: 3}
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: 0, y: 0, z: 0}
   effectDuration: 0.4
-  baseDamage: 15
+  baseDamage: 10
   range: 2
   angle: 60
   cooldown: 1.6

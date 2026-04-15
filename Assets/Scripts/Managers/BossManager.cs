@@ -322,7 +322,7 @@ public class BossManager : MonoBehaviour
     {
         if (focalorsPhase2Instance != null)
             focalorsPhase2Instance.NotifyCloneDeath();
-
+        NotifyBossPhaseProgressed(3);
         // Debug.Log("Notified Focalors Phase 2 of clone death");
     }
 
@@ -443,7 +443,6 @@ public class BossManager : MonoBehaviour
 
     private void Win()
     {
-        NotifyBossPhaseProgressed(3);
         AudioManager.Instance?.PlayVictoryMusic();
         GameManager.Instance.OnBossRoomCleared();
     }

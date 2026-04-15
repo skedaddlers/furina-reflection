@@ -23,7 +23,7 @@ MonoBehaviour:
   badPropertyText: 1s Cooldown
   icon: {fileID: 21300000, guid: 5207542830d215d40b8cb155de6b6985, type: 3}
   worldDropPrefab: {fileID: 2522190280514334033, guid: f53f814019a0bbe48945c4bb6a9d8a75, type: 3}
-  price: 70
+  price: 60
   attackSound: {fileID: 8300000, guid: 135a35400b168c54c951f785243829c2, type: 3}
   attackEffectPrefab: {fileID: 2060900179291159282, guid: 5a5cd3e2a1bc52c42bfbe62266ffba2d, type: 3}
   attackEffectOffset: {x: 0, y: 0, z: 0}

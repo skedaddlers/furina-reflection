@@ -313,7 +313,7 @@ public class PlayerStats : MonoBehaviour
     public void UpgradeHealth()
     {
         float healthIncrease = upgradeManager.GetHealthUpgradeAmount();
-        health.SetMaxHealth(health.maxHealth + healthIncrease);
+        health.SetMaxHealth(health.maxHealth + healthIncrease, false, false);
         health.Heal(healthIncrease); // Heal the player by the amount of health increased
         NotifyUpgradeChoiceSelected(PlayerUpgradeChoiceType.Health);
     }
