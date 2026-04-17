@@ -32,10 +32,6 @@ public class Enemy : MonoBehaviour
 
     private void HandleDeath()
     {
-        if (SuppressDefaultDeathHandling)
-            return;
-
-        // Reward player with XP and Gold upon enemy death
         if (PlayerStats.Instance != null)
         {
             PlayerStats.Instance.AddXP(xpReward);
@@ -46,6 +42,11 @@ public class Enemy : MonoBehaviour
         {
             GameManager.Instance.AddScore(scoreValue);
         }
+        
+        if (SuppressDefaultDeathHandling)
+            return;
+
+        // Reward player with XP and Gold upon enemy death
         OnAnyDeath?.Invoke(this);
         Destroy(gameObject);
     }

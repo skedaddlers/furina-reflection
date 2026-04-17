@@ -1373,7 +1373,7 @@ MonoBehaviour:
   cursorController: {fileID: 50898957}
   mainSceneName: Fewer Dialogue
   mainMenuSceneName: MainMenu
-  withDialogue: 0
+  withDialogue: 1
 --- !u!4 &44146001
 Transform:
   m_ObjectHideFlags: 0
@@ -1449,7 +1449,7 @@ MonoBehaviour:
   enemyAttackSpeedMultiplier: 1
   enemyAggroRangeMultiplier: 1
   enemyMultiplierMin: 0.5
-  enemyMultiplierMax: 2.5
+  enemyMultiplierMax: 2
   itemDropRateMultiplier: 1
   rewardMultiplierMin: 0.3
   rewardMultiplierMax: 3
@@ -23751,7 +23751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enablePerformanceTracking: 1
-  enableDDA: 0
+  enableDDA: 1
   enableBossFightLoops: 1
   bossFightLoopIntervalSeconds: 8
   analyzeNoMatterWhat: 1
@@ -23915,9 +23915,10 @@ MonoBehaviour:
   clearTimeBossExpectedSeconds: 110
   clearTimeEnemyHealthInfluence: 0.75
   survivabilityDamageBudgetMultiplier: 1.5
-  survivabilityDamageWeight: 0.5
-  survivabilityLowestHealthWeight: 0.3
-  survivabilityEndHealthWeight: 0.2
+  survivabilityDamageWeight: 0.6
+  survivabilitySuccessfulDodgedAttacksWeight: 0.1
+  survivabilityLowestHealthWeight: 0.15
+  survivabilityEndHealthWeight: 0.15
   rules:
   - id: ML_VERY_LOW
     symptomDescription: very.low

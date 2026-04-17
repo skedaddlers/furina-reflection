@@ -74,6 +74,17 @@ public class ClearTimeSensor : Sensor
         return new SensorReading(attributeId, lastClearTimeRatio);
     }
 
+    public override bool ShouldReadForAnalysis(AnalysisTriggerSource triggerSource)
+    {
+        return ShouldContributeToPerformance(triggerSource);
+    }
+
+    public override bool ShouldContributeToPerformance(AnalysisTriggerSource triggerSource)
+    {
+        return base.ShouldContributeToPerformance(triggerSource) &&
+            !IsMidBossFightAnalysis(triggerSource);
+    }
+
     private void HandleRoomCombatStarted(Room room)
     {
         combatStartTime = Time.time;
@@ -157,5 +168,13 @@ public class ClearTimeSensor : Sensor
         );
 
         return ratio;
+    }
+
+    private bool IsMidBossFightAnalysis(AnalysisTriggerSource triggerSource)
+    {
+        return currentRoom != null &&
+            currentRoom.roomType == RoomType.Boss &&
+            currentRoom.isInCombat &&
+            triggerSource != AnalysisTriggerSource.RoomClear;
     }
 }

@@ -42,7 +42,7 @@ public class FinalBossController : EnemyAI
     private int _currentPhaseIndex = -1;
 
     // Baseline values so phase multipliers stack on top of DDA-adjusted stats
-    private int _baseDamage;
+    private float _baseDamage;
     private float _baseAttackCooldown;
     private float _baseAgentSpeed;
 

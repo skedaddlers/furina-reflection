@@ -3462,8 +3462,8 @@ MonoBehaviour:
   musicSource: {fileID: 1272394250}
   musicSource2: {fileID: 161355404}
   musicVolume: 0.3
-  sfxVolume: 0.8
-  voiceLineVolume: 1
+  sfxVolume: 0.5
+  voiceLineVolume: 0.5
   sfxSource: {fileID: 1853010292}
   voiceLineSource: {fileID: 1305653838}
   dialogueSource: {fileID: 1509204745}
@@ -5701,7 +5701,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 8400000, guid: 9a5682daad5fd9942a75d245e2170897, type: 2}
+  m_Texture: {fileID: 2800000, guid: ebce163c72bd34d49a398656a222bcd1, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0

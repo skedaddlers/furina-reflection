@@ -19,6 +19,7 @@ namespace DDAMAPEKitFramework
         private int movingAverageSample = 5;
         private Queue<float> performanceHistory = new Queue<float>();
         private List<AnalysisSnapshot> analysisHistory = new List<AnalysisSnapshot>();
+        private AnalysisTriggerSource currentTriggerSource = AnalysisTriggerSource.Unknown;
 
         private Symptom currentSymptom;
         public Symptom CurrentSymptom => currentSymptom;
@@ -34,8 +35,10 @@ namespace DDAMAPEKitFramework
         {
             if (data == null) return;
 
+            ObservationBatch observation = data as ObservationBatch;
+
             // Calculate overall performance
-            float performance = CalculatePerformance();
+            float performance = CalculatePerformance(observation?.excludedAttributeIds);
             analysisHistory.Add(CaptureAnalysisSnapshot(performance));
             
             // Update player profile score
@@ -85,6 +88,16 @@ namespace DDAMAPEKitFramework
             return new List<AnalysisSnapshot>(analysisHistory);
         }
 
+        public void SetCurrentTriggerSource(AnalysisTriggerSource source)
+        {
+            currentTriggerSource = source;
+        }
+
+        public void ClearCurrentTriggerSource()
+        {
+            currentTriggerSource = AnalysisTriggerSource.Unknown;
+        }
+
         public void ResetAnalysisHistory()
         {
             analysisHistory.Clear();
@@ -92,7 +105,7 @@ namespace DDAMAPEKitFramework
             currentSymptom = null;
         }
 
-        private float CalculatePerformance()
+        private float CalculatePerformance(ISet<int> excludedAttributeIds = null)
         {
             var attributes = playerModel.GetAllAttributes();
             if (attributes.Count == 0) return 1f;
@@ -102,6 +115,9 @@ namespace DDAMAPEKitFramework
 
             foreach (var attribute in attributes)
             {
+                if (excludedAttributeIds != null && excludedAttributeIds.Contains(attribute.id))
+                    continue;
+
                 float reference = performanceOverTime ? 
                     attribute.reference.GetReference(Time.time) : 
                     attribute.reference.GetReference();
@@ -123,7 +139,8 @@ namespace DDAMAPEKitFramework
             var snapshot = new AnalysisSnapshot
             {
                 timestamp = Time.time,
-                performance = performance
+                performance = performance,
+                triggerSource = currentTriggerSource
             };
 
             foreach (var attribute in playerModel.GetAllAttributes())
@@ -159,7 +176,16 @@ namespace DDAMAPEKitFramework
     {
         public float timestamp;
         public float performance;
+        public AnalysisTriggerSource triggerSource;
         public List<AnalysisAttributeSnapshot> attributes = new List<AnalysisAttributeSnapshot>();
+    }
+
+    public enum AnalysisTriggerSource
+    {
+        Unknown,
+        Automatic,
+        RoomClear,
+        BossTick
     }
 
     public class AnalysisAttributeSnapshot

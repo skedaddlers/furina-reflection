@@ -3,19 +3,24 @@ using DDAMAPEKitFramework;
 
 /// <summary>
 /// Tracks how much damage the player takes per room and reports a survivability score.
-/// The score blends damage pressure, lowest health reached, and end-of-room health.
+/// The score blends damage pressure, healing, shield absorption, lowest health reached,
+/// and end-of-room health.
 /// </summary>
 public class SurvivabilitySensor : Sensor
 {
+    protected override bool SupportsBossTickAnalysis => true;
+
     [SerializeField] private Health playerHealth;
     [SerializeField] private float damageBudgetMultiplier = 1.5f;
-    [SerializeField, Range(0f, 1f)] private float damageWeight = 0.5f;
-    [SerializeField, Range(0f, 1f)] private float lowestHealthWeight = 0.3f;
-    [SerializeField, Range(0f, 1f)] private float endHealthWeight = 0.2f;
+    [SerializeField, Range(0f, 1f)] private float damageWeight = 0.6f;
+    [SerializeField, Range(0f, 1f)] private float successfulDodgedAttacksWeight = 0.1f;
+    [SerializeField, Range(0f, 1f)] private float lowestHealthWeight = 0.15f;
+    [SerializeField, Range(0f, 1f)] private float endHealthWeight = 0.15f;
 
     private float lastSurvivability = 1f;
     private float lastHealthValue = -1f;
     private float damageThisRoom = 0f;
+    private float successfulDodgedDamageThisRoom = 0f;
     private float lowestHealthRatioThisRoom = 1f;
     private float endHealthRatioThisRoom = 1f;
     private bool isTrackingRoom = false;
@@ -32,12 +37,14 @@ public class SurvivabilitySensor : Sensor
 
     void OnEnable()
     {
+        CombatEventManager.OnSuccessfulDodgeDamageAvoided += HandleSuccessfulDodgeDamageAvoided;
         Room.OnRoomCombatStarted += HandleRoomCombatStarted;
         Room.OnRoomCleared += HandleRoomCleared;
     }
 
     void OnDisable()
     {
+        CombatEventManager.OnSuccessfulDodgeDamageAvoided -= HandleSuccessfulDodgeDamageAvoided;
         Room.OnRoomCombatStarted -= HandleRoomCombatStarted;
         Room.OnRoomCleared -= HandleRoomCleared;
         UnhookHealthEvents();
@@ -53,12 +60,14 @@ public class SurvivabilitySensor : Sensor
     public void ConfigureScoring(
         float damageBudgetMultiplierValue,
         float damageWeightValue,
+        float successfulDodgedAttacksWeightValue,
         float lowestHealthWeightValue,
         float endHealthWeightValue
     )
     {
         damageBudgetMultiplier = Mathf.Max(0.25f, damageBudgetMultiplierValue);
         damageWeight = Mathf.Clamp01(damageWeightValue);
+        successfulDodgedAttacksWeight = Mathf.Clamp01(successfulDodgedAttacksWeightValue);
         lowestHealthWeight = Mathf.Clamp01(lowestHealthWeightValue);
         endHealthWeight = Mathf.Clamp01(endHealthWeightValue);
     }
@@ -72,6 +81,7 @@ public class SurvivabilitySensor : Sensor
         isTrackingRoom = true;
         roomSnapshotFinalized = false;
         damageThisRoom = 0f;
+        successfulDodgedDamageThisRoom = 0f;
         lastHealthValue = playerHealth.GetCurrentHealth();
         float currentHealthRatio = Mathf.Clamp01(lastHealthValue / Mathf.Max(1f, playerHealth.maxHealth));
         lowestHealthRatioThisRoom = currentHealthRatio;
@@ -111,6 +121,13 @@ public class SurvivabilitySensor : Sensor
         float currentHealthRatio = Mathf.Clamp01(current / Mathf.Max(1f, max));
         lowestHealthRatioThisRoom = Mathf.Min(lowestHealthRatioThisRoom, currentHealthRatio);
         endHealthRatioThisRoom = currentHealthRatio;
+    }
+    private void HandleSuccessfulDodgeDamageAvoided(float damageAvoided)
+    {
+        if (!isTrackingRoom)
+            return;
+
+        successfulDodgedDamageThisRoom += Mathf.Max(0f, damageAvoided);
     }
 
     private void EnsurePlayerHealth()
@@ -159,23 +176,34 @@ public class SurvivabilitySensor : Sensor
             return lastSurvivability;
 
         float maxHealth = Mathf.Max(1f, playerHealth.maxHealth);
-        float damageScore = 1f - Mathf.Clamp01(damageThisRoom / (maxHealth * damageBudgetMultiplier));
+        float survivabilityBudget = maxHealth * damageBudgetMultiplier;
+        float damageScore = 1f - Mathf.Clamp01(damageThisRoom / survivabilityBudget);
+        float totalDamage = damageThisRoom + successfulDodgedDamageThisRoom;
+        float successfulDodgedAttacksScore = totalDamage > 0f ? Mathf.Clamp01(successfulDodgedDamageThisRoom / totalDamage) : 0f;
         float lowestHealthScore = Mathf.Clamp01(lowestHealthRatioThisRoom);
         endHealthRatioThisRoom = Mathf.Clamp01(playerHealth.GetCurrentHealth() / maxHealth);
         float endHealthScore = endHealthRatioThisRoom;
 
-        float totalWeight = Mathf.Max(0.0001f, damageWeight + lowestHealthWeight + endHealthWeight);
+        float totalWeight = Mathf.Max(
+            0.0001f,
+            damageWeight +
+            successfulDodgedAttacksWeight +
+            lowestHealthWeight +
+            endHealthWeight
+        );
         float survivability = Mathf.Clamp01(
             (
                 damageScore * damageWeight +
+                successfulDodgedAttacksScore * successfulDodgedAttacksWeight +
                 lowestHealthScore * lowestHealthWeight +
                 endHealthScore * endHealthWeight
             ) / totalWeight
         );
 
         Debug.Log(
-            $"[SurvivabilitySensor] Room {currentRoom.roomIndex} damage {damageThisRoom:F1}, " +
-            $"lowest {lowestHealthScore:F2}, end {endHealthScore:F2}, score {survivability:F2}"
+            $"[SurvivabilitySensor] Room {currentRoom.roomIndex} damage score: {damageScore:F2}, " +
+            $"successful dodged attacks score: {successfulDodgedAttacksScore:F2}, lowest health score: {lowestHealthScore:F2}, " +
+            $"end health score: {endHealthScore:F2}, final survivability: {survivability:F2}. "
         );
 
         if (!currentRoom.isInCombat)

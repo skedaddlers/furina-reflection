@@ -249,6 +249,7 @@ public class AudioManager : MonoBehaviour
     {
         musicVolume = volume;
         musicSource.volume = musicVolume;
+        musicSource2.volume = musicVolume;
     }
 
     public void SetSFXVolume(float volume)

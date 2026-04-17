@@ -45,9 +45,10 @@ public class DDAConfigurationManager : MonoBehaviour
 
     [Header("Survivability Tuning")]
     [SerializeField] private float survivabilityDamageBudgetMultiplier = 1.5f;
-    [SerializeField, Range(0f, 1f)] private float survivabilityDamageWeight = 0.5f;
-    [SerializeField, Range(0f, 1f)] private float survivabilityLowestHealthWeight = 0.3f;
-    [SerializeField, Range(0f, 1f)] private float survivabilityEndHealthWeight = 0.2f;
+    [SerializeField, Range(0f, 1f)] private float survivabilityDamageWeight = 0.6f;
+    [SerializeField, Range(0f, 1f)] private float survivabilitySuccessfulDodgedAttacksWeight = 0.1f;
+    [SerializeField, Range(0f, 1f)] private float survivabilityLowestHealthWeight = 0.15f;
+    [SerializeField, Range(0f, 1f)] private float survivabilityEndHealthWeight = 0.15f;
 
 
     [Header("Rules (Designer editable)")]
@@ -214,6 +215,7 @@ public class DDAConfigurationManager : MonoBehaviour
         survivabilitySensor.ConfigureScoring(
             survivabilityDamageBudgetMultiplier,
             survivabilityDamageWeight,
+            survivabilitySuccessfulDodgedAttacksWeight,
             survivabilityLowestHealthWeight,
             survivabilityEndHealthWeight
         );
@@ -249,6 +251,13 @@ public class DDAConfigurationManager : MonoBehaviour
 
         // Add survivability sensor
         var survivabilitySensor = gameObject.AddComponent<SurvivabilitySensor>();
+        survivabilitySensor.ConfigureScoring(
+            survivabilityDamageBudgetMultiplier,
+            survivabilityDamageWeight,
+            survivabilitySuccessfulDodgedAttacksWeight,
+            survivabilityLowestHealthWeight,
+            survivabilityEndHealthWeight
+        );
         ddaFramework.RegisterSensor(survivabilitySensor);
 
         // Add clear time sensor

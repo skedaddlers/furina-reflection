@@ -11,6 +11,16 @@ public class ButtonSFX : MonoBehaviour
         GetComponent<Button>().onClick.AddListener(PlaySound);
     }
 
+    void OnEnable()
+    {
+        GetComponent<Button>().onClick.AddListener(PlaySound);
+    }
+
+    void OnDisable()
+    {
+        GetComponent<Button>().onClick.RemoveListener(PlaySound);
+    }
+
     void PlaySound()
     {
         AudioManager.Instance?.PlaySFX(clickSFX);

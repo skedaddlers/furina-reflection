@@ -12,7 +12,7 @@ public class EnemySystemEffector : Effector
 
     private float minMultiplier = 0.5f;
     private float maxMultiplier = 2.5f;
-    private float smoothingFactor = 0.5f;
+    private float smoothingFactor = 0.6f;
     private float trendBoostFactor = 0.1f;
 
     private Dictionary<string, float> currentMultipliers = new Dictionary<string, float>();
@@ -35,27 +35,27 @@ public class EnemySystemEffector : Effector
             case "enemyDamageMultiplier":
                 float enemyDamageValue = GetNewMultiplier(variable, value);
                 diff?.SetEnemyMultiplier("damage", enemyDamageValue);
-                UpdateActiveEnemies();
+                // UpdateActiveEnemies();
                 break;
             case "enemyHealthMultiplier":
                 float enemyHealthValue = GetNewMultiplier(variable, value);
                 diff?.SetEnemyMultiplier("health", enemyHealthValue);
-                UpdateActiveEnemies();
+                // UpdateActiveEnemies();
                 break;
             case "enemySpeedMultiplier":
                 float enemySpeedValue = GetNewMultiplier(variable, value);
                 diff?.SetEnemyMultiplier("speed", enemySpeedValue);
-                UpdateActiveEnemies();
+                // UpdateActiveEnemies();
                 break;
             case "enemyAttackSpeedMultiplier":
                 float enemyAttackSpeedValue = GetNewMultiplier(variable, value);
                 diff?.SetEnemyMultiplier("attackSpeed", enemyAttackSpeedValue);
-                UpdateActiveEnemies();
+                // UpdateActiveEnemies();
                 break;
             case "enemyAggroMultiplier":
                 float enemyAggroValue = GetNewMultiplier(variable, value);
                 diff?.SetEnemyMultiplier("aggro", enemyAggroValue);
-                UpdateActiveEnemies();
+                // UpdateActiveEnemies();
                 break;
             case "enemyCountMultiplier":
                 float enemyCountValue = GetNewMultiplier(variable, value);

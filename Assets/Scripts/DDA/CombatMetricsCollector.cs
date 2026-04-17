@@ -28,6 +28,7 @@ public class CombatMetricCollector : MonoBehaviour
         CombatEventManager.OnSkillCast += OnSkillCast;
         CombatEventManager.OnDodgeAttempt += OnDodgeAttempt;
         CombatEventManager.OnSuccessfulDodge += OnSuccessfulDodge;
+        CombatEventManager.OnSuccessfulDodgeDamageAvoided += OnSuccessfulDodgeDamageAvoided;
         CombatEventManager.OnDamageTaken += OnDamageTaken;
         CombatEventManager.OnHeal += OnHeal;
         CombatEventManager.OnManaUsed += OnManaUsed;
@@ -57,6 +58,7 @@ public class CombatMetricCollector : MonoBehaviour
         CombatEventManager.OnSkillCast -= OnSkillCast;
         CombatEventManager.OnDodgeAttempt -= OnDodgeAttempt;
         CombatEventManager.OnSuccessfulDodge -= OnSuccessfulDodge;
+        CombatEventManager.OnSuccessfulDodgeDamageAvoided -= OnSuccessfulDodgeDamageAvoided;
         CombatEventManager.OnDamageTaken -= OnDamageTaken;
         CombatEventManager.OnHeal -= OnHeal;
         CombatEventManager.OnManaUsed -= OnManaUsed;
@@ -103,7 +105,13 @@ public class CombatMetricCollector : MonoBehaviour
 
     void OnDamageTaken(float damage)
     {
+        waveStats.damageTaken += damage;
         AccumulateProfilingMetric(PlayerMetricType.DamageTaken, damage);
+    }
+
+    void OnSuccessfulDodgeDamageAvoided(float damageAvoided)
+    {
+        waveStats.successfulDodgeDamageAvoided += damageAvoided;
     }
 
     void OnHeal(float heal)
@@ -196,10 +204,11 @@ public class CombatMetricCollector : MonoBehaviour
         }
 
         float dodgeRate = 0;
+        float theoreticalDamageTaken = waveStats.damageTaken + waveStats.successfulDodgeDamageAvoided;
 
-        if (waveStats.dodgeAttempts > 0)
+        if (theoreticalDamageTaken > 0)
         {
-            dodgeRate = (float)waveStats.successfulDodges / waveStats.dodgeAttempts;
+            dodgeRate = waveStats.successfulDodgeDamageAvoided / theoreticalDamageTaken;
         }
 
         float damageTaken = GetNormalizedMetricValue(PlayerMetricType.DamageTaken, resetAccumulatedStats);
@@ -397,6 +406,7 @@ public class CombatWaveStats
 
     public float damageTaken;
     public float damageAbsorbedByShield;
+    public float successfulDodgeDamageAvoided;
 
     public int dodgeAttempts;
     public int successfulDodges;
@@ -414,6 +424,7 @@ public class CombatWaveStats
         skillCasts = 0;
         damageTaken = 0;
         damageAbsorbedByShield = 0;
+        successfulDodgeDamageAvoided = 0;
 
         dodgeAttempts = 0;
         successfulDodges = 0;

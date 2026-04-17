@@ -128,7 +128,7 @@ public class DDAIntegration : MonoBehaviour
         }
 
         combatMetricCollector?.FinalizeWaveMetrics();
-        DDAMAPEKit.Instance?.TriggerMAPEKLoop();
+        DDAMAPEKit.Instance?.TriggerMAPEKLoop(AnalysisTriggerSource.RoomClear);
     }
 
     private System.Collections.IEnumerator BossFightLoop()
@@ -144,7 +144,7 @@ public class DDAIntegration : MonoBehaviour
 
             if (combatMetricCollector != null && combatMetricCollector.PublishCurrentCombatMetrics(true))
             {
-                DDAMAPEKit.Instance?.TriggerMAPEKLoop();
+                DDAMAPEKit.Instance?.TriggerMAPEKLoop(AnalysisTriggerSource.BossTick);
             }
         }
 

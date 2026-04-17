@@ -171,16 +171,23 @@ namespace DDAMAPEKitFramework
 
         public void TriggerMAPEKLoop()
         {
+            TriggerMAPEKLoop(AnalysisTriggerSource.Unknown);
+        }
+
+        public void TriggerMAPEKLoop(AnalysisTriggerSource triggerSource)
+        {
             if (!isInitialized) return;
             playerModel.CalculateProfileDistribution();
-            RunMAPEKLoop();
+            RunMAPEKLoop(triggerSource);
             playerModel.UpdatePlayerProfile(explorationRate);
         }
 
-        private void RunMAPEKLoop()
+        private void RunMAPEKLoop(AnalysisTriggerSource triggerSource = AnalysisTriggerSource.Automatic)
         {
             // Monitor phase
-            monitor.Observe(sensors);
+            analyzer?.SetCurrentTriggerSource(triggerSource);
+            monitor.Observe(sensors, triggerSource);
+            analyzer?.ClearCurrentTriggerSource();
 
             // The rest of the loop is handled through the Observer pattern
             // Analyzer -> Planner -> Executor are triggered automatically

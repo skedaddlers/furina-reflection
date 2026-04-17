@@ -19,15 +19,30 @@ namespace DDAMAPEKitFramework
             this.systemStateLog = log;
         }
 
-        public void Observe(List<Sensor> sensors)
+        public void Observe(List<Sensor> sensors, AnalysisTriggerSource triggerSource)
         {
             bool needsAnalysis = false;
+            var observation = new ObservationBatch
+            {
+                triggerSource = triggerSource
+            };
 
             foreach (var sensor in sensors)
             {
+                bool contributesToPerformance = sensor.ShouldContributeToPerformance(triggerSource);
+                if (!contributesToPerformance)
+                {
+                    observation.excludedAttributeIds.Add(sensor.AttributeId);
+                }
+
+                if (!sensor.ShouldReadForAnalysis(triggerSource))
+                    continue;
+
                 var reading = sensor.Read();
                 if (reading != null)
                 {
+                    observation.readings.Add(reading);
+
                     // Update player model attribute
                     playerModel.UpdateAttribute(reading.attributeId, reading.value);
                     
@@ -36,7 +51,7 @@ namespace DDAMAPEKitFramework
 
                     // Check if value is outside threshold
                     var attribute = playerModel.GetAttribute(reading.attributeId);
-                    if (attribute != null && !attribute.threshold.IsInRange(reading.value))
+                    if (contributesToPerformance && attribute != null && !attribute.threshold.IsInRange(reading.value))
                     {
                         needsAnalysis = true;
                         Debug.Log($"[Monitor] Attribute {attribute.label} out of threshold: {reading.value}");
@@ -46,7 +61,7 @@ namespace DDAMAPEKitFramework
 
             if (needsAnalysis || analyzeNoMatterWhat)
             {
-                NotifyObservers(systemStateLog.GetLatestLog());
+                NotifyObservers(observation);
             }
         }
 
@@ -63,8 +78,20 @@ namespace DDAMAPEKitFramework
     {
         protected int attributeId;
         protected string attributeLabel;
+        public int AttributeId => attributeId;
+        protected virtual bool SupportsBossTickAnalysis => false;
 
         public abstract SensorReading Read();
+
+        public virtual bool ShouldReadForAnalysis(AnalysisTriggerSource triggerSource)
+        {
+            return triggerSource != AnalysisTriggerSource.BossTick || SupportsBossTickAnalysis;
+        }
+
+        public virtual bool ShouldContributeToPerformance(AnalysisTriggerSource triggerSource)
+        {
+            return triggerSource != AnalysisTriggerSource.BossTick || SupportsBossTickAnalysis;
+        }
     }
 
     /// <summary>
@@ -82,6 +109,13 @@ namespace DDAMAPEKitFramework
             this.value = value;
             this.timestamp = Time.time;
         }
+    }
+
+    public class ObservationBatch
+    {
+        public AnalysisTriggerSource triggerSource;
+        public List<SensorReading> readings = new List<SensorReading>();
+        public HashSet<int> excludedAttributeIds = new HashSet<int>();
     }
 
     /// <summary>

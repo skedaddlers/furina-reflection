@@ -9,7 +9,7 @@ public class EnemyAI : MonoBehaviour, IStaggerable
     public float attackRange = 1.5f;
     public float attackCooldown = 1.5f;
     public float movementSpeed = 3f;
-    public int damage = 10;
+    public float damage = 10;
     public float detectionRange = 10f;
     public float turnSpeed = 8f;
     public Projectile projectilePrefab;
@@ -22,7 +22,7 @@ public class EnemyAI : MonoBehaviour, IStaggerable
     protected EnemyStats enemyStats;
     protected float lastAttackTime;
     private Coroutine rotateCoroutine;
-    private int baseDamage;
+    private float baseDamage;
     private float baseAttackCooldown;
     private float baseDetectionRange;
     private float baseMovementSpeed;
