@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using DDAMAPEKitFramework;
 
 
 public class SkillManager : MonoBehaviour
@@ -205,6 +206,7 @@ public class SkillManager : MonoBehaviour
         // Individual skills own their cast audio inside OnSkillActivate.
         // Keeping it there avoids double-playing voicelines from the generic path.
         skill.OnSkillActivate(gameObject);
+        CombatEventManager.RaiseSkillCast();
         
         // If skill has duration, start coroutine to end it
         if (skill.duration > 0)

@@ -1001,10 +1001,10 @@ MonoBehaviour:
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
     eliteRoomRatio: 0.15
-    guaranteedShops: 6
+    guaranteedShops: 2
     guaranteedElites: 2
     guaranteedEvents: 2
-    guaranteeEarlyShop: 1
+    guaranteeEarlyShop: 0
     minDistanceBetweenShops: 3
     minDistanceBetweenElites: 3
     eliteMinDistanceFromStart: 3
@@ -23751,7 +23751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enablePerformanceTracking: 1
-  enableDDA: 1
+  enableDDA: 0
   enableBossFightLoops: 1
   bossFightLoopIntervalSeconds: 8
   analyzeNoMatterWhat: 1
@@ -23815,12 +23815,16 @@ MonoBehaviour:
   - id: 3
     name: Skill Spam
     weights:
+    - metric: 13
+      weight: 0.3
     - metric: 2
-      weight: 0.6
+      weight: 0.3
     - metric: 7
-      weight: 0.2
+      weight: 0.15
     - metric: 11
-      weight: 0.2
+      weight: 0.15
+    - metric: 14
+      weight: 0.1
   - id: 2
     name: Dodger
     weights:
@@ -23845,7 +23849,7 @@ MonoBehaviour:
       weight: 0.05
     - metric: 1
       weight: 0.05
-    - metric: 2
+    - metric: 14
       weight: 0.05
   profileUpdateFrequency: 10
   explorationRate: 0.2
@@ -24345,6 +24349,18 @@ MonoBehaviour:
     lastNormalized: 0
     minExpected: 0
     maxExpected: 100
+  - type: 14
+    rawAccumulated: 0
+    emaValue: 0
+    lastNormalized: 0
+    minExpected: 0
+    maxExpected: 100
+  - type: 13
+    rawAccumulated: 0
+    emaValue: 0
+    lastNormalized: 0
+    minExpected: 0
+    maxExpected: 4
   distanceSampleInterval: 0.25
   maxExpectedCombatDistance: 12
 --- !u!1 &1137845891

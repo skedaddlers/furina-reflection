@@ -48,17 +48,20 @@ namespace DDAMAPEKitFramework
     {
         public static event Action<float> OnMeleeAttack;    // float = damage
         public static event Action<float> OnRangedAttack;   // float = damage
-        public static event Action<float> OnSkillAttack;       // float = mana or damage
-        public static event Action OnDodgeAttempt;                 // dodge happened
-        public static event Action OnSuccessfulDodge;              // successful dodge happened
+        public static event Action<float> OnSkillAttack;    // float = damage dealt by skills
+        public static event Action<float> OnSkillCast;      // float = cast count, usually 1
+        public static event Action OnDodgeAttempt;          // dodge happened
+        public static event Action OnSuccessfulDodge;       // successful dodge happened
         public static event Action<float> OnSuccessfulDodgeDamageAvoided; // float = damage avoided
         public static event Action<float> OnDamageTaken;    // float = damage taken
         public static event Action<float> OnHeal;           // float = heal amount
         public static event Action<float> OnManaUsed;       // float = mana used
+        public static event Action<float> OnShieldDamageAbsorbed; // float = damage absorbed by player shield
 
         public static void RaiseMeleeAttack(float damage) => OnMeleeAttack?.Invoke(damage);
         public static void RaiseRangedAttack(float damage) => OnRangedAttack?.Invoke(damage);
         public static void RaiseSkillAttack(float amount) => OnSkillAttack?.Invoke(amount);
+        public static void RaiseSkillCast(float castCount = 1f) => OnSkillCast?.Invoke(Mathf.Max(0f, castCount));
         public static void RaiseDodgeAttempt() => OnDodgeAttempt?.Invoke();
         public static void RaiseSuccessfulDodge(float avoidedDamage = 0f)
         {
@@ -68,5 +71,6 @@ namespace DDAMAPEKitFramework
         public static void RaiseDamageTaken(float damage) => OnDamageTaken?.Invoke(damage);
         public static void RaiseHeal(float heal) => OnHeal?.Invoke(heal);
         public static void RaiseManaUsed(float mana) => OnManaUsed?.Invoke(mana);
+        public static void RaiseShieldDamageAbsorbed(float damage) => OnShieldDamageAbsorbed?.Invoke(Mathf.Max(0f, damage));
     }
 }

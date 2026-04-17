@@ -357,7 +357,9 @@ namespace DDAMAPEKitFramework
         DefensiveUpgradePreference,
         OffensiveUpgradePreference,
         ManaUpgradePreference,
-        SpeedUpgradePreference
+        SpeedUpgradePreference,
+        SkillCastRate,          // count/rate of successful skill activations in window
+        DamageAbsorbedByShield  // damage prevented by the player's shield in window
     }
 
     [System.Serializable]

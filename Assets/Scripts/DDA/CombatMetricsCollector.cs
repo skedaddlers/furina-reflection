@@ -25,11 +25,13 @@ public class CombatMetricCollector : MonoBehaviour
         CombatEventManager.OnMeleeAttack += OnMeleeAttack;
         CombatEventManager.OnRangedAttack += OnRangedAttack;
         CombatEventManager.OnSkillAttack += OnSkillAttack;
+        CombatEventManager.OnSkillCast += OnSkillCast;
         CombatEventManager.OnDodgeAttempt += OnDodgeAttempt;
         CombatEventManager.OnSuccessfulDodge += OnSuccessfulDodge;
         CombatEventManager.OnDamageTaken += OnDamageTaken;
         CombatEventManager.OnHeal += OnHeal;
         CombatEventManager.OnManaUsed += OnManaUsed;
+        CombatEventManager.OnShieldDamageAbsorbed += OnShieldDamageAbsorbed;
         Room.OnRoomCombatStarted += OnRoomCombatStarted;
         Room.OnRoomCleared += OnRoomCleared;
 
@@ -52,11 +54,13 @@ public class CombatMetricCollector : MonoBehaviour
         CombatEventManager.OnMeleeAttack -= OnMeleeAttack;
         CombatEventManager.OnRangedAttack -= OnRangedAttack;
         CombatEventManager.OnSkillAttack -= OnSkillAttack;
+        CombatEventManager.OnSkillCast -= OnSkillCast;
         CombatEventManager.OnDodgeAttempt -= OnDodgeAttempt;
         CombatEventManager.OnSuccessfulDodge -= OnSuccessfulDodge;
         CombatEventManager.OnDamageTaken -= OnDamageTaken;
         CombatEventManager.OnHeal -= OnHeal;
         CombatEventManager.OnManaUsed -= OnManaUsed;
+        CombatEventManager.OnShieldDamageAbsorbed -= OnShieldDamageAbsorbed;
         Room.OnRoomCombatStarted -= OnRoomCombatStarted;
         Room.OnRoomCleared -= OnRoomCleared;
 
@@ -81,6 +85,12 @@ public class CombatMetricCollector : MonoBehaviour
         waveStats.skillDamage += damage;
     }
 
+    void OnSkillCast(float castCount)
+    {
+        waveStats.skillCasts += castCount;
+        AccumulateProfilingMetric(PlayerMetricType.SkillCastRate, castCount);
+    }
+
     void OnDodgeAttempt()
     {
         waveStats.dodgeAttempts++;
@@ -93,40 +103,25 @@ public class CombatMetricCollector : MonoBehaviour
 
     void OnDamageTaken(float damage)
     {
-        foreach (PlayerMetric metric in profilingMetrics)
-        {
-            if (metric.type == PlayerMetricType.DamageTaken)
-            {
-                metric.Accumulate(damage);
-                break;
-            }
-        }
+        AccumulateProfilingMetric(PlayerMetricType.DamageTaken, damage);
     }
 
     void OnHeal(float heal)
     {
         waveStats.healingUsed += heal;
-        foreach (PlayerMetric metric in profilingMetrics)
-        {
-            if (metric.type == PlayerMetricType.HealingUsed)
-            {
-                metric.Accumulate(heal);
-                break;
-            }
-        }
+        AccumulateProfilingMetric(PlayerMetricType.HealingUsed, heal);
     }
 
     void OnManaUsed(float mana)
     {
         waveStats.manaUsed += mana;
-        foreach (PlayerMetric metric in profilingMetrics)
-        {
-            if (metric.type == PlayerMetricType.ManaUsed)
-            {
-                metric.Accumulate(mana);
-                break;
-            }
-        }
+        AccumulateProfilingMetric(PlayerMetricType.ManaUsed, mana);
+    }
+
+    void OnShieldDamageAbsorbed(float damageAbsorbed)
+    {
+        waveStats.damageAbsorbedByShield += damageAbsorbed;
+        AccumulateProfilingMetric(PlayerMetricType.DamageAbsorbedByShield, damageAbsorbed);
     }
 
     void OnRoomCombatStarted(Room room)
@@ -210,6 +205,8 @@ public class CombatMetricCollector : MonoBehaviour
         float damageTaken = GetNormalizedMetricValue(PlayerMetricType.DamageTaken, resetAccumulatedStats);
         float healingUsed = GetNormalizedMetricValue(PlayerMetricType.HealingUsed, resetAccumulatedStats);
         float manaUsed = GetNormalizedMetricValue(PlayerMetricType.ManaUsed, resetAccumulatedStats);
+        float skillCastRate = GetNormalizedMetricValue(PlayerMetricType.SkillCastRate, resetAccumulatedStats);
+        float damageAbsorbedByShield = GetNormalizedMetricValue(PlayerMetricType.DamageAbsorbedByShield, resetAccumulatedStats);
 
         float averageDistance = 0f;
         if (waveStats.distanceSampleCount > 0)
@@ -225,9 +222,11 @@ public class CombatMetricCollector : MonoBehaviour
             totalDamage > 0f ||
             waveStats.dodgeAttempts > 0 ||
             waveStats.distanceSampleCount > 0 ||
+            skillCastRate > 0f ||
             damageTaken > 0f ||
             healingUsed > 0f ||
-            manaUsed > 0f;
+            manaUsed > 0f ||
+            damageAbsorbedByShield > 0f;
 
         if (!hasCombatSignal && !resetAccumulatedStats)
             return false;
@@ -238,11 +237,13 @@ public class CombatMetricCollector : MonoBehaviour
         playerModel.SetProfilingMetric(PlayerMetricType.MeleeUsage, meleeRatio);
         playerModel.SetProfilingMetric(PlayerMetricType.RangedUsage, rangedRatio);
         playerModel.SetProfilingMetric(PlayerMetricType.SkillUsage, skillRatio);
+        playerModel.SetProfilingMetric(PlayerMetricType.SkillCastRate, skillCastRate);
         playerModel.SetProfilingMetric(PlayerMetricType.DodgeRate, dodgeRate);
         playerModel.SetProfilingMetric(PlayerMetricType.AverageDistance, averageDistanceNormalized);
         playerModel.SetProfilingMetric(PlayerMetricType.DamageTaken, damageTaken);
         playerModel.SetProfilingMetric(PlayerMetricType.HealingUsed, healingUsed);
         playerModel.SetProfilingMetric(PlayerMetricType.ManaUsed, manaUsed);
+        playerModel.SetProfilingMetric(PlayerMetricType.DamageAbsorbedByShield, damageAbsorbedByShield);
 
         if (resetAccumulatedStats)
         {
@@ -251,9 +252,10 @@ public class CombatMetricCollector : MonoBehaviour
 
         Debug.Log(
             $"[CombatMetricCollector] {(resetAccumulatedStats ? "Wave finalized" : "Live profiling published")}. " +
-            $"Melee: {meleeRatio:P1}, Ranged: {rangedRatio:P1}, Skill: {skillRatio:P1}, " +
+            $"Melee: {meleeRatio:P1}, Ranged: {rangedRatio:P1}, Skill: {skillRatio:P1}, Skill Cast Rate: {skillCastRate}, " +
             $"Dodge Rate: {dodgeRate:P1}, Avg Distance: {averageDistance:F2} ({averageDistanceNormalized:F2}), " +
-            $"Damage Taken: {damageTaken}, Healing Used: {healingUsed}, Mana Used: {manaUsed} "
+            $"Damage Taken: {damageTaken}, Healing Used: {healingUsed}, Mana Used: {manaUsed}, " +
+            $"Shield Absorbed: {damageAbsorbedByShield}"
         );
 
         return true;
@@ -354,6 +356,18 @@ public class CombatMetricCollector : MonoBehaviour
         );
     }
 
+    private void AccumulateProfilingMetric(PlayerMetricType metricType, float amount)
+    {
+        foreach (PlayerMetric metric in profilingMetrics)
+        {
+            if (metric.type != metricType)
+                continue;
+
+            metric.Accumulate(amount);
+            break;
+        }
+    }
+
     private float GetNormalizedMetricValue(PlayerMetricType metricType, bool resetAccumulatedStats)
     {
         foreach (PlayerMetric metric in profilingMetrics)
@@ -379,8 +393,10 @@ public class CombatWaveStats
     public float meleeDamage;
     public float rangedDamage;
     public float skillDamage;
+    public float skillCasts;
 
     public float damageTaken;
+    public float damageAbsorbedByShield;
 
     public int dodgeAttempts;
     public int successfulDodges;
@@ -395,7 +411,9 @@ public class CombatWaveStats
         meleeDamage = 0;
         rangedDamage = 0;
         skillDamage = 0;
+        skillCasts = 0;
         damageTaken = 0;
+        damageAbsorbedByShield = 0;
 
         dodgeAttempts = 0;
         successfulDodges = 0;

@@ -81,6 +81,10 @@ public class Health : MonoBehaviour
         {
             float damageAbsorbed = Mathf.Min(shieldAmount, finalDamage);
             shieldAmount -= damageAbsorbed;
+            if (damageAbsorbed > 0f && CompareTag("Player"))
+            {
+                CombatEventManager.RaiseShieldDamageAbsorbed(damageAbsorbed);
+            }
             if (shieldAmount <= 0)
             {
                 shieldAmount = 0;

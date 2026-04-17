@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DDAMAPEKitFramework;
 
 [DisallowMultipleComponent]
 public class PlayerStats : MonoBehaviour
@@ -178,6 +179,7 @@ public class PlayerStats : MonoBehaviour
         if (_currentMana < amount) return false;
         _currentMana -= amount;
         onManaChanged?.Invoke(_currentMana, maxMana);
+        CombatEventManager.RaiseManaUsed(amount);
         return true;
     }
 
@@ -186,6 +188,7 @@ public class PlayerStats : MonoBehaviour
         if (amount <= 0) return;
         _currentMana = Mathf.Max(0, _currentMana - amount);
         onManaChanged?.Invoke(_currentMana, maxMana);
+        CombatEventManager.RaiseManaUsed(amount);
     }
 
     public void AddMana(int amount)
