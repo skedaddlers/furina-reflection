@@ -214,6 +214,18 @@ public class ShopUI : MonoBehaviour
             return;
         }
 
+        if (Player.Instance.GetComponent<SkillManager>().HasSkill(skill))
+        {
+            UIManager.Instance.ShowNotification("You already own this skill!", 2f);
+            return;
+        }
+
+        if (Player.Instance.GetComponent<SkillManager>().IsAtSkillLimit())
+        {
+            UIManager.Instance.ShowNotification("You can't carry more skills!", 2f);
+            return;
+        }
+
         PlayerStats.Instance.SpendGold(skill.price);
         Player.Instance.GetComponent<SkillManager>().AddSkill(skill);
         UpdateGoldDisplay();

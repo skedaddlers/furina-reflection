@@ -1063,9 +1063,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 95
   shieldAmount: 0
-  maxShield: 100
+  maxShield: 95
   hitSFX: {fileID: 8300000, guid: 84dcdec185133064a86a72bffa454f2d, type: 3}
   enableStaggerOnHit: 1
   defaultMeleeStaggerDuration: 0.2
@@ -1181,7 +1181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isRanged: 0
   attackRange: 1.5
-  attackCooldown: 1.8
+  attackCooldown: 1.6
   movementSpeed: 1.7
   damage: 7
   detectionRange: 10
@@ -1224,7 +1224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 10
+  defense: 8
   critRate: 0
   critMultiplier: 1.5
 --- !u!137 &7450258361694064253 stripped

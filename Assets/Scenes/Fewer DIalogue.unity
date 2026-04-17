@@ -1001,10 +1001,10 @@ MonoBehaviour:
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
     eliteRoomRatio: 0.15
-    guaranteedShops: 2
+    guaranteedShops: 6
     guaranteedElites: 2
     guaranteedEvents: 2
-    guaranteeEarlyShop: 0
+    guaranteeEarlyShop: 1
     minDistanceBetweenShops: 3
     minDistanceBetweenElites: 3
     eliteMinDistanceFromStart: 3
@@ -1433,15 +1433,15 @@ MonoBehaviour:
   progressionMultiplierMin: 0.8
   progressionMultiplierMax: 1.5
   scaleEnemyStatsWithProgression: 1
-  progressionEnemyDamageMax: 1.2
-  progressionEnemyHealthMax: 1.4
+  progressionEnemyDamageMax: 1.1
+  progressionEnemyHealthMax: 1.2
   progressionEnemySpeedMax: 1.1
   progressionEnemyAttackSpeedMax: 1.15
   progressionEnemyAggroMax: 1.1
   baseEnemyLevel: 1
   levelsPerRoomDepth: 1
-  eliteRoomLevelBonus: 1
-  bossRoomLevelBonus: 2
+  eliteRoomLevelBonus: 0
+  bossRoomLevelBonus: 0
   maxEnemyLevel: 99
   enemyDamageMultiplier: 1
   enemyHealthMultiplier: 1
@@ -23754,7 +23754,7 @@ MonoBehaviour:
   enableDDA: 1
   enableBossFightLoops: 1
   bossFightLoopIntervalSeconds: 8
-  analyzeNoMatterWhat: 0
+  analyzeNoMatterWhat: 1
   debugMode: 0
   combatMetricCollector: {fileID: 1130029152}
 --- !u!4 &1130029149
@@ -36742,7 +36742,7 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 61927c91e7cd82d48903e7e1108906ee, type: 3}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: gold
-      value: 200
+      value: 999
       objectReference: {fileID: 0}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: maxStamina

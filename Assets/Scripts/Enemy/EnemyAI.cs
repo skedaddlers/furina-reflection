@@ -125,7 +125,7 @@ public class EnemyAI : MonoBehaviour, IStaggerable
                 var proj = go.GetComponent<Projectile>();
                 if (proj == null) proj = go.AddComponent<Projectile>();
 
-                proj.Init(dir, this.transform);
+                proj.Init(dir, projectilePrefab.speed, projectilePrefab.lifeTime, damage, transform, projectilePrefab.hitMask);
             }
         }
     }

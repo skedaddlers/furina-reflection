@@ -76,6 +76,11 @@ public class SkillManager : MonoBehaviour
         // Debug.Log($"Purchased skill: {skill.skillName}");
         return true;
     }
+
+    public bool IsAtSkillLimit()
+    {
+        return ownedSkills.Count >= maxActiveSkills; // Arbitrary limit to prevent hoarding
+    }
     
     // Add skill to inventory
     public void AddSkill(SkillBase skill)

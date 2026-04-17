@@ -93,7 +93,16 @@ public class EnemySystemEffector : Effector
 
         float current = currentMultipliers[variable];
         float newMultiplier = current * value;
-        float boost = 1f + sameSymptomCount * trendBoostFactor;
+        float boostFactor = sameSymptomCount * trendBoostFactor;
+        float boost = 1f;
+        if (value > 1f)
+        {
+            boost += boostFactor; // Amplify increases
+        }
+        else if (value < 1f)
+        {
+            boost -= boostFactor; // Amplify decreases
+        }
 
         newMultiplier = newMultiplier * boost;
         newMultiplier = Mathf.Clamp(newMultiplier, minMultiplier, maxMultiplier);

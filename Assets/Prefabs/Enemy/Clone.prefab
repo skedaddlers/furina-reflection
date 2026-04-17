@@ -1439,9 +1439,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa3be0729b004b449942e73614e6b44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHealth: 800
+  maxHealth: 750
   shieldAmount: 0
-  maxShield: 800
+  maxShield: 200
   hitSFX: {fileID: 8300000, guid: 84dcdec185133064a86a72bffa454f2d, type: 3}
   enableStaggerOnHit: 1
   defaultMeleeStaggerDuration: 0.2
@@ -1527,7 +1527,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 10
+  defense: 8
   critRate: 0
   critMultiplier: 1.5
 --- !u!114 &3624845416722336519
@@ -1565,7 +1565,7 @@ MonoBehaviour:
   attackRange: 2
   attackCooldown: 1.5
   movementSpeed: 3
-  damage: 4
+  damage: 5
   detectionRange: 15
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: 20197f30d6078f24b8b378da59874610, type: 3}
@@ -1625,7 +1625,7 @@ MonoBehaviour:
   lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
   lineEffectOffset: {x: 0, y: 2, z: 0}
   judicialLineSound: {fileID: 0}
-  healAmount: 50
+  healAmount: 40
   healCastTime: 1.5
   healAnimationTrigger: Cast
   healEffectPrefab: {fileID: 9017484664307500583, guid: 4eb0dace1f70966418f3c92ba8771a90, type: 3}

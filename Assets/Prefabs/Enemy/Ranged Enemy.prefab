@@ -930,10 +930,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRanged: 1
-  attackRange: 5
-  attackCooldown: 1.5
+  attackRange: 8
+  attackCooldown: 1.3
   movementSpeed: 1.1
-  damage: 10
+  damage: 6
   detectionRange: 10
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: b021a6ada189208498c8bb5796b26c15, type: 3}

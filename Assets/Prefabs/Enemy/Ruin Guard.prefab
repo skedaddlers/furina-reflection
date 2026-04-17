@@ -1267,7 +1267,7 @@ MonoBehaviour:
   isRanged: 0
   attackRange: 1.5
   attackCooldown: 1.4
-  movementSpeed: 0.93
+  movementSpeed: 1
   damage: 10
   detectionRange: 10
   turnSpeed: 8
@@ -1317,6 +1317,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   level: 1
-  defense: 18
+  defense: 17
   critRate: 0
   critMultiplier: 1.5

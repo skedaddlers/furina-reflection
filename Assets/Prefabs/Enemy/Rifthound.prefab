@@ -1064,7 +1064,7 @@ MonoBehaviour:
   staggerTrigger: Hit
   walkingSFX: {fileID: 0}
   attackSFX: {fileID: 0}
-  specialAttackCooldown: 7
+  specialAttackCooldown: 6.7
   teleportDistanceFromPlayer: 1.5
   bleedDamagePerTick: 1
   bleedTickInterval: 1
