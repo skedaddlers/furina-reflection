@@ -1273,7 +1273,7 @@ MonoBehaviour:
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: 3c6e7c7d27cc5d843b088f231b8ff4aa, type: 3}
   isPerformingSpecialAttack: 0
-  canBeStaggered: 1
+  canBeStaggered: 0
   staggerTrigger: Hit
   walkingSFX: {fileID: 0}
   attackSFX: {fileID: 8300000, guid: 071ee6e147aa0bc418fd69342a80b768, type: 3}

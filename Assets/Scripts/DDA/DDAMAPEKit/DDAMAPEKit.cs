@@ -234,13 +234,13 @@ namespace DDAMAPEKitFramework
             // Configure default symptoms based on the paper
             if(useDefaultSymptoms)
             {
-                symptomRepository.AddSymptom(new Symptom("very.high", 1.8f, 3.0f));
-                symptomRepository.AddSymptom(new Symptom("high", 1.5f, 1.8f));
-                symptomRepository.AddSymptom(new Symptom("slightly.high", 1.1f, 1.5f));
+                symptomRepository.AddSymptom(new Symptom("very.high", 1.6f, 3.0f));
+                symptomRepository.AddSymptom(new Symptom("high", 1.3f, 1.6f));
+                symptomRepository.AddSymptom(new Symptom("slightly.high", 1.1f, 1.3f));
                 symptomRepository.AddSymptom(new Symptom("normal", 0.9f, 1.1f));
-                symptomRepository.AddSymptom(new Symptom("slightly.low", 0.5f, 0.9f));
-                symptomRepository.AddSymptom(new Symptom("low", 0.2f, 0.5f));
-                symptomRepository.AddSymptom(new Symptom("very.low", 0.0f, 0.2f));
+                symptomRepository.AddSymptom(new Symptom("slightly.low", 0.7f, 0.9f));
+                symptomRepository.AddSymptom(new Symptom("low", 0.4f, 0.7f));
+                symptomRepository.AddSymptom(new Symptom("very.low", 0.0f, 0.4f));
             }
 
             if (customSymptoms != null)
