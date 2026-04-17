@@ -27,6 +27,9 @@ public class BossHealthBar : MonoBehaviour
 
     private void HandleHealthChanged(float current, float max)
     {
+        if (UIManager.Instance == null || UIManager.Instance.bossHPBarUI == null)
+            return;
+
         UIManager.Instance.bossHPBarUI.UpdateHealth(current, max);
     }
 }

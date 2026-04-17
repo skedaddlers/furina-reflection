@@ -18,25 +18,33 @@ public class BossHPBarUI : MonoBehaviour
 
     public void Initialize(BossHealthBar bossHealthBar)
     {
+        if (bossHealthBar == null || bossHealthBar.Health == null)
+            return;
+
         float max = bossHealthBar.Health.maxHealth;
         float current = bossHealthBar.Health.CurrentHealth;
 
-        healthSlider.maxValue = max;
-        healthSlider.value = current;
-
-        decayingHealthSlider.maxValue = max;
-        decayingHealthSlider.value = current;
-
+        ApplyHealthState(current, max, snapDecaying: true);
         bossNameText.text = bossHealthBar.bossName;
     }
 
     public void SetActive(bool isActive)
     {
+        if (!isActive && fillCoroutine != null)
+        {
+            StopCoroutine(fillCoroutine);
+            fillCoroutine = null;
+            isInitializing = false;
+        }
+
         bossHPBarCanvas.SetActive(isActive);
     }
 
     public void InitForBossFight(BossHealthBar bossHealthBar)
     {
+        if (bossHealthBar == null || bossHealthBar.Health == null)
+            return;
+
         if(fillCoroutine != null)
         {
             StopCoroutine(fillCoroutine);
@@ -50,62 +58,117 @@ public class BossHPBarUI : MonoBehaviour
         decayingHealthSlider.value = 0;
         float max = bossHealthBar.Health.maxHealth;
         float current = bossHealthBar.Health.CurrentHealth;
-        healthSlider.maxValue = max;
-        decayingHealthSlider.maxValue = max;
-        targetValue = current;
+        ApplyMaxValue(max);
+        targetValue = Mathf.Clamp(current, 0f, healthSlider.maxValue);
         SetActive(true);
-        // Debug.Log($"Initializing Boss HP Bar: Max={max}, Current={current}");
-        fillCoroutine = StartCoroutine(FillHealthBar(current, fillSpeed));
+
+        if (fillSpeed <= 0f)
+        {
+            isInitializing = false;
+            ApplyHealthState(targetValue, max, snapDecaying: true);
+            return;
+        }
+
+        fillCoroutine = StartCoroutine(FillHealthBar(fillSpeed));
     }
 
-    private IEnumerator FillHealthBar(float target, float duration)
+    private IEnumerator FillHealthBar(float duration)
     {
         float elapsed = 0f;
-        float startValue = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float t = elapsed / duration;
+            float t = Mathf.Clamp01(elapsed / duration);
 
-            float value = Mathf.Lerp(startValue, target, t);
+            float value = Mathf.Lerp(0f, Mathf.Clamp(targetValue, 0f, healthSlider.maxValue), t);
             healthSlider.value = value;
             decayingHealthSlider.value = value;
 
             yield return null;
         }
-        // Debug.Log("Finished filling Boss HP Bar");
+
         isInitializing = false;
-        healthSlider.value = target;
-        decayingHealthSlider.value = target;
+        fillCoroutine = null;
+        ApplyHealthState(targetValue, healthSlider.maxValue, snapDecaying: true);
     }
 
     public void UpdateHealth(float current, float max)
     {
-        healthSlider.maxValue = max;
-        if (!isInitializing)
+        ApplyMaxValue(max);
+        targetValue = Mathf.Clamp(current, 0f, healthSlider.maxValue);
+
+        if (isInitializing)
         {
-            healthSlider.value = current;
-            targetValue = current;
+            if (healthSlider.value > targetValue)
+            {
+                healthSlider.value = targetValue;
+            }
+
+            if (decayingHealthSlider.value > targetValue)
+            {
+                decayingHealthSlider.value = targetValue;
+            }
+
+            return;
         }
 
-    }
-
-    void Update()
-    {
-        if (decayingHealthSlider.value > targetValue)
-        {
-            decayingHealthSlider.value =
-                Mathf.MoveTowards(decayingHealthSlider.value, targetValue, Time.deltaTime * decayingSpeed);
-        }
-        else
+        healthSlider.value = targetValue;
+        if (decayingHealthSlider.value < targetValue)
         {
             decayingHealthSlider.value = targetValue;
         }
     }
 
+    void Update()
+    {
+        if (healthSlider == null || decayingHealthSlider == null)
+            return;
+
+        decayingHealthSlider.maxValue = healthSlider.maxValue;
+        float actualValue = healthSlider.value;
+        float desiredValue = Mathf.Max(actualValue, Mathf.Clamp(targetValue, 0f, healthSlider.maxValue));
+
+        if (decayingHealthSlider.value > desiredValue)
+        {
+            decayingHealthSlider.value =
+                Mathf.MoveTowards(decayingHealthSlider.value, desiredValue, Time.deltaTime * decayingSpeed);
+        }
+        else
+        {
+            decayingHealthSlider.value = desiredValue;
+        }
+    }
+
     public void DisableHPBar()
     {
+        if (fillCoroutine != null)
+        {
+            StopCoroutine(fillCoroutine);
+            fillCoroutine = null;
+        }
+
+        isInitializing = false;
+        targetValue = 0f;
         bossHPBarCanvas.SetActive(false);
+    }
+
+    private void ApplyMaxValue(float max)
+    {
+        float safeMax = Mathf.Max(1f, max);
+        healthSlider.maxValue = safeMax;
+        decayingHealthSlider.maxValue = safeMax;
+    }
+
+    private void ApplyHealthState(float current, float max, bool snapDecaying)
+    {
+        ApplyMaxValue(max);
+        targetValue = Mathf.Clamp(current, 0f, healthSlider.maxValue);
+        healthSlider.value = targetValue;
+
+        if (snapDecaying || decayingHealthSlider.value < targetValue)
+        {
+            decayingHealthSlider.value = targetValue;
+        }
     }
 }

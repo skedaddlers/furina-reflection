@@ -76,6 +76,11 @@ namespace DDAMAPEKitFramework
             return new List<PlayerAttribute>(attributes);
         }
 
+        public List<PlayerProfile> GetProfiles()
+        {
+            return new List<PlayerProfile>(profiles);
+        }
+
         public void AddProfile(PlayerProfile profile)
         {
             if (!profiles.Any(p => p.id == profile.id))
@@ -176,6 +181,11 @@ namespace DDAMAPEKitFramework
             return new Dictionary<PlayerProfile, float>(profileDistribution);
         }
 
+        public Dictionary<PlayerProfile, float> GetProfileScores()
+        {
+            return new Dictionary<PlayerProfile, float>(profileScores);
+        }
+
         public List<KeyValuePair<PlayerProfile, float>> GetSortedProfiles()
         {
             return profileDistribution.OrderByDescending(k => k.Value).ToList();
@@ -203,6 +213,12 @@ namespace DDAMAPEKitFramework
         
         public void UpdatePlayerProfile(float explorationRate)
         {
+            if (profiles.Count == 0)
+            {
+                currentProfile = null;
+                return;
+            }
+
             // Multi-Armed Bandit approach for profile selection
             if (UnityEngine.Random.value < explorationRate)
             {

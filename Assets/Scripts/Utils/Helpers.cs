@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
@@ -18,8 +19,8 @@ public static class Helpers
     {
         if (list == null || list.Count == 0)
             return default(T);
-        Random.InitState(seed);
-        int index = Random.Range(0, list.Count);
+        System.Random rng = new System.Random(ResolveSeed(seed));
+        int index = rng.Next(list.Count);
         return list[index];
     }
 
@@ -30,10 +31,10 @@ public static class Helpers
             return selectedItems;
 
         List<T> tempList = new List<T>(sourceList);
+        System.Random rng = new System.Random(ResolveSeed(seed));
         for (int i = 0; i < itemCount && tempList.Count > 0; i++)
         {
-            Random.InitState(seed + i);
-            int index = Random.Range(0, tempList.Count);
+            int index = rng.Next(tempList.Count);
             selectedItems.Add(tempList[index]);
             tempList.RemoveAt(index);
         }        
@@ -46,14 +47,25 @@ public static class Helpers
         if (sourceList == null || sourceList.Count == 0 || itemCount <= 0)
             return selectedItems;
 
+        System.Random rng = new System.Random(ResolveSeed(seed));
         for (int i = 0; i < itemCount; i++)
         {
-            Random.InitState(seed + i);
-            int index = Random.Range(0, sourceList.Count);
+            int index = rng.Next(sourceList.Count);
             selectedItems.Add(sourceList[index]);
         }
 
         return selectedItems;
+    }
+
+    private static int ResolveSeed(int seed)
+    {
+        if (seed != 0)
+            return seed;
+
+        unchecked
+        {
+            return Environment.TickCount ^ (Time.frameCount * 397);
+        }
     }
 
     public static float CalculateFinalDamage(

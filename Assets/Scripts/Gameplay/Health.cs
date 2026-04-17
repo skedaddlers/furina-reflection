@@ -98,7 +98,7 @@ public class Health : MonoBehaviour
         if (finalDamage > 0)
         {
             currentHealth -= finalDamage;
-            AudioManager.Instance?.PlaySFXNoOverlap(hitSFX, randomizePitch: true);
+            AudioManager.Instance?.PlaySFX(hitSFX, randomizePitch: true);
             // Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
             Enemy enemy = GetComponent<Enemy>();
             if (enemy != null)

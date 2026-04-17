@@ -271,17 +271,20 @@ public class EventRoomManager : MonoBehaviour
     private void ResolveFlatReward(GameEventOption option)
     {
         string rewardText = "";
+        GlobalDifficultyState diff = GlobalDifficultyState.Instance;
         if (playerStats != null)
         {
             if (option.goldAmount > 0)
             {
-                playerStats.AddGold(option.goldAmount);
-                rewardText += $"+{option.goldAmount} Gold\n";
+                int grantedGold = diff != null ? diff.ScaleRewardAmount(option.goldAmount) : option.goldAmount;
+                playerStats.AddGold(grantedGold);
+                rewardText += $"+{grantedGold} Gold\n";
             }
             if (option.xpAmount > 0)
             {
-                playerStats.AddXP(option.xpAmount);
-                rewardText += $"+{option.xpAmount} XP\n";
+                int grantedXp = diff != null ? diff.ScaleRewardAmount(option.xpAmount) : option.xpAmount;
+                playerStats.AddXP(grantedXp);
+                rewardText += $"+{grantedXp} XP\n";
             }
         }
 

@@ -55,6 +55,7 @@ public class GlobalDifficultyState : MonoBehaviour
 
     [Header("Reward System Multipliers (set by DDA)")]
     public float itemDropRateMultiplier = 1f; // >1 = higher drop rates
+    public float rewardPayoutMultiplier = 1f; // >1 = more gold/xp/score rewards
     public float rewardMultiplierMin = 0.3f;
     public float rewardMultiplierMax = 3f;
     [SerializeField] private int currentEnemyCount = 0;
@@ -251,6 +252,20 @@ public class GlobalDifficultyState : MonoBehaviour
     public void SetItemDropRate(float value)
     {
         itemDropRateMultiplier = Mathf.Clamp(value, rewardMultiplierMin, rewardMultiplierMax);
+    }
+
+    public void SetRewardPayoutMultiplier(float value)
+    {
+        rewardPayoutMultiplier = Mathf.Clamp(value, rewardMultiplierMin, rewardMultiplierMax);
+    }
+
+    public int ScaleRewardAmount(int amount)
+    {
+        if (amount <= 0)
+            return 0;
+
+        float scaledAmount = amount * Mathf.Clamp(rewardPayoutMultiplier, rewardMultiplierMin, rewardMultiplierMax);
+        return Mathf.Max(1, Mathf.RoundToInt(scaledAmount));
     }
 
     private void ResetProgression()

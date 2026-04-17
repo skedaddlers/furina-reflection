@@ -1451,6 +1451,7 @@ MonoBehaviour:
   enemyMultiplierMin: 0.5
   enemyMultiplierMax: 2
   itemDropRateMultiplier: 1
+  rewardPayoutMultiplier: 1
   rewardMultiplierMin: 0.3
   rewardMultiplierMax: 3
   currentEnemyCount: 0
@@ -36780,7 +36781,11 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 61927c91e7cd82d48903e7e1108906ee, type: 3}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: gold
-      value: 999
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
+      propertyPath: critRate
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: maxStamina
@@ -36788,7 +36793,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8302093940283912800, guid: 5b00960ebb62f8d47a8f9becd9a6101a, type: 3}
       propertyPath: manaRegenPerSecond
-      value: 0.9
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

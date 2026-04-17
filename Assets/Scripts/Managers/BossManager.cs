@@ -419,6 +419,11 @@ public class BossManager : MonoBehaviour
         Vector3 pos = focalorsPhase2Instance != null
             ? focalorsPhase2Instance.transform.position
             : focalorsPhase2SpawnPoint.position;
+        Enemy defeatedBoss = focalorsPhase2Instance != null
+            ? focalorsPhase2Instance.GetComponent<Enemy>()
+            : null;
+        defeatedBoss?.GrantDeathRewards();
+        defeatedBoss?.NotifyDeathObservers();
         CleanupAfterBossDefeat();
         GameObject f = Instantiate(focalorsPhase1Prefab, pos, Quaternion.identity);
         f.transform.SetParent(transform);

@@ -20,6 +20,8 @@ public class Enemy : MonoBehaviour
     public int goldReward = 10;
     public int scoreValue = 100;
     public static event Action<Enemy> OnAnyDeath;
+    private bool rewardsGranted;
+    private bool deathEventNotified;
 
     void Awake()
     {
@@ -32,22 +34,44 @@ public class Enemy : MonoBehaviour
 
     private void HandleDeath()
     {
+        if (SuppressDefaultDeathHandling)
+            return;
+
+        GrantDeathRewards();
+        NotifyDeathObservers();
+        Destroy(gameObject);
+    }
+
+    public void GrantDeathRewards()
+    {
+        if (rewardsGranted)
+            return;
+
+        rewardsGranted = true;
+
+        GlobalDifficultyState diff = GlobalDifficultyState.Instance;
+        int scaledXpReward = diff != null ? diff.ScaleRewardAmount(xpReward) : Mathf.Max(0, xpReward);
+        int scaledGoldReward = diff != null ? diff.ScaleRewardAmount(goldReward) : Mathf.Max(0, goldReward);
+        int scaledScoreValue = diff != null ? diff.ScaleRewardAmount(scoreValue) : Mathf.Max(0, scoreValue);
+
         if (PlayerStats.Instance != null)
         {
-            PlayerStats.Instance.AddXP(xpReward);
-            PlayerStats.Instance.AddGold(goldReward);
+            PlayerStats.Instance.AddXP(scaledXpReward);
+            PlayerStats.Instance.AddGold(scaledGoldReward);
         }
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.AddScore(scoreValue);
+            GameManager.Instance.AddScore(scaledScoreValue);
         }
-        
-        if (SuppressDefaultDeathHandling)
+    }
+
+    public void NotifyDeathObservers()
+    {
+        if (deathEventNotified)
             return;
 
-        // Reward player with XP and Gold upon enemy death
+        deathEventNotified = true;
         OnAnyDeath?.Invoke(this);
-        Destroy(gameObject);
     }
 }

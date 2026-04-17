@@ -114,9 +114,19 @@ public class AudioManager : MonoBehaviour
         activeMusicSource.Play();
     }
 
-    public void PlaySFX(AudioClip clip)
+    public void PlaySFX(AudioClip clip, bool randomizePitch = false)
     {
-        sfxSource.pitch = 1f; // reset pitch to default
+        if (clip == null || sfxSource == null)
+            return;
+
+        if (randomizePitch)
+        {
+            sfxSource.pitch = Random.Range(pitchVariationMin, pitchVariationMax);
+        }
+        else
+        {
+            sfxSource.pitch = 1f; // reset pitch to default
+        }
         sfxSource.volume = sfxVolume;
         sfxSource.PlayOneShot(clip);
     }

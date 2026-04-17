@@ -5,20 +5,26 @@ using UnityEngine.UI;
 public class ButtonSFX : MonoBehaviour
 {
     public AudioClip clickSFX;
+    private Button button;
+
+    void Awake()
+    {
+        button = GetComponent<Button>();
+    }
 
     void Start()
     {
-        GetComponent<Button>().onClick.AddListener(PlaySound);
+        button.onClick.AddListener(PlaySound);
     }
 
     void OnEnable()
     {
-        GetComponent<Button>().onClick.AddListener(PlaySound);
+        button.onClick.AddListener(PlaySound);
     }
 
     void OnDisable()
     {
-        GetComponent<Button>().onClick.RemoveListener(PlaySound);
+        button.onClick.RemoveListener(PlaySound);
     }
 
     void PlaySound()

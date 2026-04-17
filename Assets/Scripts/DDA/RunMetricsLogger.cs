@@ -303,6 +303,7 @@ public class RunMetricsLogger : MonoBehaviour
         currentRun.survivability = performanceSource == "dda_analysis_average" && hasAnalyzedSurvivabilityAverage
             ? analyzedSurvivabilityAverage
             : fallbackRunSurvivability;
+        CaptureFinalProfileScores();
     }
 
     private void CompleteActiveCombatEncounter(bool countAsCleared, int expectedRoomId = -1)
@@ -513,6 +514,48 @@ public class RunMetricsLogger : MonoBehaviour
         );
     }
 
+    private void CaptureFinalProfileScores()
+    {
+        currentRun.finalProfileScores.Clear();
+        currentRun.finalCurrentProfileId = 0;
+        currentRun.finalCurrentProfileName = string.Empty;
+        currentRun.finalDominantProfileId = 0;
+        currentRun.finalDominantProfileName = string.Empty;
+
+        DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();
+        PlayerModel playerModel = dda != null && dda.IsInitialized ? dda.GetPlayerModel() : null;
+        if (playerModel == null)
+            return;
+
+        Dictionary<PlayerProfile, float> scores = playerModel.GetProfileScores();
+        Dictionary<PlayerProfile, float> distribution = playerModel.GetProfileDistribution();
+        PlayerProfile currentProfile = playerModel.GetCurrentProfile();
+        PlayerProfile dominantProfile = distribution.Count > 0 ? playerModel.GetDominantProfile() : null;
+
+        currentRun.finalCurrentProfileId = currentProfile != null ? currentProfile.id : 0;
+        currentRun.finalCurrentProfileName = currentProfile != null ? currentProfile.name : string.Empty;
+        currentRun.finalDominantProfileId = dominantProfile != null ? dominantProfile.id : 0;
+        currentRun.finalDominantProfileName = dominantProfile != null ? dominantProfile.name : string.Empty;
+
+        foreach (PlayerProfile profile in playerModel.GetProfiles())
+        {
+            if (profile == null)
+                continue;
+
+            currentRun.finalProfileScores.Add(new RunProfileScoreSnapshot
+            {
+                profileId = profile.id,
+                profileName = profile.name,
+                score = scores.TryGetValue(profile, out float score) ? score : 0f,
+                distribution = distribution.TryGetValue(profile, out float profileDistribution) ? profileDistribution : 0f,
+                isCurrent = currentProfile != null && profile.id == currentProfile.id,
+                isDominant = dominantProfile != null && profile.id == dominantProfile.id
+            });
+        }
+
+        currentRun.finalProfileScores.Sort((left, right) => right.score.CompareTo(left.score));
+    }
+
     private void EnsurePlayerHealth()
     {
         if (playerHealth != null)
@@ -655,6 +698,11 @@ public class RunMetricsSnapshot
     public float survivability;
     public float performance;
     public string performanceSource;
+    public int finalCurrentProfileId;
+    public string finalCurrentProfileName;
+    public int finalDominantProfileId;
+    public string finalDominantProfileName;
+    public List<RunProfileScoreSnapshot> finalProfileScores = new List<RunProfileScoreSnapshot>();
 
     public float progressRatePercent;
     public int progressionRoomsVisited;
@@ -672,4 +720,15 @@ public class RunMetricsSnapshot
     public int reachedBoss;
     public int reachedBossPhase;
     public int victory;
+}
+
+[Serializable]
+public class RunProfileScoreSnapshot
+{
+    public int profileId;
+    public string profileName;
+    public float score;
+    public float distribution;
+    public bool isCurrent;
+    public bool isDominant;
 }

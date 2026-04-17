@@ -31,7 +31,10 @@ public class RoomManager : MonoBehaviour
         var diff = GlobalDifficultyState.Instance;
         if (diff != null)
         {
-            diff.SetTotalRooms(Layout?.roomDataMap?.Count ?? 0);
+            int progressionRoomCount = Layout != null && Layout.roomDataMap != null
+                ? Layout.roomDataMap.Values.Count(room => room.roomType != RoomType.Start && room.roomType != RoomType.Shop)
+                : 0;
+            diff.SetTotalRooms(progressionRoomCount);
         }
         // Debug.Log($"RoomManager initialized with {roomInstances.Count} rooms.");
         var minimap = FindObjectOfType<MinimapUI>();

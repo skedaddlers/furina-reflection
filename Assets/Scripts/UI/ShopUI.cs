@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ShopUI : MonoBehaviour
@@ -42,12 +43,33 @@ public class ShopUI : MonoBehaviour
     [Header("SFX")]
     public AudioClip buySound;
 
+    private readonly Dictionary<Button, UnityAction> dynamicButtonActions = new Dictionary<Button, UnityAction>();
+
     private void Start()
     {
+        closeButton.onClick.RemoveListener(CloseShop);
         closeButton.onClick.AddListener(CloseShop);
         shopPanel.SetActive(false);
         detailPanel.SetActive(false);
         UpdateGoldDisplay();
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var kvp in dynamicButtonActions)
+        {
+            if (kvp.Key != null && kvp.Value != null)
+            {
+                kvp.Key.onClick.RemoveListener(kvp.Value);
+            }
+        }
+
+        dynamicButtonActions.Clear();
+
+        if (closeButton != null)
+        {
+            closeButton.onClick.RemoveListener(CloseShop);
+        }
     }
 
     #region Shop Open
@@ -106,7 +128,7 @@ public class ShopUI : MonoBehaviour
             rarityColor.a = rarityColorAlpha;
             weaponRarityImageOverlay[i].color = rarityColor;
 
-            weaponButtons[i].onClick.RemoveAllListeners();
+            ClearDynamicButtonAction(weaponButtons[i]);
 
             bool owned = Player.Instance.GetComponent<PlayerLoadout>().HasWeapon(weapon);
             SetItemState(weaponImages[i], weaponButtons[i], owned);
@@ -114,8 +136,7 @@ public class ShopUI : MonoBehaviour
             if (!owned)
             {
                 int index = i;
-                weaponButtons[i].onClick.AddListener(() =>
-                    ShowWeaponDetails(weapon, index));
+                SetDynamicButtonAction(weaponButtons[i], () => ShowWeaponDetails(weapon, index));
             }
         }
     }
@@ -178,7 +199,7 @@ public class ShopUI : MonoBehaviour
             skillRarityImageOverlay[i].color = rarityColor;
 
 
-            skillButtons[i].onClick.RemoveAllListeners();
+            ClearDynamicButtonAction(skillButtons[i]);
 
             bool owned = Player.Instance.GetComponent<SkillManager>().HasSkill(skill);
             SetItemState(skillImages[i], skillButtons[i], owned);
@@ -186,8 +207,7 @@ public class ShopUI : MonoBehaviour
             if (!owned)
             {
                 int index = i;
-                skillButtons[i].onClick.AddListener(() =>
-                    ShowSkillDetails(skill, index));
+                SetDynamicButtonAction(skillButtons[i], () => ShowSkillDetails(skill, index));
             }
         }
     }
@@ -263,14 +283,40 @@ public class ShopUI : MonoBehaviour
         detailGoodPropertyText.text = good;
         detailBadPropertyText.text = bad;
 
-        buyButton.onClick.RemoveAllListeners();
-        buyButton.onClick.AddListener(onBuy);
+        SetDynamicButtonAction(buyButton, onBuy);
     }
 
     private void SetItemState(Image image, Button button, bool owned)
     {
         image.color = owned ? Color.gray : Color.white;
         button.interactable = !owned;
+    }
+
+    private void SetDynamicButtonAction(Button button, UnityAction action)
+    {
+        if (button == null)
+            return;
+
+        ClearDynamicButtonAction(button);
+
+        if (action == null)
+            return;
+
+        dynamicButtonActions[button] = action;
+        button.onClick.AddListener(action);
+    }
+
+    private void ClearDynamicButtonAction(Button button)
+    {
+        if (button == null)
+            return;
+
+        if (dynamicButtonActions.TryGetValue(button, out UnityAction existingAction) && existingAction != null)
+        {
+            button.onClick.RemoveListener(existingAction);
+        }
+
+        dynamicButtonActions.Remove(button);
     }
 
     #endregion
