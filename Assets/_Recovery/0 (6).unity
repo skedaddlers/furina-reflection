@@ -4578,7 +4578,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: '"A crumbling altar pulses with rhythmic, golden light. You feel a force
-    pulling you towards it, as if it demands a toll for it''s blessing"'
+    pulling you towards it, as if it demands a toll for it''s blessing'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4810d5f758c3dbe49870c1493f10ded9, type: 2}
   m_sharedMaterial: {fileID: 7790408596228138100, guid: 4810d5f758c3dbe49870c1493f10ded9, type: 2}
@@ -23753,7 +23753,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enablePerformanceTracking: 1
   enableDDA: 0
-  enableBossFightLoops: 0
+  enableBossFightLoops: 1
   bossFightLoopIntervalSeconds: 8
   analyzeNoMatterWhat: 1
   debugMode: 0

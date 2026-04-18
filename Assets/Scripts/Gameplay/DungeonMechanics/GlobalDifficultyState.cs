@@ -155,13 +155,19 @@ public class GlobalDifficultyState : MonoBehaviour
         int maxItems = Mathf.Max(minItems, room.maxItemSpawn);
         int baseItemCount = Random.Range(minItems, maxItems + 1);
 
-        float scaledItemCount = baseItemCount * Mathf.Clamp(itemDropRateMultiplier, rewardMultiplierMin, rewardMultiplierMax);
+        float multiplier = Mathf.Clamp(itemDropRateMultiplier, rewardMultiplierMin, rewardMultiplierMax);
+        float scaledItemCount = baseItemCount * multiplier;
         int guaranteedItems = Mathf.FloorToInt(scaledItemCount);
         float bonusChance = scaledItemCount - guaranteedItems;
-
+        
+        if (guaranteedItems <= 0 && multiplier > 1f)
+        {
+            guaranteedItems = 1;
+        }
         if (Random.value < bonusChance)
             guaranteedItems++;
 
+        Debug.Log($"[GlobalDifficultyState] Calculated item drops: Base={baseItemCount}, DropRateMult={itemDropRateMultiplier} => Scaled={scaledItemCount} => Guaranteed={guaranteedItems}, BonusChance={bonusChance * 100}%");
         return Mathf.Max(0, guaranteedItems);
     }
 

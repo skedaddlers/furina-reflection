@@ -199,8 +199,8 @@ MonoBehaviour:
     m_Bits: 256
   minSpawnDistance: 2
   enemyPrefab: {fileID: 4228300383457371494, guid: 095290b4c328f1e4d896bbb01f409732, type: 3}
-  itemSpawnAreaSize: {x: 21.3, y: 2.37, z: 17.1}
-  itemSpawnCenterOffset: {x: 0, y: 0, z: -1.9}
+  itemSpawnAreaSize: {x: 21.3, y: 5.99, z: 17.1}
+  itemSpawnCenterOffset: {x: 0, y: 2.25, z: -2}
   possibleItems:
   - {fileID: -6006270085673239047, guid: 04e0453bc2e03354f85db53d065f980c, type: 3}
   - {fileID: 5133405388208357320, guid: ac72a6c5797397b4cbb49366381f852b, type: 3}

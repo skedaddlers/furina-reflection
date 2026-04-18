@@ -55,6 +55,7 @@ public class RoomManager : MonoBehaviour
             var diff = GlobalDifficultyState.Instance;
             Room room = roomInstances[nextRoomID];
             int totalItem = diff != null ? diff.GetItemDropCountForRoom(room) : GetBaseItemSpawnCount(room);
+            Debug.Log($"Total items to spawn in room {nextRoomID} ({room.roomType}): {totalItem}");
             room.SpawnItemsInRoom(totalItem);
             MarkRoomVisited(nextRoomID);
         }

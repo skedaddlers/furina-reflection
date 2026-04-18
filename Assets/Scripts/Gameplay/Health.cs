@@ -31,6 +31,7 @@ public class Health : MonoBehaviour
     [Header("Voice Effects")]
     public AudioClip[] hitVoiceLines; // optional, untuk suara saat kena hit
     public float hitVoiceLineChance = 0.5f; // peluang untuk memutar suara saat kena hit
+    [SerializeField] private float hitSfxMinInterval = 0.08f;
 
     // on death event
     public Action onDeath;
@@ -98,7 +99,7 @@ public class Health : MonoBehaviour
         if (finalDamage > 0)
         {
             currentHealth -= finalDamage;
-            AudioManager.Instance?.PlaySFX(hitSFX, randomizePitch: true);
+            AudioManager.Instance?.PlaySFXWithCooldown(hitSFX, hitSfxMinInterval, randomizePitch: true);
             // Debug.Log($"{gameObject.name} took {finalDamage} damage. Health: {currentHealth}");
             Enemy enemy = GetComponent<Enemy>();
             if (enemy != null)

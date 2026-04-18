@@ -317,15 +317,21 @@ public class Room : MonoBehaviour
     private Vector3 GetRandomItemSpawnPosition()
     {
         Vector3 randomPos =
-        transform.position +
-        itemSpawnCenterOffset +
-        new Vector3(
-            Random.Range(-itemSpawnAreaSize.x / 2f, itemSpawnAreaSize.x / 2f),
-            0f,
-            Random.Range(-itemSpawnAreaSize.z / 2f, itemSpawnAreaSize.z / 2f)
-        );
+            transform.position +
+            itemSpawnCenterOffset +
+            new Vector3(
+                Random.Range(-itemSpawnAreaSize.x / 2f, itemSpawnAreaSize.x / 2f),
+                itemSpawnAreaSize.y / 2f,
+                Random.Range(-itemSpawnAreaSize.z / 2f, itemSpawnAreaSize.z / 2f)
+            );
 
-        return randomPos;
+        if (Physics.Raycast(randomPos, Vector3.down, out RaycastHit hit, 20f, groundMask))
+        {
+            return hit.point + Vector3.up * 0.1f; // small offset to avoid clipping
+        }
+
+        // fallback (in case raycast fails)
+        return transform.position;
     }
     #endregion
 

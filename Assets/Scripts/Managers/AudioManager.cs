@@ -25,6 +25,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip defeatMusic;
     public float pitchVariationMin = 0.9f;
     public float pitchVariationMax = 1.1f;
+    private readonly Dictionary<int, float> _lastSfxPlayTimes = new Dictionary<int, float>();
 
     void Awake()
     {
@@ -129,6 +130,25 @@ public class AudioManager : MonoBehaviour
         }
         sfxSource.volume = sfxVolume;
         sfxSource.PlayOneShot(clip);
+    }
+
+    public bool PlaySFXWithCooldown(AudioClip clip, float minInterval, bool randomizePitch = false)
+    {
+        if (clip == null || sfxSource == null)
+            return false;
+
+        int clipId = clip.GetInstanceID();
+        float now = Time.unscaledTime;
+
+        if (_lastSfxPlayTimes.TryGetValue(clipId, out float lastPlayTime) &&
+            now - lastPlayTime < minInterval)
+        {
+            return false;
+        }
+
+        _lastSfxPlayTimes[clipId] = now;
+        PlaySFX(clip, randomizePitch);
+        return true;
     }
 
     public void PlaySFXNoOverlap(AudioClip clip, bool randomizePitch = false, float duration = -1f)
