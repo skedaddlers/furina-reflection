@@ -214,6 +214,7 @@ public class AudioManager : MonoBehaviour
     public void StopVoiceLine()
     {
         voiceLineSource.Stop();
+        dialogueSource.Stop();
     }
 
     public void PlayVoiceLine(AudioClip clip)

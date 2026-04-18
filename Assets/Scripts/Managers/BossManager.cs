@@ -114,18 +114,30 @@ public class BossManager : MonoBehaviour
         if (UIManager.Instance?.bossHPBarUI != null)
             UIManager.Instance.bossHPBarUI.SetActive(false);
 
-        UIManager.Instance.dialogueUI.StartDialogueSequence(phase1StartDialogues);
-
         focalorsPhase1Instance.SetImmune(true);
 
-        float totalDuration = UIManager.Instance.dialogueUI
-            .GetTotalDialogueSequenceDuration(phase1StartDialogues);
+        if (UIManager.Instance?.dialogueUI == null)
+        {
+            ShowBossHPBar();
+            EnableBoss();
+            return;
+        }
 
-        float hpBarDelay = totalDuration *
-            (showPhase1BossHPBarAtIndex / (float)phase1StartDialogues.Count);
+        bool hpBarShown = false;
+        Coroutine hpBarCoroutine = StartBossHPBarDelay(
+            phase1StartDialogues,
+            showPhase1BossHPBarAtIndex,
+            () => hpBarShown = true);
 
-        Invoke(nameof(ShowBossHPBar), hpBarDelay);
-        Invoke(nameof(EnableBoss), totalDuration);
+        UIManager.Instance.dialogueUI.StartDialogueSequence(phase1StartDialogues, () =>
+        {
+            StopBossHPBarDelay(hpBarCoroutine);
+
+            if (!hpBarShown)
+                ShowBossHPBar();
+
+            EnableBoss();
+        });
     }
 
     private void EnablePhase1Boss()
@@ -156,12 +168,13 @@ public class BossManager : MonoBehaviour
         focalorsPhase1Instance.SetCanAct(false);
         NotifyBossFightActivity(false);
 
-        UIManager.Instance.dialogueUI.StartDialogueSequence(phase1EndDialogues);
+        if (UIManager.Instance?.dialogueUI == null)
+        {
+            StartPhase2();
+            return;
+        }
 
-        float duration = UIManager.Instance.dialogueUI
-            .GetTotalDialogueSequenceDuration(phase1EndDialogues);
-
-        Invoke(nameof(StartPhase2), duration);
+        UIManager.Instance.dialogueUI.StartDialogueSequence(phase1EndDialogues, StartPhase2);
     }
 
     #endregion
@@ -175,8 +188,6 @@ public class BossManager : MonoBehaviour
 
     private IEnumerator TransitionToPhase2()
     {
-        CancelInvoke(nameof(EnableBoss));
-
         isTransitioning = true;
         CurrentBossPhase = BossPhase.Phase2;
 
@@ -285,19 +296,31 @@ public class BossManager : MonoBehaviour
 
     private void StartPhase2Dialogue()
     {
-        UIManager.Instance?.dialogueUI?.StartDialogueSequence(phase2StartDialogues);
-
-        float totalDuration = UIManager.Instance.dialogueUI
-            .GetTotalDialogueSequenceDuration(phase2StartDialogues);
-
         focalorsPhase2Instance.SetImmune(true);
         focalorsPhase2Instance.SetCanAct(false);
 
-        float hpBarDelay = totalDuration *
-            (showPhase2BossHPBarAtIndex / (float)phase2StartDialogues.Count);
+        if (UIManager.Instance?.dialogueUI == null)
+        {
+            ShowBossHPBar();
+            EnableBoss();
+            return;
+        }
 
-        Invoke(nameof(ShowBossHPBar), hpBarDelay);
-        Invoke(nameof(EnableBoss), totalDuration);
+        bool hpBarShown = false;
+        Coroutine hpBarCoroutine = StartBossHPBarDelay(
+            phase2StartDialogues,
+            showPhase2BossHPBarAtIndex,
+            () => hpBarShown = true);
+
+        UIManager.Instance.dialogueUI.StartDialogueSequence(phase2StartDialogues, () =>
+        {
+            StopBossHPBarDelay(hpBarCoroutine);
+
+            if (!hpBarShown)
+                ShowBossHPBar();
+
+            EnableBoss();
+        });
     }
 
     
@@ -312,10 +335,13 @@ public class BossManager : MonoBehaviour
             return;
         }
 
-        UIManager.Instance?.dialogueUI?.StartDialogueSequence(phase2CloneDeathDialogues);
-        float duration = UIManager.Instance.dialogueUI
-            .GetTotalDialogueSequenceDuration(phase2CloneDeathDialogues);
-        Invoke(nameof(NotifyPhase2CloneDeath), duration);
+        if (UIManager.Instance?.dialogueUI == null)
+        {
+            NotifyPhase2CloneDeath();
+            return;
+        }
+
+        UIManager.Instance.dialogueUI.StartDialogueSequence(phase2CloneDeathDialogues, NotifyPhase2CloneDeath);
     }
 
     private void NotifyPhase2CloneDeath()
@@ -345,6 +371,43 @@ public class BossManager : MonoBehaviour
             UIManager.Instance.bossHPBarUI.InitForBossFight(
                 focalorsPhase2Instance.GetComponent<BossHealthBar>());
         }
+    }
+
+    private Coroutine StartBossHPBarDelay(List<Dialogue> dialogues, int showBossHPBarAtIndex, System.Action onShown)
+    {
+        float hpBarDelay = GetBossHPBarDelay(dialogues, showBossHPBarAtIndex);
+
+        if (hpBarDelay <= 0f)
+        {
+            ShowBossHPBar();
+            onShown?.Invoke();
+            return null;
+        }
+
+        return StartCoroutine(ShowBossHPBarAfterDelay(hpBarDelay, onShown));
+    }
+
+    private float GetBossHPBarDelay(List<Dialogue> dialogues, int showBossHPBarAtIndex)
+    {
+        if (UIManager.Instance?.dialogueUI == null || dialogues == null || dialogues.Count == 0)
+            return 0f;
+
+        float totalDuration = UIManager.Instance.dialogueUI.GetTotalDialogueSequenceDuration(dialogues);
+        float normalizedIndex = Mathf.Clamp01(showBossHPBarAtIndex / (float)dialogues.Count);
+        return totalDuration * normalizedIndex;
+    }
+
+    private IEnumerator ShowBossHPBarAfterDelay(float delay, System.Action onShown)
+    {
+        yield return new WaitForSeconds(delay);
+        ShowBossHPBar();
+        onShown?.Invoke();
+    }
+
+    private void StopBossHPBarDelay(Coroutine hpBarCoroutine)
+    {
+        if (hpBarCoroutine != null)
+            StopCoroutine(hpBarCoroutine);
     }
 
     void EnableBoss()
@@ -434,11 +497,14 @@ public class BossManager : MonoBehaviour
         if(withDialogue)
         {
             AudioManager.Instance?.PlayVictoryTransition();
-            UIManager.Instance.dialogueUI.StartDialogueSequence(phase2EndDialogues);
-            float duration = UIManager.Instance.dialogueUI
-                .GetTotalDialogueSequenceDuration(phase2EndDialogues);
 
-            Invoke(nameof(Win), duration);
+            if (UIManager.Instance?.dialogueUI == null)
+            {
+                Win();
+                return;
+            }
+
+            UIManager.Instance.dialogueUI.StartDialogueSequence(phase2EndDialogues, Win);
         }
         else
         {

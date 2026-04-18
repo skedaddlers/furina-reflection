@@ -14,28 +14,70 @@ public class DialogueUI : MonoBehaviour
     public float typingSpeed = 0.05f;
     public float dialogueBufferTime = 1f;
 
+    [Header("Skip Dialogue")]
+    public KeyCode skipKey = KeyCode.B;
+    public float skipHoldDuration = 1.25f;
+    public string skipPromptMessage = "Hold B to skip";
+    public GameObject skipPromptRoot;
+    public TextMeshProUGUI skipPromptText;
+    public Slider skipProgressBar;
+
     private Coroutine activeSequenceCoroutine;
     private Coroutine activeTypingCoroutine;
+    private float skipHoldTimer;
+    private System.Action activeSequenceCompletedCallback;
 
-    public void StartDialogueSequence(List<Dialogue> dialogues)
+    private void Update()
     {
-        // 1. Stop the current sequence if one is already running
-        if (activeSequenceCoroutine != null)
+        if (activeSequenceCoroutine == null)
+            return;
+
+        if (Input.GetKey(skipKey))
         {
-            StopCoroutine(activeSequenceCoroutine);
+            skipProgressBar.gameObject.SetActive(true);
+            float requiredHoldDuration = Mathf.Max(skipHoldDuration, 0.01f);
+            skipHoldTimer += Time.deltaTime;
+            UpdateSkipProgress(skipHoldTimer / requiredHoldDuration);
+
+            if (skipHoldTimer >= requiredHoldDuration)
+                CompleteDialogueSequence();
+        }
+        else if (skipHoldTimer > 0f)
+        {
+            ResetSkipHoldState();
+        }
+    }
+
+    public void StartDialogueSequence(List<Dialogue> dialogues, System.Action onSequenceCompleted = null)
+    {
+        StopDialogueSequence();
+
+        activeSequenceCompletedCallback = onSequenceCompleted;
+        ResetSkipHoldState();
+        ShowSkipUI();
+
+        if (dialogues == null || dialogues.Count == 0)
+        {
+            FinishDialogueSequence(true);
+            return;
         }
 
-        // 2. Stop any active typing effect to prevent text flickering
-        if (activeTypingCoroutine != null)
-        {
-            StopCoroutine(activeTypingCoroutine);
-        }
-
-        // 3. Start the new sequence and store the reference
         activeSequenceCoroutine = StartCoroutine(PlayDialogueSequence(dialogues));
     }
 
     public void StopDialogueSequence()
+    {
+        CancelRunningDialogueCoroutines();
+        FinishDialogueSequence(false);
+    }
+
+    private void CompleteDialogueSequence()
+    {
+        CancelRunningDialogueCoroutines();
+        FinishDialogueSequence(true);
+    }
+
+    private void CancelRunningDialogueCoroutines()
     {
         if (activeSequenceCoroutine != null)
         {
@@ -48,8 +90,6 @@ public class DialogueUI : MonoBehaviour
             StopCoroutine(activeTypingCoroutine);
             activeTypingCoroutine = null;
         }
-
-        HideDialogue();
     }
 
     private IEnumerator PlayDialogueSequence(List<Dialogue> dialogues)
@@ -64,13 +104,17 @@ public class DialogueUI : MonoBehaviour
             }
             yield return new WaitForSeconds(dialogue.GetDialogueDuration() + dialogueBufferTime); // wait for dialogue duration + a small buffer
         }
-        HideDialogue();
+
         activeSequenceCoroutine = null;
+        FinishDialogueSequence(true);
     }
     
 
     public float GetTotalDialogueSequenceDuration(List<Dialogue> dialogues)
     {
+        if (dialogues == null)
+            return 0f;
+
         float totalDuration = 0f;
         foreach (Dialogue dialogue in dialogues)
         {
@@ -81,8 +125,11 @@ public class DialogueUI : MonoBehaviour
 
     public void ShowDialogue(string dialogue, string speakerName)
     {
-        speakerNameText.text = speakerName;
-        dialoguePanel.SetActive(true);
+        if (speakerNameText != null)
+            speakerNameText.text = speakerName;
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(true);
 
         // Stop current typing before starting new typing for this specific line
         if (activeTypingCoroutine != null)
@@ -95,14 +142,18 @@ public class DialogueUI : MonoBehaviour
 
     public void HideDialogue()
     {
-        dialoguePanel.SetActive(false);
-        // Clean up coroutines when hiding
-        if (activeTypingCoroutine != null) StopCoroutine(activeTypingCoroutine);
-        activeSequenceCoroutine = null;
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
     }
 
     public IEnumerator TypewriteEffect(string dialogue)
     {
+        if (dialogueText == null)
+        {
+            activeTypingCoroutine = null;
+            yield break;
+        }
+
         dialogueText.text = dialogue; // Set the full text immediately
         dialogueText.maxVisibleCharacters = 0;
         
@@ -114,6 +165,58 @@ public class DialogueUI : MonoBehaviour
         }
         
         activeTypingCoroutine = null;
+    }
+
+    private void FinishDialogueSequence(bool invokeCompletionCallback)
+    {
+        AudioManager.Instance?.StopVoiceLine();
+
+        HideDialogue();
+        HideSkipUI();
+        ResetSkipHoldState();
+
+        System.Action callback = activeSequenceCompletedCallback;
+        activeSequenceCompletedCallback = null;
+
+        if (invokeCompletionCallback)
+            callback?.Invoke();
+    }
+
+    private void ShowSkipUI()
+    {
+        if (skipPromptRoot != null)
+            skipPromptRoot.SetActive(true);
+
+        if (skipPromptText != null)
+        {
+            skipPromptText.text = skipPromptMessage;
+            skipPromptText.gameObject.SetActive(true);
+        }
+    }
+
+    private void HideSkipUI()
+    {
+        if (skipPromptRoot != null)
+            skipPromptRoot.SetActive(false);
+
+        if (skipPromptRoot == null && skipPromptText != null)
+            skipPromptText.gameObject.SetActive(false);
+
+        if (skipPromptRoot == null && skipProgressBar != null)
+            skipProgressBar.gameObject.SetActive(false);
+    }
+
+    private void ResetSkipHoldState()
+    {
+        skipProgressBar.gameObject.SetActive(false);
+        skipHoldTimer = 0f;
+        UpdateSkipProgress(0f);
+    }
+
+    private void UpdateSkipProgress(float normalizedProgress)
+    {
+        if (skipProgressBar != null)
+            skipProgressBar.normalizedValue = Mathf.Clamp01(normalizedProgress);
     }
 }
 
