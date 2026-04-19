@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 0
   description: Furina de Fontaine's signature weapon itself! nothing can go wrong
     when Furina get her hands on this sword!
-  goodPropertyText: '+10 Damage
+  goodPropertyText: '+16 Damage
 
     +3 Range'
   badPropertyText: 1s Cooldown
@@ -29,7 +29,7 @@ MonoBehaviour:
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: 0, y: 0, z: -144.375}
   effectDuration: 1
-  baseDamage: 10
+  baseDamage: 16
   range: 3
   angle: 120
   cooldown: 1

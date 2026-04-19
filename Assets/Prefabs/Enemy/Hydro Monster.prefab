@@ -982,7 +982,7 @@ MonoBehaviour:
   isRanged: 0
   attackRange: 1.5
   attackCooldown: 1.5
-  movementSpeed: 3
+  movementSpeed: 4
   damage: 10
   detectionRange: 15
   turnSpeed: 8

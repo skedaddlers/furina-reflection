@@ -43,6 +43,9 @@ public class ShopUI : MonoBehaviour
     [Header("SFX")]
     public AudioClip buySound;
 
+    private bool isOpen = false;
+    public bool IsOpen => isOpen;
+
     private readonly Dictionary<Button, UnityAction> dynamicButtonActions = new Dictionary<Button, UnityAction>();
 
     private void Start()
@@ -96,6 +99,7 @@ public class ShopUI : MonoBehaviour
         shopPanel.OpenPanel();
         GameManager.Instance.player.GetComponent<PlayerController>().ResetAllStates();
         detailPanel.SetActive(false);
+        isOpen = true;
         return true;
     }
 
@@ -330,6 +334,7 @@ public class ShopUI : MonoBehaviour
         {
             UIManager.Instance.CloseMenu(this);
         }
+        isOpen = false;
     }
 
     #endregion

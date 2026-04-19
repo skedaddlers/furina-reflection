@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 2
   description: A bow that is given from Venti himself! you can aim and target the
     enemy you want to shoot!
-  goodPropertyText: '+14 Damage
+  goodPropertyText: '+17 Damage
 
     Aim to Shoot'
   badPropertyText: 
@@ -29,7 +29,7 @@ MonoBehaviour:
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: 0, y: 0, z: 0}
   effectDuration: 1
-  baseDamage: 14
+  baseDamage: 17
   range: 2
   angle: 60
   cooldown: 0.4

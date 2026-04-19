@@ -823,6 +823,7 @@ MonoBehaviour:
   defaultSkillStaggerDuration: 0.18
   hitVoiceLines: []
   hitVoiceLineChance: 0.5
+  hitSfxMinInterval: 0.08
 --- !u!136 &8944227814187816612
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -914,7 +915,7 @@ MonoBehaviour:
   enemyRenderer: {fileID: 7111225425522403523}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 2398677579558737384}
-  xpReward: 35
+  xpReward: 55
   goldReward: 20
   scoreValue: 60
 --- !u!114 &6259348790908507245
@@ -932,7 +933,7 @@ MonoBehaviour:
   isRanged: 1
   attackRange: 8
   attackCooldown: 1.3
-  movementSpeed: 1.1
+  movementSpeed: 1.6
   damage: 6
   detectionRange: 10
   turnSpeed: 8

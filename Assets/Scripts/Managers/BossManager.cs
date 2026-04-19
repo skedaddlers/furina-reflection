@@ -37,6 +37,12 @@ public class BossManager : MonoBehaviour
     public float healthDialogueTriggerPercentage = 0.5f;
     public List<Dialogue> phase2EndDialogues;
 
+    [Header("Ally Summon")]
+    [SerializeField] private string allySummonNotificationText = "Focalors is calling allies to help!";
+    [SerializeField] private float allySummonNotificationDuration = 2f;
+    [SerializeField] private int allySummonMinimumCount = 2;
+    [SerializeField] private int allySummonMaximumCount = 5;
+
     public BossPhase CurrentBossPhase { get; private set; } = BossPhase.Phase1;
 
     [Header("SFX")]
@@ -46,10 +52,13 @@ public class BossManager : MonoBehaviour
     private FocalorsPhase2AI focalorsPhase2Instance;
     private Health phase1Health;
     private Health phase2Health;
+    private Health trackedCloneHealth;
     private Room parentRoom;
 
     private GameObject currentBoss;
     private bool isTransitioning = false;
+    private bool phase1AlliesCalled;
+    private bool cloneAlliesCalled;
 
     #region Phase 1
 
@@ -62,6 +71,8 @@ public class BossManager : MonoBehaviour
     {
         if (currentBoss != null || isTransitioning)
             return;
+
+        phase1AlliesCalled = false;
 
         if (skipPhase1)
         {
@@ -106,6 +117,8 @@ public class BossManager : MonoBehaviour
         {
             phase1Health.onDeath -= HandlePhase1Defeated;
             phase1Health.onDeath += HandlePhase1Defeated;
+            phase1Health.onHealthChanged -= HandlePhase1HealthChanged;
+            phase1Health.onHealthChanged += HandlePhase1HealthChanged;
         }
     }
 
@@ -217,6 +230,7 @@ public class BossManager : MonoBehaviour
         if (phase1Health != null)
         {
             phase1Health.onDeath -= HandlePhase1Defeated;
+            phase1Health.onHealthChanged -= HandlePhase1HealthChanged;
             phase1Health = null;
         }
 
@@ -245,11 +259,15 @@ public class BossManager : MonoBehaviour
         Enemy f2 = currentBoss.GetComponent<Enemy>();
         f2.SuppressDefaultDeathHandling = true;
         focalorsPhase2Instance = currentBoss.GetComponent<FocalorsPhase2AI>();
+        focalorsPhase2Instance.onCloneSpawned -= HandleCloneSpawned;
+        focalorsPhase2Instance.onCloneSpawned += HandleCloneSpawned;
         focalorsPhase2Instance.onCloneDies -= StartCloneDeathDialogue;
         focalorsPhase2Instance.onCloneDies += StartCloneDeathDialogue;
         focalorsPhase2Instance.onPhase2Death -= TransformAfterDefeat;
         focalorsPhase2Instance.onPhase2Death += TransformAfterDefeat;
         phase2Health = currentBoss.GetComponent<Health>();
+        cloneAlliesCalled = false;
+        ClearTrackedCloneHealth();
 
         if (phase2spawnSound != null)
         {
@@ -326,6 +344,8 @@ public class BossManager : MonoBehaviour
     
     private void StartCloneDeathDialogue()
     {
+        ClearTrackedCloneHealth();
+
         if (focalorsPhase2Instance != null)
             focalorsPhase2Instance.onCloneDies -= StartCloneDeathDialogue;
 
@@ -521,11 +541,23 @@ public class BossManager : MonoBehaviour
     private void CleanupAfterBossDefeat()
     {
         NotifyBossFightActivity(false);
+        parentRoom?.ClearBossSummonedEnemies();
+        ClearTrackedCloneHealth();
 
         if (focalorsPhase2Instance != null)
         {
+            focalorsPhase2Instance.onCloneSpawned -= HandleCloneSpawned;
+            focalorsPhase2Instance.onCloneDies -= StartCloneDeathDialogue;
+            focalorsPhase2Instance.onPhase2Death -= TransformAfterDefeat;
             Destroy(focalorsPhase2Instance.gameObject);
             focalorsPhase2Instance = null;
+        }
+
+        if (phase2Health != null)
+        {
+            phase2Health.onDeath -= OnBossDefeated;
+            phase2Health.onHealthChanged -= CheckPhase2HealthForDialogue;
+            phase2Health = null;
         }
 
         if (UIManager.Instance?.bossHPBarUI != null)
@@ -539,10 +571,21 @@ public class BossManager : MonoBehaviour
         NotifyBossFightActivity(false);
 
         if (phase1Health != null)
+        {
             phase1Health.onDeath -= HandlePhase1Defeated;
+            phase1Health.onHealthChanged -= HandlePhase1HealthChanged;
+        }
 
         if (phase2Health != null)
+        {
             phase2Health.onDeath -= OnBossDefeated;
+            phase2Health.onHealthChanged -= CheckPhase2HealthForDialogue;
+        }
+
+        if (focalorsPhase2Instance != null)
+            focalorsPhase2Instance.onCloneSpawned -= HandleCloneSpawned;
+
+        ClearTrackedCloneHealth();
     }
 
 #if UNITY_EDITOR
@@ -579,6 +622,83 @@ public class BossManager : MonoBehaviour
         if (parentRoom != null)
         {
             OnBossPhaseProgressed?.Invoke(parentRoom, Mathf.Clamp(phaseIndex, 0, 3));
+        }
+    }
+
+    private void HandlePhase1HealthChanged(float currentHealth, float maxHealth)
+    {
+        if (phase1AlliesCalled || maxHealth <= 0f)
+            return;
+
+        if (currentHealth > maxHealth * 0.5f)
+            return;
+
+        phase1AlliesCalled = true;
+        StartCoroutine(SummonBossAlliesAfterWarning(() =>
+            CurrentBossPhase == BossPhase.Phase1 &&
+            phase1Health != null &&
+            phase1Health.CurrentHealth > 0f));
+    }
+
+    private void HandleCloneSpawned(Health cloneHealth)
+    {
+        ClearTrackedCloneHealth();
+        trackedCloneHealth = cloneHealth;
+
+        if (trackedCloneHealth != null)
+        {
+            trackedCloneHealth.onHealthChanged -= HandleCloneHealthChanged;
+            trackedCloneHealth.onHealthChanged += HandleCloneHealthChanged;
+        }
+    }
+
+    private void HandleCloneHealthChanged(float currentHealth, float maxHealth)
+    {
+        if (cloneAlliesCalled || maxHealth <= 0f)
+            return;
+
+        if (currentHealth > maxHealth * 0.5f)
+            return;
+
+        cloneAlliesCalled = true;
+        StartCoroutine(SummonBossAlliesAfterWarning(() =>
+            CurrentBossPhase == BossPhase.Phase2 &&
+            trackedCloneHealth != null &&
+            trackedCloneHealth.CurrentHealth > 0f));
+    }
+
+    private IEnumerator SummonBossAlliesAfterWarning(System.Func<bool> canSpawn)
+    {
+        if (canSpawn == null || !canSpawn())
+            yield break;
+
+        UIManager.Instance?.ShowNotification(allySummonNotificationText, allySummonNotificationDuration);
+
+        if (allySummonNotificationDuration > 0f)
+            yield return new WaitForSeconds(allySummonNotificationDuration);
+
+        if (!canSpawn())
+            yield break;
+
+        if (parentRoom == null)
+            parentRoom = GetComponent<Room>();
+
+        if (parentRoom == null)
+            yield break;
+
+        int summonCount = parentRoom.GetBossCommonEnemySummonCount(allySummonMinimumCount, allySummonMaximumCount);
+        if (summonCount <= 0)
+            yield break;
+
+        parentRoom.SpawnBossCommonEnemies(summonCount);
+    }
+
+    private void ClearTrackedCloneHealth()
+    {
+        if (trackedCloneHealth != null)
+        {
+            trackedCloneHealth.onHealthChanged -= HandleCloneHealthChanged;
+            trackedCloneHealth = null;
         }
     }
 }

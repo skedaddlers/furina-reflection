@@ -486,7 +486,7 @@ MonoBehaviour:
   enemyRenderer: {fileID: 7065071415207174372}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
-  xpReward: 100
+  xpReward: 120
   goldReward: 0
   scoreValue: 300
 --- !u!114 &1759342616226106966
@@ -520,7 +520,7 @@ MonoBehaviour:
   isRanged: 1
   attackRange: 6
   attackCooldown: 1.4
-  movementSpeed: 1.4
+  movementSpeed: 2.1
   damage: 8
   detectionRange: 15
   turnSpeed: 8
@@ -538,7 +538,7 @@ MonoBehaviour:
   verdictArcRange: 8
   verdictArcAngle: 70
   verdictArcSegments: 30
-  verdictArcTelegraphTime: 1.2
+  verdictArcTelegraphTime: 0.6
   verdictArcEffectPrefab: {fileID: 3156866507962234106, guid: 44bb64ca62c9b4344a1625914707200c, type: 3}
   verdictArcEffectRotationOffset: {x: 0, y: -90, z: 0}
   verdictArcSound: {fileID: 8300000, guid: 7215620d17b9eab4dbecd112543157ae, type: 3}
@@ -547,13 +547,13 @@ MonoBehaviour:
   rippleSpawnRadius: 10
   rippleCircleRadius: 3
   rippleSegments: 30
-  rippleTelegraphTime: 1
+  rippleTelegraphTime: 0.6
   rippleEffectPrefab: {fileID: 8974203713140315807, guid: 3c339117b2de5fe459f62b63cda3cbc9, type: 3}
   rippleCourtSound: {fileID: 8300000, guid: 80fb45802feeab246bf92f8c56fb9e1d, type: 3}
   useJudicialLine: 1
   lineWidth: 2
   lineLength: 8
-  lineTelegraphTime: 1
+  lineTelegraphTime: 0.4
   lineEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
   lineEffectOffset: {x: 0, y: 1, z: 0}
   judicialLineSound: {fileID: 8300000, guid: e4b5273c1242ec940a632761b8c8c1ce, type: 3}

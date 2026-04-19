@@ -967,6 +967,7 @@ MonoBehaviour:
   defaultSkillStaggerDuration: 0.18
   hitVoiceLines: []
   hitVoiceLineChance: 0.5
+  hitSfxMinInterval: 0.08
 --- !u!136 &7170321652431724467
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1036,7 +1037,7 @@ MonoBehaviour:
   enemyRenderer: {fileID: 7179545089949620145}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 8237243016429360707}
-  xpReward: 100
+  xpReward: 120
   goldReward: 50
   scoreValue: 250
 --- !u!114 &7963045105340031469
@@ -1054,7 +1055,7 @@ MonoBehaviour:
   isRanged: 0
   attackRange: 1.5
   attackCooldown: 1.6
-  movementSpeed: 0.4
+  movementSpeed: 1.2
   damage: 8
   detectionRange: 10
   turnSpeed: 8
@@ -1072,7 +1073,7 @@ MonoBehaviour:
   bleedVFXPrefab: {fileID: 6126188424833946103, guid: dc73d9708c725ee49b3ee0238343111f, type: 3}
   bleedApplySFX: {fileID: 8300000, guid: 349bfead4ec0cb94d89099e3d200c065, type: 3}
   telegraphPrefab: {fileID: 9056453673954427339, guid: 1e309eb610c108846b9f962d8903ff20, type: 3}
-  telegraphDuration: 1.1
+  telegraphDuration: 0.6
   telegraphRadius: 1.25
   telegraphSegments: 24
   telegraphYOffset: 0.05

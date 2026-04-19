@@ -52,6 +52,7 @@ public class Room : MonoBehaviour
     public bool isVisited = false;
 
     public List<GameObject> spawnedEnemies = new List<GameObject>();
+    private readonly List<GameObject> bossSummonedEnemies = new List<GameObject>();
 
     public static System.Action<Room> OnRoomCleared;
     public static System.Action<Room> OnWaveCleared;
@@ -409,20 +410,73 @@ public class Room : MonoBehaviour
                 return false;
         }
 
+        foreach (var enemy in bossSummonedEnemies)
+        {
+            if (enemy == null) continue;
+
+            if (Vector3.Distance(spawnPos, enemy.transform.position) < minSpawnDistance)
+                return false;
+        }
+
         return true;
     }
 
     private void SpawnEnemy(GameObject prefab, Vector3 spawnPos)
     {
-        GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
-        ApplyRoomDepthLevel(enemy);
-        spawnedEnemies.Add(enemy);
+        SpawnEnemyInternal(prefab, spawnPos, spawnedEnemies, HandleEnemyDeath);
+    }
 
-        var health = enemy.GetComponent<Health>();
-        if (health != null)
+    public int GetBossCommonEnemySummonCount(int minimumCount, int maximumCount)
+    {
+        int minCount = Mathf.Max(1, minimumCount);
+        int maxCount = Mathf.Max(minCount, maximumCount);
+        var diff = GlobalDifficultyState.Instance;
+
+        if (diff != null)
+            return diff.GetEnemyCountForRoom(this, minCount, maxCount);
+
+        return minCount;
+    }
+
+    public int SpawnBossCommonEnemies(int enemyCount)
+    {
+        if (enemyCount <= 0)
+            return 0;
+
+        List<GameObject> enemiesToSpawn = GetSpecificEnemiesForRoom(Library.Instance?.commonEnemies, enemyCount, "common");
+        if (enemiesToSpawn.Count == 0)
+            return 0;
+
+        int spawned = 0;
+        int attempts = 0;
+        int maxAttempts = enemiesToSpawn.Count * 10;
+
+        while (spawned < enemiesToSpawn.Count && attempts < maxAttempts)
         {
-            health.onDeath += () => HandleEnemyDeath(enemy);
+            attempts++;
+
+            if (!TryGetSpawnPosition(out Vector3 spawnPos))
+                continue;
+
+            if (!IsSpawnPositionValid(spawnPos))
+                continue;
+
+            SpawnEnemyInternal(enemiesToSpawn[spawned], spawnPos, bossSummonedEnemies, HandleBossSummonedEnemyDeath);
+            spawned++;
         }
+
+        return spawned;
+    }
+
+    public void ClearBossSummonedEnemies()
+    {
+        foreach (var enemy in bossSummonedEnemies)
+        {
+            if (enemy != null)
+                Destroy(enemy);
+        }
+
+        bossSummonedEnemies.Clear();
     }
 
     public int GetScaledEnemyLevel()
@@ -489,6 +543,48 @@ public class Room : MonoBehaviour
         }
 
         return result;
+    }
+
+    private List<GameObject> GetSpecificEnemiesForRoom(List<GameObject> pool, int count, string poolName)
+    {
+        var result = new List<GameObject>();
+
+        if (pool != null && pool.Count > 0)
+            result = Helpers.GetRandomItemsAllowRepeats(pool, count, roomIndex);
+
+        if (result.Count == 0 && enemyPrefab != null)
+        {
+            Debug.LogWarning($"Fallback enemy selection for Room {roomIndex}. Please populate {poolName} enemies in GlobalLibrary.");
+            for (int i = 0; i < count; i++)
+                result.Add(enemyPrefab);
+        }
+
+        return result;
+    }
+
+    private void SpawnEnemyInternal(
+        GameObject prefab,
+        Vector3 spawnPos,
+        List<GameObject> trackingList,
+        System.Action<GameObject> onDeathHandler)
+    {
+        if (prefab == null)
+            return;
+
+        GameObject enemy = Instantiate(prefab, spawnPos, Quaternion.identity, transform);
+        ApplyRoomDepthLevel(enemy);
+        trackingList.Add(enemy);
+
+        var health = enemy.GetComponent<Health>();
+        if (health != null && onDeathHandler != null)
+        {
+            health.onDeath += () => onDeathHandler(enemy);
+        }
+    }
+
+    private void HandleBossSummonedEnemyDeath(GameObject enemy)
+    {
+        bossSummonedEnemies.Remove(enemy);
     }
 
     #endregion

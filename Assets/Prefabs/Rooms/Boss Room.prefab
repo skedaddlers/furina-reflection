@@ -745,7 +745,7 @@ MonoBehaviour:
   - {fileID: 8705788801835095017}
   waveCount: 1
   timeBetweenWaves: 5
-  maxEnemies: 1
+  maxEnemies: 10
   enemyCount: 1
   spawnAreaSize: {x: 1.83, y: 5, z: 2.3}
   spawnAreaCenterOffset: {x: 0, y: 0, z: 0}
@@ -953,6 +953,10 @@ MonoBehaviour:
   - speakerName: Focalors
     dialogueText: And Furina... No more rehearsals.
     voiceLine: {fileID: 8300000, guid: 58a31253d549075418c4c61e075b9c81, type: 3}
+  allySummonNotificationText: Focalors is calling allies to help!
+  allySummonNotificationDuration: 2
+  allySummonMinimumCount: 2
+  allySummonMaximumCount: 5
   phase2spawnSound: {fileID: 8300000, guid: 9aa2fabbad89abf4593b155b6bd708fa, type: 3}
 --- !u!1 &7686554196724947285
 GameObject:

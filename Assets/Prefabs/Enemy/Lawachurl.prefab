@@ -3109,6 +3109,7 @@ MonoBehaviour:
   defaultSkillStaggerDuration: 0.18
   hitVoiceLines: []
   hitVoiceLineChance: 0.5
+  hitSfxMinInterval: 0.08
 --- !u!195 &-313271174845791396
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -3238,7 +3239,7 @@ MonoBehaviour:
   enemyRenderer: {fileID: 2979416103861789338}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 2360180028150991818}
-  xpReward: 100
+  xpReward: 120
   goldReward: 50
   scoreValue: 250
 --- !u!114 &4903317098627957196

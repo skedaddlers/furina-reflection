@@ -24105,10 +24105,10 @@ MonoBehaviour:
   clearTimeBossExpectedSeconds: 110
   clearTimeEnemyHealthInfluence: 0.75
   survivabilityDamageBudgetMultiplier: 1.5
-  survivabilityDamageWeight: 0.6
+  survivabilityDamageWeight: 0.7
   survivabilitySuccessfulDodgedAttacksWeight: 0.1
-  survivabilityLowestHealthWeight: 0.15
-  survivabilityEndHealthWeight: 0.15
+  survivabilityLowestHealthWeight: 0.1
+  survivabilityEndHealthWeight: 0.1
   rules:
   - id: ML_VERY_LOW
     symptomDescription: very.low

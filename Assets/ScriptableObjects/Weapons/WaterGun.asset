@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 0
   description: A gun that Furina made herself! Now Furina can shoot from afar! It
     spends mana to shoot though
-  goodPropertyText: +1 Damage (x2)
+  goodPropertyText: +4 Damage (x2)
   badPropertyText: '0.9s Cooldown
 
     1 Mana cost'
@@ -29,7 +29,7 @@ MonoBehaviour:
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: 0, y: 0, z: 0}
   effectDuration: 1
-  baseDamage: 1
+  baseDamage: 4
   range: 2
   angle: 60
   cooldown: 0.9

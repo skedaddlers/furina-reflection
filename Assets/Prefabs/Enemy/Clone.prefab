@@ -1512,7 +1512,7 @@ MonoBehaviour:
   enemyRenderer: {fileID: 4684639286036497217}
   rendererColor: {r: 0, g: 0, b: 0, a: 0}
   healthBar: {fileID: 0}
-  xpReward: 100
+  xpReward: 120
   goldReward: 0
   scoreValue: 400
 --- !u!114 &-3851192223676009071
@@ -1565,7 +1565,7 @@ MonoBehaviour:
   isRanged: 0
   attackRange: 2
   attackCooldown: 1.5
-  movementSpeed: 3
+  movementSpeed: 4
   damage: 5
   detectionRange: 15
   turnSpeed: 8

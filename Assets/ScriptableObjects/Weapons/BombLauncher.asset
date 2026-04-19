@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 3
   description: Furina was bored and she made this beast of a weapon, this thing shoots
     bombs that explode on contact!
-  goodPropertyText: '+10 Damage
+  goodPropertyText: '+12 Damage
 
     Area of Effects'
   badPropertyText: '1.6s Cooldown
@@ -31,7 +31,7 @@ MonoBehaviour:
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: 0, y: 0, z: 0}
   effectDuration: 0.4
-  baseDamage: 10
+  baseDamage: 12
   range: 2
   angle: 60
   cooldown: 1.6

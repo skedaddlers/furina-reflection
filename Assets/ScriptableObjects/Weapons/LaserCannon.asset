@@ -17,7 +17,7 @@ MonoBehaviour:
   rarity: 2
   description: This water laser can pierce through targets in a straight line! It's
     Furina's newest invention
-  goodPropertyText: '+15 Damage
+  goodPropertyText: '+18 Damage
 
     Can pierce targets'
   badPropertyText: '1.2s Cooldown
@@ -31,7 +31,7 @@ MonoBehaviour:
   attackEffectOffset: {x: 0, y: 0, z: 0}
   attackEffectRotation: {x: 0, y: 0, z: 0}
   effectDuration: 0.5
-  baseDamage: 15
+  baseDamage: 18
   range: 2
   angle: 60
   cooldown: 1.2

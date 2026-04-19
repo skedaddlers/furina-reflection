@@ -12,6 +12,7 @@ public class FocalorsPhase2AI : EnemyAI
     public float jumpHeight = 5f;
     public float jumpDuration = 1f;
     public Transform cloneSpawnPoint; // Optional: where the clone appears
+    public System.Action<Health> onCloneSpawned;
     public System.Action onCloneDies; // Event to notify BossManager that clone has died
 
     [Header("Phase 2 Outro Mechanics")]
@@ -168,6 +169,7 @@ public class FocalorsPhase2AI : EnemyAI
         }
         ApplyConfiguredEnemyLevel(clone);
         cloneHealth = clone.GetComponent<Health>();
+        onCloneSpawned?.Invoke(cloneHealth);
         
         if (cloneHealth != null)
         {
