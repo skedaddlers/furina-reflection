@@ -45,6 +45,16 @@ MonoBehaviour:
       randomizeReposition: 1
       repostionIndex: 0
     skill: {fileID: 8002971525184020752, guid: fffdfb1c65b438545bbbe4f813b1524d, type: 3}
+  - type: 1
+    movement:
+      movementType: 2
+      duration: 1.5
+      speed: 4
+      distance: 2
+      distanceToStop: 0.1
+      randomizeReposition: 1
+      repostionIndex: 0
+    skill: {fileID: 6684773646091941726, guid: 503694c1cc7bbdd4dae8303671c900c8, type: 3}
   baseWeight: 1
   cooldown: 2
   lastUsedTime: 137.2517

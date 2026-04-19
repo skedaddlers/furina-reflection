@@ -67,7 +67,7 @@ MonoBehaviour:
   placementAttemptsPerBubble: 12
   bubbleRadius: 1.25
   bubbleSegments: 24
-  initialTelegraphTime: 1.55
+  initialTelegraphTime: 1.2
   delayBetweenExplosions: 0
   bubbleEffectPrefab: {fileID: 7647375919561907788, guid: 6f6786f3e14b6f6488b27cbe9d1b700c, type: 3}
   explosionEffectPrefab: {fileID: 0}

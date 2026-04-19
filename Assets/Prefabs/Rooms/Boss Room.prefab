@@ -747,7 +747,7 @@ MonoBehaviour:
   timeBetweenWaves: 5
   maxEnemies: 10
   enemyCount: 1
-  spawnAreaSize: {x: 1.83, y: 5, z: 2.3}
+  spawnAreaSize: {x: 14.09, y: 5, z: 16.39}
   spawnAreaCenterOffset: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2
@@ -956,7 +956,7 @@ MonoBehaviour:
   allySummonNotificationText: Focalors is calling allies to help!
   allySummonNotificationDuration: 2
   allySummonMinimumCount: 2
-  allySummonMaximumCount: 5
+  allySummonMaximumCount: 10
   phase2spawnSound: {fileID: 8300000, guid: 9aa2fabbad89abf4593b155b6bd708fa, type: 3}
 --- !u!1 &7686554196724947285
 GameObject:

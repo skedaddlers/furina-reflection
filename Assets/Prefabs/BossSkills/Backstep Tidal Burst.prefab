@@ -61,5 +61,5 @@ MonoBehaviour:
   backstepDistance: 6
   backstepDuration: 0.3
   backstepRadius: 5
-  backstepTelegraphTime: 1.2
+  backstepTelegraphTime: 0.7
   backstepEffectPrefab: {fileID: 584207449403360073, guid: 8b2d2c2480e79684ca191c0b655b3163, type: 3}

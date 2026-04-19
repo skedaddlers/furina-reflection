@@ -1038,9 +1038,9 @@ MonoBehaviour:
     shopRoomRatio: 0.2
     eventRoomRatio: 0.15
     eliteRoomRatio: 0.15
-    guaranteedShops: 2
-    guaranteedElites: 2
-    guaranteedEvents: 2
+    guaranteedShops: 0
+    guaranteedElites: 0
+    guaranteedEvents: 0
     guaranteeEarlyShop: 0
     minDistanceBetweenShops: 3
     minDistanceBetweenElites: 3

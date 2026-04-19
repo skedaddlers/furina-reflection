@@ -41,7 +41,7 @@ public class BossManager : MonoBehaviour
     [SerializeField] private string allySummonNotificationText = "Focalors is calling allies to help!";
     [SerializeField] private float allySummonNotificationDuration = 2f;
     [SerializeField] private int allySummonMinimumCount = 2;
-    [SerializeField] private int allySummonMaximumCount = 5;
+    [SerializeField] private int allySummonMaximumCount = 10;
 
     public BossPhase CurrentBossPhase { get; private set; } = BossPhase.Phase1;
 

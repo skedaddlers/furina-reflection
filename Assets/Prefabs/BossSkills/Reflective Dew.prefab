@@ -59,8 +59,8 @@ MonoBehaviour:
   castSoundVolume: 1
   soundDuration: 3
   defenseIncreaseMultiplier: 3
-  reflectiveDuration: 8
-  mirroredHealMultiplier: 1.2
+  reflectiveDuration: 6
+  mirroredHealMultiplier: 2
   activeEffectPrefab: {fileID: 9017484664307500583, guid: 4eb0dace1f70966418f3c92ba8771a90, type: 3}
   activeEffectLifetime: 8
   mirrorPulseEffectPrefab: {fileID: 0}

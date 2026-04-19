@@ -446,7 +446,6 @@ public class Room : MonoBehaviour
         List<GameObject> enemiesToSpawn = GetSpecificEnemiesForRoom(Library.Instance?.commonEnemies, enemyCount, "common");
         if (enemiesToSpawn.Count == 0)
             return 0;
-
         int spawned = 0;
         int attempts = 0;
         int maxAttempts = enemiesToSpawn.Count * 10;
@@ -464,7 +463,6 @@ public class Room : MonoBehaviour
             SpawnEnemyInternal(enemiesToSpawn[spawned], spawnPos, bossSummonedEnemies, HandleBossSummonedEnemyDeath);
             spawned++;
         }
-
         return spawned;
     }
 

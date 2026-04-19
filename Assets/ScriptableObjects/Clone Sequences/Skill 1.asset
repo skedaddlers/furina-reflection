@@ -20,5 +20,8 @@ MonoBehaviour:
   - type: 5
     duration: 1.5
     speed: 5
+  - type: 2
+    duration: 1.5
+    speed: 5
   baseWeight: 1
-  cachedWeight: 0
+  cachedWeight: 0.01102078

@@ -58,8 +58,8 @@ MonoBehaviour:
   castSound: {fileID: 8300000, guid: 071ee6e147aa0bc418fd69342a80b768, type: 3}
   castSoundVolume: 1
   soundDuration: 3
-  coneRange: 7
-  coneAngle: 70
+  coneRange: 8
+  coneAngle: 80
   coneSegments: 24
   firstTelegraphTime: 0.75
   ghostDelay: 1

@@ -58,7 +58,7 @@ MonoBehaviour:
   castSound: {fileID: 8300000, guid: 7215620d17b9eab4dbecd112543157ae, type: 3}
   castSoundVolume: 1
   soundDuration: 3
-  closeCollapseRadius: 4
+  closeCollapseRadius: 5
   closeCollapseSegments: 30
-  closeCollapseTelegraphTime: 1
+  closeCollapseTelegraphTime: 0.7
   closeCollapseEffectPrefab: {fileID: 584207449403360073, guid: 8b2d2c2480e79684ca191c0b655b3163, type: 3}

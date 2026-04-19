@@ -58,8 +58,8 @@ MonoBehaviour:
   castSound: {fileID: 8300000, guid: e4b5273c1242ec940a632761b8c8c1ce, type: 3}
   castSoundVolume: 1
   soundDuration: 3
-  blastWidth: 2.5
-  blastLength: 10
+  blastWidth: 3
+  blastLength: 12
   telegraphTime: 0.7
   blastEffectPrefab: {fileID: 5551718882146614446, guid: d056d1dd4ebaf164b827be3fb9832d42, type: 3}
   blastEffectOffset: {x: 0, y: 1.5, z: 0}

@@ -58,9 +58,9 @@ MonoBehaviour:
   castSound: {fileID: 8300000, guid: a8bb2dd57e883d74fa78b028fc48287a, type: 3}
   castSoundVolume: 1
   soundDuration: 3
-  dashWidth: 3
-  dashLength: 12
-  dashTelegraphTime: 1.2
+  dashWidth: 5
+  dashLength: 14
+  dashTelegraphTime: 0.85
   dashDuration: 0.2
   dashEffectPrefab: {fileID: 0}
   endAnimationTrigger: StopDash

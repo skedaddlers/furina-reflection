@@ -54,7 +54,7 @@ MonoBehaviour:
       distanceToStop: 0.1
       randomizeReposition: 1
       repostionIndex: 0
-    skill: {fileID: 3477844690129249376, guid: 90036ace21deeab40bd955a92ce5ec0f, type: 3}
+    skill: {fileID: -1990391074256547780, guid: 4b2984e80e4369741864dcedac285a0a, type: 3}
   baseWeight: 1
   cooldown: 2
   lastUsedTime: 137.2517
