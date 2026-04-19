@@ -34,7 +34,7 @@ MonoBehaviour:
   purchasePrice: 100
   duration: 8
   damageAmount: 0
-  healAmount: 15
+  healAmount: 10
   shieldAmount: 0
   effectPrefab: {fileID: 7155335147208632822, guid: 97c43495f80a3244fad1301dfafbe252, type: 3}
   castSound: {fileID: 8300000, guid: 8c7a7654bbe28914ba43e1abd3dbe8e2, type: 3}
@@ -46,6 +46,6 @@ MonoBehaviour:
   isUpgraded: 0
   upgradeDescription: Now gives extra movement speed!
   nextLevelSkill: {fileID: 11400000, guid: a3777466c3fba8a4997fbf4cb9f85d1b, type: 2}
-  attackBonus: 20
+  attackBonus: 15
   healthDrainPerSecond: 2
   movementSpeedBonusPercent: 0.5

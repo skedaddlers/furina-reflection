@@ -34,7 +34,7 @@ public class SkillSilenceZone : BossSkill
             telegraph.ConfigureCircle(zoneRadius, telegraphSegments, telegraphTime);
             Destroy(telegraph.gameObject, telegraphTime + 0.1f);
         }
-
+        UIManager.Instance.ShowNotification(notificationText, notificationDuration);
         boss.Animator.SetTrigger(animationTrigger);
         yield return new WaitForSeconds(telegraphTime);
 

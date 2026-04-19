@@ -291,7 +291,7 @@ public class FocalorsPhase2AI : EnemyAI
         float totalWeight = 0;
         Dictionary<string, float> profileWeights = GetProfileDistributionByName();
         bool hasProfileDistribution = profileWeights.Count > 0;
-
+        Debug.Log($"Choosing sequence. Has profile distribution: {hasProfileDistribution}. Profile weights: {string.Join(", ", profileWeights)}");
         if (!hasProfileDistribution)
             return sequences[Random.Range(0, sequences.Count)];
 
@@ -340,6 +340,9 @@ public class FocalorsPhase2AI : EnemyAI
     private Dictionary<string, float> GetProfileDistributionByName()
     {
         Dictionary<string, float> weights = new();
+
+        if(!DDAIntegration.IsAdaptationEnabled)
+            return weights;
 
         var playerModel = DDARuntimeHelper.TryGetActivePlayerModel();
         if (playerModel == null)

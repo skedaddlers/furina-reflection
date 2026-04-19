@@ -53,7 +53,8 @@ MonoBehaviour:
   staggerDuration: 1
   causesKnockback: 0
   knockbackDistance: 1
-  notificationText: Boss is using a skill!
+  notificationText: Focalors used Silence Zone! Skill cooldowns will be increased,
+    and mana will regen slower inside the zone!
   notificationDuration: 2
   castSound: {fileID: 8300000, guid: 3b816425e35ce264b8aa79ad5951daf4, type: 3}
   castSoundVolume: 1

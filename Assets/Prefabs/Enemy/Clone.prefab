@@ -1563,10 +1563,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossCloneAI
   isRanged: 0
-  attackRange: 2
+  attackRange: 3
   attackCooldown: 1.5
   movementSpeed: 4
-  damage: 5
+  damage: 9
   detectionRange: 15
   turnSpeed: 8
   projectilePrefab: {fileID: 7933930715022831805, guid: 20197f30d6078f24b8b378da59874610, type: 3}
@@ -1596,7 +1596,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 99ffe2a2a1c2fcc4d8e5079fec2769f4, type: 2}
   - {fileID: 11400000, guid: 56f4e906ebc62c84499872c8e4af62b1, type: 2}
   - {fileID: 11400000, guid: ccf92922ab79a5f42895853dd0789543, type: 2}
-  mirrorChance: 0.25
+  mirrorChance: 0.2
   cooldownTime: 0.8
   telegraphPrefab: {fileID: 7527255315057587825, guid: 4a6ddb415a723d14d8923b050f62f2e6, type: 3}
   castSoundVolume: 1

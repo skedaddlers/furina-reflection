@@ -57,6 +57,72 @@ public static class Helpers
         return selectedItems;
     }
 
+    public static List<T> GetWeightedRandomItems<T>(List<T> sourceList, int itemCount, Func<T, float> weightSelector, int seed = 0)
+    {
+        var selectedItems = new List<T>();
+        if (sourceList == null || sourceList.Count == 0 || itemCount <= 0)
+            return selectedItems;
+
+        var tempList = new List<T>(sourceList);
+        System.Random rng = new System.Random(ResolveSeed(seed));
+
+        for (int i = 0; i < itemCount && tempList.Count > 0; i++)
+        {
+            int index = GetWeightedRandomIndex(tempList, weightSelector, rng);
+            if (index < 0 || index >= tempList.Count)
+                break;
+
+            selectedItems.Add(tempList[index]);
+            tempList.RemoveAt(index);
+        }
+
+        return selectedItems;
+    }
+
+    private static int GetWeightedRandomIndex<T>(List<T> sourceList, Func<T, float> weightSelector, System.Random rng)
+    {
+        if (sourceList == null || sourceList.Count == 0)
+            return -1;
+
+        float totalWeight = 0f;
+        int fallbackIndex = -1;
+
+        for (int i = 0; i < sourceList.Count; i++)
+        {
+            T item = sourceList[i];
+            if (!ReferenceEquals(item, null) && fallbackIndex < 0)
+                fallbackIndex = i;
+
+            if (ReferenceEquals(item, null))
+                continue;
+
+            float weight = Mathf.Max(0f, weightSelector != null ? weightSelector(item) : 1f);
+            totalWeight += weight;
+        }
+
+        if (totalWeight <= 0f)
+            return fallbackIndex;
+
+        double roll = rng.NextDouble() * totalWeight;
+        for (int i = 0; i < sourceList.Count; i++)
+        {
+            T item = sourceList[i];
+            if (ReferenceEquals(item, null))
+                continue;
+
+            float weight = Mathf.Max(0f, weightSelector != null ? weightSelector(item) : 1f);
+            if (weight <= 0f)
+                continue;
+
+            if (roll < weight)
+                return i;
+
+            roll -= weight;
+        }
+
+        return fallbackIndex;
+    }
+
     private static int ResolveSeed(int seed)
     {
         if (seed != 0)

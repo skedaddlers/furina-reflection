@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
 public class SkillSpiralHydroBurst : BossSkill
 {
@@ -25,53 +26,88 @@ public class SkillSpiralHydroBurst : BossSkill
     public override IEnumerator ExecuteRoutine()
     {
         if (boss == null || projectilePrefab == null) yield break;
-        FaceTargetInstantly();
+        Quaternion baseRotation = GetBaseFacingRotation();
+        float spinAngle = 0f;
+        float elapsed = 0f;
+        float interval = Mathf.Max(0.01f, fireInterval);
+        float spinDegreesPerSecond = angleStepPerWindow / interval;
+        NavMeshAgent agent = boss.GetComponent<NavMeshAgent>();
+        bool restoreAgentRotation = false;
+        bool updateRotationBackup = false;
+        float angularSpeedBackup = 0f;
+
+        if (agent != null)
+        {
+            restoreAgentRotation = true;
+            updateRotationBackup = agent.updateRotation;
+            angularSpeedBackup = agent.angularSpeed;
+            agent.updateRotation = false;
+            agent.angularSpeed = 0f;
+        }
+
+        boss.transform.rotation = baseRotation;
 
         if (!string.IsNullOrEmpty(spinBool))
             boss.Animator.SetBool(spinBool, true);
 
-        float elapsed = 0f;
-        float interval = Mathf.Max(0.01f, fireInterval);
-        float spinDegreesPerSecond = angleStepPerWindow / interval;
-
-        while (elapsed < spinDuration)
+        try
         {
-            FireWindow(startAngleOffset);
+            while (elapsed < spinDuration)
+            {
+                FireWindow(baseRotation, spinAngle);
 
-            float wait = Mathf.Min(interval, spinDuration - elapsed);
-            if (wait > 0f)
-                yield return RotateBossForDuration(wait, spinDegreesPerSecond);
-            elapsed += wait;
+                float wait = Mathf.Min(interval, spinDuration - elapsed);
+                if (wait > 0f)
+                {
+                    yield return RotateBossForDuration(baseRotation, spinAngle, wait, spinDegreesPerSecond);
+                    spinAngle += spinDegreesPerSecond * wait;
+                }
+
+                elapsed += wait;
+            }
         }
+        finally
+        {
+            if (!string.IsNullOrEmpty(spinBool))
+                boss.Animator.SetBool(spinBool, false);
 
-        if (!string.IsNullOrEmpty(spinBool))
-            boss.Animator.SetBool(spinBool, false);
+            if (restoreAgentRotation && agent != null)
+            {
+                agent.updateRotation = updateRotationBackup;
+                agent.angularSpeed = angularSpeedBackup;
+            }
+        }
     }
 
-    private IEnumerator RotateBossForDuration(float duration, float degreesPerSecond)
+    private IEnumerator RotateBossForDuration(Quaternion baseRotation, float startSpinAngle, float duration, float degreesPerSecond)
     {
         float elapsed = 0f;
         while (elapsed < duration)
         {
             float dt = Mathf.Min(Time.deltaTime, duration - elapsed);
             elapsed += dt;
-            boss.transform.Rotate(0f, degreesPerSecond * dt, 0f, Space.World);
+            float currentSpinAngle = startSpinAngle + (degreesPerSecond * elapsed);
+            boss.transform.rotation = baseRotation * Quaternion.Euler(0f, currentSpinAngle, 0f);
             yield return null;
         }
+
+        boss.transform.rotation = baseRotation * Quaternion.Euler(0f, startSpinAngle + (degreesPerSecond * duration), 0f);
     }
 
-    private void FaceTargetInstantly()
+    private Quaternion GetBaseFacingRotation()
     {
-        if (boss.TargetPlayer == null) return;
+        if (boss.TargetPlayer == null)
+            return boss.transform.rotation;
 
         Vector3 toPlayer = boss.TargetPlayer.position - boss.transform.position;
         toPlayer.y = 0f;
-        if (toPlayer.sqrMagnitude <= 0.0001f) return;
+        if (toPlayer.sqrMagnitude <= 0.0001f)
+            return boss.transform.rotation;
 
-        boss.transform.rotation = Quaternion.LookRotation(toPlayer.normalized, Vector3.up);
+        return Quaternion.LookRotation(toPlayer.normalized, Vector3.up);
     }
 
-    private void FireWindow(float centerAngleOffset)
+    private void FireWindow(Quaternion baseRotation, float spinAngle)
     {
         PlayCastSound();
         int count = Mathf.Max(1, projectilesPerWindow);
@@ -81,8 +117,9 @@ public class SkillSpiralHydroBurst : BossSkill
         for (int i = 0; i < count; i++)
         {
             float localSpread = startAngle + (step * i);
-            float worldAngle = centerAngleOffset + localSpread;
-            Vector3 dir = Quaternion.Euler(0f, worldAngle, 0f) * boss.transform.forward;
+            float worldAngle = startAngleOffset + spinAngle + localSpread;
+            Quaternion shotRotation = baseRotation * Quaternion.Euler(0f, worldAngle, 0f);
+            Vector3 dir = shotRotation * Vector3.forward;
             Transform spawn = projectileSpawnPoint != null ? projectileSpawnPoint : boss.transform;
             GameObject go = Instantiate(projectilePrefab, spawn.position + spawnOffset, Quaternion.LookRotation(dir));
             Projectile p = go.GetComponent<Projectile>();

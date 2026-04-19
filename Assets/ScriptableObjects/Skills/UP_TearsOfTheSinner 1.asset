@@ -27,7 +27,7 @@ MonoBehaviour:
     20s Cooldown'
   skillType: 0
   targetType: 2
-  manaCost: 65
+  manaCost: 60
   cooldownTime: 20
   levelRequired: 1
   purchasePrice: 100

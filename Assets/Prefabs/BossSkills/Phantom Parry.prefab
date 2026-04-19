@@ -48,7 +48,7 @@ MonoBehaviour:
   animationTrigger: CastSkill
   windUpAnimationTrigger: WindUp
   isEnabled: 1
-  baseDamage: 8
+  baseDamage: 10
   causesStagger: 0
   staggerDuration: 1
   causesKnockback: 0
@@ -61,7 +61,7 @@ MonoBehaviour:
   stanceDuration: 2
   immuneDuringStance: 1
   stanceBool: ParryStance
-  triggerRange: 3
+  triggerRange: 5
   triggerAngle: 140
   meleeRegisterWindow: 0.4
   counterRange: 4.5

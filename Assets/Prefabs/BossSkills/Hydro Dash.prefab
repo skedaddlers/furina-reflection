@@ -48,7 +48,7 @@ MonoBehaviour:
   animationTrigger: A_Dash
   windUpAnimationTrigger: W_Dash
   isEnabled: 1
-  baseDamage: 8
+  baseDamage: 11
   causesStagger: 1
   staggerDuration: 1
   causesKnockback: 0

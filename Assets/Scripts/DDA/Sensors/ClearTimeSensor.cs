@@ -67,6 +67,21 @@ public class ClearTimeSensor : Sensor
         enemyHealthInfluence = Mathf.Clamp01(healthInfluence);
     }
 
+    public float GetExpectedClearTimeForRoom(Room room)
+    {
+        return CalculateExpectedClearTime(room);
+    }
+
+    public float EvaluatePerformanceForRoom(Room room, float actualClearTimeSeconds)
+    {
+        return CalculateClearTimeRatio(CalculateExpectedClearTime(room), actualClearTimeSeconds);
+    }
+
+    public float EvaluatePerformance(float expectedClearTimeSeconds, float actualClearTimeSeconds)
+    {
+        return CalculateClearTimeRatio(expectedClearTimeSeconds, actualClearTimeSeconds);
+    }
+
     public override SensorReading Read()
     {
         lastClearTimeRatio = EvaluateCurrentClearTimeRatio();
@@ -162,12 +177,19 @@ public class ClearTimeSensor : Sensor
             ? expectedClearTimeForActiveRoom
             : CalculateExpectedClearTime(currentRoom);
 
-        float ratio = Mathf.Clamp(expected / elapsed, 0f, 3f);
+        float ratio = CalculateClearTimeRatio(expected, elapsed);
         Debug.Log(
             $"[ClearTimeSensor] Room {currentRoom.roomIndex} expected {expected:F1}s, actual {elapsed:F1}s, ratio {ratio:F2}"
         );
 
         return ratio;
+    }
+
+    private static float CalculateClearTimeRatio(float expectedClearTimeSeconds, float actualClearTimeSeconds)
+    {
+        float expected = Mathf.Max(0.1f, expectedClearTimeSeconds);
+        float actual = Mathf.Max(0.1f, actualClearTimeSeconds);
+        return Mathf.Clamp(expected / actual, 0f, 3f);
     }
 
     private bool IsMidBossFightAnalysis(AnalysisTriggerSource triggerSource)

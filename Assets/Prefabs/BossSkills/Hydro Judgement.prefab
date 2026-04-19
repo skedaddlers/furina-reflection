@@ -48,7 +48,7 @@ MonoBehaviour:
   animationTrigger: Judgement
   windUpAnimationTrigger: WindUp
   isEnabled: 1
-  baseDamage: 8
+  baseDamage: 11
   causesStagger: 1
   staggerDuration: 1
   causesKnockback: 1
@@ -58,7 +58,7 @@ MonoBehaviour:
   castSound: {fileID: 8300000, guid: 7215620d17b9eab4dbecd112543157ae, type: 3}
   castSoundVolume: 1
   soundDuration: 3
-  telegraphRadius: 6
+  telegraphRadius: 5
   telegraphSegments: 36
   telegraphTime: 1
   jumpDuration: 1.1

@@ -1,11 +1,26 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System;
 public class Shop : MonoBehaviour
 {
     public List<WeaponBase> weaponsForSale;
     public List<SkillBase> skillsForSale;
     public Room parentRoom;
+
+    [Header("Shop Slots")]
+    [SerializeField] private int weaponSlots = 3;
+    [SerializeField] private int skillSlots = 3;
+
+    [Header("Rarity Weights")]
+    [SerializeField] private float commonBaseWeight = 1f;
+    [SerializeField] private float rareBaseWeight = 0.45f;
+    [SerializeField] private float epicBaseWeight = 0.18f;
+    [SerializeField] private float legendaryBaseWeight = 0.05f;
+    [SerializeField] private float commonWeightDecayPerDistance = 0.05f;
+    [SerializeField] private float higherRarityBoostPerDistance = 0.12f;
+    [SerializeField] private float minimumCommonWeightMultiplier = 0.35f;
+
     private Transform model;
     private Animator animator;
     private Player player;
@@ -18,20 +33,7 @@ public class Shop : MonoBehaviour
         model = GetComponent<Transform>();
         animator = GetComponent<Animator>();
         player = GameManager.Instance.player;
-        // Example: Populate shop with random items from library
-        var allWeapons = Helpers.GetRandomItems(Library.Instance.allWeapons, 3, parentRoom.roomIndex + (int)System.DateTime.Now.Ticks);
-        var allSkills = Helpers.GetRandomItems(Library.Instance.allSkills, 3, parentRoom.roomIndex + (int)System.DateTime.Now.Ticks);
-
-        // For simplicity, just add first 3 weapons and skills
-        for (int i = 0; i < 3 && i < allWeapons.Count; i++)
-        {
-            weaponsForSale.Add(allWeapons[i]);
-        }
-
-        for (int i = 0; i < 3 && i < allSkills.Count; i++)
-        {
-            skillsForSale.Add(allSkills[i]);
-        }
+        PopulateShopInventory();
     }
 
     void Update()
@@ -93,5 +95,56 @@ public class Shop : MonoBehaviour
             UIManager.Instance.ShowInterractionUI(false, "");     
             UIManager.Instance.shopUI.CloseShop();
         }
+    }
+
+    private void PopulateShopInventory()
+    {
+        if (weaponsForSale == null)
+            weaponsForSale = new List<WeaponBase>();
+        else
+            weaponsForSale.Clear();
+
+        if (skillsForSale == null)
+            skillsForSale = new List<SkillBase>();
+        else
+            skillsForSale.Clear();
+
+        var library = Library.Instance;
+        if (library == null)
+        {
+            Debug.LogWarning("[Shop] Library.Instance is null. Shop inventory could not be generated.");
+            return;
+        }
+
+        int baseSeed = unchecked((parentRoom != null ? parentRoom.roomIndex : GetInstanceID()) * 397 ^ Environment.TickCount);
+        var selectedWeapons = Helpers.GetWeightedRandomItems(library.allWeapons, weaponSlots, GetWeaponWeight, baseSeed + 17);
+        var selectedSkills = Helpers.GetWeightedRandomItems(library.allSkills, skillSlots, GetSkillWeight, baseSeed + 53);
+
+        weaponsForSale.AddRange(selectedWeapons);
+        skillsForSale.AddRange(selectedSkills);
+    }
+
+    private float GetWeaponWeight(WeaponBase weapon)
+    {
+        return weapon == null ? 0f : GetRarityWeight(weapon.rarity);
+    }
+
+    private float GetSkillWeight(SkillBase skill)
+    {
+        return skill == null ? 0f : GetRarityWeight(skill.rarity);
+    }
+
+    private float GetRarityWeight(Rarity rarity)
+    {
+        int shopDistance = parentRoom != null ? Mathf.Max(0, parentRoom.distanceFromStart) : 0;
+
+        return rarity switch
+        {
+            Rarity.Common => commonBaseWeight * Mathf.Max(minimumCommonWeightMultiplier, 1f - shopDistance * commonWeightDecayPerDistance),
+            Rarity.Rare => rareBaseWeight * (1f + shopDistance * higherRarityBoostPerDistance),
+            Rarity.Epic => epicBaseWeight * (1f + shopDistance * higherRarityBoostPerDistance * 2f),
+            Rarity.Legendary => legendaryBaseWeight * (1f + shopDistance * higherRarityBoostPerDistance * 3f),
+            _ => 1f
+        };
     }
 }

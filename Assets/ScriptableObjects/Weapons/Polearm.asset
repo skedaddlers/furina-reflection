@@ -20,7 +20,7 @@ MonoBehaviour:
   goodPropertyText: '+7 Damage (x2)
 
     +4 Range'
-  badPropertyText: 1.2s Cooldown
+  badPropertyText: 1.7s Cooldown
   icon: {fileID: 21300000, guid: 5dd4daf107f064846a100ea4adca6e50, type: 3}
   worldDropPrefab: {fileID: 1116301838605631135, guid: bfc3679ace3db9c499c57c2f66feb13d, type: 3}
   price: 80
@@ -32,7 +32,7 @@ MonoBehaviour:
   baseDamage: 7
   range: 4
   angle: 90
-  cooldown: 1.2
+  cooldown: 1.7
   manaCost: 0
   causesStagger: 0
   staggerDuration: 0.5

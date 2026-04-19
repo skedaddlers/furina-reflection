@@ -47,6 +47,7 @@ public class DDAConfigurationManager : MonoBehaviour
     [SerializeField] private float survivabilityDamageBudgetMultiplier = 1.5f;
     [SerializeField, Range(0f, 1f)] private float survivabilityDamageWeight = 0.6f;
     [SerializeField, Range(0f, 1f)] private float survivabilitySuccessfulDodgedAttacksWeight = 0.1f;
+    [SerializeField, Range(0f, 1f)] private float survivabilityHealingWeight = 0.1f;
     [SerializeField, Range(0f, 1f)] private float survivabilityLowestHealthWeight = 0.15f;
     [SerializeField, Range(0f, 1f)] private float survivabilityEndHealthWeight = 0.15f;
 
@@ -216,6 +217,7 @@ public class DDAConfigurationManager : MonoBehaviour
             survivabilityDamageBudgetMultiplier,
             survivabilityDamageWeight,
             survivabilitySuccessfulDodgedAttacksWeight,
+            survivabilityHealingWeight,
             survivabilityLowestHealthWeight,
             survivabilityEndHealthWeight
         );
@@ -255,6 +257,7 @@ public class DDAConfigurationManager : MonoBehaviour
             survivabilityDamageBudgetMultiplier,
             survivabilityDamageWeight,
             survivabilitySuccessfulDodgedAttacksWeight,
+            survivabilityHealingWeight,
             survivabilityLowestHealthWeight,
             survivabilityEndHealthWeight
         );

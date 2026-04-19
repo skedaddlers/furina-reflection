@@ -48,7 +48,7 @@ MonoBehaviour:
   animationTrigger: CastSkill
   windUpAnimationTrigger: WindUp
   isEnabled: 1
-  baseDamage: 3
+  baseDamage: 5
   causesStagger: 0
   staggerDuration: 1
   causesKnockback: 0

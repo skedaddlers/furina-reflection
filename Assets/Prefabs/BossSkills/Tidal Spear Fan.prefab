@@ -48,7 +48,7 @@ MonoBehaviour:
   animationTrigger: FrontSpell
   windUpAnimationTrigger: WindUp
   isEnabled: 0
-  baseDamage: 8
+  baseDamage: 10
   causesStagger: 0
   staggerDuration: 1
   causesKnockback: 0

@@ -48,7 +48,7 @@ MonoBehaviour:
   animationTrigger: Stomp
   windUpAnimationTrigger: W
   isEnabled: 0
-  baseDamage: 8
+  baseDamage: 11
   causesStagger: 1
   staggerDuration: 1
   causesKnockback: 1

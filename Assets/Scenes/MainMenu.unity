@@ -5904,9 +5904,12 @@ MonoBehaviour:
       m_Calls: []
   m_text: This is a fanmade roguelike game featuring Furina from Genshin Impact.
     Some of the assets are either taken from open source websites, or AI-generated,
-    while the rest are made by the developer themself. This game's main purpose was
-    used as a thesis for the developer. This game is not used for commercial purposes,
-    and is not published online.
+    while the rest are made by the developer themself. This project also includes
+    assets and materials from Genshin Impact which are the property of HoYoverse.
+    All rights to these assets belong to HoYoverse. This project is a non-commercial,
+    academic work and is not affiliated with, endorsed by, or sponsored by HoYoverse.
+    This game's main purpose was used as a thesis for the developer. This game is
+    not used for commercial purposes, and is not published online.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4810d5f758c3dbe49870c1493f10ded9, type: 2}
   m_sharedMaterial: {fileID: 7790408596228138100, guid: 4810d5f758c3dbe49870c1493f10ded9, type: 2}
@@ -5933,14 +5936,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 55
-  m_fontSizeBase: 55
+  m_fontSize: 40.8
+  m_fontSizeBase: 40.8
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 8
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0

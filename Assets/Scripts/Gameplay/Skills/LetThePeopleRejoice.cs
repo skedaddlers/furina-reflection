@@ -91,12 +91,15 @@ public class LetThePeopleRejoice : SkillBase
         {
             // Drain health
             float drainAmount = healthDrainPerSecond * drainInterval;
-            activePlayerStats.health.TakeDamage(
-                drainAmount,
-                isCrit: false,
-                source: DamageSource.Skill,
-                applyStagger: false
-            );
+            if (activePlayerStats.health.CurrentHealth >= drainAmount)
+            {
+                activePlayerStats.health.TakeDamage(
+                    drainAmount,
+                    isCrit: false,
+                    source: DamageSource.Skill,
+                    applyStagger: false
+                );
+            }
 
             // Debug: Show current attack value
             // Debug.Log($"{skillName}: Current baseAttack = {activePlayerStats.baseAttack}");

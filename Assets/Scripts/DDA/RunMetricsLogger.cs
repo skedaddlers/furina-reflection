@@ -18,6 +18,7 @@ public enum RunEndReason
 public class RunMetricsLogger : MonoBehaviour
 {
     private const int SurvivabilityAttributeId = 3;
+    private const int ClearTimeAttributeId = 4;
 
     [Header("Local Logging")]
     [SerializeField] private bool enableLocalRunLogging = true;
@@ -36,9 +37,13 @@ public class RunMetricsLogger : MonoBehaviour
 
     private RunMetricsSnapshot currentRun;
     private Health playerHealth;
+    private ClearTimeSensor clearTimeSensor;
     private float survivabilityDamageBudget;
     private float totalCompletedCombatDuration;
+    private float totalCompletedClearTimePerformance;
+    private int completedClearTimePerformanceSamples;
     private float activeCombatStartTime = -1f;
+    private float activeCombatExpectedClearTime = -1f;
     private int activeCombatRoomId = -1;
     private RoomType activeCombatRoomType = RoomType.Start;
     private int bossRoomId = -1;
@@ -109,6 +114,7 @@ public class RunMetricsLogger : MonoBehaviour
         DDAMAPEKit.TryGetExistingInstance()?.ResetAnalysisHistory();
         InitializeLayoutSnapshot();
         EnsurePlayerHealth();
+        EnsureClearTimeSensor();
         UpdateHealthRatiosFromCurrentState();
     }
 
@@ -214,10 +220,14 @@ public class RunMetricsLogger : MonoBehaviour
 
         InitializeLayoutSnapshot();
         EnsurePlayerHealth();
+        EnsureClearTimeSensor();
 
         activeCombatStartTime = Time.time;
         activeCombatRoomId = room.roomIndex;
         activeCombatRoomType = room.roomType;
+        activeCombatExpectedClearTime = clearTimeSensor != null
+            ? clearTimeSensor.GetExpectedClearTimeForRoom(room)
+            : -1f;
 
         startedCombatRoomIds.Add(room.roomIndex);
         currentRun.startedCombatRooms = startedCombatRoomIds.Count;
@@ -279,6 +289,7 @@ public class RunMetricsLogger : MonoBehaviour
         currentRun.averageClearTimeSeconds = currentRun.clearedCombatRooms > 0
             ? totalCompletedCombatDuration / currentRun.clearedCombatRooms
             : 0f;
+        currentRun.averageClearTimePerformance = CalculateAverageClearTimePerformance();
 
         currentRun.progressRatePercent = CalculateProgressRatePercent();
         currentRun.totalDamageThatWouldHaveBeenTaken =
@@ -290,19 +301,43 @@ public class RunMetricsLogger : MonoBehaviour
         UpdateHealthRatiosFromCurrentState();
         float fallbackRunSurvivability = CalculateRunSurvivability();
         currentRun.survivability = fallbackRunSurvivability;
+        currentRun.survivabilityExcludingBossLoops = fallbackRunSurvivability;
+        currentRun.survivabilityPerformance = CalculateAttributePerformance(SurvivabilityAttributeId, currentRun.survivability);
+        currentRun.survivabilityPerformanceExcludingBossLoops = CalculateAttributePerformance(SurvivabilityAttributeId, currentRun.survivabilityExcludingBossLoops);
 
         string performanceSource;
         float analyzedSurvivabilityAverage;
         bool hasAnalyzedSurvivabilityAverage;
         currentRun.performance = CalculatePerformance(
+            excludeBossTickAnalysis: false,
             out performanceSource,
             out analyzedSurvivabilityAverage,
             out hasAnalyzedSurvivabilityAverage
         );
         currentRun.performanceSource = performanceSource;
-        currentRun.survivability = performanceSource == "dda_analysis_average" && hasAnalyzedSurvivabilityAverage
+        currentRun.survivability = IsAnalyzedAverageSource(performanceSource) && hasAnalyzedSurvivabilityAverage
             ? analyzedSurvivabilityAverage
             : fallbackRunSurvivability;
+        currentRun.survivabilityPerformance = CalculateAttributePerformance(SurvivabilityAttributeId, currentRun.survivability);
+
+        string performanceExcludingBossLoopsSource;
+        float analyzedSurvivabilityExcludingBossLoops;
+        bool hasAnalyzedSurvivabilityExcludingBossLoops;
+        currentRun.performanceExcludingBossLoops = CalculatePerformance(
+            excludeBossTickAnalysis: true,
+            out performanceExcludingBossLoopsSource,
+            out analyzedSurvivabilityExcludingBossLoops,
+            out hasAnalyzedSurvivabilityExcludingBossLoops
+        );
+        currentRun.performanceExcludingBossLoopsSource = performanceExcludingBossLoopsSource;
+        currentRun.survivabilityExcludingBossLoops =
+            IsAnalyzedAverageSource(performanceExcludingBossLoopsSource) && hasAnalyzedSurvivabilityExcludingBossLoops
+                ? analyzedSurvivabilityExcludingBossLoops
+                : fallbackRunSurvivability;
+        currentRun.survivabilityPerformanceExcludingBossLoops =
+            CalculateAttributePerformance(SurvivabilityAttributeId, currentRun.survivabilityExcludingBossLoops);
+        CapturePerformanceHistory();
+        CapturePerformanceVariance();
         CaptureFinalProfileScores();
     }
 
@@ -319,11 +354,20 @@ public class RunMetricsLogger : MonoBehaviour
 
         if (countAsCleared && clearedCombatRoomIds.Add(activeCombatRoomId))
         {
-            totalCompletedCombatDuration += Mathf.Max(0f, Time.time - activeCombatStartTime);
+            float encounterDuration = Mathf.Max(0f, Time.time - activeCombatStartTime);
+            totalCompletedCombatDuration += encounterDuration;
+
+            EnsureClearTimeSensor();
+            if (clearTimeSensor != null && activeCombatExpectedClearTime > 0f)
+            {
+                totalCompletedClearTimePerformance += clearTimeSensor.EvaluatePerformance(activeCombatExpectedClearTime, encounterDuration);
+                completedClearTimePerformanceSamples++;
+            }
         }
 
         currentRun.clearedCombatRooms = clearedCombatRoomIds.Count;
         activeCombatStartTime = -1f;
+        activeCombatExpectedClearTime = -1f;
         activeCombatRoomId = -1;
         activeCombatRoomType = RoomType.Start;
     }
@@ -396,6 +440,7 @@ public class RunMetricsLogger : MonoBehaviour
     }
 
     private float CalculatePerformance(
+        bool excludeBossTickAnalysis,
         out string source,
         out float averageSurvivability,
         out bool hasAverageSurvivability
@@ -405,13 +450,22 @@ public class RunMetricsLogger : MonoBehaviour
         hasAverageSurvivability = false;
 
         if (TryCalculateAverageAnalyzedMetrics(
+            excludeBossTickAnalysis,
             out float averagedPerformance,
             out averageSurvivability,
             out hasAverageSurvivability
         ))
         {
-            source = "dda_analysis_average";
+            source = excludeBossTickAnalysis
+                ? "dda_analysis_average_excluding_boss_ticks"
+                : "dda_analysis_average";
             return averagedPerformance;
+        }
+
+        if (excludeBossTickAnalysis)
+        {
+            source = "local_fallback";
+            return CalculateFallbackPerformance();
         }
 
         DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();
@@ -443,6 +497,7 @@ public class RunMetricsLogger : MonoBehaviour
     }
 
     private bool TryCalculateAverageAnalyzedMetrics(
+        bool excludeBossTickAnalysis,
         out float averagePerformance,
         out float averageSurvivability,
         out bool hasAverageSurvivability
@@ -467,6 +522,9 @@ public class RunMetricsLogger : MonoBehaviour
 
         foreach (AnalysisSnapshot analysis in analysisHistory)
         {
+            if (excludeBossTickAnalysis && analysis.triggerSource == AnalysisTriggerSource.BossTick)
+                continue;
+
             performanceSum += analysis.performance;
             performanceCount++;
 
@@ -495,6 +553,140 @@ public class RunMetricsLogger : MonoBehaviour
         }
 
         return true;
+    }
+
+    private float CalculateAverageClearTimePerformance()
+    {
+        if (completedClearTimePerformanceSamples > 0)
+        {
+            return totalCompletedClearTimePerformance / completedClearTimePerformanceSamples;
+        }
+
+        DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();
+        PlayerModel playerModel = dda != null && dda.IsInitialized ? dda.GetPlayerModel() : null;
+        PlayerAttribute clearTimeAttribute = playerModel != null ? playerModel.GetAttribute(ClearTimeAttributeId) : null;
+        if (clearTimeAttribute == null)
+            return 0f;
+
+        float reference = clearTimeAttribute.reference.GetReference();
+        return reference > 0f ? clearTimeAttribute.value / reference : 0f;
+    }
+
+    private float CalculateAttributePerformance(int attributeId, float value)
+    {
+        DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();
+        PlayerModel playerModel = dda != null && dda.IsInitialized ? dda.GetPlayerModel() : null;
+        PlayerAttribute attribute = playerModel != null ? playerModel.GetAttribute(attributeId) : null;
+        if (attribute == null)
+            return value;
+
+        float reference = attribute.reference.GetReference();
+        return reference > 0f ? value / reference : value;
+    }
+
+    private static bool IsAnalyzedAverageSource(string source)
+    {
+        return source == "dda_analysis_average" ||
+            source == "dda_analysis_average_excluding_boss_ticks";
+    }
+
+    private void CapturePerformanceHistory()
+    {
+        currentRun.performanceHistory.Clear();
+
+        DDAMAPEKit dda = DDAMAPEKit.TryGetExistingInstance();
+        if (dda == null || !dda.IsInitialized)
+            return;
+
+        List<AnalysisSnapshot> analysisHistory = dda.GetAnalysisHistory();
+        if (analysisHistory == null || analysisHistory.Count == 0)
+            return;
+
+        foreach (AnalysisSnapshot analysis in analysisHistory)
+        {
+            float survivability = GetAnalysisAttributeValue(analysis, SurvivabilityAttributeId);
+            float clearTime = GetAnalysisAttributeValue(analysis, ClearTimeAttributeId);
+
+            currentRun.performanceHistory.Add(new RunPerformanceHistoryEntry
+            {
+                timestamp = analysis.timestamp,
+                triggerSource = analysis.triggerSource.ToString(),
+                overallPerformance = analysis.performance,
+                survivability = survivability,
+                survivabilityPerformance = CalculateAttributePerformance(SurvivabilityAttributeId, survivability),
+                clearTime = clearTime,
+                clearTimePerformance = CalculateAttributePerformance(ClearTimeAttributeId, clearTime)
+            });
+        }
+    }
+
+    private void CapturePerformanceVariance()
+    {
+        currentRun.performanceVariance = CalculateHistoryVariance(includeBossTicks: true, entry => entry.overallPerformance);
+        currentRun.performanceVarianceExcludingBossLoops = CalculateHistoryVariance(includeBossTicks: false, entry => entry.overallPerformance);
+
+        currentRun.clearTimePerformanceVariance = CalculateHistoryVariance(includeBossTicks: true, entry => entry.clearTimePerformance);
+        currentRun.clearTimePerformanceVarianceExcludingBossLoops = CalculateHistoryVariance(includeBossTicks: false, entry => entry.clearTimePerformance);
+
+        currentRun.survivabilityPerformanceVariance = CalculateHistoryVariance(includeBossTicks: true, entry => entry.survivabilityPerformance);
+        currentRun.survivabilityPerformanceVarianceExcludingBossLoops = CalculateHistoryVariance(includeBossTicks: false, entry => entry.survivabilityPerformance);
+    }
+
+    private static float GetAnalysisAttributeValue(AnalysisSnapshot analysis, int attributeId)
+    {
+        if (analysis == null || analysis.attributes == null)
+            return 0f;
+
+        foreach (AnalysisAttributeSnapshot attribute in analysis.attributes)
+        {
+            if (attribute.attributeId == attributeId)
+                return attribute.value;
+        }
+
+        return 0f;
+    }
+
+    private float CalculateHistoryVariance(bool includeBossTicks, Func<RunPerformanceHistoryEntry, float> selector)
+    {
+        if (currentRun == null || currentRun.performanceHistory == null || currentRun.performanceHistory.Count == 0 || selector == null)
+            return 0f;
+
+        float sum = 0f;
+        int count = 0;
+
+        foreach (RunPerformanceHistoryEntry entry in currentRun.performanceHistory)
+        {
+            if (!ShouldIncludeHistoryEntry(entry, includeBossTicks))
+                continue;
+
+            sum += selector(entry);
+            count++;
+        }
+
+        if (count <= 1)
+            return 0f;
+
+        float mean = sum / count;
+        float squaredDeviationSum = 0f;
+
+        foreach (RunPerformanceHistoryEntry entry in currentRun.performanceHistory)
+        {
+            if (!ShouldIncludeHistoryEntry(entry, includeBossTicks))
+                continue;
+
+            float delta = selector(entry) - mean;
+            squaredDeviationSum += delta * delta;
+        }
+
+        return squaredDeviationSum / count;
+    }
+
+    private static bool ShouldIncludeHistoryEntry(RunPerformanceHistoryEntry entry, bool includeBossTicks)
+    {
+        if (entry == null)
+            return false;
+
+        return includeBossTicks || entry.triggerSource != AnalysisTriggerSource.BossTick.ToString();
     }
 
     private float CalculateFallbackPerformance()
@@ -594,6 +786,14 @@ public class RunMetricsLogger : MonoBehaviour
         playerHealth.onHealthChanged += HandlePlayerHealthChanged;
     }
 
+    private void EnsureClearTimeSensor()
+    {
+        if (clearTimeSensor != null)
+            return;
+
+        clearTimeSensor = FindObjectOfType<ClearTimeSensor>();
+    }
+
     private void UnhookPlayerHealth()
     {
         if (playerHealth == null)
@@ -639,10 +839,14 @@ public class RunMetricsLogger : MonoBehaviour
         currentRun = null;
         survivabilityDamageBudget = 0f;
         totalCompletedCombatDuration = 0f;
+        totalCompletedClearTimePerformance = 0f;
+        completedClearTimePerformanceSamples = 0;
         activeCombatStartTime = -1f;
+        activeCombatExpectedClearTime = -1f;
         activeCombatRoomId = -1;
         activeCombatRoomType = RoomType.Start;
         bossRoomId = -1;
+        clearTimeSensor = null;
 
         visitedProgressionRoomIds.Clear();
         startedCombatRoomIds.Clear();
@@ -695,14 +899,27 @@ public class RunMetricsSnapshot
     public float damageTakenOverPotentialDamage;
 
     public float averageClearTimeSeconds;
+    public float averageClearTimePerformance;
     public float survivability;
+    public float survivabilityExcludingBossLoops;
+    public float survivabilityPerformance;
+    public float survivabilityPerformanceExcludingBossLoops;
     public float performance;
+    public float performanceExcludingBossLoops;
+    public float performanceVariance;
+    public float performanceVarianceExcludingBossLoops;
+    public float clearTimePerformanceVariance;
+    public float clearTimePerformanceVarianceExcludingBossLoops;
+    public float survivabilityPerformanceVariance;
+    public float survivabilityPerformanceVarianceExcludingBossLoops;
     public string performanceSource;
+    public string performanceExcludingBossLoopsSource;
     public int finalCurrentProfileId;
     public string finalCurrentProfileName;
     public int finalDominantProfileId;
     public string finalDominantProfileName;
     public List<RunProfileScoreSnapshot> finalProfileScores = new List<RunProfileScoreSnapshot>();
+    public List<RunPerformanceHistoryEntry> performanceHistory = new List<RunPerformanceHistoryEntry>();
 
     public float progressRatePercent;
     public int progressionRoomsVisited;
@@ -731,4 +948,16 @@ public class RunProfileScoreSnapshot
     public float distribution;
     public bool isCurrent;
     public bool isDominant;
+}
+
+[Serializable]
+public class RunPerformanceHistoryEntry
+{
+    public float timestamp;
+    public string triggerSource;
+    public float overallPerformance;
+    public float survivability;
+    public float survivabilityPerformance;
+    public float clearTime;
+    public float clearTimePerformance;
 }

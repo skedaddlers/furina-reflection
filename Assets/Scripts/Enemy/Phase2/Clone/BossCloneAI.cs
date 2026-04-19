@@ -100,6 +100,9 @@ public class BossCloneAI : EnemyAI
     {
         profileDistribution = new Dictionary<CloneProfileTag, float>();
 
+        if (!DDAIntegration.IsAdaptationEnabled)
+            return;
+
         var playerModel = DDARuntimeHelper.TryGetActivePlayerModel();
         if (playerModel == null)
             return;
@@ -153,6 +156,12 @@ public class BossCloneAI : EnemyAI
     {
         if (sequences == null || sequences.Count == 0)
             return null;
+
+        if (!DDAIntegration.IsAdaptationEnabled)
+        {
+            Debug.Log("DDA adaptation not enabled, choosing random sequence.");
+            return sequences[Random.Range(0, sequences.Count)];
+        }
 
         LoadProfileDistribution();
         if (profileDistribution == null || profileDistribution.Count == 0)

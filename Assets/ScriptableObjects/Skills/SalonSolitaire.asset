@@ -28,7 +28,7 @@ MonoBehaviour:
   skillType: 3
   targetType: 0
   manaCost: 35
-  cooldownTime: 15
+  cooldownTime: 12
   levelRequired: 1
   purchasePrice: 100
   duration: 12
