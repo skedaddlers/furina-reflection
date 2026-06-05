@@ -1,0 +1,288 @@
+{
+    "runId": "954803e44c4c4502ae70e71028973587",
+    "startedAtUtc": "2026-05-11T15:29:38.2636181Z",
+    "endedAtUtc": "2026-05-11T15:33:33.4844184Z",
+    "endReason": "Victory",
+    "appVersion": "0.1.0",
+    "platform": "WindowsPlayer",
+    "deviceModel": "Pongo 775 (Axioo)",
+    "sceneName": "Fewer Dialogue",
+    "persistentDataPath": "C:/Users/Pongo/AppData/LocalLow/Rukwa/Furina Reflection",
+    "logFilePath": "C:/Users/Pongo/AppData/LocalLow/Rukwa/Furina Reflection\\RunLogs\\run_20260511_153333_954803e44c4c4502ae70e71028973587.json",
+    "dungeonSeed": 1616159186,
+    "isDDAenabled": true,
+    "score": 1200,
+    "timePlayedSeconds": 215.53146362304688,
+    "timePlayedFormatted": "03:35",
+    "totalDamageTaken": 72.73126220703125,
+    "totalDamageDealt": 2581.090576171875,
+    "totalDamageAvoidedByDodging": 25.94070816040039,
+    "totalDamageThatWouldHaveBeenTaken": 98.67196655273438,
+    "damageTakenOverPotentialDamage": 0.7371015548706055,
+    "averageClearTimeSeconds": 198.26864624023438,
+    "averageClearTimePerformance": 0.5548027753829956,
+    "survivability": 0.5510143637657166,
+    "survivabilityExcludingBossLoops": 0.5139061808586121,
+    "survivabilityPerformance": 0.6887679696083069,
+    "survivabilityPerformanceExcludingBossLoops": 0.6423827409744263,
+    "performance": 0.6887678503990173,
+    "performanceExcludingBossLoops": 0.8373737931251526,
+    "performanceVariance": 0.008101415820419789,
+    "performanceVarianceExcludingBossLoops": 0.0,
+    "clearTimePerformanceVariance": 0.0,
+    "clearTimePerformanceVarianceExcludingBossLoops": 0.0,
+    "survivabilityPerformanceVariance": 0.008101415820419789,
+    "survivabilityPerformanceVarianceExcludingBossLoops": 0.0,
+    "performanceSource": "dda_analysis_average",
+    "performanceExcludingBossLoopsSource": "local_fallback",
+    "finalCurrentProfileId": 0,
+    "finalCurrentProfileName": "Melee Lover",
+    "finalDominantProfileId": 0,
+    "finalDominantProfileName": "Melee Lover",
+    "finalProfileScores": [
+        {
+            "profileId": 0,
+            "profileName": "Melee Lover",
+            "score": 1.2667697668075562,
+            "distribution": 0.7265565395355225,
+            "isCurrent": true,
+            "isDominant": true
+        },
+        {
+            "profileId": 2,
+            "profileName": "Dodger",
+            "score": 0.2927323877811432,
+            "distribution": 0.07251816242933274,
+            "isCurrent": false,
+            "isDominant": false
+        },
+        {
+            "profileId": 1,
+            "profileName": "Ranged Lover",
+            "score": 0.25604894757270815,
+            "distribution": 0.14503632485866548,
+            "isCurrent": false,
+            "isDominant": false
+        },
+        {
+            "profileId": 4,
+            "profileName": "Defensive",
+            "score": 0.10638035833835602,
+            "distribution": 0.05588896572589874,
+            "isCurrent": false,
+            "isDominant": false
+        },
+        {
+            "profileId": 3,
+            "profileName": "Skill Spam",
+            "score": 0.06597888469696045,
+            "distribution": 0.0,
+            "isCurrent": false,
+            "isDominant": false
+        }
+    ],
+    "performanceHistory": [
+        {
+            "timestamp": 62.17847442626953,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.9013333320617676,
+            "survivability": 0.7210666537284851,
+            "survivabilityPerformance": 0.9013333320617676,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 70.17926025390625,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.9013333320617676,
+            "survivability": 0.7210666537284851,
+            "survivabilityPerformance": 0.9013333320617676,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 78.18196105957031,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.8519999384880066,
+            "survivability": 0.6815999746322632,
+            "survivabilityPerformance": 0.8519999384880066,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 86.18377685546875,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.7159558534622192,
+            "survivability": 0.5727646946907044,
+            "survivabilityPerformance": 0.7159558534622192,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 94.1850814819336,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.7347058653831482,
+            "survivability": 0.5877646803855896,
+            "survivabilityPerformance": 0.7347058653831482,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 115.45750427246094,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.7032657265663147,
+            "survivability": 0.5626125931739807,
+            "survivabilityPerformance": 0.7032657265663147,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 123.4603042602539,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.7032657265663147,
+            "survivability": 0.5626125931739807,
+            "survivabilityPerformance": 0.7032657265663147,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 131.4617156982422,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6719971299171448,
+            "survivability": 0.5375977158546448,
+            "survivabilityPerformance": 0.6719971299171448,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 139.46295166015626,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6719971299171448,
+            "survivability": 0.5375977158546448,
+            "survivabilityPerformance": 0.6719971299171448,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 147.46420288085938,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6719971299171448,
+            "survivability": 0.5375977158546448,
+            "survivabilityPerformance": 0.6719971299171448,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 155.46534729003907,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6794885993003845,
+            "survivability": 0.5435909032821655,
+            "survivabilityPerformance": 0.6794885993003845,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 163.46713256835938,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6794885993003845,
+            "survivability": 0.5435909032821655,
+            "survivabilityPerformance": 0.6794885993003845,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 171.4673309326172,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.658660888671875,
+            "survivability": 0.526928722858429,
+            "survivabilityPerformance": 0.658660888671875,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 179.46939086914063,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6264365911483765,
+            "survivability": 0.5011492967605591,
+            "survivabilityPerformance": 0.6264365911483765,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 187.47096252441407,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6309139132499695,
+            "survivability": 0.5047311186790466,
+            "survivabilityPerformance": 0.6309139132499695,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 195.47317504882813,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6309139132499695,
+            "survivability": 0.5047311186790466,
+            "survivabilityPerformance": 0.6309139132499695,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 203.475341796875,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6309139132499695,
+            "survivability": 0.5047311186790466,
+            "survivabilityPerformance": 0.6309139132499695,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 211.47714233398438,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6354049444198608,
+            "survivability": 0.5083239674568176,
+            "survivabilityPerformance": 0.6354049444198608,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 219.47813415527345,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.6096025705337524,
+            "survivability": 0.4876820743083954,
+            "survivabilityPerformance": 0.6096025705337524,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 227.4785919189453,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.5772255063056946,
+            "survivability": 0.4617803990840912,
+            "survivabilityPerformance": 0.5772255063056946,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        },
+        {
+            "timestamp": 235.4786376953125,
+            "triggerSource": "BossTick",
+            "overallPerformance": 0.5772255063056946,
+            "survivability": 0.4617803990840912,
+            "survivabilityPerformance": 0.5772255063056946,
+            "clearTime": 0.0,
+            "clearTimePerformance": 0.0
+        }
+    ],
+    "progressRatePercent": 100.0,
+    "progressionRoomsVisited": 1,
+    "totalProgressionRooms": 1,
+    "startedCombatRooms": 1,
+    "clearedCombatRooms": 1,
+    "totalCombatRooms": 1,
+    "dodgeAttempts": 92,
+    "successfulDodges": 6,
+    "lowestHealthRatio": 0.5126873850822449,
+    "endHealthRatio": 0.5126873850822449,
+    "reachedBoss": 1,
+    "reachedBossPhase": 3,
+    "victory": 1
+}
